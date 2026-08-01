@@ -1,0 +1,209 @@
+# PRD — Constructor de listas de ejército · StarCraft: The Miniatures Game
+
+Versión 1.0 · Documento de requisitos de producto
+
+---
+
+## 1. Objetivo
+
+Aplicación web accesible desde una URL, utilizable en escritorio y móvil, que permita construir listas de ejército legales para StarCraft: The Miniatures Game, consultarlas y llevarlas impresas a la mesa de juego.
+
+El valor central no es «una hoja de cálculo bonita»: es **garantizar que la lista es legal**. El usuario debe poder confiar en que si la app dice que la lista es válida, lo es.
+
+## 2. Usuarios
+
+| Perfil | Contexto | Necesidad principal |
+|---|---|---|
+| Constructor | En casa, escritorio, con tiempo | Explorar composiciones, comparar costes, optimizar |
+| Jugador en mesa | Club o tienda, móvil, con prisa | Consultar su lista y los perfiles de sus unidades |
+| Oponente | Frente al usuario | Ver la lista rival (regla de listas abiertas, §9.1.10) |
+
+## 3. Alcance de la versión 1
+
+### Incluido
+- Construcción de listas Zerg completas y validadas.
+- Selección de cartas de misión y despliegue (disponible para las tres razas desde el inicio).
+- Consulta del catálogo de cartas (unidades, facción, tácticas).
+- Guardado local de múltiples listas.
+- Importación y exportación de listas.
+- Impresión: hoja resumen A4, cartas de las unidades incluidas, exportación a PDF.
+- Funcionamiento sin conexión (PWA instalable).
+- Interfaz en español, con nombres propios en inglés.
+
+### Regla de idioma
+
+Se traduce lo que explica, no lo que nombra. Nombres de unidades, armas, habilidades, cartas y palabras clave de regla permanecen en **inglés**, igual que en las cartas físicas. Textos de efecto, interfaz, errores y términos estructurales (Minerales, Suministro, Núcleo…) van en **español**.
+
+### Excluido explícitamente
+- Terran y Protoss (llegan en la versión 2, sin cambios de arquitectura).
+- Cuentas de usuario y sincronización entre dispositivos.
+- Acompañante de partida (heridas, recursos por ronda, fases).
+- Asistente para ejecutar el draft en la mesa (tirada, descartes, afinidad de marcadores) — pendiente de confirmar.
+- Partidas por equipos (§9.1.8).
+- Listas cerradas (§9.1.10) — solo se contempla el modo abierto por defecto.
+- Cualquier funcionalidad multijugador o social.
+
+## 4. Historias de usuario
+
+Cada historia tiene criterios de aceptación verificables. `CA` = criterio de aceptación.
+
+### Bloque A — Construcción
+
+**US-01 · Elegir escala de enfrentamiento**
+Como jugador, quiero fijar la escala de la partida para conocer mi presupuesto.
+- CA-01.1 Se ofrecen Escaramuza (hasta 1 000), Estándar (hasta 2 000) y Gran Ofensiva (2 001+).
+- CA-01.2 En Gran Ofensiva el usuario introduce el límite exacto de minerales.
+- CA-01.3 El presupuesto de gas vespeno se calcula como el 10 % del límite de minerales y se muestra sin que el usuario lo introduzca.
+- CA-01.4 Cambiar la escala a la baja no borra la lista: la marca como inválida e indica qué sobra.
+
+**US-02 · Elegir raza y carta de facción**
+Como jugador, quiero elegir mi carta de facción para conocer mis espacios iniciales y qué puedo incluir.
+- CA-02.1 Se muestran las cartas de facción disponibles de la raza con sus etiquetas y espacios iniciales.
+- CA-02.2 Al seleccionarla se muestran los espacios iniciales desglosados por tipo (Núcleo, Élite, Apoyo, Aéreo, Héroe).
+- CA-02.3 Se muestra el recurso por ronda que aporta (CP, BM o PE) y sus habilidades.
+- CA-02.4 Cambiar de carta de facción avisa de qué elementos de la lista dejarían de ser elegibles antes de confirmar.
+
+**US-03 · Comprar cartas tácticas**
+Como jugador, quiero gastar gas vespeno en cartas tácticas para desbloquear espacios de ejército.
+- CA-03.1 Solo se ofrecen cartas cuyas etiquetas estén todas contenidas en las de la carta de facción.
+- CA-03.2 Cada carta muestra su coste en gas y los espacios que otorga.
+- CA-03.3 Las cartas marcadas UNIQUE solo pueden incluirse una vez; la app lo impide.
+- CA-03.4 El contador de espacios totales por tipo se actualiza en el momento.
+- CA-03.5 No se puede superar el presupuesto de gas.
+- CA-03.6 El gas no gastado se muestra explícitamente como perdido (§9.1.4).
+
+**US-03b · Seleccionar Creep Card (solo Zerg)**
+Como jugador Zerg, debo incluir exactamente una Creep Card, porque mi carta de facción me obliga.
+- CA-03b.1 Las Creep Cards se presentan en un bloque propio, separado de las tácticas.
+- CA-03b.2 Mientras no haya ninguna seleccionada, la lista es ilegal y se avisa de forma persistente.
+- CA-03b.3 No se puede seleccionar más de una.
+- CA-03b.4 Su coste en gas computa en el límite de gas vespeno.
+- CA-03b.5 El bloque no aparece en razas que no sean Zerg.
+
+**US-04 · Reclutar unidades**
+Como jugador, quiero añadir unidades gastando minerales y ocupando espacios.
+- CA-04.1 Las unidades que **nunca** podrán formar parte del ejército (etiquetas incompatibles, otra raza, UNIQUE ya incluida) **no se muestran**.
+- CA-04.1b Las unidades legales pero que ahora no caben (minerales o espacios insuficientes) **sí se muestran**, atenuadas, con su coste y el motivo, y no se pueden añadir.
+- CA-04.2 Cada unidad muestra sus opciones de composición con número de modelos, coste y valor de suministro.
+- CA-04.3 Al elegir una opción, la unidad ocupa tantos espacios de su tipo como su valor de suministro.
+- CA-04.4 Si no quedan espacios libres del tipo requerido, la app lo indica y explica qué carta táctica lo desbloquearía.
+- CA-04.5 No se pueden componer unidades con un número de modelos que no figure como opción.
+- CA-04.6 Las unidades invocadas se pueden añadir para tener sus stats a mano, pero no cuestan minerales ni ocupan espacios (§9.1.9).
+- CA-04.7 Las unidades invocadas se distinguen visualmente de las reclutadas, en pantalla y en la impresión.
+
+**US-05 · Comprar mejoras**
+Como jugador, quiero personalizar mis unidades con mejoras.
+- CA-05.1 Se muestran las mejoras disponibles para la unidad con el coste correspondiente a la composición elegida.
+- CA-05.2 Una mejora estándar se aplica a todos los modelos de la unidad.
+- CA-05.3 Una mejora ESPECIALISTA se asigna a un modelo concreto, nominado por el usuario.
+- CA-05.4 La misma mejora ESPECIALISTA no puede comprarse dos veces para la misma unidad.
+- CA-05.5 Dos mejoras ESPECIALISTA distintas deben ir en modelos distintos.
+- CA-05.6 Una mejora de reemplazo (`↑ POR arma`) sustituye el arma nombrada; la app muestra el equipo resultante de cada modelo.
+- CA-05.7 Cambiar la composición de la unidad recalcula el coste de sus mejoras y avisa si alguna deja de ser aplicable.
+
+**US-06 · Ver el estado de recursos en todo momento**
+- CA-06.1 Minerales gastados / límite, gas gastado / límite y espacios ocupados / totales por tipo son visibles en cualquier paso.
+- CA-06.2 Los excesos se señalan como error, no solo con un número en rojo.
+- CA-06.3 Se muestran los espacios de todos los tipos que otorga la lista, **incluido Aéreo**.
+- CA-06.4 Se muestra el recurso por ronda acumulado (CP, BM o PE) sumando facción y tácticas.
+- CA-06.5 Se muestra el suministro total de la lista.
+- CA-06.6 El límite de minerales es editable directamente, además de por escala predefinida.
+- CA-06.7 La barra de recursos **nunca se oculta**: permanece visible en todos los pasos, al desplazar y en cualquier anchura de pantalla. En móvil puede contraer el detalle secundario, pero minerales, gas y espacios siguen visibles siempre.
+
+**US-06b · Entender de dónde salen mis espacios**
+Como jugador, quiero saber qué carta aporta cada espacio y qué unidad lo consume.
+- CA-06b.1 Desglose por tipo de espacio con las cartas que lo otorgan y las unidades que lo ocupan.
+- CA-06b.2 Cuando un error se debe a falta de espacios, se indica qué carta táctica lo resolvería y a qué coste.
+
+**US-16 · Elegir misiones y despliegues**
+Como jugador, quiero seleccionar las 2 cartas de misión y las 2 de despliegue que llevo al draft.
+- CA-16.1 Se seleccionan exactamente 2 misiones y 2 despliegues, sin duplicados en el propio conjunto (§9.2).
+- CA-16.2 Se ofrecen preferentemente las de la escala de la partida; las de otra escala se pueden elegir con aviso.
+- CA-16.3 Cada misión muestra suministro inicial, escalado por ronda, duración, condiciones de puntuación y victoria instantánea.
+- CA-16.4 Cada despliegue muestra dimensiones de mesa y el diagrama de posición de los marcadores.
+- CA-16.5 Las 4 cartas se guardan con la lista y aparecen en la impresión.
+- CA-16.6 Las cartas de escenario están disponibles con independencia de la raza elegida.
+
+### Bloque B — Validación
+
+**US-07 · Saber si mi lista es legal**
+- CA-07.1 La app distingue **errores** (lista ilegal) de **avisos** (legal pero cuestionable, p. ej. espacios sin usar o recursos sin gastar).
+- CA-07.2 Cada error indica la regla concreta del reglamento que se incumple y qué hacer para resolverlo.
+- CA-07.3 Una lista con errores puede guardarse, pero se marca visiblemente como no válida y no se imprime sin advertencia.
+
+### Bloque C — Gestión
+
+**US-08 · Guardar y recuperar listas**
+- CA-08.1 Varias listas guardadas con nombre, raza, escala y fecha.
+- CA-08.2 Los datos persisten al cerrar el navegador.
+- CA-08.3 Duplicar una lista para crear variantes.
+- CA-08.4 Cada lista registra la versión del catálogo con la que se creó.
+- CA-08.5 Si el catálogo cambia y afecta a una lista guardada, la app avisa y detalla qué cambió.
+
+**US-09 · Compartir listas por fichero**
+- CA-09.1 Exportar a fichero JSON.
+- CA-09.2 Importar desde fichero, con validación y mensaje claro si el fichero no es válido.
+
+**US-09b · Compartir listas por seed**
+Como jugador, quiero compartir una lista pegando un código corto en un chat, y recuperarla pegándolo en la app.
+- CA-09b.1 Cualquier lista genera un seed que la codifica **por completo**, sin depender de ningún servidor.
+- CA-09b.2 El seed se copia al portapapeles con un solo gesto.
+- CA-09b.3 Pegar un seed reconstruye la lista idéntica al original.
+- CA-09b.4 Un seed incompleto o alterado se detecta y se rechaza con un mensaje claro; nunca produce una lista incorrecta en silencio.
+- CA-09b.5 Un seed creado con otra versión del catálogo se importa igualmente, detallando qué costes cambiaron o qué elementos ya no existen.
+- CA-09b.6 El seed usa un alfabeto sin caracteres ambiguos, para poder dictarse en voz alta.
+- CA-09b.7 Funciona sin conexión, tanto al generar como al importar.
+
+### Bloque D — Consulta
+
+**US-10 · Consultar cartas**
+- CA-10.1 Buscador de unidades, cartas de facción y cartas tácticas.
+- CA-10.2 Filtros por raza, tipo de espacio, rol de combate y etiquetas.
+- CA-10.3 Ficha completa con perfil, armas, habilidades, mejoras y costes.
+- CA-10.4 Accesible sin haber creado ninguna lista.
+
+### Bloque E — Impresión
+
+**US-11 · Imprimir la hoja de lista**
+- CA-11.1 Hoja A4 con: nombre, escala, carta de facción, cartas tácticas, Creep Card, unidades con composición y mejoras por modelo, misiones y despliegues elegidos, y desglose de recursos y espacios.
+- CA-11.2 Legible en blanco y negro.
+- CA-11.3 Sin elementos de interfaz en la salida impresa.
+
+**US-12 · Imprimir las cartas de las unidades**
+- CA-12.1 Se imprimen las cartas de las unidades incluidas en la lista.
+- CA-12.2 Formato apto para recortar, con las dos caras de cada carta.
+- CA-12.3 Las cartas son la imagen original en inglés recortada del PDF, no una regeneración.
+- CA-12.4 Se puede elegir qué cartas imprimir, sin obligar a imprimirlas todas.
+
+**US-13 · Exportar a PDF**
+- CA-13.1 Descarga de un PDF con el mismo contenido que la impresión.
+- CA-13.2 Funciona sin conexión (generación en el cliente).
+
+### Bloque F — Plataforma
+
+**US-14 · Usar la app en el móvil**
+- CA-14.1 Interfaz utilizable en pantallas desde 360 px de ancho.
+- CA-14.2 Objetivos táctiles adecuados; nada que requiera precisión de ratón.
+- CA-14.3 Sin pérdida de funcionalidad respecto a escritorio.
+
+**US-15 · Usar la app sin conexión**
+- CA-15.1 Instalable como PWA.
+- CA-15.2 Tras la primera carga, funciona íntegramente sin red.
+
+## 5. Requisitos no funcionales
+
+| Requisito | Criterio |
+|---|---|
+| Rendimiento | Validación de una lista completa por debajo de 50 ms; interacción sin latencia perceptible |
+| Carga inicial | Aplicación utilizable en menos de 3 s en 4G |
+| Fiabilidad de datos | Cobertura de pruebas del motor de reglas al 100 % de las reglas R1–R10 |
+| Accesibilidad | Contraste AA; navegación por teclado en escritorio |
+| Privacidad | Ningún dato sale del dispositivo; sin telemetría ni terceros |
+| Mantenibilidad | Añadir una raza nueva no debe requerir cambios en el motor de reglas ni en la interfaz |
+
+## 6. Métrica de éxito
+
+La versión 1 se considera terminada cuando:
+1. La lista de ejemplo del reglamento se reproduce en la app y valida con el desglose exacto de minerales y espacios que aparece impreso en el manual.
+2. El usuario construye una lista Zerg completa, la imprime y la usa en una partida real sin necesitar consultar el PDF.
+3. Añadir Terran consiste únicamente en añadir ficheros de catálogo.

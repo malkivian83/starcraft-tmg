@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "2026.05.1.0",
+  "sourceRef": "StarCraft-TMG_EN.pdf, May 2026 v1.0 — §9.1.1",
+  "scales": [
+    {
+      "id": "skirmish",
+      "name": { "es": "Escaramuza", "en": "Skirmish" },
+      "mineralLimit": 1000,
+      "mineralMinimum": 0,
+      "vespeneRatio": 0.1,
+      "battlefield": "36\" × 36\""
+    },
+    {
+      "id": "standard",
+      "name": { "es": "Estándar", "en": "Standard" },
+      "mineralLimit": 2000,
+      "mineralMinimum": 0,
+      "vespeneRatio": 0.1,
+      "battlefield": "36\" × 54\""
+    },
+    {
+      "id": "grand_offensive",
+      "name": { "es": "Gran Ofensiva", "en": "Grand Offensive" },
+      "mineralLimit": null,
+      "mineralMinimum": 2001,
+      "vespeneRatio": 0.1,
+      "battlefield": "36\" × 72\""
+    }
+  ]
+}

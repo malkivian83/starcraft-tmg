@@ -1,0 +1,1240 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "2026.05.1.0",
+  "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Zerg-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
+  "race": "ZERG",
+
+  "factionCards": [
+    {
+      "id": "zerg.faction.zerg_swarm",
+      "seedId": 1101,
+      "race": "ZERG",
+      "name": "Zerg Swarm",
+      "tags": ["ZERG"],
+      "startingSlots": { "CORE": 3, "ELITE": 1, "SUPPORT": 1, "AIR": 1 },
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Brood Instinct",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Úsala antes de que una unidad amiga haga una Tirada de Evasión. Aplica un modificador de +1 a esa tirada.",
+            "en": "Use before a Friendly Unit makes an Evade Roll. Apply a +1 Modifier to that roll."
+          }
+        },
+        {
+          "name": "Zerg Creep",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Durante la Construcción del Ejército, selecciona exactamente una Creep Card y añádela a tu Lista de Ejército, pagando su coste indicado (si lo tiene).",
+            "en": "During Army Building, select exactly one Creep Card and add it to their Army List, paying its listed cost (if any)."
+          }
+        },
+        {
+          "name": "Rapid Burrowing",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Selecciona una unidad Zerg terrestre amiga no trabada en el campo de batalla. Esa unidad gana el estado Burrowed, aunque ya se haya activado esta ronda.",
+            "en": "Select one Friendly, Unengaged Ground Zerg Unit on the battlefield. That Unit gains the Burrowed Status, even if it has already been Activated this Round."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/faction-zerg-swarm.png"
+    },
+    {
+      "id": "zerg.faction.kerrigans_swarm",
+      "seedId": 1102,
+      "race": "ZERG",
+      "name": "Kerrigan's Swarm",
+      "tags": ["ZERG", "KERRIGAN'S SWARM"],
+      "startingSlots": { "CORE": 3, "ELITE": 2, "HERO": 1 },
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Wild Mutation",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si la unidad activa está SOBRE CREEP, gana BUFF Velocidad (1) y su primera arma usada gana PRECISION (1).",
+            "en": "If the active unit is ON CREEP, the unit gains BUFF Speed (1) and its first used Weapon gains PRECISION (1)."
+          }
+        },
+        {
+          "name": "Zerg Creep",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Durante la Construcción del Ejército debes seleccionar exactamente una Creep Card y añadirla a tu Lista de Ejército, pagando su coste indicado (si lo tiene).",
+            "en": "During Army Building, you must select exactly one Creep Card and add it to your Army List, paying its listed cost (if any)."
+          }
+        },
+        {
+          "name": "Omega Network",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si no hay ningún Omega Worm amigo en el campo de batalla, coloca una unidad Omega Worm amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier modelo enemigo. Esta ronda, el Omega Worm no puede usar sus Habilidades Especiales (excepto Structure).",
+            "en": "If there is no Friendly Omega Worm on the battlefield, set a Friendly Omega Worm Unit anywhere on GROUND LEVEL of the battlefield, more than 10\" away from any Enemy model. This Round, the Omega Worm is not eligible to use its Special Abilities (excluding Structure)."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/faction-kerrigans-swarm.png"
+    }
+  ],
+
+  "tacticalCards": [
+    {
+      "id": "zerg.tactical.spawning_pool",
+      "seedId": 2101,
+      "race": "ZERG",
+      "name": "Spawning Pool",
+      "tags": ["ZERG"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Feral Rage",
+          "phase": "COMBAT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).",
+            "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-spawning-pool.png"
+    },
+    {
+      "id": "zerg.tactical.spawning_pool_six_pool",
+      "seedId": 2102,
+      "race": "ZERG",
+      "name": "Spawning Pool (Six Pool)",
+      "tags": ["ZERG"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 2 },
+      "unique": true,
+      "resource": "BM",
+      "resourcePerRound": 2,
+      "abilities": [
+        {
+          "name": "Timing Push",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad Zergling activa se despliega desde cualquier borde de mesa que no sea el Borde de Entrada de un jugador. Esta acción debe terminar a más de 10\" de cualquier modelo enemigo.",
+            "en": "The active Zergling Unit Deploys from any table edge that is not a Player's Entry Edge. This action must end more than 10\" away from any Enemy model."
+          }
+        },
+        {
+          "name": "Feral Rage",
+          "phase": "COMBAT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).",
+            "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-spawning-pool-six-pool.png"
+    },
+    {
+      "id": "zerg.tactical.roach_warren",
+      "seedId": 2103,
+      "race": "ZERG",
+      "name": "Roach Warren",
+      "tags": ["ZERG"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Nasty Surprise",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad terrestre activa pierde el estado Burrowed.",
+            "en": "The active Ground Unit loses the Burrowed Status."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-roach-warren.png"
+    },
+    {
+      "id": "zerg.tactical.hydralisk_den",
+      "seedId": 2104,
+      "race": "ZERG",
+      "name": "Hydralisk Den",
+      "tags": ["ZERG"],
+      "vespeneCost": 35,
+      "slotsGranted": { "ELITE": 2 },
+      "unique": false,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Missile Attacks",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La primera arma a distancia usada por la unidad activa gana PRECISION (1).",
+            "en": "The active Unit's first Ranged Weapon used gains PRECISION (1)."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-hydralisk-den.png"
+    },
+    {
+      "id": "zerg.tactical.evolution_chamber",
+      "seedId": 2105,
+      "race": "ZERG",
+      "name": "Evolution Chamber",
+      "tags": ["ZERG"],
+      "vespeneCost": 30,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Chitinous Plating",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Úsala antes de que una unidad amiga haga una Tirada de Armadura. Esa unidad gana TOUGH (1) para esa tirada.",
+            "en": "Use before a Friendly Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll."
+          }
+        },
+        {
+          "name": "Extended Claws",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad activa gana un modificador de +1 a todas las Tiradas de Impacto IMPACT.",
+            "en": "The active Unit gains a +1 Modifier to all IMPACT Hit Rolls."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-evolution-chamber.png"
+    },
+    {
+      "id": "zerg.tactical.hatchery",
+      "seedId": 2106,
+      "race": "ZERG",
+      "name": "Hatchery",
+      "tags": ["ZERG"],
+      "vespeneCost": 30,
+      "slotsGranted": { "SUPPORT": 1 },
+      "unique": false,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Lie in Wait",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad terrestre activa, si no está trabada, gana el estado Burrowed.",
+            "en": "The active, Unengaged Ground Unit gains the Burrowed Status."
+          }
+        },
+        {
+          "name": "Creep Spread",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca una ficha de Creep Tumor en el campo de batalla a menos de 6\" (no se requiere línea de visión) de un Borde de Entrada amigo o de una ficha de Creep Tumor amiga existente.",
+            "en": "Set a Creep Tumor token on the battlefield Within 6\" (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-hatchery.png"
+    },
+    {
+      "id": "zerg.tactical.lair",
+      "seedId": 2107,
+      "race": "ZERG",
+      "name": "Lair",
+      "tags": ["ZERG"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 1, "ELITE": 1 },
+      "unique": true,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Predation",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Las armas de combate cuerpo a cuerpo de la unidad activa ganan INSTANT.",
+            "en": "The active Unit's Close Combat Weapons gain INSTANT."
+          }
+        },
+        {
+          "name": "Creep Spread",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca una ficha de Creep Tumor en el campo de batalla a menos de 6\" (no se requiere línea de visión) de un Borde de Entrada amigo o de una ficha de Creep Tumor amiga existente.",
+            "en": "Set a Creep Tumor token on the battlefield Within 6\" (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-lair.png"
+    },
+    {
+      "id": "zerg.tactical.overlord",
+      "seedId": 2108,
+      "race": "ZERG",
+      "name": "Overlord",
+      "tags": ["ZERG"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 1, "ELITE": 1, "HERO": 1 },
+      "unique": true,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Ventral Sacs",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca un Indicador de Facción en cualquier punto del campo de batalla a más de 10\" de cualquier modelo enemigo. Al final de la ronda, el jugador que lo controla puede desplegar una unidad terrestre desde la Reserva en contacto peana con peana con ese Indicador.",
+            "en": "Set a Faction Indicator anywhere on the battlefield more than 10\" away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."
+          }
+        },
+        {
+          "name": "Excrete Creep",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca una ficha de Creep Tumor en el campo de batalla a menos de 6\" (no se requiere línea de visión) de un Borde de Entrada amigo o de una ficha de Creep Tumor amiga existente.",
+            "en": "Set a Creep Tumor token on the battlefield Within 6\" (Line of Sight is not required) of either a Friendly Entry Edge or an existing Friendly Creep Tumor token."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-overlord.png"
+    },
+    {
+      "id": "zerg.tactical.overseer",
+      "seedId": 2109,
+      "race": "ZERG",
+      "name": "Overseer",
+      "tags": ["ZERG"],
+      "vespeneCost": 25,
+      "slotsGranted": { "SUPPORT": 1 },
+      "unique": true,
+      "resource": "BM",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Contaminate",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca un Indicador de Facción en cualquier punto del campo de batalla. Mientras las unidades enemigas estén a menos de 6\" de este Indicador, pierden el estado HIDDEN.",
+            "en": "Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6\" of this Faction Indicator, they lose HIDDEN Status."
+          }
+        },
+        {
+          "name": "Pneumatized Carapace",
+          "phase": "ASSAULT",
+          "type": "REACTION",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Úsala después de que una unidad amiga tire un D6 de Distancia de Carga. Tira un D6 adicional y usa el resultado más alto para calcular la Distancia de Carga total.",
+            "en": "Use after a Friendly Unit rolls a D6 for Charge Distance. Roll an additional D6 and use the higher result to calculate the total Charge Distance."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/tactical-overseer.png"
+    }
+  ],
+
+  "creepCards": [
+    {
+      "id": "zerg.creep.accelerating_creep",
+      "seedId": 3101,
+      "race": "ZERG",
+      "name": "Accelerating Creep",
+      "tags": ["ZERG"],
+      "vespeneCost": 0,
+      "unique": true,
+      "abilities": [
+        {
+          "name": "Speed on Creep",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si la unidad Zerg amiga activa está SOBRE CREEP, aumenta su característica de Velocidad en 1.",
+            "en": "If the active Friendly Zerg Unit is ON CREEP, increase its Speed characteristic by 1."
+          }
+        },
+        {
+          "name": "Living Glob of Tissue",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Las fichas de Creep Tumor tienen STAY IN PLAY y DISPLACEMENT.",
+            "en": "Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."
+          }
+        },
+        {
+          "name": "Creep Removal",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si una unidad enemiga termina una acción de Movimiento, Despliegue, Carrera, Carga o Desenganche a menos de 1\" de una ficha de Creep Tumor amiga, retira esa ficha del campo de batalla.",
+            "en": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1\" of a Friendly Creep Tumor token, remove that token from the battlefield."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/creep-accelerating-creep.png"
+    },
+    {
+      "id": "zerg.creep.malignant_creep",
+      "seedId": 3102,
+      "race": "ZERG",
+      "name": "Malignant Creep",
+      "tags": ["ZERG"],
+      "vespeneCost": 10,
+      "unique": true,
+      "abilities": [
+        {
+          "name": "Creep Removal",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si una unidad enemiga termina una acción de Movimiento, Despliegue, Carrera, Carga o Desenganche a menos de 1\" de una ficha de Creep Tumor amiga, retira esa ficha del campo de batalla.",
+            "en": "If an Enemy Unit ends a Move, Deploy, Run, Charge or Disengage action Within 1\" of a Friendly Creep Tumor token, remove that token from the battlefield."
+          }
+        },
+        {
+          "name": "Living Glob of Tissue",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Las fichas de Creep Tumor tienen STAY IN PLAY y DISPLACEMENT.",
+            "en": "Creep Tumor tokens have STAY IN PLAY and DISPLACEMENT."
+          }
+        },
+        {
+          "name": "Malevolent Matriarch",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si la unidad Zerg amiga activa declara una acción de Carga estando SOBRE CREEP, gana un modificador de +1 a las Tiradas de Impacto IMPACT.",
+            "en": "If the active Friendly Zerg Unit declares a Charge action while ON CREEP, it gains +1 Modifier to IMPACT Hit Rolls."
+          }
+        }
+      ],
+      "imageRef": "cards/zerg/creep-malignant-creep.png"
+    }
+  ],
+
+  "unitCards": [
+    {
+      "id": "zerg.card.zergling",
+      "race": "ZERG",
+      "name": "Zergling",
+      "baseSize": "Ø 25MM",
+      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 12, "supply": 1 },
+        { "minModels": 13, "maxModels": 18, "supply": 2 }
+      ],
+      "imageRefFront": "cards/zerg/unit-zergling-front.png",
+      "imageRefBack": "cards/zerg/unit-zergling-back.png"
+    },
+    {
+      "id": "zerg.card.raptor",
+      "race": "ZERG",
+      "name": "Raptor (Zergling)",
+      "baseSize": "Ø 25MM",
+      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 12, "supply": 1 },
+        { "minModels": 13, "maxModels": 18, "supply": 2 }
+      ],
+      "imageRefFront": "cards/zerg/unit-raptor-front.png",
+      "imageRefBack": "cards/zerg/unit-raptor-back.png"
+    },
+    {
+      "id": "zerg.card.kerrigan_swarm_raptor",
+      "race": "ZERG",
+      "name": "Kerrigan Swarm Raptor (Zergling)",
+      "baseSize": "Ø 25MM",
+      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-kerrigan-swarm-raptor-front.png",
+      "imageRefBack": "cards/zerg/unit-kerrigan-swarm-raptor-back.png"
+    },
+    {
+      "id": "zerg.card.swarmling",
+      "race": "ZERG",
+      "name": "Swarmling (Zergling)",
+      "baseSize": "Ø 25MM",
+      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 18, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-swarmling-front.png",
+      "imageRefBack": "cards/zerg/unit-swarmling-back.png"
+    },
+    {
+      "id": "zerg.card.roach",
+      "race": "ZERG",
+      "name": "Roach",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-roach-front.png",
+      "imageRefBack": "cards/zerg/unit-roach-back.png"
+    },
+    {
+      "id": "zerg.card.vile",
+      "race": "ZERG",
+      "name": "Vile (Roach)",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-vile-front.png",
+      "imageRefBack": "cards/zerg/unit-vile-back.png"
+    },
+    {
+      "id": "zerg.card.corpser",
+      "race": "ZERG",
+      "name": "Corpser (Roach)",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-corpser-front.png",
+      "imageRefBack": "cards/zerg/unit-corpser-back.png"
+    },
+    {
+      "id": "zerg.card.hydralisk",
+      "race": "ZERG",
+      "name": "Hydralisk",
+      "baseSize": "40×100MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/8", "shield": null },
+      "weapons": [
+        {
+          "name": "Needle Spines",
+          "phase": "ASSAULT",
+          "range": "12",
+          "target": "All",
+          "rateOfAttack": "3",
+          "hit": "3+",
+          "surgeType": "Light, Armoured",
+          "surgeDice": "D3+1",
+          "damage": "2",
+          "keywords": []
+        },
+        {
+          "name": "Scythe",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La Coherencia Horizontal de esta unidad es de 4\".",
+            "en": "This Unit's Horizontal Coherency is 4\"."
+          }
+        },
+        {
+          "name": "Lunge",
+          "phase": "COMBAT",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando otra unidad amiga a menos de 10\" es objetivo de un Ataque a Distancia, tras resolverse el ataque por completo esta unidad, si no está trabada, puede realizar una acción de Movimiento directamente hacia la unidad atacante.",
+            "en": "When another Friendly Unit Within 10\" is the target of a Ranged Attack, after the attack is fully resolved, this Unit, if Unengaged, may perform a Move action Directly Towards the attacking Unit."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 1 },
+        { "minModels": 2, "maxModels": 2, "supply": 2 },
+        { "minModels": 3, "maxModels": 4, "supply": 3 }
+      ],
+      "imageRefFront": "cards/zerg/unit-hydralisk-front.png",
+      "imageRefBack": "cards/zerg/unit-hydralisk-back.png"
+    },
+    {
+      "id": "zerg.card.queen",
+      "race": "ZERG",
+      "name": "Queen",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "2", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-queen-front.png",
+      "imageRefBack": "cards/zerg/unit-queen-back.png"
+    },
+    {
+      "id": "zerg.card.kerrigan",
+      "race": "ZERG",
+      "name": "Kerrigan",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "9", "evade": "6+", "armour": "5+", "speed": "7", "shield": null },
+      "weapons": [],
+      "abilities": [
+        {
+          "name": "Commander",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Trata la característica de Suministro de esta unidad como aumentada en 1 para controlar y disputar Marcadores de Misión, completar objetivos y resolver chequeos de Desenganche.",
+            "en": "Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers, completing objectives, and resolving Disengage checks."
+          }
+        },
+        {
+          "name": "Crushing Grip",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Selecciona una unidad enemiga a menos de 12\". Esa unidad cuenta como Activada en esta fase (coloca un Marcador de Activación junto a ella).",
+            "en": "Select one Enemy Unit Within 12\". That Unit counts as Activated in this Phase (set an Activation Marker next to it)."
+          }
+        },
+        {
+          "name": "Mutating Carapace",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Selecciona una unidad enemiga a menos de 18\". Esta unidad puede hacer una Tirada de Evasión contra todos los ataques de la unidad seleccionada, con un modificador de +2 aplicado a esas tiradas.",
+            "en": "Select one Enemy Unit Within 18\". This Unit is eligible to make an Evade Roll against all attacks made by the selected Enemy Unit, with a +2 Modifier applied to those Evade Rolls."
+          }
+        }
+      ],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-kerrigan-front.png",
+      "imageRefBack": "cards/zerg/unit-kerrigan-back.png"
+    },
+    {
+      "id": "zerg.card.roachling",
+      "race": "ZERG",
+      "name": "Roachling",
+      "baseSize": "Ø 25MM",
+      "profile": { "size": "1", "hitPoints": "1", "evade": "6+", "armour": "6+", "speed": "4/7", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 0 }],
+      "imageRefFront": "cards/zerg/unit-roachling-front.png",
+      "imageRefBack": "cards/zerg/unit-roachling-back.png"
+    },
+    {
+      "id": "zerg.card.omega_worm",
+      "race": "ZERG",
+      "name": "Omega Worm",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "—", "hitPoints": "—", "evade": "—", "armour": "—", "speed": "—", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "imageRefFront": "cards/zerg/unit-omega-worm-front.png",
+      "imageRefBack": "cards/zerg/unit-omega-worm-back.png"
+    }
+  ],
+
+  "unitEntries": [
+    {
+      "id": "zerg.entry.zergling",
+      "seedId": 4101,
+      "cardId": "zerg.card.zergling",
+      "race": "ZERG",
+      "name": "Zergling",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "12", "models": 12, "mineralCost": 180, "supplyValue": 1 },
+        { "id": "18", "models": 18, "mineralCost": 220, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "adrenal_glands",
+          "seedId": 5101,
+          "name": "Adrenal Glands",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "12": 20, "18": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "burrow_ambush",
+          "seedId": 5102,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "12": 20, "18": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "shredding_claws",
+          "seedId": 5103,
+          "name": "Shredding Claws",
+          "specialist": false,
+          "replacesWeapon": "Claws",
+          "costByComposition": { "12": 10, "18": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.raptor",
+      "seedId": 4102,
+      "cardId": "zerg.card.raptor",
+      "race": "ZERG",
+      "name": "Raptor (Zergling)",
+      "tags": ["ZERG"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "12", "models": 12, "mineralCost": 240, "supplyValue": 1 },
+        { "id": "18", "models": 18, "mineralCost": 300, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "adrenal_glands",
+          "seedId": 5111,
+          "name": "Adrenal Glands",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "12": 20, "18": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "burrow_ambush",
+          "seedId": 5112,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "12": 20, "18": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "shredding_claws",
+          "seedId": 5113,
+          "name": "Shredding Claws",
+          "specialist": false,
+          "replacesWeapon": "Claws",
+          "costByComposition": { "12": 10, "18": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.kerrigan_swarm_raptor",
+      "seedId": 4103,
+      "cardId": "zerg.card.kerrigan_swarm_raptor",
+      "race": "ZERG",
+      "name": "Kerrigan Swarm Raptor (Zergling)",
+      "tags": ["ZERG", "KERRIGAN'S SWARM"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "unique": true,
+      "summoned": false,
+      "compositions": [
+        { "id": "6", "models": 6, "mineralCost": 250, "supplyValue": 1 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "zerg.entry.swarmling",
+      "seedId": 4104,
+      "cardId": "zerg.card.swarmling",
+      "race": "ZERG",
+      "name": "Swarmling (Zergling)",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "18", "models": 18, "mineralCost": 260, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "burrow_ambush",
+          "seedId": 5121,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "18": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.roach",
+      "seedId": 4105,
+      "cardId": "zerg.card.roach",
+      "race": "ZERG",
+      "name": "Roach",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 170, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "burrow_ambush",
+          "seedId": 5131,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "glial_reconstitution",
+          "seedId": 5132,
+          "name": "Glial Reconstitution",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "hydriodic_bile",
+          "seedId": 5133,
+          "name": "Hydriodic Bile",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "tunneling_claws",
+          "seedId": 5134,
+          "name": "Tunneling Claws",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.vile",
+      "seedId": 4106,
+      "cardId": "zerg.card.vile",
+      "race": "ZERG",
+      "name": "Vile (Roach)",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 200, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "burrow_ambush",
+          "seedId": 5141,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "glial_reconstitution",
+          "seedId": 5142,
+          "name": "Glial Reconstitution",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "hydriodic_bile",
+          "seedId": 5143,
+          "name": "Hydriodic Bile",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "tunneling_claws",
+          "seedId": 5144,
+          "name": "Tunneling Claws",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.corpser",
+      "seedId": 4107,
+      "cardId": "zerg.card.corpser",
+      "race": "ZERG",
+      "name": "Corpser (Roach)",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 240, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "burrow_ambush",
+          "seedId": 5151,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "glial_reconstitution",
+          "seedId": 5152,
+          "name": "Glial Reconstitution",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "hydriodic_bile",
+          "seedId": 5153,
+          "name": "Hydriodic Bile",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "tunneling_claws",
+          "seedId": 5154,
+          "name": "Tunneling Claws",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.hydralisk",
+      "seedId": 4108,
+      "cardId": "zerg.card.hydralisk",
+      "race": "ZERG",
+      "name": "Hydralisk",
+      "tags": ["ZERG"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "2", "models": 2, "mineralCost": 140, "supplyValue": 2 },
+        { "id": "4", "models": 4, "mineralCost": 260, "supplyValue": 3 }
+      ],
+      "upgrades": [
+        {
+          "id": "ancillary_carapace",
+          "seedId": 5161,
+          "name": "Ancillary Carapace",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Ancillary Carapace",
+              "phase": "ANY",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Esta unidad gana TOUGH (1) en la primera Tirada de Armadura de cada activación.",
+                "en": "This Unit gains TOUGH (1) on the first Armour Roll of each Activation."
+              }
+            }
+          ]
+        },
+        {
+          "id": "burrow_ambush",
+          "seedId": 5162,
+          "name": "Burrow Ambush",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Burrow Ambush",
+              "phase": "MOVEMENT",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ningún modelo puede colocarse a menos de 10\" de un modelo enemigo. La activación de esta unidad termina.",
+                "en": "When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10\" of any Enemy model. This Unit's Activation ends."
+              }
+            }
+          ]
+        },
+        {
+          "id": "grooved_spines",
+          "seedId": 5163,
+          "name": "Grooved Spines",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Grooved Spines",
+              "phase": "ASSAULT",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "El arma a distancia Needle Spines de esta unidad gana LONG RANGE (16\").",
+                "en": "This Unit's Needle Spines ranged weapon gains LONG RANGE (16\")."
+              }
+            }
+          ]
+        },
+        {
+          "id": "lurking",
+          "seedId": 5164,
+          "name": "Lurking",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 10, "4": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Lurking",
+              "phase": "ANY",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Si esta unidad tiene el estado Stationary, puede hacer una Tirada de Evasión contra el primer Ataque a Distancia que la tenga por objetivo esta ronda. Si está SOBRE CREEP, gana un modificador de +1 a esa Tirada de Evasión.",
+                "en": "If this Unit has Stationary Status, it is eligible to make an Evade Roll against the first Ranged Attack targeting it this Round. If this Unit is ON CREEP, it gains +1 Modifier to this Evade Roll."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.queen",
+      "seedId": 4109,
+      "cardId": "zerg.card.queen",
+      "race": "ZERG",
+      "name": "Queen",
+      "tags": ["ZERG"],
+      "slotType": "SUPPORT",
+      "combatRole": { "es": "Apoyo", "en": "Support" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 150, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "creep_speed",
+          "seedId": 5171,
+          "name": "Creep Speed",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "1": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "domineering_presence",
+          "seedId": 5172,
+          "name": "Domineering Presence",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "1": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "zerg.entry.kerrigan",
+      "seedId": 4110,
+      "cardId": "zerg.card.kerrigan",
+      "race": "ZERG",
+      "name": "Kerrigan",
+      "tags": ["ZERG", "KERRIGAN'S SWARM"],
+      "slotType": "HERO",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": true,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 250, "supplyValue": 1 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "zerg.entry.roachling",
+      "seedId": 4111,
+      "cardId": "zerg.card.roachling",
+      "race": "ZERG",
+      "name": "Roachling",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "unique": false,
+      "summoned": true,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 0, "supplyValue": 0 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "zerg.entry.omega_worm",
+      "seedId": 4112,
+      "cardId": "zerg.card.omega_worm",
+      "race": "ZERG",
+      "name": "Omega Worm",
+      "tags": ["ZERG"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "unique": false,
+      "summoned": true,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 0, "supplyValue": 0 }
+      ],
+      "upgrades": []
+    }
+  ]
+}

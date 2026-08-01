@@ -1,0 +1,214 @@
+/*
+ * Hoja A4. En pantalla se muestra como vista previa; al imprimir es lo ÚNICO
+ * que sale (CA-11.3), en blanco y negro y sin elementos de interfaz.
+ */
+
+.sheet {
+  background: #fff;
+  color: #111;
+  padding: 14mm 12mm;
+  border-radius: var(--radius);
+  font-size: 11pt;
+  line-height: 1.35;
+}
+
+.sheet__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 2px solid #111;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.sheet__title {
+  font-size: 17pt;
+  margin: 0;
+}
+
+.sheet__sub {
+  margin: 3px 0 0;
+  font-size: 9.5pt;
+  color: #333;
+}
+
+.sheet__illegal {
+  margin: 0;
+  padding: 3px 8px;
+  border: 2px solid #111;
+  font-weight: 700;
+  font-size: 9pt;
+  white-space: nowrap;
+}
+
+.sheet__section {
+  margin-bottom: 9px;
+  break-inside: avoid;
+}
+
+.sheet__section h2 {
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #999;
+  padding-bottom: 2px;
+  margin: 0 0 4px;
+}
+
+.sheet__cards {
+  margin: 2px 0;
+  font-size: 10pt;
+}
+
+.sheet__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+}
+
+.sheet__table th,
+.sheet__table td {
+  border-bottom: 1px solid #ccc;
+  padding: 3px 5px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sheet__table th {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #111;
+}
+
+.sheet__table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid #111;
+  border-bottom: none;
+}
+
+.sheet__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet__upgrades {
+  font-size: 9pt;
+  color: #333;
+}
+
+/* --- Impresión ----------------------------------------------------------- */
+
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Nada de la interfaz sale impreso. */
+  .no-print,
+  .topbar,
+  .tabs,
+  .resbar,
+  button {
+    display: none !important;
+  }
+
+  .app,
+  .content {
+    padding: 0;
+    margin: 0;
+    display: block;
+  }
+
+  .panel {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+  .sheet {
+    padding: 0;
+    border-radius: 0;
+    font-size: 10pt;
+  }
+}
+
+/* --- Rejilla de escenarios y libro mayor (pantalla) ---------------------- */
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.scenario-diagram {
+  width: 100%;
+  max-height: 190px;
+  object-fit: contain;
+  background: var(--bg);
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+.ledger {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.ledger__block {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  background: var(--bg-raised);
+}
+
+.ledger__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ledger__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ledger__table td {
+  padding: 2px 0;
+}
+
+.ledger__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ledger__ok {
+  color: var(--ok);
+}
+
+.ledger__bad {
+  color: var(--error);
+}
+
+.ledger__total td {
+  border-top: 1px solid var(--line);
+  padding-top: 4px;
+  font-weight: 600;
+}

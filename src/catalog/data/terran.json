@@ -1,0 +1,826 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "2026.05.1.0",
+  "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 + StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf",
+  "race": "TERRAN",
+
+  "factionCards": [
+    {
+      "id": "terran.faction.terran_armed_forces",
+      "seedId": 1201,
+      "race": "TERRAN",
+      "name": "Terran Armed Forces",
+      "tags": ["TERRAN"],
+      "startingSlots": { "CORE": 3, "ELITE": 1, "SUPPORT": 1, "AIR": 1 },
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Tactical Retreat",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad activa ignora la penalización de Desenganche durante el resto de la ronda.",
+            "en": "The active Unit ignores the Disengage penalty for the remainder of the Round."
+          }
+        },
+        {
+          "name": "Terran Tenacity",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por partida. Reclama de inmediato el Marcador de Primer Jugador. Ningún otro jugador puede reclamarlo durante el resto de esta fase.",
+            "en": "Once per Game. Immediately claim the First Player Marker. No other player may claim the First Player Marker for the remainder of this Phase."
+          }
+        }
+      ],
+      "imageRef": "cards/terran/faction-terran-armed-forces.png"
+    },
+    {
+      "id": "terran.faction.raynors_raiders",
+      "seedId": 1202,
+      "race": "TERRAN",
+      "name": "Raynor's Raiders",
+      "tags": ["TERRAN", "RAYNOR'S RAIDERS"],
+      "startingSlots": { "CORE": 3, "HERO": 1, "SUPPORT": 1, "AIR": 1 },
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Rapid Ingress",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca una unidad Point Defence Drone amiga en cualquier punto del campo de batalla, a más de 1\" de cualquier modelo enemigo. Retira esta unidad al final de la ronda.",
+            "en": "Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1\" away from any Enemy model. Remove this Unit at the End of the Round."
+          }
+        },
+        {
+          "name": "Ready for Pickup?",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por partida. La unidad activa resuelve el efecto PLACE (12). Los modelos colocados por este efecto no pueden situarse dentro del Alcance de Trabazón de ninguna unidad enemiga. Esto se resuelve en lugar de realizar una acción estándar.",
+            "en": "Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action."
+          }
+        }
+      ],
+      "imageRef": "cards/terran/faction-raynors-raiders.png"
+    }
+  ],
+
+  "tacticalCards": [
+    {
+      "id": "terran.tactical.barracks",
+      "seedId": 2201,
+      "race": "TERRAN",
+      "name": "Barracks",
+      "tags": ["TERRAN"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-barracks.png"
+    },
+    {
+      "id": "terran.tactical.barracks_proxy",
+      "seedId": 2202,
+      "race": "TERRAN",
+      "name": "Barracks (Proxy)",
+      "tags": ["TERRAN"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 2 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 2,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-barracks-proxy.png"
+    },
+    {
+      "id": "terran.tactical.barracks_tech_lab",
+      "seedId": 2203,
+      "race": "TERRAN",
+      "name": "Barracks (Tech Lab)",
+      "tags": ["TERRAN"],
+      "vespeneCost": 45,
+      "slotsGranted": { "CORE": 1, "ELITE": 1 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-barracks-tech-lab.png"
+    },
+    {
+      "id": "terran.tactical.supply_depot",
+      "seedId": 2204,
+      "race": "TERRAN",
+      "name": "Supply Depot",
+      "tags": ["TERRAN"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 1, "ELITE": 1, "HERO": 1 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-supply-depot.png"
+    },
+    {
+      "id": "terran.tactical.factory",
+      "seedId": 2205,
+      "race": "TERRAN",
+      "name": "Factory",
+      "tags": ["TERRAN"],
+      "vespeneCost": 35,
+      "slotsGranted": { "ELITE": 2 },
+      "unique": false,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-factory.png"
+    },
+    {
+      "id": "terran.tactical.engineering_bay",
+      "seedId": 2206,
+      "race": "TERRAN",
+      "name": "Engineering Bay",
+      "tags": ["TERRAN"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-engineering-bay.png"
+    },
+    {
+      "id": "terran.tactical.armory",
+      "seedId": 2207,
+      "race": "TERRAN",
+      "name": "Armory",
+      "tags": ["TERRAN"],
+      "vespeneCost": 30,
+      "slotsGranted": { "ELITE": 1 },
+      "unique": false,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-armory.png"
+    },
+    {
+      "id": "terran.tactical.academy",
+      "seedId": 2208,
+      "race": "TERRAN",
+      "name": "Academy",
+      "tags": ["TERRAN"],
+      "vespeneCost": 35,
+      "slotsGranted": { "SUPPORT": 2 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-academy.png"
+    },
+    {
+      "id": "terran.tactical.orbital_command",
+      "seedId": 2209,
+      "race": "TERRAN",
+      "name": "Orbital Command",
+      "tags": ["TERRAN"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-orbital-command.png"
+    },
+    {
+      "id": "terran.tactical.dropship",
+      "seedId": 2210,
+      "race": "TERRAN",
+      "name": "Dropship",
+      "tags": ["TERRAN"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 1, "SUPPORT": 1 },
+      "unique": true,
+      "resource": "CP",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/terran/tactical-dropship.png"
+    }
+  ],
+
+  "creepCards": [],
+
+  "unitCards": [
+    {
+      "id": "terran.card.marine",
+      "race": "TERRAN",
+      "name": "Marine",
+      "baseSize": "Ø 32MM",
+      "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
+      "weapons": [
+        {
+          "name": "C-14 Rifle",
+          "phase": "ASSAULT",
+          "range": "12",
+          "target": "All",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": []
+        },
+        {
+          "name": "Strike",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "1",
+          "hit": "5+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Stimpack",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad sufre DAÑO NO LETAL (2). Gana BUFF Velocidad (3). Además, su C-14 Rifle y todas las armas de combate cuerpo a cuerpo ganan PRECISION (3).",
+            "en": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its C-14 Rifle and all Close Combat Weapons gain PRECISION (3)."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 3, "supply": 0 },
+        { "minModels": 4, "maxModels": 6, "supply": 1 },
+        { "minModels": 7, "maxModels": 9, "supply": 2 }
+      ],
+      "imageRefFront": "cards/terran/unit-marine-front.png",
+      "imageRefBack": "cards/terran/unit-marine-back.png"
+    },
+    {
+      "id": "terran.card.raynors_raider",
+      "race": "TERRAN",
+      "name": "Raynor's Raider (Marine)",
+      "baseSize": "Ø 32MM",
+      "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
+      "imageRefFront": "cards/terran/unit-raynors-raider-front.png",
+      "imageRefBack": "cards/terran/unit-raynors-raider-back.png"
+    },
+    {
+      "id": "terran.card.marauder",
+      "race": "TERRAN",
+      "name": "Marauder",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "2", "hitPoints": "5", "evade": "6+", "armour": "4+", "speed": "4/7", "shield": null },
+      "weapons": [
+        {
+          "name": "Quad K12",
+          "phase": "ASSAULT",
+          "range": "12",
+          "target": "Ground",
+          "rateOfAttack": "3",
+          "hit": "3+",
+          "surgeType": "Armoured",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": ["PIERCE Armoured (2)"]
+        },
+        {
+          "name": "Strike",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Stimpack",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad sufre DAÑO NO LETAL (2). Gana BUFF Velocidad (3). Además, su Quad K12 y todas las armas de combate cuerpo a cuerpo ganan PRECISION (2).",
+            "en": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its Quad K12 and all Close Combat Weapons gain PRECISION (2)."
+          }
+        },
+        {
+          "name": "Concusive Shells",
+          "phase": "ASSAULT",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando un enemigo declara una Carga contra una unidad amiga a menos de 8\", ese enemigo gana DEBUFF Velocidad (2).",
+            "en": "When an Enemy declares a Charge against a Friendly Unit Within 8\", that Enemy gains DEBUFF Speed (2)."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 2, "supply": 1 },
+        { "minModels": 3, "maxModels": 4, "supply": 2 }
+      ],
+      "imageRefFront": "cards/terran/unit-marauder-front.png",
+      "imageRefBack": "cards/terran/unit-marauder-back.png"
+    },
+    {
+      "id": "terran.card.medic",
+      "race": "TERRAN",
+      "name": "Medic",
+      "baseSize": "Ø 32MM",
+      "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
+      "weapons": [
+        {
+          "name": "Strike",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "1",
+          "hit": "5+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 3, "supply": 1 }
+      ],
+      "imageRefFront": "cards/terran/unit-medic-front.png",
+      "imageRefBack": "cards/terran/unit-medic-back.png"
+    },
+    {
+      "id": "terran.card.goliath",
+      "race": "TERRAN",
+      "name": "Goliath",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "—", "hitPoints": "—", "evade": "—", "armour": "—", "speed": "—", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 2 }],
+      "imageRefFront": "cards/terran/unit-goliath-front.png",
+      "imageRefBack": "cards/terran/unit-goliath-back.png"
+    },
+    {
+      "id": "terran.card.jim_raynor",
+      "race": "TERRAN",
+      "name": "Jim Raynor",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "—", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": null },
+      "weapons": [
+        {
+          "name": "Commando Rifle",
+          "phase": "ASSAULT",
+          "range": "12",
+          "target": "All",
+          "rateOfAttack": "6",
+          "hit": "3+",
+          "surgeType": "Light",
+          "surgeDice": "D3+1",
+          "damage": "1",
+          "keywords": ["BURST FIRE 8\" (3)"]
+        }
+      ],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "imageRefFront": "cards/terran/unit-jim-raynor-front.png",
+      "imageRefBack": "cards/terran/unit-jim-raynor-back.png"
+    },
+    {
+      "id": "terran.card.point_defense_drone",
+      "race": "TERRAN",
+      "name": "Point Defense Drone",
+      "baseSize": "Ø 32MM",
+      "profile": { "size": "—", "hitPoints": "3", "evade": "6+", "armour": "6+", "speed": "—", "shield": null },
+      "weapons": [],
+      "abilities": [],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
+      "imageRefFront": "cards/terran/unit-point-defense-drone-front.png",
+      "imageRefBack": "cards/terran/unit-point-defense-drone-back.png"
+    }
+  ],
+
+  "unitEntries": [
+    {
+      "id": "terran.entry.marine",
+      "seedId": 4201,
+      "cardId": "terran.card.marine",
+      "race": "TERRAN",
+      "name": "Marine",
+      "tags": ["TERRAN"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "6", "models": 6, "mineralCost": 160, "supplyValue": 1 },
+        { "id": "9", "models": 9, "mineralCost": 210, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "agg_12",
+          "seedId": 5201,
+          "name": "AGG-12",
+          "specialist": true,
+          "replacesWeapon": "C-14 Rifle",
+          "costByComposition": { "6": 10, "9": 10 },
+          "grantsWeapons": [
+            {
+              "name": "AGG-12",
+              "phase": "ASSAULT",
+              "range": "12",
+              "target": "Ground",
+              "rateOfAttack": "2",
+              "hit": "3+",
+              "surgeType": "Armoured",
+              "surgeDice": "D3",
+              "damage": "1",
+              "keywords": ["LONG RANGE (18\")", "SPECIALIST"]
+            }
+          ],
+          "grantsAbilities": []
+        },
+        {
+          "id": "bayonet",
+          "seedId": 5202,
+          "name": "Bayonet",
+          "specialist": false,
+          "replacesWeapon": "Strike",
+          "costByComposition": { "6": 20, "9": 30 },
+          "grantsWeapons": [
+            {
+              "name": "Bayonet",
+              "phase": "COMBAT",
+              "range": "E",
+              "target": "Ground",
+              "rateOfAttack": "2",
+              "hit": "5+",
+              "surgeType": null,
+              "surgeDice": null,
+              "damage": "1",
+              "keywords": []
+            }
+          ],
+          "grantsAbilities": []
+        },
+        {
+          "id": "combat_shield",
+          "seedId": 5203,
+          "name": "Combat Shield",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "6": 20, "9": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Combat Shield",
+              "phase": "MOVEMENT",
+              "type": "ACTIVE",
+              "cost": 1,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Esta unidad siempre puede hacer una Tirada de Evasión contra cualquier Ataque de Combate Cuerpo a Cuerpo que la tenga por objetivo y contra cualquier daño de una Habilidad Especial enemiga.",
+                "en": "This Unit is always eligible to make an Evade Roll against any Close Combat Attack targeting it and any Damage from an Enemy Special Ability."
+              }
+            }
+          ]
+        },
+        {
+          "id": "grenades_frag",
+          "seedId": 5204,
+          "name": "Grenades - Frag",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "6": 10, "9": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Grenades - Frag",
+              "phase": "ASSAULT",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", el dado S de esa arma se sustituye por D6.",
+                "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon's S Dice is replaced by D6."
+              }
+            }
+          ]
+        },
+        {
+          "id": "rocket_launcher",
+          "seedId": 5205,
+          "name": "Rocket Launcher",
+          "specialist": true,
+          "replacesWeapon": null,
+          "costByComposition": { "6": 40, "9": 40 },
+          "grantsWeapons": [
+            {
+              "name": "Rocket Launcher",
+              "phase": "ASSAULT",
+              "range": "12",
+              "target": "Ground",
+              "rateOfAttack": "4",
+              "hit": "3+",
+              "surgeType": null,
+              "surgeDice": null,
+              "damage": "1",
+              "keywords": ["INDIRECT FIRE", "LONG RANGE (18\")", "SIDEARM", "SPECIALIST"]
+            }
+          ],
+          "grantsAbilities": []
+        },
+        {
+          "id": "slugthrower",
+          "seedId": 5206,
+          "name": "Slugthrower",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "6": 10, "9": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Slugthrower",
+              "phase": "ASSAULT",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", ese arma gana ANTI-EVADE (1).",
+                "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon gains ANTI-EVADE (1)."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "terran.entry.raynors_raider",
+      "seedId": 4202,
+      "cardId": "terran.card.raynors_raider",
+      "race": "TERRAN",
+      "name": "Raynor's Raider (Marine)",
+      "tags": ["TERRAN", "RAYNOR'S RAIDERS"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "6", "models": 6, "mineralCost": 230, "supplyValue": 1 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "terran.entry.marauder",
+      "seedId": 4203,
+      "cardId": "terran.card.marauder",
+      "race": "TERRAN",
+      "name": "Marauder",
+      "tags": ["TERRAN"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Tanque", "en": "Tank" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "2", "models": 2, "mineralCost": 150, "supplyValue": 1 },
+        { "id": "4", "models": 4, "mineralCost": 280, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "kinetic_foam",
+          "seedId": 5211,
+          "name": "Kinetic Foam",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Kinetic Foam",
+              "phase": "ANY",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Aumenta en 1 la característica de Puntos de Golpe de esta unidad.",
+                "en": "Increase this Unit's Hit Points characteristic by 1."
+              }
+            }
+          ]
+        },
+        {
+          "id": "laser_targeting_systems",
+          "seedId": 5212,
+          "name": "Laser Targeting Systems",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Laser Targeting Systems",
+              "phase": "ANY",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "El arma Quad K12 de esta unidad gana LONG RANGE (16\").",
+                "en": "This Unit's Quad K12 weapon gains LONG RANGE (16\")."
+              }
+            }
+          ]
+        },
+        {
+          "id": "veteran_of_tarsonis",
+          "seedId": 5213,
+          "name": "Veteran of Tarsonis",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20, "4": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": [
+            {
+              "name": "Veteran of Tarsonis",
+              "phase": "ANY",
+              "type": "PASSIVE",
+              "cost": null,
+              "fromUpgrade": true,
+              "text": {
+                "es": "Mientras esta unidad esté a menos de 3\" de un Marcador de Misión, su característica de Armadura aumenta en 1.",
+                "en": "While this Unit is Within 3\" of a Mission Marker, its Armour characteristic is increased by 1."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "terran.entry.medic",
+      "seedId": 4204,
+      "cardId": "terran.card.medic",
+      "race": "TERRAN",
+      "name": "Medic",
+      "tags": ["TERRAN"],
+      "slotType": "SUPPORT",
+      "combatRole": { "es": "Salvavidas", "en": "Lifesaver" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 110, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "a13_flash_grenade_launcher",
+          "seedId": 5221,
+          "name": "A-13 Flash Grenade Launcher",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "advanced_medic_facilities",
+          "seedId": 5222,
+          "name": "Advanced Medic Facilities",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 60 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "stabilizer_medpacks",
+          "seedId": 5223,
+          "name": "Stabilizer Medpacks",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "terran.entry.goliath",
+      "seedId": 4205,
+      "cardId": "terran.card.goliath",
+      "race": "TERRAN",
+      "name": "Goliath",
+      "tags": ["TERRAN"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 190, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "ares_class_targeting_system",
+          "seedId": 5231,
+          "name": "Ares-Class Targeting System",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "1": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "haywire_missiles",
+          "seedId": 5232,
+          "name": "Haywire Missiles",
+          "specialist": false,
+          "replacesWeapon": "Hellfire Missiles",
+          "costByComposition": { "1": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "scatter_missiles",
+          "seedId": 5233,
+          "name": "Scatter Missiles",
+          "specialist": false,
+          "replacesWeapon": "Hellfire Missiles",
+          "costByComposition": { "1": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "terran.entry.jim_raynor",
+      "seedId": 4206,
+      "cardId": "terran.card.jim_raynor",
+      "race": "TERRAN",
+      "name": "Jim Raynor",
+      "tags": ["TERRAN", "RAYNOR'S RAIDERS"],
+      "slotType": "HERO",
+      "combatRole": { "es": "Táctico", "en": "Tactician" },
+      "unique": true,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 250, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "c14_rifle",
+          "seedId": 5241,
+          "name": "C-14 Rifle",
+          "specialist": false,
+          "replacesWeapon": "Commando Rifle",
+          "costByComposition": { "1": 0 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "terran.entry.point_defense_drone",
+      "seedId": 4207,
+      "cardId": "terran.card.point_defense_drone",
+      "race": "TERRAN",
+      "name": "Point Defense Drone",
+      "tags": ["TERRAN"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "unique": false,
+      "summoned": true,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 0, "supplyValue": 0 }
+      ],
+      "upgrades": []
+    }
+  ]
+}

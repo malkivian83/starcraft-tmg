@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "2026.05.1.0",
+  "sourceRef": "Hojas de cartas P2P, sección SCENARIO CARDS — idénticas en las tres razas (hallazgo M1)",
+  "missionCards": [
+    {
+      "id": "mission.hold_position.standard",
+      "seedId": 6001,
+      "name": "Hold Position",
+      "scale": "standard",
+      "startingSupply": 6,
+      "supplyEscalation": 2,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 10,
+      "imageRef": "cards/scenarios/hold-position-standard.png"
+    },
+    {
+      "id": "mission.hold_position.skirmish",
+      "seedId": 6002,
+      "name": "Hold Position",
+      "scale": "skirmish",
+      "startingSupply": 3,
+      "supplyEscalation": 1,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 8,
+      "imageRef": "cards/scenarios/hold-position-skirmish.png"
+    },
+    {
+      "id": "mission.frontlines.standard",
+      "seedId": 6003,
+      "name": "Frontlines",
+      "scale": "standard",
+      "startingSupply": 6,
+      "supplyEscalation": 2,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 10,
+      "imageRef": "cards/scenarios/frontlines-standard.png"
+    },
+    {
+      "id": "mission.frontlines.skirmish",
+      "seedId": 6004,
+      "name": "Frontlines",
+      "scale": "skirmish",
+      "startingSupply": 3,
+      "supplyEscalation": 1,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 8,
+      "imageRef": "cards/scenarios/frontlines-skirmish.png"
+    },
+    {
+      "id": "mission.gather_the_resources.standard",
+      "seedId": 6005,
+      "name": "Gather the Resources",
+      "scale": "standard",
+      "startingSupply": 6,
+      "supplyEscalation": 2,
+      "gameLength": 5,
+      "missionParameters": {
+        "es": "Todos los Marcadores de Misión están Activados.",
+        "en": "All Mission Markers are Activated."
+      },
+      "scoringConditions": {
+        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
+        "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour."
+      },
+      "additionalConditions": {
+        "es": "FASE DE ASALTO: si una unidad no trabada está a menos de 3\" de un Marcador de Misión neutral controlado o asociado al oponente, puede realizar la acción Gather en lugar de una acción estándar. ACCIÓN GATHER: gana 1 PV. VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.",
+        "en": "ASSAULT PHASE: If an Unengaged Unit is Within 3\" of a Controlled Neutral Mission Marker or associated with the Opponent, this unit may perform the Gather Action instead of a standard action. GATHER ACTION: Gain 1 VP. SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs."
+      },
+      "instantWinLead": 10,
+      "imageRef": "cards/scenarios/gather-the-resources-standard.png"
+    },
+    {
+      "id": "mission.gather_the_resources.skirmish",
+      "seedId": 6006,
+      "name": "Gather the Resources",
+      "scale": "skirmish",
+      "startingSupply": 3,
+      "supplyEscalation": 1,
+      "gameLength": 5,
+      "missionParameters": {
+        "es": "Todos los Marcadores de Misión están Activados.",
+        "en": "All Mission Markers are Activated."
+      },
+      "scoringConditions": {
+        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
+        "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour."
+      },
+      "additionalConditions": {
+        "es": "FASE DE ASALTO: si una unidad no trabada está a menos de 3\" de un Marcador de Misión neutral controlado o asociado al oponente, puede realizar la acción Gather en lugar de una acción estándar. ACCIÓN GATHER: gana 1 PV. VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.",
+        "en": "ASSAULT PHASE: If an Unengaged Unit is Within 3\" of a Controlled Neutral Mission Marker or associated with the Opponent, this unit may perform the Gather Action instead of a standard action. GATHER ACTION: Gain 1 VP. SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs."
+      },
+      "instantWinLead": 8,
+      "imageRef": "cards/scenarios/gather-the-resources-skirmish.png"
+    },
+    {
+      "id": "mission.divide_and_conquer.standard",
+      "seedId": 6007,
+      "name": "Divide and Conquer",
+      "scale": "standard",
+      "startingSupply": 8,
+      "supplyEscalation": 2,
+      "gameLength": 4,
+      "missionParameters": {
+        "es": "Todos los Marcadores de Misión están Activados. Divide el campo de batalla en cuatro cuadrantes según indica la Carta de Despliegue.",
+        "en": "All Mission Markers are Activated. Split the Battlefield in four quarters as shown on the Deployment Card."
+      },
+      "scoringConditions": {
+        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
+        "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: Calculate Total Current Supply in each battlefield quarter. Gain 1 VP for each quarter where your Total Current Supply is higher than the Opponent's. Only Units Wholly Within a quarter contribute their Supply to this check. If a Unit controls a Mission Marker, that Unit is worth 1 extra Supply for controlling quarters. Gain 2 VP for Controlling Mission Marker 5."
+      },
+      "additionalConditions": {
+        "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.",
+        "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs."
+      },
+      "instantWinLead": 10,
+      "imageRef": "cards/scenarios/divide-and-conquer-standard.png"
+    },
+    {
+      "id": "mission.divide_and_conquer.skirmish",
+      "seedId": 6008,
+      "name": "Divide and Conquer",
+      "scale": "skirmish",
+      "startingSupply": 4,
+      "supplyEscalation": 1,
+      "gameLength": 4,
+      "missionParameters": {
+        "es": "Todos los Marcadores de Misión están Activados. Divide el campo de batalla en cuatro cuadrantes según indica la Carta de Despliegue.",
+        "en": "All Mission Markers are Activated. Split the Battlefield in four quarters as shown on the Deployment Card."
+      },
+      "scoringConditions": {
+        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
+        "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: Calculate Total Current Supply in each battlefield quarter. Gain 1 VP for each quarter where your Total Current Supply is higher than the Opponent's. Only Units Wholly Within a quarter contribute their Supply to this check. If a Unit controls a Mission Marker, that Unit is worth 1 extra Supply for controlling quarters. Gain 2 VP for Controlling Mission Marker 5."
+      },
+      "additionalConditions": {
+        "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.",
+        "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs."
+      },
+      "instantWinLead": 8,
+      "imageRef": "cards/scenarios/divide-and-conquer-skirmish.png"
+    },
+    {
+      "id": "mission.supply_drop.standard",
+      "seedId": 6009,
+      "name": "Supply Drop",
+      "scale": "standard",
+      "startingSupply": 6,
+      "supplyEscalation": 2,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 10,
+      "imageRef": "cards/scenarios/supply-drop-standard.png"
+    },
+    {
+      "id": "mission.supply_drop.skirmish",
+      "seedId": 6010,
+      "name": "Supply Drop",
+      "scale": "skirmish",
+      "startingSupply": 3,
+      "supplyEscalation": 1,
+      "gameLength": 5,
+      "missionParameters": { "es": "", "en": "" },
+      "scoringConditions": { "es": "", "en": "" },
+      "additionalConditions": { "es": "", "en": "" },
+      "instantWinLead": 8,
+      "imageRef": "cards/scenarios/supply-drop-skirmish.png"
+    }
+  ],
+  "deploymentCards": [
+    {
+      "id": "deployment.abandoned_camp",
+      "seedId": 7001,
+      "name": "Abandoned Camp",
+      "scale": "skirmish",
+      "battlefield": { "width": 36, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-abandoned-camp.png"
+    },
+    {
+      "id": "deployment.agria_valley",
+      "seedId": 7002,
+      "name": "Agria Valley",
+      "scale": "skirmish",
+      "battlefield": { "width": 36, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-agria-valley.png"
+    },
+    {
+      "id": "deployment.dirt_side",
+      "seedId": 7003,
+      "name": "Dirt Side",
+      "scale": "skirmish",
+      "battlefield": { "width": 36, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-dirt-side.png"
+    },
+    {
+      "id": "deployment.frontier",
+      "seedId": 7004,
+      "name": "Frontier",
+      "scale": "skirmish",
+      "battlefield": { "width": 36, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-frontier.png"
+    },
+    {
+      "id": "deployment.char_plains",
+      "seedId": 7005,
+      "name": "Char Plains",
+      "scale": "skirmish",
+      "battlefield": { "width": 36, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-char-plains.png"
+    },
+    {
+      "id": "deployment.gauntlet",
+      "seedId": 7006,
+      "name": "Gauntlet",
+      "scale": "standard",
+      "battlefield": { "width": 54, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-gauntlet.png"
+    },
+    {
+      "id": "deployment.typhoon",
+      "seedId": 7007,
+      "name": "Typhoon",
+      "scale": "standard",
+      "battlefield": { "width": 54, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-typhoon.png"
+    },
+    {
+      "id": "deployment.acropolis",
+      "seedId": 7008,
+      "name": "Acropolis",
+      "scale": "standard",
+      "battlefield": { "width": 54, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-acropolis.png"
+    },
+    {
+      "id": "deployment.proving_grounds",
+      "seedId": 7009,
+      "name": "Proving Grounds",
+      "scale": "standard",
+      "battlefield": { "width": 54, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-proving-grounds.png"
+    },
+    {
+      "id": "deployment.breach",
+      "seedId": 7010,
+      "name": "Breach",
+      "scale": "standard",
+      "battlefield": { "width": 54, "height": 36 },
+      "imageRef": "cards/scenarios/deployment-breach.png"
+    }
+  ]
+}
