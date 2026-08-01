@@ -4,3 +4,6 @@ dist-ssr/
 *.local
 .DS_Store
 .vite/
+tsconfig.tsbuildinfo
+*.out.log
+*.err.log
