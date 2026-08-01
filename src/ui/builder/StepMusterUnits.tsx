@@ -59,17 +59,21 @@ export function StepMusterUnits() {
                   {compositions.map(({ composition, status: cs, reason: cr }) => (
                     <button
                       key={composition.id}
+                      className="comp"
                       disabled={cs !== 'available'}
                       title={cr?.es}
                       aria-label={`Añadir ${entry.name} con ${models(composition.models)} por ${composition.mineralCost} minerales`}
                       onClick={() => addUnit(entry.id, composition.id)}
-                      style={{ flexDirection: 'column', alignItems: 'flex-start' }}
                     >
-                      <span className="small muted">
-                        {models(composition.models)} · suministro{' '}
-                        {composition.supplyValue}
+                      <span className="comp__models">
+                        {models(composition.models)}
                       </span>
-                      <strong>{composition.mineralCost} min.</strong>
+                      <span className="comp__supply">
+                        suministro {composition.supplyValue}
+                      </span>
+                      <span className="comp__cost">
+                        {composition.mineralCost} min.
+                      </span>
                     </button>
                   ))}
                 </div>

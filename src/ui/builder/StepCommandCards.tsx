@@ -15,7 +15,8 @@ import { SlotChips, UniqueChip } from '../common/Chips';
 export function StepCommandCards() {
   const { list, index, summary, validation } = useListStore();
   const selectFactionCard = useListStore((s) => s.selectFactionCard);
-  const toggleTacticalCard = useListStore((s) => s.toggleTacticalCard);
+  const addTacticalCard = useListStore((s) => s.addTacticalCard);
+  const removeTacticalCard = useListStore((s) => s.removeTacticalCard);
   const selectCreepCard = useListStore((s) => s.selectCreepCard);
 
   const factionCards = index.catalog.factionCards;
@@ -114,11 +115,19 @@ export function StepCommandCards() {
               </h2>
               <div className="stack">
                 {tactical
-                  .filter((t) => t.status !== 'impossible')
+                  .filter(
+                    (t) =>
+                      // Una carta que ya llevas SIEMPRE se muestra, aunque su
+                      // estado sea «imposible» por ser UNIQUE y estar incluida:
+                      // si se ocultara, no habría forma de retirarla.
+                      t.status !== 'impossible' ||
+                      list.tacticalCardIds.includes(t.card.id),
+                  )
                   .map(({ card, status, reason, remedy }) => {
                     const count = list.tacticalCardIds.filter(
                       (id) => id === card.id,
                     ).length;
+                    const canAdd = status === 'available';
                     const blocked = status === 'blocked';
                     return (
                       <div
@@ -159,15 +168,29 @@ export function StepCommandCards() {
                         )}
                         <div className="row">
                           <button
-                            disabled={blocked}
-                            onClick={() => toggleTacticalCard(card.id)}
+                            disabled={!canAdd}
+                            title={
+                              card.unique && count > 0
+                                ? 'Es UNIQUE: solo se permite una copia.'
+                                : reason?.es
+                            }
+                            aria-label={`Añadir ${card.name}`}
+                            onClick={() => addTacticalCard(card.id)}
                           >
                             Añadir
                           </button>
                           {count > 0 && (
-                            <button onClick={() => toggleTacticalCard(card.id)}>
+                            <button
+                              aria-label={`Quitar ${card.name}`}
+                              onClick={() => removeTacticalCard(card.id)}
+                            >
                               Quitar
                             </button>
+                          )}
+                          {card.unique && count > 0 && (
+                            <span className="small muted">
+                              UNIQUE: máximo una copia
+                            </span>
                           )}
                         </div>
                       </div>

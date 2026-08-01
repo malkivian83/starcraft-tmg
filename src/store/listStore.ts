@@ -54,7 +54,8 @@ interface ListState {
   setName: (name: string) => void;
 
   selectFactionCard: (id: string) => void;
-  toggleTacticalCard: (id: string) => void;
+  addTacticalCard: (id: string) => void;
+  removeTacticalCard: (id: string) => void;
   selectCreepCard: (id: string) => void;
 
   addUnit: (unitEntryId: string, compositionId: string) => void;
@@ -148,19 +149,23 @@ export const useListStore = create<ListState>((set, get) => {
       });
     },
 
-    toggleTacticalCard: (id) => {
+    // Añadir y quitar son acciones DISTINTAS, no un interruptor: las cartas
+    // que no son UNIQUE pueden llevarse varias veces (§9.1.5), y con un
+    // toggle la segunda pulsación de «Añadir» quitaba la primera copia.
+    addTacticalCard: (id) => {
       const { list, index } = get();
-      const card = index.tacticalCards.get(id);
-      if (!card) return;
+      if (!index.tacticalCards.get(id)) return;
+      apply({ tacticalCardIds: [...list.tacticalCardIds, id] });
+    },
 
-      const has = list.tacticalCardIds.includes(id);
-      if (has) {
-        const next = [...list.tacticalCardIds];
-        next.splice(next.indexOf(id), 1);
-        apply({ tacticalCardIds: next });
-      } else {
-        apply({ tacticalCardIds: [...list.tacticalCardIds, id] });
-      }
+    /** Quita una sola copia, no todas: puede haber varias de la misma carta. */
+    removeTacticalCard: (id) => {
+      const { list } = get();
+      const next = [...list.tacticalCardIds];
+      const position = next.indexOf(id);
+      if (position === -1) return;
+      next.splice(position, 1);
+      apply({ tacticalCardIds: next });
     },
 
     selectCreepCard: (id) =>
