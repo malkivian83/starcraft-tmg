@@ -69,7 +69,14 @@ export function App() {
   return (
     <div className="app">
       <header className="topbar no-print">
-        <span className="topbar__title">SC:TMG · Listas de ejército</span>
+        <img
+          className="topbar__logo"
+          src="/logo.png"
+          alt="StarCraft: The Miniatures Game"
+          width={521}
+          height={149}
+        />
+        <span className="topbar__title">Listas de ejército</span>
 
         <div className="field">
           <label htmlFor="list-name">Nombre</label>

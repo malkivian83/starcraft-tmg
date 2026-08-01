@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { findComposition, upgradeCostFor } from '@/engine/costing';
 import { getEligibleUnits } from '@/engine/eligibility';
 import type { ListEntry, UnitEntry } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel, UniqueChip } from '../common/Chips';
 import { models } from '../common/plural';
+import { upgradeDescription } from '../common/upgradeText';
 
 /**
  * Paso 2 — Reclutamiento.
@@ -247,6 +249,14 @@ function Upgrades({
 }) {
   const toggleUpgrade = useListStore((s) => s.toggleUpgrade);
   const setUpgradeModel = useListStore((s) => s.setUpgradeModel);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const toggle = (id: string) =>
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
 
   const available = unit.upgrades.filter(
     (u) => upgradeCostFor(u, listEntry.compositionId) !== undefined,
@@ -264,46 +274,81 @@ function Upgrades({
             (a) => a.upgradeId === upgrade.id,
           );
           const cost = upgradeCostFor(upgrade, listEntry.compositionId) ?? 0;
-          return (
-            <div key={upgrade.id} className="row" style={{ gap: 6 }}>
-              <label className="row" style={{ gap: 6, cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={Boolean(applied)}
-                  onChange={() => toggleUpgrade(listEntry.instanceId, upgrade.id)}
-                />
-                <span>{upgrade.name}</span>
-                <span className="chip chip--cost">+{cost}</span>
-                {upgrade.specialist && (
-                  <span className="chip chip--unique">SPECIALIST</span>
-                )}
-                {upgrade.replacesWeapon && (
-                  <span className="chip small">
-                    sustituye {upgrade.replacesWeapon}
-                  </span>
-                )}
-              </label>
+          const detailId = `${listEntry.instanceId}-${upgrade.id}-detalle`;
+          const open = expanded.has(upgrade.id);
 
-              {applied && upgrade.specialist && (
-                <label className="row small muted" style={{ gap: 4 }}>
-                  Modelo
-                  <select
-                    value={applied.modelIndex ?? 0}
-                    onChange={(e) =>
-                      setUpgradeModel(
-                        listEntry.instanceId,
-                        upgrade.id,
-                        Number(e.target.value),
-                      )
+          return (
+            <div key={upgrade.id}>
+              <div className="row" style={{ gap: 6 }}>
+                {/*
+                 * El «+» abre la explicación sin tener que comprar la mejora:
+                 * decidir si te interesa exige saber qué hace antes de pagarla.
+                 */}
+                <button
+                  className="upg__toggle"
+                  aria-expanded={open}
+                  aria-controls={detailId}
+                  aria-label={`${open ? 'Ocultar' : 'Ver'} qué hace ${upgrade.name}`}
+                  onClick={() => toggle(upgrade.id)}
+                >
+                  {open ? '−' : '+'}
+                </button>
+
+                <label className="row" style={{ gap: 6, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(applied)}
+                    onChange={() =>
+                      toggleUpgrade(listEntry.instanceId, upgrade.id)
                     }
-                  >
-                    {Array.from({ length: models }, (_, i) => (
-                      <option key={i} value={i}>
-                        #{i + 1}
-                      </option>
-                    ))}
-                  </select>
+                  />
+                  <span>{upgrade.name}</span>
+                  <span className="chip chip--cost">+{cost}</span>
+                  {upgrade.specialist && (
+                    <span className="chip chip--unique">SPECIALIST</span>
+                  )}
+                  {upgrade.replacesWeapon && (
+                    <span className="chip small">
+                      sustituye {upgrade.replacesWeapon}
+                    </span>
+                  )}
                 </label>
+
+                {applied && upgrade.specialist && (
+                  <label className="row small muted" style={{ gap: 4 }}>
+                    Modelo
+                    <select
+                      value={applied.modelIndex ?? 0}
+                      onChange={(e) =>
+                        setUpgradeModel(
+                          listEntry.instanceId,
+                          upgrade.id,
+                          Number(e.target.value),
+                        )
+                      }
+                    >
+                      {Array.from({ length: models }, (_, i) => (
+                        <option key={i} value={i}>
+                          #{i + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+              </div>
+
+              {open && (
+                <div id={detailId} className="upg__detail">
+                  <p style={{ margin: 0 }}>{upgradeDescription(upgrade)}</p>
+                  {upgrade.grantsWeapons.map((weapon) => (
+                    <p key={weapon.name} className="upg__weapon">
+                      <strong>{weapon.name}</strong> · Alc. {weapon.range} ·{' '}
+                      {weapon.target} · RdA {weapon.rateOfAttack} · Imp.{' '}
+                      {weapon.hit} · Daño {weapon.damage}
+                      {weapon.keywords.length > 0 && ` · ${weapon.keywords.join(', ')}`}
+                    </p>
+                  ))}
+                </div>
               )}
             </div>
           );

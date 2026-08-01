@@ -108,10 +108,26 @@ a {
   background: var(--bg-panel);
 }
 
+.topbar__logo {
+  height: 30px;
+  width: auto;
+}
+
 .topbar__title {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+
+@media (max-width: 620px) {
+  /* En móvil el logo se queda solo: el rótulo duplica lo que ya dice. */
+  .topbar__title {
+    display: none;
+  }
 }
 
 .topbar__spacer {
@@ -345,6 +361,40 @@ a {
 
 .comp:disabled .comp__cost {
   color: var(--text-dim);
+}
+
+/* --- Desplegable de mejora ----------------------------------------------- */
+
+.upg__toggle {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+.upg__detail {
+  margin: 3px 0 7px 28px;
+  padding: 7px 10px;
+  border-left: 2px solid var(--accent-dim);
+  border-radius: 0 4px 4px 0;
+  background: var(--bg);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+.upg__weapon {
+  margin: 5px 0 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
 }
 
 /* --- Mensajes de validación ---------------------------------------------- */
