@@ -32,6 +32,13 @@ const PAGE_OVERRIDES = {
     8: 'zerg.card.corpser',
     10: 'zerg.card.kerrigan_swarm_raptor',
   },
+  terran: {
+    // La página del Point Defense Drone y la del Raider mencionan "Marine".
+    // Sin esta asignación explícita el detector acababa guardando el retrato
+    // del dron como si fuera el del Raider.
+    5: 'terran.card.point_defense_drone',
+    6: 'terran.card.raynors_raider',
+  },
 };
 
 const SOURCES = [

@@ -216,7 +216,7 @@ interface Ability {
   name: Localized;
   phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY';
   type: 'ACTIVE' | 'PASSIVE' | 'REACTION';
-  cost: number | null;           // coste en CP/BM/PE
+  cost: number | 'X' | null;     // coste en CP/BM/PE; X si es variable
   text: Localized;
   fromUpgrade: boolean;          // si solo está disponible con una mejora
 }
@@ -301,6 +301,18 @@ interface UpgradeOption {
 ```
 
 `costByComposition` implementa el hallazgo H3. Una mejora no disponible para una composición sencillamente no aparece como clave — es la forma de representar el `-` de las tablas del manual.
+
+La fase de una mejora se conserva en la habilidad o arma que concede
+(`grantsAbilities[].phase` o `grantsWeapons[].phase`). La interfaz y la hoja
+PDF la muestran siempre; para una mejora puramente pasiva se usa la fase que
+figura en la hoja P2P, incluidos los casos de **Cualquier fase**.
+
+La presentación no puede separar el valor de su unidad: un coste de habilidad
+debe mostrarse como `1 CP`, `2 PE`, `1 BM` o `X CP`, nunca como un número suelto.
+El coste de una mejora siempre se muestra como minerales (`+20 min.`) y se
+obtiene de `costByComposition` para la composición seleccionada. Las armas de
+mejora usan exactamente la misma tabla que las armas base, incluidos alcance,
+objetivo, RdA, impacto, surge, daño y palabras clave.
 
 ## 4. Entidades de la lista del usuario
 

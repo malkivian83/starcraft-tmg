@@ -123,6 +123,23 @@ describe.each(races)('Catálogo %s', (race) => {
     expect(sinTexto).toEqual([]);
   });
 
+  it('cada habilidad y mejora conserva la fase en la que puede usarse', () => {
+    const withoutPhase: string[] = [];
+    const inspect = (owner: string, abilities: Array<{ phase: string }>) => {
+      abilities.forEach((ability, index) => {
+        if (!ability.phase) withoutPhase.push(`${owner}#${index}`);
+      });
+    };
+    catalog.factionCards.forEach((card) => inspect(card.name, card.abilities));
+    catalog.tacticalCards.forEach((card) => inspect(card.name, card.abilities));
+    catalog.creepCards.forEach((card) => inspect(card.name, card.abilities));
+    catalog.unitCards.forEach((card) => inspect(card.name, card.abilities));
+    catalog.unitEntries.forEach((entry) =>
+      entry.upgrades.forEach((upgrade) => inspect(`${entry.name} → ${upgrade.name}`, upgrade.grantsAbilities)),
+    );
+    expect(withoutPhase).toEqual([]);
+  });
+
   it('toda mejora de reemplazo aporta el arma que sustituye', () => {
     // Una mejora "↑ FOR X" sin arma dejaría al modelo sin nada que disparar.
     const sinArma: string[] = [];

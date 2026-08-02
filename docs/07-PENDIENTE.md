@@ -10,14 +10,13 @@ diario · **C** = mejora deseable.
 
 ## A · Datos que pueden dar listas incorrectas
 
-### A1 · Los costes no han tenido segunda revisión humana
-Todos los costes salen del reglamento §12.10 y §12.11, y coinciden con la app
-de referencia en las 11 unidades que pude contrastar. **El resto no lo ha
-verificado nadie.** Un coste mal transcrito produce una lista que la aplicación
-declara legal y no lo es, y ninguna prueba automática puede detectarlo: el único
-testigo es el PDF.
+### A1 · Costes Zerg verificados; Terran y Protoss pendientes
+Los costes Zerg de unidades, composiciones, mejoras, tácticas y Creep se han
+contrastado con el reglamento §12.10 y §12.11 (mayo de 2026). La comprobación
+queda protegida por una prueba de regresión de catálogo.
 
-Es el riesgo número uno del proyecto y sigue abierto.
+**Sigue pendiente** la misma revisión directa para Terran y Protoss. Un coste
+mal transcrito produce una lista que la aplicación declara legal y no lo es.
 
 ### A2 · Bandas de suministro inventadas en dos cartas
 `supplyProfile` es informativo —el motor usa el `supplyValue` de cada
@@ -41,15 +40,20 @@ Se puso «Damage Dealer» por ser el más frecuente. No se extrajo de la carta.
 
 ## B · Contenido incompleto que se nota al usar la app
 
-### B1 · Fichas de unidad sin armas ni habilidades
+### B1 · Auditoría de fases, tácticas y perfiles realizada
 
-Inventario exacto (17 de 26 cartas están incompletas):
+Se han contrastado las hojas P2P de Zerg, Terran y Protoss. La aplicación y la
+hoja PDF muestran la fase de cada habilidad y mejora: **Movimiento**,
+**Asalto**, **Combate** o **Cualquier fase**. Las 10 tácticas Terran y las 10
+Protoss ya incluyen sus habilidades, tipo, coste de recurso y fase; además se
+completaron perfiles como `Raynor's Raider`, `Goliath`, `Adept`, `Sentry` y
+`Stalker`.
 
 | Raza | Sin armas **y** sin habilidades | Solo sin armas | Solo sin habilidades |
 |---|---|---|---|
-| Zerg | `Kerrigan Swarm Raptor`, `Roachling`, `Omega Worm` | `Queen`, `Kerrigan` | — |
-| Terran | `Raynor's Raider`, `Goliath`, `Point Defense Drone` | — | `Medic`, `Jim Raynor` |
-| Protoss | — | `Praetor Guard`, `Stalker`, `Artanis`, `Pylon` | `Zealot`, `Adept`, `Sentry` |
+| Zerg | — | `Omega Worm` (intencional) | — |
+| Terran | `Point Defense Drone` (intencional) | — | `Medic`, `Jim Raynor` |
+| Protoss | — | `Praetor Guard`, `Artanis`, `Pylon` (estructura intencional) | — |
 
 Se puede regenerar esta tabla con:
 
@@ -58,22 +62,22 @@ node -e "for(const r of ['zerg','terran','protoss']){const d=require('./src/cata
 ```
 
 Salen en el resumen del PDF como una ficha con el retrato y los atributos pero
-sin nada debajo. Es exactamente el fallo que se reportó con el `Swarmling`.
+sin nada debajo. Esta es la causa de los perfiles visualmente vacíos: la entrada
+puede ser reclutable y tener costes correctos, pero su carta de referencia no
+tiene contenido de reglas que mostrar.
 
-### B2 · Textos truncados por la extracción
-Estos quedaron a medias porque el texto rotado del PDF los corta:
+### B2 · Características de perfil sin transcribir
+Además de B1, estas cartas tienen valores literales `—` en el bloque de
+características. No son ceros: son datos no transcritos y deben contrastarse
+con las cartas antes de mostrarse como información fiable.
 
-- `Debilitating Saliva` (Vile) — marcado en el propio catálogo como pendiente.
-- `Regeneration` (Roach, Vile, Corpser) — omitida en lugar de escribir media frase.
-- `Devastating Charge` de la familia Roach — cada unidad tiene un valor de
-  `IMPACT` distinto, así que no se puede compartir ni deducir.
+| Carta | Campos pendientes |
+|---|---|
+| `Goliath` | Tamaño, heridas, evasión, armadura y velocidad (todo el perfil) |
+| `Jim Raynor` | Tamaño |
+| `Point Defense Drone` | Tamaño y velocidad |
 
-### B3 · Características sin transcribir
-`Goliath` (Terran) tiene `—` en las seis características. `Jim Raynor`,
-`Point Defense Drone` y `Omega Worm` tienen el tamaño sin transcribir; el
-`Omega Worm` las tiene todas a `—`.
-
-### B4 · Faltan las imágenes de carta
+### B3 · Faltan las imágenes de carta
 Solo se han recortado los **retratos de miniatura** (18 de 19 unidades; falta
 `Point Defense Drone`, que no tiene página propia). No están recortadas:
 
@@ -84,14 +88,6 @@ Solo se han recortado los **retratos de miniatura** (18 de 19 unidades; falta
   de marcadores. Es la ausencia más visible.
 
 La interfaz oculta las imágenes que faltan, así que nada se rompe.
-
-### B5 · Misiones sin condiciones de puntuación
-`Hold Position`, `Frontlines` y `Supply Drop` tienen los campos de texto vacíos
-(parámetros, puntuación y condiciones adicionales). Solo `Gather the Resources`
-y `Divide and Conquer` están transcritas.
-
-Los valores numéricos (suministro inicial, escalado, duración, victoria
-instantánea) sí están en las cinco.
 
 ---
 
@@ -113,6 +109,24 @@ siguen sin hacer: «¿Qué me cabe?», control de colección y comparador de lis
 ---
 
 ## Deuda técnica
+
+### D0 · Criterios obligatorios para el contenido consultable
+
+Las correcciones encontradas durante la revisión de cartas se consideran
+requisitos de aceptación, no detalles cosméticos:
+
+- Toda habilidad activa o reacción debe conservar su fase y su coste literal,
+  incluida la unidad de recurso y los costes variables como `X CP`.
+- Toda mejora debe enseñar el coste en minerales de la composición actual,
+  también si es `0`.
+- Las armas añadidas o reemplazadas por mejoras deben usar la tabla completa de
+  armas, idéntica a la del perfil normal.
+- Los perfiles con reglas en varias fases deben agruparse visualmente por fase.
+- Cada miniatura debe verificarse con la carta fuente, especialmente cuando dos
+  páginas comparten nombres como Marine o referencias cruzadas.
+
+Estas comprobaciones deben incorporarse a pruebas de interfaz antes de dar una
+auditoría de cartas por cerrada.
 
 ### D1 · Sin pruebas de interfaz
 Hay 110 pruebas del motor, el catálogo y el códec de seed, pero **ninguna de

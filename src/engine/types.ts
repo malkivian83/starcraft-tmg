@@ -76,8 +76,8 @@ export interface Ability {
   name: ProperName;
   phase: Phase;
   type: AbilityType;
-  /** Coste en CP/BM/PE. `null` si no cuesta recurso. */
-  cost: number | null;
+  /** Coste en CP/BM/PE. `X` representa un coste variable. */
+  cost: number | 'X' | null;
   text: Localized;
   fromUpgrade: boolean;
 }

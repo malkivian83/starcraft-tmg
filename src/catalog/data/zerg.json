@@ -463,7 +463,7 @@
       "resourcePerRound": 1,
       "abilities": [
         {
-          "name": "Contaminate",
+          "name": "Oversight Mode",
           "phase": "MOVEMENT",
           "type": "ACTIVE",
           "cost": null,
@@ -587,7 +587,7 @@
       "id": "zerg.card.zergling",
       "race": "ZERG",
       "name": "Zergling",
-      "baseSize": "Ø 25MM",
+      "baseSize": "Ø 32MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
       "weapons": [
         {
@@ -625,10 +625,19 @@
             "es": "Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.",
             "en": "When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic."
           }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (1) 5+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (1) 5+ effect." }
         }
       ],
       "supplyProfile": [
-        { "minModels": 1, "maxModels": 12, "supply": 1 },
+        { "minModels": 1, "maxModels": 6, "supply": 0 },
+        { "minModels": 7, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
       ],
       "imageRefFront": "cards/zerg/unit-zergling-front.png",
@@ -638,7 +647,7 @@
       "id": "zerg.card.raptor",
       "race": "ZERG",
       "name": "Raptor (Zergling)",
-      "baseSize": "Ø 25MM",
+      "baseSize": "Ø 32MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
       "weapons": [
         {
@@ -677,17 +686,7 @@
             "en": "This Unit can move through IMPASSABLE TERRAIN of Size 4 or less and change elevation without using ACCESS POINTS."
           }
         },
-        {
-          "name": "Leap",
-          "phase": "ASSAULT",
-          "type": "ACTIVE",
-          "cost": 1,
-          "fromUpgrade": false,
-          "text": {
-            "es": "Al determinar la Distancia de Carga de esta unidad, suma 2 a la Distancia de Carga.",
-            "en": "When determining Charge Distance for this Unit, add 2 to the Charge Distance."
-          }
-        },
+        { "name": "Metabolic Boost", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.", "en": "When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic." } },
         {
           "name": "Adrenal Overload",
           "phase": "ASSAULT",
@@ -712,7 +711,8 @@
         }
       ],
       "supplyProfile": [
-        { "minModels": 1, "maxModels": 12, "supply": 1 },
+        { "minModels": 1, "maxModels": 6, "supply": 0 },
+        { "minModels": 7, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
       ],
       "imageRefFront": "cards/zerg/unit-raptor-front.png",
@@ -722,11 +722,68 @@
       "id": "zerg.card.kerrigan_swarm_raptor",
       "race": "ZERG",
       "name": "Kerrigan Swarm Raptor (Zergling)",
-      "baseSize": "Ø 25MM",
-      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
-      "weapons": [],
-      "abilities": [],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
+      "baseSize": "Ø 32MM",
+      "profile": { "size": "1", "hitPoints": "2", "evade": "4+", "armour": "5+", "speed": "5/9", "shield": null },
+      "weapons": [
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": "Light, Armoured",
+          "surgeDice": "D6",
+          "damage": "1",
+          "keywords": ["INSTANT"]
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": { "es": "La Coherencia Horizontal de esta unidad es de 4\".", "en": "This Unit's Horizontal Coherency is 4\"." }
+        },
+        {
+          "name": "Raptor Strain",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": { "es": "Esta unidad puede atravesar TERRENO INFRANQUEABLE de Tamaño 4 o menor y cambiar de elevación sin usar PUNTOS DE ACCESO.", "en": "This Unit can move through IMPASSABLE TERRAIN of Size 4 or less and change elevation without using ACCESS POINTS." }
+        },
+        {
+          "name": "Leap",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": { "es": "Al determinar la Distancia de Carga de esta unidad, suma 2 a la Distancia de Carga.", "en": "When determining Charge Distance for this Unit, add 2 to the Charge Distance." }
+        },
+        {
+          "name": "Adrenal Overload",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": { "es": "Esta unidad gana un modificador de +1 a todas las Tiradas de Impacto IMPACT.", "en": "This Unit gains a +1 Modifier to all IMPACT Hit Rolls." }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (2) 5+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 5+ effect." }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 3, "supply": 0 },
+        { "minModels": 4, "maxModels": 6, "supply": 1 }
+      ],
       "imageRefFront": "cards/zerg/unit-kerrigan-swarm-raptor-front.png",
       "imageRefBack": "cards/zerg/unit-kerrigan-swarm-raptor-back.png"
     },
@@ -734,7 +791,7 @@
       "id": "zerg.card.swarmling",
       "race": "ZERG",
       "name": "Swarmling (Zergling)",
-      "baseSize": "Ø 25MM",
+      "baseSize": "Ø 32MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "5+", "armour": "6+", "speed": "4/8", "shield": null },
       "weapons": [
         {
@@ -807,7 +864,7 @@
       "id": "zerg.card.roach",
       "race": "ZERG",
       "name": "Roach",
-      "baseSize": "Ø 40MM",
+      "baseSize": "Ø 50MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -836,17 +893,9 @@
         }
       ],
       "abilities": [
-        {
-          "name": "Burrow",
-          "phase": "ANY",
-          "type": "ACTIVE",
-          "cost": 2,
-          "fromUpgrade": false,
-          "text": {
-            "es": "Si esta unidad no está trabada, gana o pierde el estado Burrowed.",
-            "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status."
-          }
-        }
+        { "name": "Burrow", "phase": "ANY", "type": "ACTIVE", "cost": 2, "fromUpgrade": false, "text": { "es": "Si esta unidad no está trabada, gana o pierde el estado Burrowed.", "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status." } },
+        { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
+        { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (2) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 4+ effect." } }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-roach-front.png",
@@ -856,7 +905,7 @@
       "id": "zerg.card.vile",
       "race": "ZERG",
       "name": "Vile (Roach)",
-      "baseSize": "Ø 40MM",
+      "baseSize": "Ø 50MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -896,17 +945,9 @@
             "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status."
           }
         },
-        {
-          "name": "Debilitating Saliva",
-          "phase": "ANY",
-          "type": "REACTION",
-          "cost": 1,
-          "fromUpgrade": false,
-          "text": {
-            "es": "Se usa cuando un enemigo… (texto de la carta pendiente de transcribir por completo).",
-            "en": "Use when an Enemy… (full card text pending transcription)."
-          }
-        }
+        { "name": "Debilitating Saliva", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Se usa cuando una unidad enemiga a menos de 8\" de esta unidad declara un Ataque a Distancia. Aplica DEBUFF Hit (1) a cada una de las armas a distancia de esa unidad.", "en": "Use when an Enemy Unit Within 8\" of this Unit declares a Ranged Attack. Apply DEBUFF Hit (1) to each of that Unit's Ranged Weapons." } },
+        { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
+        { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (1) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (1) 4+ effect." } }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-vile-front.png",
@@ -916,7 +957,7 @@
       "id": "zerg.card.corpser",
       "race": "ZERG",
       "name": "Corpser (Roach)",
-      "baseSize": "Ø 40MM",
+      "baseSize": "Ø 50MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -966,7 +1007,9 @@
             "es": "Una vez por partida. Resuelve el efecto SUMMON para poner en juego una unidad de Roachlings.",
             "en": "Once Per Game. Resolve the SUMMON effect to bring a Roachling Unit into play."
           }
-        }
+        },
+        { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
+        { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (3) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (3) 4+ effect." } }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-corpser-front.png",
@@ -1040,9 +1083,12 @@
       "id": "zerg.card.queen",
       "race": "ZERG",
       "name": "Queen",
-      "baseSize": "Ø 50MM",
-      "profile": { "size": "2", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
-      "weapons": [],
+      "baseSize": "Ø 80MM",
+      "profile": { "size": "3", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
+      "weapons": [
+        { "name": "Talons", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "3", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] },
+        { "name": "Acid Spines", "phase": "ASSAULT", "range": "12", "target": "Flying", "rateOfAttack": "4", "hit": "4+", "surgeType": "Light, Armoured", "surgeDice": "D3", "damage": "2", "keywords": [] }
+      ],
       "abilities": [
         {
           "name": "Spawn Creep Tumor",
@@ -1110,7 +1156,32 @@
       "name": "Kerrigan",
       "baseSize": "Ø 40MM",
       "profile": { "size": "2", "hitPoints": "9", "evade": "6+", "armour": "5+", "speed": "7", "shield": null },
-      "weapons": [],
+      "weapons": [
+        {
+          "name": "Energy Blast",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "All",
+          "rateOfAttack": "5",
+          "hit": "3+",
+          "surgeType": "Light, Armoured",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": []
+        },
+        {
+          "name": "Blades",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "6",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "2",
+          "keywords": ["CRITICAL HIT (2)"]
+        }
+      ],
       "abilities": [
         {
           "name": "Commander",
@@ -1144,6 +1215,28 @@
             "es": "Selecciona una unidad enemiga a menos de 18\". Esta unidad puede hacer una Tirada de Evasión contra todos los ataques de la unidad seleccionada, con un modificador de +2 aplicado a esas tiradas.",
             "en": "Select one Enemy Unit Within 18\". This Unit is eligible to make an Evade Roll against all attacks made by the selected Enemy Unit, with a +2 Modifier applied to those Evade Rolls."
           }
+        },
+        {
+          "name": "Leaping Strike",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si no está trabada, resuelve el efecto PLACE (6).",
+            "en": "If Unengaged, resolve the PLACE (6) effect."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (4) 4+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 4+ effect."
+          }
         }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
@@ -1154,10 +1247,10 @@
       "id": "zerg.card.roachling",
       "race": "ZERG",
       "name": "Roachling",
-      "baseSize": "Ø 25MM",
+      "baseSize": "Ø 32MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "6+", "armour": "6+", "speed": "4/7", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [{ "name": "Claws", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
+      "abilities": [{ "name": "Underdeveloped Claws", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Esta unidad no puede ganar el estado Burrowed.", "en": "This Unit cannot gain Burrowed Status." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 0 }],
       "imageRefFront": "cards/zerg/unit-roachling-front.png",
       "imageRefBack": "cards/zerg/unit-roachling-back.png"
@@ -1166,11 +1259,16 @@
       "id": "zerg.card.omega_worm",
       "race": "ZERG",
       "name": "Omega Worm",
-      "baseSize": "Ø 50MM",
-      "profile": { "size": "—", "hitPoints": "—", "evade": "—", "armour": "—", "speed": "—", "shield": null },
+      "baseSize": "Ø 80MM",
+      "profile": { "size": "3", "hitPoints": "10", "evade": "—", "armour": "5+", "speed": "—", "shield": null },
       "weapons": [],
-      "abilities": [],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "abilities": [
+        { "name": "Detection", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Mientras las unidades enemigas estén a menos de 6\" de esta unidad, pierden el estado HIDDEN.", "en": "While Enemy Units are Within 6\" of this Unit, they lose HIDDEN Status." } },
+        { "name": "Source of Creep", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Una unidad Zerg terrestre amiga o enemiga a menos de 6\" de esta unidad cuenta como SOBRE CREEP.", "en": "A Friendly or Enemy Ground Zerg Unit Within 6\" of this Unit, counts as being ON CREEP." } },
+        { "name": "Structure", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Esta unidad no puede activarse ni realizar acciones. Su suministro actual es 0, no puede controlar ni disputar marcadores de misión y no puede ser objetivo de una habilidad salvo que se indique lo contrario.", "en": "This Unit cannot be Activated in any Phase and cannot perform actions. Additionally, its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise." } },
+        { "name": "Omega Network", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "La peana del Omega Worm cuenta como un borde de entrada. Cada ronda, unidades amigas con un coste de suministro combinado de 2 o menos pueden desplegarse por este borde. Un modelo líder amigo que termine Movimiento, Desenganche o Carrera en contacto peana con peana puede volver a Reservas con su unidad.", "en": "The base of the Omega Worm counts as an Entry Edge. Each Round, Friendly Units with a combined Supply cost of 2 or less may be Deployed via this Entry Edge. If a Friendly Leading model finishes a Move, Disengage, or Run action in base-to-base contact with the Omega Worm, the controlling player may remove that Unit from the battlefield and return it to Reserves." } }
+      ],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
       "imageRefFront": "cards/zerg/unit-omega-worm-front.png",
       "imageRefBack": "cards/zerg/unit-omega-worm-back.png"
     }
@@ -1185,7 +1283,7 @@
       "name": "Zergling",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1233,7 +1331,7 @@
       "name": "Raptor (Zergling)",
       "tags": ["ZERG"],
       "slotType": "ELITE",
-      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1281,7 +1379,7 @@
       "name": "Kerrigan Swarm Raptor (Zergling)",
       "tags": ["ZERG", "KERRIGAN'S SWARM"],
       "slotType": "ELITE",
-      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
       "unique": true,
       "summoned": false,
       "compositions": [
@@ -1297,7 +1395,7 @@
       "name": "Swarmling (Zergling)",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Enjambre", "en": "Swarm" },
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1324,7 +1422,7 @@
       "name": "Roach",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "combatRole": { "es": "Tanque", "en": "Tank" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1381,7 +1479,7 @@
       "name": "Vile (Roach)",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "combatRole": { "es": "Tanque", "en": "Tank" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1438,7 +1536,7 @@
       "name": "Corpser (Roach)",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Vanguardia", "en": "Frontline" },
+      "combatRole": { "es": "Tanque", "en": "Tank" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1601,7 +1699,7 @@
       "name": "Queen",
       "tags": ["ZERG"],
       "slotType": "SUPPORT",
-      "combatRole": { "es": "Apoyo", "en": "Support" },
+      "combatRole": { "es": "Salvavidas", "en": "Lifesaver" },
       "unique": false,
       "summoned": false,
       "compositions": [
@@ -1654,7 +1752,7 @@
       "name": "Roachling",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "combatRole": { "es": "Tanque", "en": "Tank" },
       "unique": false,
       "summoned": true,
       "compositions": [
@@ -1670,7 +1768,7 @@
       "name": "Omega Worm",
       "tags": ["ZERG"],
       "slotType": "CORE",
-      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "combatRole": { "es": "Táctico", "en": "Tactician" },
       "unique": false,
       "summoned": true,
       "compositions": [

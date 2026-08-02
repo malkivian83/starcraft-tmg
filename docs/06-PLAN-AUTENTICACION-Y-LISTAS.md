@@ -7,8 +7,8 @@ cuenta y pueda cargarlas desde cualquier dispositivo. La cuenta tendrá un panel
 para cambiar la contraseña y elegir una facción predeterminada. Al crear una
 lista nueva tras iniciar sesión, se usará esa facción.
 
-Este documento es una planificación: no introduce autenticación, backend ni
-cambios en la interfaz actual.
+Este documento comenzó como planificación y ahora sirve como referencia de la
+implementación en curso.
 
 ## Alcance funcional
 
@@ -45,9 +45,10 @@ Correo / restablecimiento
 ```
 
 La solución usará un **backend propio** con una API y una base de datos
-centralizada. La propuesta de referencia es PostgreSQL: encaja con la relación
-usuario-listas, permite restricciones e índices claros y facilita copias de
-seguridad. El cliente sólo hablará con la API; nunca con la base de datos.
+centralizada. La implementación usará MariaDB mediante XAMPP en desarrollo:
+encaja con la relación usuario-listas, permite restricciones e índices claros y
+facilita copias de seguridad. El cliente sólo hablará con la API; nunca con la
+base de datos.
 
 ```text
 Cliente React/PWA
@@ -59,7 +60,7 @@ API propia
   |- perfiles y preferencias
   |- listas y validación de propiedad
         |
-PostgreSQL centralizado
+MariaDB centralizada
 ```
 
 ## Modelo de datos remoto
@@ -153,7 +154,7 @@ server/                         futuro backend propio
       users/                     perfil y preferencias
       lists/                     CRUD y autorización de listas
     db/
-      migrations/                evolución versionada de PostgreSQL
+      migrations/                evolución versionada de MariaDB
       repositories/              acceso a datos, aislado de las rutas
     middleware/                  autenticación, errores y límites
   tests/
@@ -218,7 +219,7 @@ credenciales reales nunca se incluirán en Git.
 
 ### Fase 0 - Decisiones y preparación
 
-- Confirmar PostgreSQL como base de datos, dominio de correos y entorno de
+- Confirmar MariaDB como base de datos, dominio de correos y entorno de
   despliegue del backend.
 - Definir textos legales de privacidad y conservación de datos.
 - Crear proyecto remoto, entornos de desarrollo y producción, y un documento

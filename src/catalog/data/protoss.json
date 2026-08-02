@@ -128,7 +128,7 @@
       "startingSlots": { "CORE": 3, "ELITE": 1, "SUPPORT": 1, "AIR": 1 },
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Mass Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Una vez por partida, retira de la mesa a todas las unidades Protoss amigas a 6\" del indicador y devuélvelas a Reservas.", "en": "Once per Game, return all Friendly Protoss Units Within 6\" of the Faction Indicator to Reserves." } }, { "name": "Dae'Uhl", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Cuando una unidad amiga recibe daño, reduce el daño total en 2 (mínimo 1).", "en": "When a Friendly Unit receives Damage, reduce the Total Damage by 2 (minimum 1)." } }],
       "imageRef": "cards/protoss/faction-daelaam.png"
     },
     {
@@ -154,7 +154,7 @@
         },
         {
           "name": "Bound by the Khala",
-          "phase": "ANY",
+          "phase": "MOVEMENT",
           "type": "ACTIVE",
           "cost": null,
           "fromUpgrade": false,
@@ -180,7 +180,7 @@
       "unique": false,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo de la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }],
       "imageRef": "cards/protoss/tactical-gateway.png"
     },
     {
@@ -194,7 +194,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo de la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }, { "name": "Warp In", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa se despliega desde un borde que no sea su borde de entrada, a más de 10\" de enemigos.", "en": "The active Ground Unit Deploys from any table edge that is not a player's Entry Edge, more than 10\" from Enemy models." } }],
       "imageRef": "cards/protoss/tactical-warp-gate.png"
     },
     {
@@ -245,19 +245,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [
-        {
-          "name": "Ancient Pride",
-          "phase": "ANY",
-          "type": "ACTIVE",
-          "cost": null,
-          "fromUpgrade": false,
-          "text": {
-            "es": "La primera arma usada por la unidad activa gana INSTANT.",
-            "en": "The active Unit's first Weapon used gains INSTANT."
-          }
-        }
-      ],
+      "abilities": [{ "name": "Strategic Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa y no trabada vuelve a Reservas en vez de realizar una acción.", "en": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action." } }, { "name": "Ancient Pride", "phase": "ANY", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma usada por la unidad activa gana INSTANT.", "en": "The active Unit's first Weapon used gains INSTANT." } }],
       "imageRef": "cards/protoss/tactical-nexus.png"
     },
     {
@@ -271,7 +259,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Strategic Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa y no trabada vuelve a Reservas en vez de realizar una acción.", "en": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action." } }, { "name": "Photon Overcharge", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Cuando una unidad enemiga entra desde Reservas por un lugar distinto de su borde de entrada, sufre HITS 3 (1).", "en": "Use when an Enemy Unit enters from Reserves via a location other than its own Entry Edge. That Unit suffers HITS 3 (1)." } }],
       "imageRef": "cards/protoss/tactical-overcharged-nexus.png"
     },
     {
@@ -285,7 +273,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Guardian Shell", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad terrestre amiga, gana DODGE (2) para esa tirada.", "en": "Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll." } }],
       "imageRef": "cards/protoss/tactical-power-field.png"
     },
     {
@@ -299,7 +287,7 @@
       "unique": false,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Ground Weapons", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad terrestre activa gana CRITICAL HIT (1).", "en": "The active Ground Unit's first Ranged Weapon used gains CRITICAL HIT (1)." } }, { "name": "Ground Armor", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad terrestre amiga, gana TOUGH (1) para esa tirada.", "en": "Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll." } }],
       "imageRef": "cards/protoss/tactical-forge.png"
     },
     {
@@ -313,7 +301,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Gravitic Boosters", "phase": "ASSAULT", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Después de que una unidad amiga tire D6 para la distancia de carga, suma 1 a esa distancia.", "en": "Use after a Friendly Unit rolls a D6 for Charge Distance. Add 1 to its Charge Distance." } }, { "name": "Surveillance", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador; los enemigos a 6\" pierden HIDDEN.", "en": "Set a Faction Indicator anywhere on the battlefield. Enemy Units Within 6\" of it lose HIDDEN Status." } }],
       "imageRef": "cards/protoss/tactical-observer.png"
     },
     {
@@ -327,7 +315,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Phase", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad activa resuelve PLACE (3).", "en": "The active Unit resolves the PLACE (3) effect." } }, { "name": "Warp Conduit", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador a más de 10\" de enemigos; al final de la ronda puedes desplegar una unidad terrestre desde Reservas en contacto con él.", "en": "Set a Faction Indicator more than 10\" from Enemy models. At the End of the Round, you may Deploy one Ground Unit from Reserves in base-to-base contact with it." } }],
       "imageRef": "cards/protoss/tactical-warp-prism.png"
     },
     {
@@ -341,7 +329,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Weapons of the Firstborn", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad terrestre activa gana BUFF Range (4).", "en": "The active Ground Unit's first Ranged Weapon used gains BUFF Range (4)." } }, { "name": "Veil of Shadows", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Después de que una unidad amiga resuelva PLACE, esa unidad resuelve HEAL (2).", "en": "Use after a Friendly Unit resolves a PLACE effect. That Unit resolves HEAL (2)." } }],
       "imageRef": "cards/protoss/tactical-twilight-council.png"
     }
   ],
@@ -369,7 +357,7 @@
           "keywords": []
         }
       ],
-      "abilities": [],
+      "abilities": [{ "name": "Charge", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Para la distancia de carga tira 2D6 en lugar de D6 y usa el resultado mayor.", "en": "For Charge Distance, roll 2D6 instead of D6 and use the higher result." } }, { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Tras una carga exitosa resuelve IMPACT (3) 4+.", "en": "After a successful Charge, resolve IMPACT (3) 4+." } }],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 1, "supply": 1 },
         { "minModels": 2, "maxModels": 3, "supply": 2 }
@@ -435,7 +423,7 @@
           "keywords": ["ANTI-EVADE (1)"]
         }
       ],
-      "abilities": [],
+      "abilities": [{ "name": "Psionic Transfer", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Shade; al final de la ronda puedes recolocar la unidad en coherencia con ella.", "en": "Set a Shade token; at the End of the Round this Unit may be set in coherency with it." } }, { "name": "Psionic Presence", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Las armas amigas contra un enemigo a 4\" de su Shade ganan PRECISION (1).", "en": "Friendly weapons targeting an Enemy Within 4\" of its Shade gain PRECISION (1)." } }],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 2, "supply": 0 },
         { "minModels": 3, "maxModels": 4, "supply": 1 }
@@ -463,7 +451,7 @@
           "keywords": ["INSTANT"]
         }
       ],
-      "abilities": [],
+      "abilities": [{ "name": "Guardian Shield", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Los ataques a distancia contra aliados a 4\" tiran un dado menos.", "en": "Ranged Attacks targeting Friendly Units Within 4\" use 1 fewer die." } }, { "name": "Force Field", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un Force Field a 8\"; las unidades de tamaño 2 o menor no pueden cruzarlo.", "en": "Set a Force Field Within 8\"; Size 2 or lower Units cannot move across it." } }, { "name": "Restoration", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Retira todos los DEBUFFS de una unidad amiga a 4\".", "en": "Remove all DEBUFFS from a Friendly Unit Within 4\"." } }],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 2, "supply": 1 }
@@ -477,7 +465,7 @@
       "name": "Stalker",
       "baseSize": "Ø 80MM",
       "profile": { "size": "3", "hitPoints": "6", "evade": "6+", "armour": "4+", "speed": "4/8", "shield": "3" },
-      "weapons": [],
+      "weapons": [{ "name": "Particle Disruptors", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "4", "hit": "3+", "surgeType": "Armoured", "surgeDice": "D3", "damage": "2", "keywords": [] }, { "name": "Stomp", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [
         {
           "name": "Squadron",

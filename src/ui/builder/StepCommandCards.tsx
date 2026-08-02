@@ -277,7 +277,7 @@ function CardDetail({
   kind: string;
   badge: string;
   slots?: Parameters<typeof SlotChips>[0]['slots'];
-  abilities: Array<{ name: string; text: { es: string } }>;
+  abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; text: { es: string } }>;
 }) {
   return (
     <article
@@ -296,9 +296,15 @@ function CardDetail({
         <p key={ability.name} className="small" style={{ margin: '6px 0' }}>
           {/* Nombre en inglés, explicación en español (regla de idioma). */}
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
+          <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase)}</span>
+          <span className="chip small">{ability.type}{ability.cost ? ` ${ability.cost}` : ''}</span>
           {ability.text.es && <> — {ability.text.es}</>}
         </p>
       ))}
     </article>
   );
+}
+
+function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY') {
+  return ({ MOVEMENT: 'Movimiento', ASSAULT: 'Asalto', COMBAT: 'Combate', ANY: 'Cualquier fase' })[phase];
 }

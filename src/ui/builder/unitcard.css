@@ -61,6 +61,14 @@
   margin-bottom: 6px;
 }
 
+.wtable--upgrade {
+  margin: 8px 0 2px;
+  padding: 4px 6px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
 .wtable th {
   font-size: 9px;
   letter-spacing: 0.06em;
@@ -116,6 +124,33 @@
   color: var(--text-faint);
   vertical-align: 1px;
 }
+
+.ability-group {
+  margin-top: 9px;
+  padding: 5px 8px;
+  border-left: 3px solid var(--line-strong);
+  background: color-mix(in srgb, var(--bg-raised) 65%, transparent);
+}
+
+.ability-group__title {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.phase-tag {
+  font-weight: 700;
+  color: #fff;
+  border-color: transparent;
+}
+
+.phase-tag--MOVEMENT { background: #167aaf; }
+.phase-tag--ASSAULT { background: #b05c15; }
+.phase-tag--COMBAT { background: #943d70; }
+.phase-tag--ANY { background: #596576; }
 
 @media (max-width: 620px) {
   .unitcard__mini {

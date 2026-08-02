@@ -44,8 +44,11 @@ interface ListState {
   index: CatalogIndex;
   summary: CostSummary;
   validation: ValidationResult;
+  remoteRevision: number | null;
 
   setList: (list: ArmyList) => void;
+  setRemoteRevision: (revision: number | null) => void;
+  resetForRace: (race: Race) => void;
   patch: (changes: Partial<ArmyList>) => void;
 
   setRace: (race: Race) => void;
@@ -109,8 +112,11 @@ export const useListStore = create<ListState>((set, get) => {
 
   return {
     ...derive(initialList, initialIndex),
+    remoteRevision: null,
 
-    setList: (list) => set(derive(list, indexFor(list.race))),
+    setList: (list) => set({ ...derive(list, indexFor(list.race)), remoteRevision: null }),
+    setRemoteRevision: (remoteRevision) => set({ remoteRevision }),
+    resetForRace: (race) => set({ ...derive(createEmptyList(race), indexFor(race)), remoteRevision: null }),
     patch: (changes) => apply(changes),
 
     setRace: (race) => {
@@ -121,7 +127,7 @@ export const useListStore = create<ListState>((set, get) => {
       fresh.name = list.name;
       fresh.scaleId = list.scaleId;
       fresh.mineralLimit = list.mineralLimit;
-      set(derive(fresh, indexFor(race)));
+      set({ ...derive(fresh, indexFor(race)), remoteRevision: null });
     },
 
     setScale: (scaleId) => {

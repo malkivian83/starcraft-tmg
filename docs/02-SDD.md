@@ -221,6 +221,17 @@ Cuatro pasos, alineados con las tres pestañas de la app de referencia más la r
 - **Creep Card (solo Zerg)** → bloque propio y obligatorio, con aviso persistente mientras no se elija (R11)
 
 **Paso 2 · Reclutamiento y mejoras**
+
+Requisitos de legibilidad que se validan manualmente en interfaz:
+
+- Las habilidades se agrupan por fase y muestran su coste junto a la unidad de
+  recurso correspondiente (`CP`, `PE` o `BM`).
+- Cada mejora muestra su coste de minerales para la composición activa, incluso
+  cuando es `0`.
+- Una mejora que concede un arma la representa en la misma tabla de armas que
+  el perfil base; no se admite una versión abreviada en texto corrido.
+- Las miniaturas se verifican contra la página fuente: una asignación errónea
+  es un defecto de contenido, aunque la ruta del archivo exista.
 - Maestro-detalle: catálogo filtrado a la izquierda, lista a la derecha
 - Filtrado en dos niveles (ver §6.6)
 - Mejoras por unidad, con nominación de modelo en las SPECIALIST (D2)

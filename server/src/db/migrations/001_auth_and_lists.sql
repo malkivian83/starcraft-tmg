@@ -1,0 +1,46 @@
+CREATE TABLE users (
+  id CHAR(36) PRIMARY KEY,
+  email VARCHAR(254) NOT NULL,
+  email_normalized VARCHAR(254) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  email_verified_at DATETIME NULL,
+  deleted_at DATETIME NULL,
+  session_version INT NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE profiles (
+  user_id CHAR(36) PRIMARY KEY,
+  default_race ENUM('ZERG', 'TERRAN', 'PROTOSS') NOT NULL DEFAULT 'ZERG',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT profiles_user_fk FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE saved_lists (
+  id CHAR(36) PRIMARY KEY,
+  owner_id CHAR(36) NOT NULL,
+  name VARCHAR(160) NOT NULL,
+  race ENUM('ZERG', 'TERRAN', 'PROTOSS') NOT NULL,
+  payload JSON NOT NULL,
+  catalog_content_version VARCHAR(64) NOT NULL,
+  schema_version VARCHAR(64) NOT NULL,
+  revision INT NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX saved_lists_owner_updated_idx (owner_id, updated_at),
+  CONSTRAINT saved_lists_owner_fk FOREIGN KEY (owner_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE account_tokens (
+  id CHAR(36) PRIMARY KEY,
+  user_id CHAR(36) NOT NULL,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  purpose ENUM('VERIFY_EMAIL', 'RESET_PASSWORD') NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX account_tokens_active_idx (token_hash, purpose, used_at),
+  CONSTRAINT account_tokens_user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

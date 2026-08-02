@@ -302,15 +302,20 @@ function UnitReference() {
               </table>
             )}
 
-            {card?.abilities.map((ability) => (
-              <p key={ability.name} className="unitref__ability">
-                <strong>{ability.name}</strong>
-                <span className="unitref__tag">
-                  {ability.type}
-                  {ability.cost ? ` ${ability.cost}` : ''}
-                </span>{' '}
-                {ability.text.es}
-              </p>
+            {card && groupAbilitiesByPhase(card.abilities).map(([phase, abilities]) => (
+              <section key={phase} className="unitref__phase-group">
+                <span className={`unitref__phase-title phase-tag phase-tag--${phase}`}>{phaseLabel(phase)}</span>
+                {abilities.map((ability) => (
+                  <p key={ability.name} className="unitref__ability">
+                    <strong>{ability.name}</strong>
+                    <span className="unitref__tag">
+                      {ability.type}
+                      {ability.cost ? ` ${ability.cost} ${resourceLabel(card.race)}` : ''}
+                    </span>{' '}
+                    {ability.text.es}
+                  </p>
+                ))}
+              </section>
             ))}
 
             {applied.length > 0 && (
@@ -319,6 +324,13 @@ function UnitReference() {
                 {applied.map(({ applied: a, upgrade }) => (
                   <p key={upgrade.id} className="unitref__ability">
                     <strong>{upgrade.name}</strong>
+                    <span className="unitref__tag">+{upgradeCostFor(upgrade, listEntry.compositionId) ?? 0} min.</span>
+                    <span className={`unitref__tag phase-tag phase-tag--${upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY'}`}>{phaseLabel(upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY')}</span>
+                    {upgrade.grantsAbilities.map((ability) => (
+                      <span key={ability.name} className="unitref__tag">
+                        {ability.type}{ability.cost ? ` ${ability.cost} ${resourceLabel(card?.race ?? unit.race)}` : ''}
+                      </span>
+                    ))}
                     {upgrade.specialist && (
                       <span className="unitref__tag">
                         SPECIALIST
@@ -372,3 +384,17 @@ function UnitReference() {
   );
 }
 
+function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY') {
+  return ({ MOVEMENT: 'Movimiento', ASSAULT: 'Asalto', COMBAT: 'Combate', ANY: 'Cualquier fase' })[phase];
+}
+
+function resourceLabel(race: 'ZERG' | 'TERRAN' | 'PROTOSS') {
+  return ({ ZERG: 'BM', TERRAN: 'CP', PROTOSS: 'PE' })[race];
+}
+
+function groupAbilitiesByPhase<T extends { phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY' }>(abilities: T[]) {
+  const order = ['MOVEMENT', 'ASSAULT', 'COMBAT', 'ANY'] as const;
+  return order
+    .map((phase) => [phase, abilities.filter((ability) => ability.phase === phase)] as const)
+    .filter(([, grouped]) => grouped.length > 0);
+}

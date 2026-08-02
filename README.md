@@ -22,6 +22,23 @@ npm test
 npm run build
 ```
 
+## Desarrollo con cuentas de usuario
+
+El registro necesita la API y MariaDB de XAMPP. Copia `.env.example` a `.env`,
+define un `SESSION_SECRET` largo e inicia el servicio **MySQL** desde el panel
+de XAMPP. Después crea una base de datos y un usuario de aplicación (o usa los
+ya configurados en tu `.env`) y aplica el esquema:
+
+```bash
+npm run db:migrate
+npm run dev:server
+```
+
+La interfaz sigue arrancando con `npm run dev`. En desarrollo, los enlaces de
+verificación de correo se muestran también en la pantalla tras registrarse.
+Para producción se debe configurar un proveedor SMTP y una base de datos
+MariaDB accesible por el backend desplegado.
+
 La compilación deja en `dist/` un sitio **estático**: no hay servidor ni base de
 datos. Se sube tal cual a cualquier hosting.
 
@@ -71,9 +88,9 @@ rompe, la corrección del producto deja de ser verificable.
 
 | Raza | Estado |
 |---|---|
-| Zerg | Completa: 12 unidades, 2 facciones, 9 tácticas, 2 Creep Cards |
-| Terran | Completa: 7 unidades, 2 facciones, 10 tácticas |
-| Protoss | Pendiente (el catálogo lo admite sin tocar código) |
+| Zerg | 12 unidades, 2 facciones, 9 tácticas y 2 Creep Cards; fases revisadas |
+| Terran | 7 unidades, 2 facciones y 10 tácticas; fases revisadas |
+| Protoss | 7 unidades, 2 facciones y 10 tácticas; fases revisadas |
 
 Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
 
@@ -81,8 +98,9 @@ Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
 cartas, que no los incluyen. Están pendientes de una segunda verificación
 humana; ver `docs/00-PLAN-DE-TRABAJO.md`.
 
-Las imágenes de las cartas (`public/cards/…`) todavía no se han recortado de
-los PDF: la interfaz las oculta si no existen y el resto funciona igual.
+La aplicación y la hoja PDF de lista muestran la fase de uso de habilidades y
+mejoras (Movimiento, Asalto, Combate o Cualquier fase). Las imágenes completas
+de carta siguen siendo opcionales: la interfaz las oculta si no existen.
 
 ## Verificación
 

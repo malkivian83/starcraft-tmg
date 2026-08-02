@@ -35,7 +35,7 @@ const ability = z.object({
   name: properName,
   phase,
   type: z.enum(['ACTIVE', 'PASSIVE', 'REACTION']),
-  cost: z.number().int().nonnegative().nullable(),
+  cost: z.union([z.number().int().nonnegative(), z.literal('X')]).nullable(),
   text: localized,
   fromUpgrade: z.boolean(),
 });

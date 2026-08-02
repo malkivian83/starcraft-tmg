@@ -223,7 +223,7 @@
       "unique": false,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
       "imageRef": "cards/terran/tactical-barracks.png"
     },
     {
@@ -237,7 +237,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 2,
-      "abilities": [],
+      "abilities": [{ "name": "Armed and Ready", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa se despliega desde cualquier borde que no sea su borde de entrada, a más de 10\" de enemigos.", "en": "The active Biological Unit deploys from any table edge that is not its Entry Edge, more than 10\" from Enemy models." } }, { "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
       "imageRef": "cards/terran/tactical-barracks-proxy.png"
     },
     {
@@ -251,7 +251,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Let's Have a Blast!", "phase": "ASSAULT", "type": "ACTIVE", "cost": 2, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad biológica activa gana ANTI-EVADE (1).", "en": "The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1)." } }, { "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 2, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
       "imageRef": "cards/terran/tactical-barracks-tech-lab.png"
     },
     {
@@ -265,7 +265,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Additional Supply Depots", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "El valor de suministro de la unidad activa mejora en 1 al controlar o disputar marcadores de misión y completar objetivos.", "en": "The active Unit's Supply Value is improved by 1 for Controlling and Contesting Mission Markers and completing objectives." } }],
       "imageRef": "cards/terran/tactical-supply-depot.png"
     },
     {
@@ -279,7 +279,7 @@
       "unique": false,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Field Repair", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad mecánica activa resuelve HEAL (2).", "en": "The active Mechanical Unit resolves the HEAL (2) effect." } }],
       "imageRef": "cards/terran/tactical-factory.png"
     },
     {
@@ -293,7 +293,7 @@
       "unique": false,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Infantry Weapons", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad biológica activa gana CRITICAL HIT (1).", "en": "The active Biological Unit's first Ranged Weapon used gains CRITICAL HIT (1)." } }, { "name": "Infantry Armor", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad biológica amiga, gana TOUGH (1) para esa tirada.", "en": "Use before a Friendly Biological Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll." } }],
       "imageRef": "cards/terran/tactical-engineering-bay.png"
     },
     {
@@ -307,7 +307,7 @@
       "unique": false,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Vehicle Weapons", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad mecánica activa gana CRITICAL HIT (1).", "en": "The active Mechanical Unit's first Ranged Weapon used gains CRITICAL HIT (1)." } }, { "name": "Vehicle Plating", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad mecánica amiga, gana TOUGH (1) para esa tirada.", "en": "Use before a Friendly Mechanical Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll." } }],
       "imageRef": "cards/terran/tactical-armory.png"
     },
     {
@@ -321,7 +321,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Advanced Training", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Una vez por ronda, una habilidad de unidad de apoyo que cueste CP reduce su coste en 1 (mínimo 0).", "en": "Once per Round, a Friendly Support Unit ability that costs CP costs 1 less (minimum 0)." } }],
       "imageRef": "cards/terran/tactical-academy.png"
     },
     {
@@ -335,7 +335,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Comsat Station", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Elige un borde que no sea un borde de entrada: hasta el final de la ronda, los enemigos no pueden desplegar desde él.", "en": "Select one table edge that is not a player's Entry Edge. Until the End of the Round, Enemy Units cannot Deploy from that edge." } }, { "name": "Scanner Sweep", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador; los enemigos a 6\" pierden HIDDEN.", "en": "Set a Faction Indicator anywhere on the battlefield. Enemy Units Within 6\" of it lose HIDDEN Status." } }],
       "imageRef": "cards/terran/tactical-orbital-command.png"
     },
     {
@@ -349,7 +349,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 1,
-      "abilities": [],
+      "abilities": [{ "name": "Strap In!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa y no trabada vuelve a Reservas en vez de realizar una acción.", "en": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action." } }, { "name": "Ready for Dust-Off", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador a más de 10\" de enemigos; al final de la ronda puedes desplegar una unidad terrestre desde Reservas en contacto con él.", "en": "Set a Faction Indicator more than 10\" from Enemy models. At the End of the Round, you may Deploy one Ground Unit from Reserves in base-to-base contact with it." } }],
       "imageRef": "cards/terran/tactical-dropship.png"
     }
   ],
@@ -416,8 +416,8 @@
       "name": "Raynor's Raider (Marine)",
       "baseSize": "Ø 32MM",
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [{ "name": "C-14 Rifle", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "2", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": [] }, { "name": "Bayonet", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
+      "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad sufre DAÑO NO LETAL (2), gana BUFF Speed (3) y sus armas ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2), gains BUFF Speed (3), and its weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver Stimpack con 1 CP menos.", "en": "When deploying from Reserves, it may resolve Stimpack with its CP cost reduced by 1." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver PLACE (10) desde otra unidad amiga; no puede colocarse a 8\" de enemigos.", "en": "When deploying from Reserves, it may resolve PLACE (10) from another Friendly Unit, no closer than 8\" to an Enemy." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
       "imageRefFront": "cards/terran/unit-raynors-raider-front.png",
       "imageRefBack": "cards/terran/unit-raynors-raider-back.png"
@@ -506,7 +506,52 @@
           "keywords": []
         }
       ],
-      "abilities": [],
+      "abilities": [
+        {
+          "name": "Medpack",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Selecciona otra unidad biológica amiga a 4\". Resuelve HEAL (X), donde X es el número de modelos de esta unidad a 4\" del objetivo.",
+            "en": "Select another Friendly Biological Unit Within 4\". Resolve HEAL (X), where X is the number of models in this Unit Within 4\" of the target." 
+          }
+        },
+        {
+          "name": "Optical Flare",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 2,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Selecciona una unidad enemiga a 12\". Hasta el final de la ronda, sus armas a distancia sufren DEBUFF Range (4) y no puede beneficiarse de LONG RANGE.",
+            "en": "Select one Enemy Unit Within 12\". Until the End of the Round, its Ranged Weapons suffer DEBUFF Range (4) and it cannot benefit from LONG RANGE." 
+          }
+        },
+        {
+          "name": "Life Support",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando otra unidad biológica amiga a 4\" sufre daño, reduce el daño total antes de asignarlo en 1 por cada modelo de esta unidad a 4\" de ella.",
+            "en": "Use when another Friendly Biological Unit Within 4\" suffers Damage. Reduce Total Damage before allocation by 1 for each model in this Unit Within 4\" of it." 
+          }
+        },
+        {
+          "name": "Restoration",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando una unidad amiga a 4\" recibe un DEBUFF, retira todos sus DEBUFFS.",
+            "en": "Use when a Friendly Unit Within 4\" receives a DEBUFF. Remove all DEBUFFS from it." 
+          }
+        }
+      ],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 3, "supply": 1 }
@@ -520,8 +565,8 @@
       "name": "Goliath",
       "baseSize": "Ø 50MM",
       "profile": { "size": "—", "hitPoints": "—", "evade": "—", "armour": "—", "speed": "—", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [{ "name": "Autocannon", "phase": "ASSAULT", "range": "12", "target": "Ground", "rateOfAttack": "9", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": ["LONG RANGE (18\")"] }, { "name": "Underbelly Machine Gun", "phase": "ASSAULT", "range": "8", "target": "Ground", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["PINPOINT", "SIDEARM"] }, { "name": "Hellfire Missiles", "phase": "ASSAULT", "range": "16", "target": "Flying", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["ANTI-EVADE (1)", "SIDEARM"] }, { "name": "Stomp", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "4", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
+      "abilities": [{ "name": "Target Lock", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Un Goliath amigo gana contra el objetivo elegido dados de oleada Light y Armoured D3+1 con Autocannon.", "en": "Friendly Goliaths targeting the selected enemy with Autocannon gain Light and Armoured surge D3+1." } }, { "name": "Indomitable", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Mientras está trabada puede atacar y ser atacada por unidades enemigas no trabadas.", "en": "While Engaged, this Unit may target and be targeted by Unengaged Enemy Units." } }, { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Tras una carga exitosa resuelve IMPACT (4) 3+.", "en": "After a successful Charge, resolve IMPACT (4) 3+." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 2 }],
       "imageRefFront": "cards/terran/unit-goliath-front.png",
       "imageRefBack": "cards/terran/unit-goliath-back.png"
@@ -531,22 +576,28 @@
       "race": "TERRAN",
       "name": "Jim Raynor",
       "baseSize": "Ø 40MM",
-      "profile": { "size": "—", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": null },
+      "profile": { "size": "2", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": null },
       "weapons": [
         {
           "name": "Commando Rifle",
           "phase": "ASSAULT",
-          "range": "12",
+          "range": "18",
           "target": "All",
-          "rateOfAttack": "6",
+          "rateOfAttack": "3",
           "hit": "3+",
-          "surgeType": "Light",
-          "surgeDice": "D3+1",
+          "surgeType": "Armoured",
+          "surgeDice": "D3",
           "damage": "1",
-          "keywords": ["BURST FIRE 8\" (3)"]
+          "keywords": ["BULKY", "PIERCE Armoured (3)"]
         }
       ],
-      "abilities": [],
+      "abilities": [
+        { "name": "Bayonet", "phase": "COMBAT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Arma de combate: E, Ground, RdA 2, Impacto 4+, oleada Light D3, Daño 1.", "en": "Close Combat Weapon: E, Ground, RoA 2, Hit 4+, Light D3, Damage 1." } },
+        { "name": "Justice Revolver", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Arma a distancia: 6\", Ground, RdA 2, Impacto 3+, Daño 2; ANTI-EVADE (2), SIDEARM y PINPOINT.", "en": "Ranged Weapon: 6\", Ground, RoA 2, Hit 3+, Damage 2; ANTI-EVADE (2), SIDEARM, PINPOINT." } },
+        { "name": "Orders", "phase": "MOVEMENT", "type": "ACTIVE", "cost": "X", "fromUpgrade": false, "text": { "es": "REPEATABLE. Elige otra unidad biológica amiga a 8\" y gasta CP para otorgar CRITICAL HIT (2), ignorar Desenganche o retirar su marcador de activación.", "en": "REPEATABLE. Select another Friendly Biological Unit Within 8\" and spend CP to grant Critical Hit, ignore Disengage, or remove its Activation Marker." } },
+        { "name": "Commander", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Su suministro aumenta en 1 al controlar o disputar marcadores, completar objetivos y resolver Desenganche.", "en": "Its Supply is increased by 1 for controlling or contesting markers, objectives, and Disengage checks." } },
+        { "name": "Freedom Fighters", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "El suministro de las unidades amigas a 8\" no puede reducirse por debajo de 1 al disputar marcadores y completar objetivos.", "en": "Friendly Units Within 8\" cannot have Supply reduced below 1 for contesting markers and objectives." } }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
       "imageRefFront": "cards/terran/unit-jim-raynor-front.png",
       "imageRefBack": "cards/terran/unit-jim-raynor-back.png"

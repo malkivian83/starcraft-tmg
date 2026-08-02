@@ -302,15 +302,22 @@ function UnitProfileDetails({ card }: { card: UnitCard }) {
         </table>
       )}
 
-      {card.abilities.map((ability) => (
-        <p key={ability.name} className="ability">
-          <strong className="ability__name">{ability.name}</strong>
-          <span className="ability__tag">
-            {ability.type}
-            {ability.cost ? ` ${ability.cost}` : ''}
-          </span>{' '}
-          {ability.text.es}
-        </p>
+      {groupAbilitiesByPhase(card.abilities).map(([phase, abilities]) => (
+        <section key={phase} className="ability-group">
+          <div className={`ability-group__title phase-tag phase-tag--${phase}`}>
+            {phaseLabel(phase)}
+          </div>
+          {abilities.map((ability) => (
+            <p key={ability.name} className="ability">
+              <strong className="ability__name">{ability.name}</strong>
+              <span className="ability__tag">
+                {ability.type}
+                {ability.cost ? ` ${ability.cost} ${resourceLabel(card.race)}` : ''}
+              </span>{' '}
+              {ability.text.es}
+            </p>
+          ))}
+        </section>
       ))}
     </div>
   );
@@ -386,7 +393,8 @@ function Upgrades({
                     }
                   />
                   <span>{upgrade.name}</span>
-                  <span className="chip chip--cost">+{cost}</span>
+                  <span className="chip chip--cost">+{cost} min.</span>
+                  <span className={`chip small phase-tag phase-tag--${upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY'}`}>{phaseLabel(upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY')}</span>
                   {upgrade.specialist && (
                     <span className="chip chip--unique">SPECIALIST</span>
                   )}
@@ -423,12 +431,34 @@ function Upgrades({
               {open && (
                 <div id={detailId} className="upg__detail">
                   <p style={{ margin: 0 }}>{upgradeDescription(upgrade)}</p>
-                  {upgrade.grantsWeapons.map((weapon) => (
-                    <p key={weapon.name} className="upg__weapon">
-                      <strong>{weapon.name}</strong> · Alc. {weapon.range} ·{' '}
-                      {weapon.target} · RdA {weapon.rateOfAttack} · Imp.{' '}
-                      {weapon.hit} · Daño {weapon.damage}
-                      {weapon.keywords.length > 0 && ` · ${weapon.keywords.join(', ')}`}
+                  {upgrade.grantsWeapons.length > 0 && (
+                    <table className="wtable wtable--upgrade">
+                      <thead>
+                        <tr>
+                          <th>Arma</th><th>Alc.</th><th>Obj.</th><th>RdA</th>
+                          <th>Imp.</th><th>Surge</th><th>Daño</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {upgrade.grantsWeapons.map((weapon) => (
+                          <tr key={weapon.name}>
+                            <td className="wtable__name">
+                              {weapon.name}
+                              {weapon.keywords.length > 0 && <span className="wtable__kw">{weapon.keywords.join(', ')}</span>}
+                            </td>
+                            <td>{weapon.range}</td><td>{weapon.target}</td><td>{weapon.rateOfAttack}</td>
+                            <td>{weapon.hit}</td>
+                            <td>{weapon.surgeType ? `${weapon.surgeType} ${weapon.surgeDice ?? ''}`.trim() : '—'}</td>
+                            <td>{weapon.damage}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                  {upgrade.grantsAbilities.map((ability) => (
+                    <p key={ability.name} className="upg__weapon">
+                      <strong>{ability.name}</strong> · {phaseLabel(ability.phase)} · {ability.type}
+                      {ability.cost ? ` ${ability.cost} ${resourceLabel(unit.race)}` : ''}
                     </p>
                   ))}
                 </div>
@@ -439,4 +469,19 @@ function Upgrades({
       </div>
     </div>
   );
+}
+
+function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY') {
+  return ({ MOVEMENT: 'Movimiento', ASSAULT: 'Asalto', COMBAT: 'Combate', ANY: 'Cualquier fase' })[phase];
+}
+
+function resourceLabel(race: 'ZERG' | 'TERRAN' | 'PROTOSS') {
+  return ({ ZERG: 'BM', TERRAN: 'CP', PROTOSS: 'PE' })[race];
+}
+
+function groupAbilitiesByPhase<T extends { phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY' }>(abilities: T[]) {
+  const order = ['MOVEMENT', 'ASSAULT', 'COMBAT', 'ANY'] as const;
+  return order
+    .map((phase) => [phase, abilities.filter((ability) => ability.phase === phase)] as const)
+    .filter(([, grouped]) => grouped.length > 0);
 }
