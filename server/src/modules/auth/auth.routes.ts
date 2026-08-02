@@ -78,9 +78,10 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
   router.post('/login', async (request, response) => {
     const { email: inputEmail, password } = body(credentialsSchema, request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
-    const valid = user && !user.deletedAt && await argon2.verify(user.passwordHash, password);
+    const valid = user && !user.deletedAt && user.isActive && await argon2.verify(user.passwordHash, password);
     if (!valid) throw new HttpError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos.');
     issueSession(response, user.id, user.sessionVersion, env);
+    await repository.recordLogin(user.id);
     response.json({ user: publicUser(user) });
   });
 

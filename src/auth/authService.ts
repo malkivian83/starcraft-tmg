@@ -9,6 +9,16 @@ export interface AuthenticatedUser {
   avatar: string | null;
 }
 
+export interface AdminUser {
+  id: string;
+  email: string;
+  nickname: string | null;
+  isActive: boolean;
+  lastLoginAt: string | null;
+  savedLists: number;
+}
+export interface SmtpSettings { host: string; port: number; secure: boolean; username: string; from: string; passwordConfigured: boolean; password?: string; }
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
 
 export class ApiError extends Error {
@@ -80,3 +90,17 @@ export async function changePassword(currentPassword: string, newPassword: strin
 export async function deleteAccount(password: string): Promise<void> {
   await request('/auth/account', { method: 'DELETE', body: JSON.stringify({ password }) });
 }
+
+export async function listAdminUsers(): Promise<AdminUser[]> {
+  return (await request<{ users: AdminUser[] }>('/admin/users')).users;
+}
+
+export async function setAdminUserActive(id: string, isActive: boolean): Promise<void> {
+  await request(`/admin/users/${id}/active`, { method: 'PUT', body: JSON.stringify({ isActive }) });
+}
+
+export async function setAdminUserPassword(id: string, password: string): Promise<void> {
+  await request(`/admin/users/${id}/password`, { method: 'PUT', body: JSON.stringify({ password }) });
+}
+export async function getSmtpSettings(): Promise<SmtpSettings | null> { return (await request<{ smtp: SmtpSettings | null }>('/admin/smtp')).smtp; }
+export async function saveSmtpSettings(settings: Omit<SmtpSettings, 'passwordConfigured'>): Promise<void> { await request('/admin/smtp', { method: 'PUT', body: JSON.stringify(settings) }); }

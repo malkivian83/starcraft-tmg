@@ -13,6 +13,8 @@ export interface UserRecord {
   defaultRace: Race;
   nickname: string | null;
   avatar: string | null;
+  isActive: boolean;
+  lastLoginAt: string | null;
 }
 
 interface UserRow extends RowDataPacket {
@@ -25,13 +27,15 @@ interface UserRow extends RowDataPacket {
   default_race: Race;
   nickname: string | null;
   avatar: string | null;
+  is_active: number;
+  last_login_at: string | null;
 }
 
 function mapUser(row: UserRow): UserRecord {
-  return { id: row.id, email: row.email, passwordHash: row.password_hash, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, nickname: row.nickname, avatar: row.avatar };
+  return { id: row.id, email: row.email, passwordHash: row.password_hash, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, nickname: row.nickname, avatar: row.avatar, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at };
 }
 
-const userColumns = `SELECT u.id, u.email, u.password_hash, u.email_verified_at, u.deleted_at, u.session_version, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
+const userColumns = `SELECT u.id, u.email, u.password_hash, u.email_verified_at, u.deleted_at, u.is_active, u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
 
 export class AuthRepository {
   constructor(private readonly pool: Pool) {}
@@ -77,6 +81,14 @@ export class AuthRepository {
   async updatePassword(userId: string, passwordHash: string): Promise<UserRecord> {
     await this.pool.execute('UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?', [passwordHash, userId]);
     return (await this.findById(userId))!;
+  }
+
+  async recordLogin(userId: string): Promise<void> { await this.pool.execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', [userId]); }
+  async setUserActive(userId: string, isActive: boolean): Promise<void> { await this.pool.execute('UPDATE users SET is_active = ?, session_version = session_version + 1 WHERE id = ?', [isActive, userId]); }
+
+  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; lastLoginAt: string | null; savedLists: number }>> {
+    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.last_login_at ORDER BY u.created_at DESC`);
+    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
   }
 
   async updateDefaultRace(userId: string, defaultRace: Race): Promise<UserRecord> {

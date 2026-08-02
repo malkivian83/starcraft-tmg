@@ -1,0 +1,9 @@
+ALTER TABLE users
+  ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1 AFTER deleted_at,
+  ADD COLUMN last_login_at DATETIME NULL AFTER session_version;
+
+CREATE TABLE app_settings (
+  setting_key VARCHAR(64) PRIMARY KEY,
+  setting_value TEXT NOT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;

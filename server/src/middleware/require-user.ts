@@ -22,7 +22,7 @@ export function requireUser(repository: AuthRepository, env: ServerEnvironment) 
 
     try {
       const user = await repository.findById(session.sub);
-      if (!user || user.deletedAt || user.sessionVersion !== session.sv) {
+      if (!user || user.deletedAt || !user.isActive || user.sessionVersion !== session.sv) {
         return next(new HttpError(401, 'UNAUTHENTICATED', 'La sesión no es válida.'));
       }
       request.authenticatedUser = user;

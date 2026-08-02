@@ -6,6 +6,8 @@ import { errorHandler } from './lib/errors.js';
 import { requireUser } from './middleware/require-user.js';
 import { AuthRepository } from './modules/auth/auth.repository.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
+import { createAdminRouter } from './modules/admin/admin.routes.js';
+import { SmtpSettingsRepository } from './modules/email/smtp-settings.repository.js';
 import type { EmailGateway } from './modules/email/email.gateway.js';
 import { ListRepository } from './modules/lists/list.repository.js';
 import { createListRouter } from './modules/lists/list.routes.js';
@@ -33,6 +35,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, email: Ema
     response.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email }));
+  app.use('/api/admin', createAdminRouter(authRepository, new SmtpSettingsRepository(pool, env.SESSION_SECRET), env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));
   app.use(errorHandler);
 

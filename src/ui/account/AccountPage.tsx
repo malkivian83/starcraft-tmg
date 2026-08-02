@@ -3,6 +3,7 @@ import * as auth from '@/auth/authService';
 import { availableRaces } from '@/catalog/loader';
 import { useAuthStore } from '@/store/authStore';
 import { AVATAR_OPTIONS, ProfileAvatar, profileName } from './ProfileAvatar';
+import { SuperAdminPanel } from './SuperAdminPanel';
 
 export function AccountPage() {
   const user = useAuthStore((state) => state.user)!;
@@ -49,6 +50,7 @@ export function AccountPage() {
         <section className="panel stack danger-zone"><h2>Eliminar cuenta</h2><p className="muted">La cuenta se desactiva de forma lógica y las listas dejan de estar accesibles.</p><button onClick={() => { void removeAccount(); }}>Borrar cuenta</button></section>
       </div>
     </div>
+    {user.email.trim().toLowerCase() === 'malkivian@gmail.com' && <SuperAdminPanel />}
     {message && <p className="page-message">{message}</p>}
   </main>;
 }
