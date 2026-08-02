@@ -4,6 +4,140 @@
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 + StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf",
   "race": "TERRAN",
 
+  "upgradeGlossary": {
+    "agg_12": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Un modelo nominado cambia su C-14 Rifle por un AGG-12 de largo alcance y perforación contra objetivos Armoured. Al portar un arma distinta, ese modelo resuelve sus ataques como un lote aparte.",
+        "en": "A nominated model replaces its C-14 Rifle with an AGG-12. Carrying a different weapon, that model resolves its attacks as a separate Batch."
+      }
+    },
+    "bayonet": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el ataque Strike por una Bayonet, que duplica la Cadencia de Ataque en combate cuerpo a cuerpo.",
+        "en": "Replaces the Strike attack with a Bayonet, doubling the Rate of Attack in close combat."
+      }
+    },
+    "rocket_launcher": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Un modelo nominado gana un Rocket Launcher además de su arma actual: fuego indirecto y largo alcance, sin renunciar al C-14 Rifle por ser SIDEARM.",
+        "en": "A nominated model gains a Rocket Launcher in addition to its current weapon: indirect fire and long range, keeping the C-14 Rifle thanks to SIDEARM."
+      }
+    },
+    "a13_flash_grenade_launcher": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Aumenta a 16\" el alcance de la habilidad especial Optical Flare.",
+        "en": "Increase the Optical Flare special ability's Range to 16\"."
+      }
+    },
+    "advanced_medic_facilities": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "El Valor de Suministro de esta unidad cuenta como 0 al calcular la Reserva de Suministro.",
+        "en": "This Unit's Supply Value counts as 0 when calculating the Supply Pool."
+      }
+    },
+    "stabilizer_medpacks": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Cuando esta unidad resuelve una habilidad Life Support o Medpack, se trata como si tuviera un modelo adicional dentro del alcance al calcular los efectos de esa habilidad.",
+        "en": "When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects."
+      }
+    },
+    "ares_class_targeting_system": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Las armas Autocannon y Underbelly Machine Gun de esta unidad ganan PRECISION (1).",
+        "en": "This Unit's Autocannon and Underbelly Machine Gun weapons gain PRECISION (1)."
+      }
+    },
+    "haywire_missiles": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el arma Hellfire Missiles por Haywire Missiles.",
+        "en": "Replaces the Hellfire Missiles weapon with Haywire Missiles."
+      },
+      "weapon": {
+        "name": "Haywire Missiles",
+        "phase": "ASSAULT",
+        "range": "12",
+        "target": "Ground",
+        "rateOfAttack": "3",
+        "hit": "3+",
+        "surgeType": "Armoured",
+        "surgeDice": "D3",
+        "damage": "1",
+        "keywords": ["PIERCE Armoured (3)", "SIDEARM"]
+      }
+    },
+    "scatter_missiles": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el arma Hellfire Missiles por Scatter Missiles.",
+        "en": "Replaces the Hellfire Missiles weapon with Scatter Missiles."
+      },
+      "weapon": {
+        "name": "Scatter Missiles",
+        "phase": "ASSAULT",
+        "range": "18",
+        "target": "Ground",
+        "rateOfAttack": "6",
+        "hit": "5+",
+        "surgeType": "Light",
+        "surgeDice": "D3",
+        "damage": "1",
+        "keywords": [
+          "INDIRECT FIRE",
+          "LOCKED IN (6)",
+          "LONG RANGE (24\")",
+          "SIDEARM"
+        ]
+      }
+    },
+    "c14_rifle": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el Commando Rifle por un C-14 Rifle estándar, sin coste.",
+        "en": "Replaces the Commando Rifle with a standard C-14 Rifle, at no cost."
+      },
+      "weapon": {
+        "name": "C-14 Rifle",
+        "phase": "ASSAULT",
+        "range": "12",
+        "target": "All",
+        "rateOfAttack": "2",
+        "hit": "3+",
+        "surgeType": "Light",
+        "surgeDice": "D3",
+        "damage": "1",
+        "keywords": []
+      }
+    }
+  },
+
   "factionCards": [
     {
       "id": "terran.faction.terran_armed_forces",

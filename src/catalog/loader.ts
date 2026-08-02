@@ -7,6 +7,7 @@ import {
   coreCatalogSchema,
   raceCatalogSchema,
   scenarioCatalogSchema,
+  type RaceCatalogData,
 } from './schema';
 
 const RACE_DATA: Record<Race, unknown> = {
@@ -39,7 +40,7 @@ export function loadCatalog(race: Race): CatalogLoadResult {
       `El catálogo de ${race} todavía no está disponible en esta versión.`,
     );
   }
-  const raceCatalog = raceCatalogSchema.parse(raw);
+  const raceCatalog = applyUpgradeGlossary(raceCatalogSchema.parse(raw));
 
   if (raceCatalog.contentVersion !== core.contentVersion) {
     problems.push(
@@ -62,6 +63,54 @@ export function loadCatalog(race: Race): CatalogLoadResult {
   };
 
   return { catalog, problems };
+}
+
+/**
+ * Rellena cada mejora con el texto y el arma del glosario de su raza.
+ *
+ * Solo se aplica a las mejoras que no traen ya sus propias habilidades: así
+ * una mejora concreta puede seguir definiendo un texto propio si difiere.
+ */
+function applyUpgradeGlossary(catalog: RaceCatalogData): RaceCatalogData {
+  const glossary = catalog.upgradeGlossary;
+  if (!glossary) return catalog;
+
+  return {
+    ...catalog,
+    unitEntries: catalog.unitEntries.map((entry) => ({
+      ...entry,
+      upgrades: entry.upgrades.map((upgrade) => {
+        const shared = glossary[upgrade.id];
+        if (!shared) return upgrade;
+
+        const alreadyDescribed =
+          upgrade.grantsAbilities.length > 0 || Boolean(upgrade.text);
+
+        return {
+          ...upgrade,
+          text: upgrade.text ?? shared.text,
+          grantsAbilities: alreadyDescribed
+            ? upgrade.grantsAbilities
+            : [
+                {
+                  name: upgrade.name,
+                  phase: shared.phase,
+                  type: shared.type,
+                  cost: shared.cost,
+                  text: shared.text,
+                  fromUpgrade: true,
+                },
+              ],
+          grantsWeapons:
+            upgrade.grantsWeapons.length > 0
+              ? upgrade.grantsWeapons
+              : shared.weapon
+                ? [shared.weapon]
+                : [],
+        };
+      }),
+    })),
+  };
 }
 
 export function availableRaces(): Race[] {

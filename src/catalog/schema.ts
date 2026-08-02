@@ -182,11 +182,29 @@ export const deploymentCardSchema = z.object({
   notes: localized.optional(),
 });
 
+/**
+ * Texto de una mejora, compartido por todas las unidades que la ofrecen.
+ *
+ * `Burrow Ambush` existe en siete unidades Zerg con el mismo efecto pero
+ * distinto coste. El coste vive en cada unidad —es lo que cambia—, y el texto
+ * aquí: repetirlo siete veces obligaría a corregir una errata siete veces, y
+ * olvidar una dejaría el catálogo diciendo dos cosas distintas.
+ */
+export const upgradeGlossaryEntrySchema = z.object({
+  phase,
+  type: z.enum(['ACTIVE', 'PASSIVE', 'REACTION']),
+  cost: z.number().int().nonnegative().nullable(),
+  text: localized,
+  /** Arma que otorga la mejora, si sustituye o añade uno. */
+  weapon: weapon.optional(),
+});
+
 export const raceCatalogSchema = z.object({
   schemaVersion: z.string(),
   contentVersion: z.string(),
   sourceRef: z.string(),
   race,
+  upgradeGlossary: z.record(z.string(), upgradeGlossaryEntrySchema).optional(),
   factionCards: z.array(factionCardSchema),
   tacticalCards: z.array(tacticalCardSchema),
   creepCards: z.array(creepCardSchema),

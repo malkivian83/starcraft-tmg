@@ -108,6 +108,34 @@ describe.each(races)('Catálogo %s', (race) => {
     expect(clashes).toEqual([]);
   });
 
+  it('toda mejora tiene texto que explica qué hace', () => {
+    // Sin esto, la ficha impresa muestra el nombre de la mejora sin decir qué
+    // hace, que es justo lo que se olvida en mitad de una partida.
+    const sinTexto: string[] = [];
+    for (const entry of catalog.unitEntries) {
+      for (const upgrade of entry.upgrades) {
+        const described =
+          Boolean(upgrade.text?.es) ||
+          upgrade.grantsAbilities.some((a) => a.text.es.trim().length > 0);
+        if (!described) sinTexto.push(`${entry.name} → ${upgrade.name}`);
+      }
+    }
+    expect(sinTexto).toEqual([]);
+  });
+
+  it('toda mejora de reemplazo aporta el arma que sustituye', () => {
+    // Una mejora "↑ FOR X" sin arma dejaría al modelo sin nada que disparar.
+    const sinArma: string[] = [];
+    for (const entry of catalog.unitEntries) {
+      for (const upgrade of entry.upgrades) {
+        if (upgrade.replacesWeapon && upgrade.grantsWeapons.length === 0) {
+          sinArma.push(`${entry.name} → ${upgrade.name}`);
+        }
+      }
+    }
+    expect(sinArma).toEqual([]);
+  });
+
   it('toda carta de facción otorga al menos un espacio', () => {
     const broken = catalog.factionCards
       .filter((c) => Object.values(c.startingSlots).every((v) => !v))

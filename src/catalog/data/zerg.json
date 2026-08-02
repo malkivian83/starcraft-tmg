@@ -4,6 +4,93 @@
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Zerg-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
   "race": "ZERG",
 
+  "upgradeGlossary": {
+    "adrenal_glands": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Las armas Claws y Shredding Claws de esta unidad ganan PRECISION (2).",
+        "en": "This Unit's Claws and Shredding Claws weapons gain PRECISION (2)."
+      }
+    },
+    "burrow_ambush": {
+      "phase": "MOVEMENT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ningún modelo puede colocarse a menos de 10\" de un modelo enemigo. La activación de esta unidad termina.",
+        "en": "When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10\" of any Enemy model. This Unit's Activation ends."
+      }
+    },
+    "shredding_claws": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el arma Claws por Shredding Claws.",
+        "en": "Replaces the Claws weapon with Shredding Claws."
+      },
+      "weapon": {
+        "name": "Shredding Claws",
+        "phase": "COMBAT",
+        "range": "E",
+        "target": "Ground",
+        "rateOfAttack": "2",
+        "hit": "4+",
+        "surgeType": "Light, Armoured",
+        "surgeDice": "D3",
+        "damage": "1",
+        "keywords": []
+      }
+    },
+    "tunneling_claws": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Mientras esta unidad tenga el estado Burrowed, puede realizar las acciones de Movimiento y Carrera sin perderlo. También puede moverse a través de las peanas de otras unidades.",
+        "en": "While this Unit has the Burrowed Status, it may perform the Move and Run actions without losing that Status. It may also move through other Units' bases."
+      }
+    },
+    "glial_reconstitution": {
+      "phase": "MOVEMENT",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "Esta unidad gana BUFF Velocidad (1), o BUFF Velocidad (2) si está SOBRE CREEP.",
+        "en": "This Unit gains BUFF SPEED (1), or BUFF SPEED (2) if the Unit is ON CREEP."
+      }
+    },
+    "hydriodic_bile": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "El arma Acid Saliva de esta unidad pasa a tener Tipo de Surge: Light, y Dado S: D3+1.",
+        "en": "This Unit's Acid Saliva weapon gains Surge Type: Light, and S Dice: D3+1."
+      }
+    },
+    "creep_speed": {
+      "phase": "ANY",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Mientras esta unidad esté SOBRE CREEP, aumenta su característica de Velocidad en 2.",
+        "en": "While this Unit is ON CREEP, increase this Unit's Speed characteristic by 2."
+      }
+    },
+    "domineering_presence": {
+      "phase": "MOVEMENT",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "Selecciona otra unidad amiga a menos de 6\" (no se requiere línea de visión). La característica de Suministro de esa unidad aumenta en 1 para controlar y disputar Marcadores de Misión y para completar objetivos.",
+        "en": "Select another Friendly Unit Within 6\" (Line of Sight is not required). That Unit's Supply characteristic is increased by 1 for Controlling and Contesting Mission Markers and completing objectives."
+      }
+    }
+  },
+
   "factionCards": [
     {
       "id": "zerg.faction.zerg_swarm",
@@ -502,8 +589,44 @@
       "name": "Zergling",
       "baseSize": "Ø 25MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La Coherencia Horizontal de esta unidad es de 4\".",
+            "en": "This Unit's Horizontal Coherency is 4\"."
+          }
+        },
+        {
+          "name": "Metabolic Boost",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.",
+            "en": "When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic."
+          }
+        }
+      ],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
@@ -517,8 +640,77 @@
       "name": "Raptor (Zergling)",
       "baseSize": "Ø 25MM",
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": "Light, Armoured",
+          "surgeDice": "D6",
+          "damage": "1",
+          "keywords": ["INSTANT"]
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La Coherencia Horizontal de esta unidad es de 4\".",
+            "en": "This Unit's Horizontal Coherency is 4\"."
+          }
+        },
+        {
+          "name": "Raptor Strain",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad puede atravesar TERRENO INFRANQUEABLE de Tamaño 4 o menor y cambiar de elevación sin usar PUNTOS DE ACCESO.",
+            "en": "This Unit can move through IMPASSABLE TERRAIN of Size 4 or less and change elevation without using ACCESS POINTS."
+          }
+        },
+        {
+          "name": "Leap",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Al determinar la Distancia de Carga de esta unidad, suma 2 a la Distancia de Carga.",
+            "en": "When determining Charge Distance for this Unit, add 2 to the Charge Distance."
+          }
+        },
+        {
+          "name": "Adrenal Overload",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad gana un modificador de +1 a todas las Tiradas de Impacto IMPACT.",
+            "en": "This Unit gains a +1 Modifier to all IMPACT Hit Rolls."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (2) 5+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 5+ effect."
+          }
+        }
+      ],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
@@ -556,8 +748,45 @@
       "name": "Roach",
       "baseSize": "Ø 40MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [
+        {
+          "name": "Acid Saliva",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "Ground",
+          "rateOfAttack": "3",
+          "hit": "3+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        },
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Burrow",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": 2,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si esta unidad no está trabada, gana o pierde el estado Burrowed.",
+            "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status."
+          }
+        }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-roach-front.png",
       "imageRefBack": "cards/zerg/unit-roach-back.png"
@@ -568,8 +797,56 @@
       "name": "Vile (Roach)",
       "baseSize": "Ø 40MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [
+        {
+          "name": "Acid Saliva",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "Ground",
+          "rateOfAttack": "4",
+          "hit": "3+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        },
+        {
+          "name": "Vile Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Burrow",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": 2,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si esta unidad no está trabada, gana o pierde el estado Burrowed.",
+            "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status."
+          }
+        },
+        {
+          "name": "Debilitating Saliva",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Se usa cuando un enemigo… (texto de la carta pendiente de transcribir por completo).",
+            "en": "Use when an Enemy… (full card text pending transcription)."
+          }
+        }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-vile-front.png",
       "imageRefBack": "cards/zerg/unit-vile-back.png"
@@ -580,8 +857,56 @@
       "name": "Corpser (Roach)",
       "baseSize": "Ø 40MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
-      "weapons": [],
-      "abilities": [],
+      "weapons": [
+        {
+          "name": "Acid Saliva",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        },
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "3",
+          "hit": "4+",
+          "surgeType": "Light",
+          "surgeDice": "D3+1",
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Burrow",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": 2,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si esta unidad no está trabada, gana o pierde el estado Burrowed.",
+            "en": "If this Unit is Unengaged, it gains or loses the Burrowed Status."
+          }
+        },
+        {
+          "name": "Roachling Infestation",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 2,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por partida. Resuelve el efecto SUMMON para poner en juego una unidad de Roachlings.",
+            "en": "Once Per Game. Resolve the SUMMON effect to bring a Roachling Unit into play."
+          }
+        }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-corpser-front.png",
       "imageRefBack": "cards/zerg/unit-corpser-back.png"
@@ -657,7 +982,63 @@
       "baseSize": "Ø 50MM",
       "profile": { "size": "2", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
       "weapons": [],
-      "abilities": [],
+      "abilities": [
+        {
+          "name": "Spawn Creep Tumor",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Coloca una ficha de Creep Tumor en contacto peana con peana con esta unidad.",
+            "en": "Set a Creep Tumor token in base-to-base contact with this Unit."
+          }
+        },
+        {
+          "name": "Transfusion",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Se usa cuando otra unidad biológica amiga (incluida una Estructura) sufre daño a menos de 4\". Reduce el Daño Total en 2 antes de asignarlo.",
+            "en": "Use when another Friendly Biological Unit (including a Structure) suffers Damage Within 4\". Reduce the Total Damage before allocation by 2."
+          }
+        },
+        {
+          "name": "Restoration",
+          "phase": "ANY",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Se usa cuando una unidad amiga a menos de 4\" recibe un DEBUFF. Retírale todos los DEBUFFS.",
+            "en": "Use when a Friendly Unit Within 4\" receives a DEBUFF. Remove all DEBUFFS from it."
+          }
+        },
+        {
+          "name": "Psionic Link",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por ronda, si hay al menos 7 modelos amigos a menos de 6\" de esta unidad, puede resolver su Habilidad Especial con el coste en BM reducido en 1.",
+            "en": "Once per Round, if there are at least 7 Friendly models Within 6\" of this Unit, it may resolve its Special Ability with the BM cost reduced by 1."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (4) 3+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (4) 3+ effect."
+          }
+        }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
       "imageRefFront": "cards/zerg/unit-queen-front.png",
       "imageRefBack": "cards/zerg/unit-queen-back.png"
