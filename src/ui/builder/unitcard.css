@@ -1,0 +1,115 @@
+/* Ficha de unidad en el roster: retrato, características y perfil. */
+
+.unitcard {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.unitcard__top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/*
+ * Retrato recortado de la hoja de cartas. Proporción vertical como en la
+ * ficha original; `object-position: top` para que al recortar se conserve la
+ * cabeza de la miniatura, que es lo que la identifica de un vistazo.
+ */
+.unitcard__mini {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 104px;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--bg);
+}
+
+.unitcard__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.unitcard__profile {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+/* --- Tabla de armas ------------------------------------------------------ */
+
+.wtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 6px;
+}
+
+.wtable th {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: left;
+  padding: 0 6px 2px 0;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+.wtable td {
+  padding: 3px 6px 3px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-dim);
+}
+
+.wtable__name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.wtable__kw {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-faint);
+}
+
+/* --- Habilidades --------------------------------------------------------- */
+
+.ability {
+  margin: 5px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+/* Nombre en inglés, explicación en español (regla de idioma). */
+.ability__name {
+  color: var(--accent);
+}
+
+.ability__tag {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  vertical-align: 1px;
+}
+
+@media (max-width: 620px) {
+  .unitcard__mini {
+    width: 58px;
+    height: 80px;
+  }
+}

@@ -1,0 +1,91 @@
+/*
+ * Tira de características imitando la carta: casillas inclinadas, rótulo
+ * pequeño arriba y valor grande debajo.
+ *
+ * La inclinación se consigue con `skewX` en la casilla y la inversa en el
+ * contenido, para que el texto quede recto dentro de un paralelogramo.
+ */
+.statblock {
+  display: flex;
+  gap: 3px;
+  align-items: stretch;
+}
+
+.statblock__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 46px;
+  padding: 3px 8px;
+  transform: skewX(-12deg);
+  background: linear-gradient(
+    180deg,
+    var(--bg-raised) 0%,
+    var(--bg) 100%
+  );
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+}
+
+.statblock__cell > * {
+  transform: skewX(12deg);
+}
+
+.statblock__label {
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.statblock__value {
+  font-size: 16px;
+  line-height: 1.05;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.statblock--small .statblock__cell {
+  min-width: 38px;
+  padding: 2px 6px;
+}
+
+.statblock--small .statblock__label {
+  font-size: 6px;
+}
+
+.statblock--small .statblock__value {
+  font-size: 13px;
+}
+
+@media (max-width: 620px) {
+  .statblock {
+    flex-wrap: wrap;
+  }
+}
+
+/* En papel: sin degradados ni inclinación, que se lea en blanco y negro. */
+@media print {
+  .statblock__cell {
+    transform: none;
+    background: none;
+    border: 1px solid #999;
+  }
+
+  .statblock__cell > * {
+    transform: none;
+  }
+
+  .statblock__label {
+    color: #555;
+  }
+
+  .statblock__value {
+    color: #000;
+  }
+}

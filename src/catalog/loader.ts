@@ -40,7 +40,9 @@ export function loadCatalog(race: Race): CatalogLoadResult {
       `El catálogo de ${race} todavía no está disponible en esta versión.`,
     );
   }
-  const raceCatalog = applyUpgradeGlossary(raceCatalogSchema.parse(raw));
+  const raceCatalog = withMiniRefs(
+    applyUpgradeGlossary(raceCatalogSchema.parse(raw)),
+  );
 
   if (raceCatalog.contentVersion !== core.contentVersion) {
     problems.push(
@@ -63,6 +65,25 @@ export function loadCatalog(race: Race): CatalogLoadResult {
   };
 
   return { catalog, problems };
+}
+
+/**
+ * Deriva la ruta de la foto de miniatura a partir del id de la carta.
+ *
+ * `tools/extract/makeMinis.mjs` las escribe siempre como
+ * `public/cards/<raza>/mini-<slug>.jpg`, así que repetir la ruta en cada una
+ * de las 18 cartas del JSON solo añadiría sitios donde desincronizarse.
+ * Si el fichero no existe, la interfaz oculta la imagen.
+ */
+function withMiniRefs(catalog: RaceCatalogData): RaceCatalogData {
+  const race = catalog.race.toLowerCase();
+  return {
+    ...catalog,
+    unitCards: catalog.unitCards.map((card) => ({
+      ...card,
+      miniRef: card.miniRef ?? `cards/${race}/mini-${card.id.split('.').pop()}.jpg`,
+    })),
+  };
 }
 
 /**

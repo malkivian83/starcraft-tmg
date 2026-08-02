@@ -115,6 +115,7 @@ export const unitCardSchema = z.object({
   ),
   imageRefFront: z.string().optional(),
   imageRefBack: z.string().optional(),
+  miniRef: z.string().optional(),
 });
 
 export const upgradeOptionSchema = z.object({

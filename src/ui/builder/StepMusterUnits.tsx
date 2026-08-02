@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { findComposition, upgradeCostFor } from '@/engine/costing';
 import { getEligibleUnits } from '@/engine/eligibility';
-import type { ListEntry, UnitEntry } from '@/engine/types';
+import type { ListEntry, UnitCard, UnitEntry } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel, UniqueChip } from '../common/Chips';
 import { models } from '../common/plural';
+import { StatBlock } from '../common/StatBlock';
 import { upgradeDescription } from '../common/upgradeText';
+import './unitcard.css';
 
 /**
  * Paso 2 — Reclutamiento.
@@ -166,55 +168,78 @@ function RosterEntry({ listEntry }: { listEntry: ListEntry }) {
 
   return (
     <article
-      className="panel"
+      className="unitcard"
       style={{
-        background: 'var(--bg-raised)',
-        borderLeft: `3px solid ${issues.length ? 'var(--error)' : 'var(--accent)'}`,
+        borderLeftColor: issues.length ? 'var(--error)' : 'var(--accent)',
       }}
     >
-      <div className="card__head">
-        <h3>
-          {unit.name}{' '}
-          {listEntry.reference && <span className="chip">Referencia</span>}
-        </h3>
-        <div className="row small muted">
-          {card && (
-            <>
-              <span>PG {card.profile.hitPoints}</span>
-              <span>Vel. {card.profile.speed}</span>
-              <span>Eva. {card.profile.evade}</span>
-              <span>Arm. {card.profile.armour}</span>
-            </>
+      <div className="unitcard__top">
+        {card?.miniRef && (
+          <img
+            className="unitcard__mini"
+            src={`/${card.miniRef}`}
+            alt={`Miniatura de ${unit.name}`}
+            /*
+             * Sin carga diferida a propósito: son pocas y pequeñas, y al
+             * imprimir hay que garantizar que ya están descargadas. Una
+             * imagen diferida puede no llegar a tiempo y salir en blanco
+             * en el PDF.
+             */
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        )}
+
+        <div className="unitcard__main">
+          <div className="card__head">
+            <h3>
+              {unit.name}{' '}
+              {listEntry.reference && <span className="chip">Referencia</span>}
+            </h3>
+            <button
+              onClick={() => removeUnit(listEntry.instanceId)}
+              aria-label={`Quitar ${unit.name}`}
+              title="Quitar de la lista"
+            >
+              ✕
+            </button>
+          </div>
+
+          {card && <StatBlock profile={card.profile} />}
+
+          {!listEntry.reference && (
+            <div className="row small" style={{ marginTop: 8 }}>
+              <span className="muted">Composición:</span>
+              {unit.compositions.map((c) => (
+                <button
+                  key={c.id}
+                  className={
+                    c.id === listEntry.compositionId ? 'chip chip--slot' : 'chip'
+                  }
+                  style={{ cursor: 'pointer' }}
+                  aria-pressed={c.id === listEntry.compositionId}
+                  aria-label={`Cambiar a ${models(c.models)} por ${c.mineralCost} minerales`}
+                  onClick={() => changeComposition(listEntry.instanceId, c.id)}
+                >
+                  {models(c.models)} · {c.mineralCost}
+                </button>
+              ))}
+              <span className="chip chip--slot">
+                {composition?.supplyValue ?? 0}× {slotLabel(unit.slotType)}
+              </span>
+            </div>
           )}
-          <button
-            onClick={() => removeUnit(listEntry.instanceId)}
-            aria-label={`Quitar ${unit.name}`}
-            title="Quitar de la lista"
-          >
-            ✕
-          </button>
         </div>
       </div>
 
-      {!listEntry.reference && (
-        <div className="row small" style={{ margin: '6px 0' }}>
-          <span className="muted">Composición:</span>
-          {unit.compositions.map((c) => (
-            <button
-              key={c.id}
-              className={c.id === listEntry.compositionId ? 'chip chip--slot' : 'chip'}
-              style={{ cursor: 'pointer' }}
-              aria-pressed={c.id === listEntry.compositionId}
-              aria-label={`Cambiar a ${models(c.models)} por ${c.mineralCost} minerales`}
-              onClick={() => changeComposition(listEntry.instanceId, c.id)}
-            >
-              {models(c.models)} · {c.mineralCost}
-            </button>
-          ))}
-          <span className="chip chip--slot">
-            {composition?.supplyValue ?? 0}× {slotLabel(unit.slotType)}
-          </span>
-        </div>
+      {/*
+        Las habilidades van ANTES que las mejoras: son lo que la unidad hace de
+        serie, y las mejoras se eligen sabiendo con qué se combinan.
+      */}
+      {card && card.weapons.length + card.abilities.length > 0 && (
+        <UnitProfileDetails card={card} />
       )}
 
       {!listEntry.reference && composition && (
@@ -230,6 +255,64 @@ function RosterEntry({ listEntry }: { listEntry: ListEntry }) {
         </div>
       ))}
     </article>
+  );
+}
+
+/** Armas y habilidades de serie de la unidad, antes de las mejoras. */
+function UnitProfileDetails({ card }: { card: UnitCard }) {
+  return (
+    <div className="unitcard__profile">
+      {card.weapons.length > 0 && (
+        <table className="wtable">
+          <thead>
+            <tr>
+              <th>Arma</th>
+              <th>Alc.</th>
+              <th>Obj.</th>
+              <th>RdA</th>
+              <th>Imp.</th>
+              <th>Surge</th>
+              <th>Daño</th>
+            </tr>
+          </thead>
+          <tbody>
+            {card.weapons.map((weapon) => (
+              <tr key={weapon.name}>
+                <td className="wtable__name">
+                  {weapon.name}
+                  {weapon.keywords.length > 0 && (
+                    <span className="wtable__kw">
+                      {weapon.keywords.join(', ')}
+                    </span>
+                  )}
+                </td>
+                <td>{weapon.range}</td>
+                <td>{weapon.target}</td>
+                <td>{weapon.rateOfAttack}</td>
+                <td>{weapon.hit}</td>
+                <td>
+                  {weapon.surgeType
+                    ? `${weapon.surgeType} ${weapon.surgeDice ?? ''}`.trim()
+                    : '—'}
+                </td>
+                <td>{weapon.damage}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {card.abilities.map((ability) => (
+        <p key={ability.name} className="ability">
+          <strong className="ability__name">{ability.name}</strong>
+          <span className="ability__tag">
+            {ability.type}
+            {ability.cost ? ` ${ability.cost}` : ''}
+          </span>{' '}
+          {ability.text.es}
+        </p>
+      ))}
+    </div>
   );
 }
 

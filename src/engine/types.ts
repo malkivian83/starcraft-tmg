@@ -173,6 +173,8 @@ export interface UnitCard {
   supplyProfile: SupplyBand[];
   imageRefFront?: string;
   imageRefBack?: string;
+  /** Foto de la miniatura recortada de la hoja de cartas. */
+  miniRef?: string;
 }
 
 export interface Composition {

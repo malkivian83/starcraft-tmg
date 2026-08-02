@@ -129,20 +129,31 @@
   border-bottom: 1px solid #ddd;
 }
 
-.unitref__name {
-  font-size: 11pt;
-  margin: 0 0 3px;
+.unitref__head {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
-.unitref__stats {
-  font-size: 8.5pt;
-  font-weight: 400;
-  color: #444;
-  white-space: nowrap;
+.unitref__mini {
+  flex: 0 0 auto;
+  width: 17mm;
+  height: 23mm;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+
+.unitref__ident {
+  flex: 1;
+  min-width: 0;
+}
+
+.unitref__name {
+  font-size: 11pt;
+  margin: 0 0 4px;
 }
 
 .unitref__weapons {

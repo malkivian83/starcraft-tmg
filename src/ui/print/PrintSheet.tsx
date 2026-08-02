@@ -2,6 +2,7 @@ import { findComposition, upgradeCostFor } from '@/engine/costing';
 import { SLOT_TYPES } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
+import { StatBlock } from '../common/StatBlock';
 import { upgradeDescription } from '../common/upgradeText';
 import './print.css';
 
@@ -255,16 +256,22 @@ function UnitReference() {
 
         return (
           <article key={key} className="unitref">
-            <h3 className="unitref__name">
-              {unit.name}
-              {card && (
-                <span className="unitref__stats">
-                  PG {card.profile.hitPoints} · Vel. {card.profile.speed} · Eva.{' '}
-                  {card.profile.evade} · Arm. {card.profile.armour}
-                  {card.profile.shield && ` · Esc. ${card.profile.shield}`}
-                </span>
+            <div className="unitref__head">
+              {card?.miniRef && (
+                <img
+                  className="unitref__mini"
+                  src={`/${card.miniRef}`}
+                  alt=""
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
               )}
-            </h3>
+              <div className="unitref__ident">
+                <h3 className="unitref__name">{unit.name}</h3>
+                {card && <StatBlock profile={card.profile} size="small" />}
+              </div>
+            </div>
 
             {card && card.weapons.length > 0 && (
               <table className="unitref__weapons">
