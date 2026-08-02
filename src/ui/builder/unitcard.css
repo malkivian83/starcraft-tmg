@@ -1,11 +1,21 @@
 /* Ficha de unidad en el roster: retrato, características y perfil. */
 
 .unitcard {
-  background: var(--bg-panel);
+  /* Tinte de raza que se desvanece hacia abajo, como la cabecera de la carta. */
+  background: linear-gradient(
+    180deg,
+    var(--race-glow) 0%,
+    var(--bg-panel) 42%
+  );
   border: 1px solid var(--line);
   border-left: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 10px 12px;
+}
+
+.unitcard h3 {
+  font-size: 15px;
+  letter-spacing: 0.01em;
 }
 
 .unitcard__top {

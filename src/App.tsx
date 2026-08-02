@@ -67,7 +67,8 @@ export function App() {
   };
 
   return (
-    <div className="app">
+    // La raza tiñe toda la interfaz: los colores salen de las propias cartas.
+    <div className="app" data-race={list.race}>
       <header className="topbar no-print">
         <img
           className="topbar__logo"

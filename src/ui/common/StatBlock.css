@@ -20,12 +20,9 @@
   min-width: 46px;
   padding: 3px 8px;
   transform: skewX(-12deg);
-  background: linear-gradient(
-    180deg,
-    var(--bg-raised) 0%,
-    var(--bg) 100%
-  );
-  border: 1px solid var(--line-strong);
+  /* Banda teñida del color de la raza, como la tira de la carta. */
+  background: linear-gradient(180deg, var(--accent-deep) 0%, var(--bg) 100%);
+  border: 1px solid var(--accent-dim);
   border-radius: 3px;
 }
 
