@@ -735,10 +735,71 @@
       "race": "ZERG",
       "name": "Swarmling (Zergling)",
       "baseSize": "Ø 25MM",
-      "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
-      "weapons": [],
-      "abilities": [],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 18, "supply": 1 }],
+      "profile": { "size": "1", "hitPoints": "1", "evade": "5+", "armour": "6+", "speed": "4/8", "shield": null },
+      "weapons": [
+        {
+          "name": "Claws",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "5+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La Coherencia Horizontal de esta unidad es de 4\".",
+            "en": "This Unit's Horizontal Coherency is 4\"."
+          }
+        },
+        {
+          "name": "Zergling Reconstitution",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Resuelve el efecto RESPAWN (2), o RESPAWN (3) si esta unidad está SOBRE CREEP.",
+            "en": "Resolve the RESPAWN (2) effect, or RESPAWN (3) if the Unit is ON CREEP."
+          }
+        },
+        {
+          "name": "Metabolic Boost",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.",
+            "en": "When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (1) 5+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (1) 5+ effect."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 6, "supply": 0 },
+        { "minModels": 7, "maxModels": 18, "supply": 1 }
+      ],
       "imageRefFront": "cards/zerg/unit-swarmling-front.png",
       "imageRefBack": "cards/zerg/unit-swarmling-back.png"
     },
