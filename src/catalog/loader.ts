@@ -1,5 +1,6 @@
 import type { Catalog, Race } from '@/engine/types';
 import coreData from './data/core.json';
+import protossData from './data/protoss.json';
 import scenarioData from './data/scenarios.json';
 import terranData from './data/terran.json';
 import zergData from './data/zerg.json';
@@ -13,8 +14,7 @@ import {
 const RACE_DATA: Record<Race, unknown> = {
   ZERG: zergData,
   TERRAN: terranData,
-  // Protoss llega en la siguiente iteración; el catálogo lo admite sin cambios.
-  PROTOSS: null,
+  PROTOSS: protossData,
 };
 
 export interface CatalogLoadResult {

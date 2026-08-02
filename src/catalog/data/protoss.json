@@ -1,0 +1,780 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "2026.05.1.0",
+  "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Protoss-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
+  "race": "PROTOSS",
+
+  "upgradeGlossary": {
+    "leg_enhancements": {
+      "phase": "MOVEMENT",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "Esta unidad realiza una acción de Movimiento de 2\". No cuenta para su límite de acciones.",
+        "en": "This Unit performs a 2\" Move action. This does not count towards its action limit."
+      }
+    },
+    "my_life_for_aiur": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Cuando esta unidad resuelve IMPACT, cada modelo elegible genera un dado de IMPACT adicional.",
+        "en": "When this Unit resolves IMPACT, each eligible model generates 1 additional IMPACT die."
+      }
+    },
+    "we_stand_as_one": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Cuando esta unidad hace un Ataque de Combate Cuerpo a Cuerpo, si el objetivo está trabado con al menos otra unidad amiga, su arma de cuerpo a cuerpo gana PRECISION (2).",
+        "en": "When this Unit makes a Close Combat Attack, if the target is Engaged with at least 1 other Friendly Unit, this Unit's Close Combat Weapon gains PRECISION (2)."
+      }
+    },
+    "zealous_round": {
+      "phase": "ANY",
+      "type": "REACTION",
+      "cost": 0,
+      "text": {
+        "es": "Cuando esta unidad no está activada y recibe daño, el jugador que la controla puede darla por activada en esta fase (girando su Marcador de Activación) para reducir el Daño Total en 2.",
+        "en": "When this Unit is not Activated and receives Damage, the controlling player may count this Unit as Activated in this Phase (flip its Activation Marker) to reduce the Total Damage by 2."
+      }
+    },
+    "guidance": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "El arma a distancia Glaive Cannon de esta unidad gana ANTI-EVADE (2).",
+        "en": "This Unit's Glaive Cannon Ranged weapon gains ANTI-EVADE (2)."
+      }
+    },
+    "resonating_glaives": {
+      "phase": "ASSAULT",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "El Glaive Cannon de esta unidad gana BUFF RdA (1).",
+        "en": "This Unit's Glaive Cannon gains BUFF RoA (1)."
+      }
+    },
+    "glaive_strike": {
+      "phase": "COMBAT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Sustituye el ataque Strike por Glaive Strike, que perfora objetivos Light.",
+        "en": "Replaces the Strike attack with Glaive Strike, which pierces Light targets."
+      },
+      "weapon": {
+        "name": "Glaive Strike",
+        "phase": "COMBAT",
+        "range": "E",
+        "target": "Ground",
+        "rateOfAttack": "1",
+        "hit": "4+",
+        "surgeType": "Light",
+        "surgeDice": "D3",
+        "damage": "1",
+        "keywords": ["PIERCE Light (2)"]
+      }
+    },
+    "solid_field_projectors": {
+      "phase": "MOVEMENT",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "Coloca una ficha de Force Field a menos de 8\" en un espacio libre. Las unidades de Tamaño 2 o menor no pueden atravesar los Force Fields. Los modelos de Tamaño 3 o más sí pueden pasar por encima, y entonces la ficha se retira.",
+        "en": "Set a Force Field token Within 8\" in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."
+      }
+    },
+    "hallucination": {
+      "phase": "ASSAULT",
+      "type": "REACTION",
+      "cost": 0,
+      "text": {
+        "es": "Cuando una unidad enemiga declara un Ataque a Distancia contra una unidad amiga a menos de 4\", esa unidad amiga puede hacer una Tirada de Evasión contra ese ataque.",
+        "en": "When an Enemy Unit declares a Ranged Attack against a Friendly Unit Within 4\", the targeted Friendly Unit is eligible to make an Evade Roll against that attack."
+      }
+    },
+    "path_of_shadows": {
+      "phase": "ANY",
+      "type": "ACTIVE",
+      "cost": 1,
+      "text": {
+        "es": "Esta unidad gana el estado HIDDEN hasta que realice otra acción.",
+        "en": "This Unit gains HIDDEN Status until it performs another action."
+      }
+    },
+    "fury_of_the_nerazim": {
+      "phase": "ASSAULT",
+      "type": "PASSIVE",
+      "cost": null,
+      "text": {
+        "es": "Cuando esta unidad ataca a una unidad enemiga que ya ha sido activada durante esta fase, sus Particle Disruptors ganan INSTANT para ese ataque.",
+        "en": "When this Unit attacks an Enemy Unit that has already been Activated during this Phase, its Particle Disruptors gain INSTANT for that attack."
+      }
+    }
+  },
+
+  "factionCards": [
+    {
+      "id": "protoss.faction.daelaam",
+      "seedId": 1301,
+      "race": "PROTOSS",
+      "name": "Daelaam",
+      "tags": ["PROTOSS"],
+      "startingSlots": { "CORE": 3, "ELITE": 1, "SUPPORT": 1, "AIR": 1 },
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/faction-daelaam.png"
+    },
+    {
+      "id": "protoss.faction.khalai",
+      "seedId": 1302,
+      "race": "PROTOSS",
+      "name": "Khalai",
+      "tags": ["PROTOSS", "KHALAI"],
+      "startingSlots": { "CORE": 3, "ELITE": 2, "HERO": 1 },
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Pylon Warp-In",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Si no hay ningún Pylon amigo en el campo de batalla, coloca una unidad Pylon amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier modelo enemigo. Esta ronda, el Pylon no puede usar sus Habilidades Especiales (excepto Structure).",
+            "en": "If there is no Friendly Pylon on the battlefield, set a Friendly Pylon Unit anywhere on GROUND LEVEL of the battlefield more than 10\" away from any Enemy model. This Round, the Pylon is not eligible to use its Special Abilities (excluding Structure)."
+          }
+        },
+        {
+          "name": "Bound by the Khala",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Al final de la activación de la unidad activa, selecciona otra unidad amiga que pueda activarse en la fase actual. Actívala de inmediato.",
+            "en": "At the end of the active Unit's Activation, select one other Friendly Unit eligible to Activate in the current Phase. Immediately Activate that Unit."
+          }
+        }
+      ],
+      "imageRef": "cards/protoss/faction-khalai.png"
+    }
+  ],
+
+  "tacticalCards": [
+    {
+      "id": "protoss.tactical.gateway",
+      "seedId": 2301,
+      "race": "PROTOSS",
+      "name": "Gateway",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 25,
+      "slotsGranted": { "CORE": 1 },
+      "unique": false,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-gateway.png"
+    },
+    {
+      "id": "protoss.tactical.warp_gate",
+      "seedId": 2302,
+      "race": "PROTOSS",
+      "name": "Warp Gate",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 2 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-warp-gate.png"
+    },
+    {
+      "id": "protoss.tactical.gate_chronoboosted",
+      "seedId": 2303,
+      "race": "PROTOSS",
+      "name": "Gate Chronoboosted",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 1, "ELITE": 1 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Quick Strikes",
+          "phase": "COMBAT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).",
+            "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)."
+          }
+        },
+        {
+          "name": "Zealous Charge",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La unidad activa gana BUFF Velocidad (2).",
+            "en": "The active Unit gains BUFF Speed (2)."
+          }
+        }
+      ],
+      "imageRef": "cards/protoss/tactical-gate-chronoboosted.png"
+    },
+    {
+      "id": "protoss.tactical.nexus",
+      "seedId": 2304,
+      "race": "PROTOSS",
+      "name": "Nexus",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 2 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [
+        {
+          "name": "Ancient Pride",
+          "phase": "ANY",
+          "type": "ACTIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La primera arma usada por la unidad activa gana INSTANT.",
+            "en": "The active Unit's first Weapon used gains INSTANT."
+          }
+        }
+      ],
+      "imageRef": "cards/protoss/tactical-nexus.png"
+    },
+    {
+      "id": "protoss.tactical.overcharged_nexus",
+      "seedId": 2305,
+      "race": "PROTOSS",
+      "name": "Overcharged Nexus",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 1, "ELITE": 1 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-overcharged-nexus.png"
+    },
+    {
+      "id": "protoss.tactical.power_field",
+      "seedId": 2306,
+      "race": "PROTOSS",
+      "name": "Power Field",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 40,
+      "slotsGranted": { "CORE": 1, "ELITE": 1, "HERO": 1 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-power-field.png"
+    },
+    {
+      "id": "protoss.tactical.forge",
+      "seedId": 2307,
+      "race": "PROTOSS",
+      "name": "Forge",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 30,
+      "slotsGranted": { "ELITE": 1 },
+      "unique": false,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-forge.png"
+    },
+    {
+      "id": "protoss.tactical.observer",
+      "seedId": 2308,
+      "race": "PROTOSS",
+      "name": "Observer",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 25,
+      "slotsGranted": { "SUPPORT": 1 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-observer.png"
+    },
+    {
+      "id": "protoss.tactical.warp_prism",
+      "seedId": 2309,
+      "race": "PROTOSS",
+      "name": "Warp Prism",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 35,
+      "slotsGranted": { "CORE": 2 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-warp-prism.png"
+    },
+    {
+      "id": "protoss.tactical.twilight_council",
+      "seedId": 2310,
+      "race": "PROTOSS",
+      "name": "Twilight Council",
+      "tags": ["PROTOSS"],
+      "vespeneCost": 45,
+      "slotsGranted": { "SUPPORT": 1, "ELITE": 1 },
+      "unique": true,
+      "resource": "PE",
+      "resourcePerRound": 1,
+      "abilities": [],
+      "imageRef": "cards/protoss/tactical-twilight-council.png"
+    }
+  ],
+
+  "creepCards": [],
+
+  "unitCards": [
+    {
+      "id": "protoss.card.zealot",
+      "race": "PROTOSS",
+      "name": "Zealot",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": "3" },
+      "weapons": [
+        {
+          "name": "Psi Blades",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "4",
+          "hit": "3+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": []
+        }
+      ],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 1 },
+        { "minModels": 2, "maxModels": 3, "supply": 2 }
+      ],
+      "imageRefFront": "cards/protoss/unit-zealot-front.png",
+      "imageRefBack": "cards/protoss/unit-zealot-back.png"
+    },
+    {
+      "id": "protoss.card.praetor_guard",
+      "race": "PROTOSS",
+      "name": "Praetor Guard (Zealot)",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": "3" },
+      "weapons": [],
+      "abilities": [
+        {
+          "name": "Shield Overcharge",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad gana TOUGH (2) en la primera Tirada de Armadura de cada ronda.",
+            "en": "This Unit gains TOUGH (2) on the first Armour Roll each Round."
+          }
+        },
+        {
+          "name": "Leg Enhancements",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad realiza una acción de Movimiento de 2\". No cuenta para su límite de acciones.",
+            "en": "This Unit performs a 2\" Move action. This does not count towards its action limit."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 1 },
+        { "minModels": 2, "maxModels": 3, "supply": 2 }
+      ],
+      "imageRefFront": "cards/protoss/unit-praetor-guard-front.png",
+      "imageRefBack": "cards/protoss/unit-praetor-guard-back.png"
+    },
+    {
+      "id": "protoss.card.adept",
+      "race": "PROTOSS",
+      "name": "Adept",
+      "baseSize": "Ø 40MM",
+      "profile": { "size": "2", "hitPoints": "3", "evade": "5+", "armour": "5+", "speed": "5/8", "shield": "2" },
+      "weapons": [
+        {
+          "name": "Glaive Cannon",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "All",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": "Light",
+          "surgeDice": "D3+1",
+          "damage": "1",
+          "keywords": ["ANTI-EVADE (1)"]
+        }
+      ],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 2, "supply": 0 },
+        { "minModels": 3, "maxModels": 4, "supply": 1 }
+      ],
+      "imageRefFront": "cards/protoss/unit-adept-front.png",
+      "imageRefBack": "cards/protoss/unit-adept-back.png"
+    },
+    {
+      "id": "protoss.card.sentry",
+      "race": "PROTOSS",
+      "name": "Sentry",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "1", "hitPoints": "4", "evade": "6+", "armour": "5+", "speed": "4/7", "shield": "2" },
+      "weapons": [
+        {
+          "name": "Disruption Beam",
+          "phase": "ASSAULT",
+          "range": "8",
+          "target": "All",
+          "rateOfAttack": "2",
+          "hit": "2+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": ["INSTANT"]
+        }
+      ],
+      "abilities": [],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 2, "supply": 1 }
+      ],
+      "imageRefFront": "cards/protoss/unit-sentry-front.png",
+      "imageRefBack": "cards/protoss/unit-sentry-back.png"
+    },
+    {
+      "id": "protoss.card.stalker",
+      "race": "PROTOSS",
+      "name": "Stalker",
+      "baseSize": "Ø 80MM",
+      "profile": { "size": "3", "hitPoints": "6", "evade": "6+", "armour": "4+", "speed": "4/8", "shield": "3" },
+      "weapons": [],
+      "abilities": [
+        {
+          "name": "Squadron",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "La Coherencia Horizontal de esta unidad es de 4\".",
+            "en": "This Unit's Horizontal Coherency is 4\"."
+          }
+        }
+      ],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 1 },
+        { "minModels": 2, "maxModels": 2, "supply": 2 }
+      ],
+      "imageRefFront": "cards/protoss/unit-stalker-front.png",
+      "imageRefBack": "cards/protoss/unit-stalker-back.png"
+    },
+    {
+      "id": "protoss.card.artanis",
+      "race": "PROTOSS",
+      "name": "Artanis",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "2", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": "4" },
+      "weapons": [],
+      "abilities": [
+        {
+          "name": "Commander",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Trata la característica de Suministro de esta unidad como aumentada en 1 para controlar y disputar Marcadores de Misión y para completar objetivos.",
+            "en": "Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers and completing objectives."
+          }
+        }
+      ],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
+      "imageRefFront": "cards/protoss/unit-artanis-front.png",
+      "imageRefBack": "cards/protoss/unit-artanis-back.png"
+    },
+    {
+      "id": "protoss.card.pylon",
+      "race": "PROTOSS",
+      "name": "Pylon",
+      "baseSize": "Ø 50MM",
+      "profile": { "size": "3", "hitPoints": "8", "evade": "—", "armour": "5+", "speed": "—", "shield": "2" },
+      "weapons": [],
+      "abilities": [
+        {
+          "name": "Structure",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad no puede activarse.",
+            "en": "This Unit cannot be Activated."
+          }
+        }
+      ],
+      "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
+      "imageRefFront": "cards/protoss/unit-pylon-front.png",
+      "imageRefBack": "cards/protoss/unit-pylon-back.png"
+    }
+  ],
+
+  "unitEntries": [
+    {
+      "id": "protoss.entry.zealot",
+      "seedId": 4301,
+      "cardId": "protoss.card.zealot",
+      "race": "PROTOSS",
+      "name": "Zealot",
+      "tags": ["PROTOSS"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 160, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "leg_enhancements",
+          "seedId": 5301,
+          "name": "Leg Enhancements",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "my_life_for_aiur",
+          "seedId": 5302,
+          "name": "My Life for Aiur",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "we_stand_as_one",
+          "seedId": 5303,
+          "name": "We Stand as One",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "zealous_round",
+          "seedId": 5304,
+          "name": "Zealous Round",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "3": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "protoss.entry.praetor_guard",
+      "seedId": 4302,
+      "cardId": "protoss.card.praetor_guard",
+      "race": "PROTOSS",
+      "name": "Praetor Guard (Zealot)",
+      "tags": ["PROTOSS", "KHALAI"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": true,
+      "summoned": false,
+      "compositions": [
+        { "id": "3", "models": 3, "mineralCost": 280, "supplyValue": 2 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "protoss.entry.adept",
+      "seedId": 4303,
+      "cardId": "protoss.card.adept",
+      "race": "PROTOSS",
+      "name": "Adept",
+      "tags": ["PROTOSS"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "4", "models": 4, "mineralCost": 150, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "glaive_strike",
+          "seedId": 5311,
+          "name": "Glaive Strike",
+          "specialist": false,
+          "replacesWeapon": "Strike",
+          "costByComposition": { "4": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "guidance",
+          "seedId": 5312,
+          "name": "Guidance",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "4": 10 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "resonating_glaives",
+          "seedId": 5313,
+          "name": "Resonating Glaives",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "4": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "protoss.entry.sentry",
+      "seedId": 4304,
+      "cardId": "protoss.card.sentry",
+      "race": "PROTOSS",
+      "name": "Sentry",
+      "tags": ["PROTOSS"],
+      "slotType": "SUPPORT",
+      "combatRole": { "es": "Salvavidas", "en": "Lifesaver" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "2", "models": 2, "mineralCost": 130, "supplyValue": 1 }
+      ],
+      "upgrades": [
+        {
+          "id": "hallucination",
+          "seedId": 5321,
+          "name": "Hallucination",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "solid_field_projectors",
+          "seedId": 5322,
+          "name": "Solid-Field Projectors",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "2": 20 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "protoss.entry.stalker",
+      "seedId": 4305,
+      "cardId": "protoss.card.stalker",
+      "race": "PROTOSS",
+      "name": "Stalker",
+      "tags": ["PROTOSS"],
+      "slotType": "ELITE",
+      "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
+      "unique": false,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 170, "supplyValue": 1 },
+        { "id": "2", "models": 2, "mineralCost": 270, "supplyValue": 2 }
+      ],
+      "upgrades": [
+        {
+          "id": "fury_of_the_nerazim",
+          "seedId": 5331,
+          "name": "Fury of the Nerazim",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "1": 20, "2": 30 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        },
+        {
+          "id": "path_of_shadows",
+          "seedId": 5332,
+          "name": "Path of Shadows",
+          "specialist": false,
+          "replacesWeapon": null,
+          "costByComposition": { "1": 20, "2": 40 },
+          "grantsWeapons": [],
+          "grantsAbilities": []
+        }
+      ]
+    },
+    {
+      "id": "protoss.entry.artanis",
+      "seedId": 4306,
+      "cardId": "protoss.card.artanis",
+      "race": "PROTOSS",
+      "name": "Artanis",
+      "tags": ["PROTOSS"],
+      "slotType": "HERO",
+      "combatRole": { "es": "Tanque", "en": "Tank" },
+      "unique": true,
+      "summoned": false,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 250, "supplyValue": 1 }
+      ],
+      "upgrades": []
+    },
+    {
+      "id": "protoss.entry.pylon",
+      "seedId": 4307,
+      "cardId": "protoss.card.pylon",
+      "race": "PROTOSS",
+      "name": "Pylon",
+      "tags": ["PROTOSS"],
+      "slotType": "CORE",
+      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "unique": false,
+      "summoned": true,
+      "compositions": [
+        { "id": "1", "models": 1, "mineralCost": 0, "supplyValue": 0 }
+      ],
+      "upgrades": []
+    }
+  ]
+}

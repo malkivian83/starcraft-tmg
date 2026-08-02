@@ -45,6 +45,11 @@ const SOURCES = [
     pdf: 'docs/StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf',
     catalog: 'src/catalog/data/terran.json',
   },
+  {
+    race: 'protoss',
+    pdf: 'docs/StarCraft-Protoss-P2P-Card-Sheets-A4_EN.pdf',
+    catalog: 'src/catalog/data/protoss.json',
+  },
 ];
 
 const run = (cmd, args) =>
