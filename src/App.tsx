@@ -58,7 +58,18 @@ function ArmyBuilderApp() {
   };
   const confirmDiscard = (action: string) => !isDirty || window.confirm(`${action} reemplazara los cambios sin guardar de esta lista. Quieres continuar?`);
   const createList = () => { if (!confirmDiscard('Crear una lista nueva')) return; resetForRace(user?.defaultRace ?? 'ZERG'); setSeedVisible(false); setPage('builder'); };
-  const onImportFile = async (file: File) => { const result = importListFromJson(await file.text()); if (result.list) { if (!confirmDiscard('Importar una lista')) return; setList(result.list); setSeedVisible(false); setPage('builder'); setToast('Lista importada.'); } else setToast(result.error ?? 'No se pudo importar el fichero.'); };
+  const onImportFile = async (file: File) => {
+    // La confirmacion debe ocurrir antes de la lectura asincrona del fichero:
+    // de otro modo puede aparecer cuando el usuario ya ha cambiado de vista.
+    if (!confirmDiscard('Importar una lista')) return;
+    const result = importListFromJson(await file.text());
+    if (result.list) {
+      setList(result.list);
+      setSeedVisible(false);
+      setPage('builder');
+      setToast('Lista importada.');
+    } else setToast(result.error ?? 'No se pudo importar el fichero.');
+  };
   const saveList = async () => { try { const saved = await saveRemoteList(list, remoteRevision); setRemoteRevision(saved.revision); markSaved(); setToast('Lista guardada en tu cuenta.'); } catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); } };
   const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard('Cargar otra lista')) return; setList(loaded); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPage('builder'); setToast('Lista cargada.'); };
   const changeRace = (race: Race) => { if (race !== list.race && !confirmDiscard('Cambiar de raza')) return; setRace(race); };
