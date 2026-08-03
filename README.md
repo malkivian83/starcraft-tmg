@@ -7,7 +7,7 @@ sin conexión.
 ## Puesta en marcha
 
 ```bash
-npm install
+npm install 
 ```
 
 ```bash
