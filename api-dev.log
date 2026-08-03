@@ -1,0 +1,7 @@
+﻿
+> starcraft-tmg-army-builder@0.1.0 dev:server
+> tsx watch server/src/index.ts
+
+API disponible en http://localhost:3001/api
+16:17:15 [tsx] change in ./server\src\modules\email\email.gateway.ts Restarting...
+API disponible en http://localhost:3001/api

@@ -111,6 +111,39 @@
   color: #333;
 }
 
+/*
+ * En pantalla estrecha la hoja sigue siendo una vista previa, no un A4 a
+ * tamaño real. Reducimos sus márgenes y fijamos las tablas a su contenedor
+ * para que ninguna columna fuerce desplazamiento horizontal en el móvil.
+ */
+@media screen and (max-width: 620px) {
+  .sheet {
+    max-width: 100%;
+    padding: 18px 12px;
+    font-size: 10pt;
+    overflow: hidden;
+  }
+
+  .sheet__head {
+    flex-wrap: wrap;
+  }
+
+  .sheet__illegal {
+    white-space: normal;
+  }
+
+  .sheet__table {
+    table-layout: fixed;
+    font-size: 8pt;
+  }
+
+  .sheet__table th,
+  .sheet__table td {
+    padding: 2px 3px;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* --- Resumen de fichas de unidad ---------------------------------------- */
 
 /*
