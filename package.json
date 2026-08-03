@@ -9,6 +9,7 @@
     "db:migrate": "tsx server/src/db/migrate.ts",
     "build": "tsc -b && vite build",
     "build:server": "tsc -p tsconfig.server.json",
+    "deploy:plesk": "npm run build && npm run build:server && npm run db:migrate",
     "start:server": "node server/dist/index.js",
     "preview": "vite preview",
     "test": "vitest run",
@@ -49,6 +50,8 @@
     "vitest": "^3.2.7"
   },
   "allowScripts": {
+    "argon2@0.45.1": true,
+    "esbuild@0.28.1": true,
     "esbuild@0.25.12": true,
     "esbuild@0.21.5": true
   }
