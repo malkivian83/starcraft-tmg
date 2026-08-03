@@ -67,6 +67,35 @@ describe('Catálogo Protoss', () => {
     });
   });
 
+  it('incluye las dos armas de combate de Artanis', () => {
+    expect(index.unitCards.get('protoss.card.artanis')!.weapons).toEqual([
+      {
+        name: 'Twilight Blades Strike',
+        phase: 'COMBAT',
+        range: 'E',
+        target: 'Ground',
+        rateOfAttack: '2',
+        hit: '2+',
+        surgeType: 'Armoured',
+        surgeDice: 'D3',
+        damage: '3',
+        keywords: [],
+      },
+      {
+        name: 'Twilight Blades Sweep',
+        phase: 'COMBAT',
+        range: 'E',
+        target: 'Ground',
+        rateOfAttack: '6',
+        hit: '2+',
+        surgeType: 'Light',
+        surgeDice: 'D3+1',
+        damage: '1',
+        keywords: [],
+      },
+    ]);
+  });
+
   it('el coste de las mejoras del Stalker depende de la composición', () => {
     const stalker = index.unitEntries.get('protoss.entry.stalker')!;
     const path = stalker.upgrades.find((u) => u.id === 'path_of_shadows')!;
