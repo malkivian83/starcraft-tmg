@@ -5,6 +5,8 @@ import type { ServerEnvironment } from '../../config/env.js';
 import { HttpError } from '../../lib/errors.js';
 import { requireUser } from '../../middleware/require-user.js';
 import { AuthRepository } from '../auth/auth.repository.js';
+import { EmailDeliveryLogRepository } from '../email/email-delivery-log.repository.js';
+import { describeSmtpError, SmtpEmailGateway } from '../email/email.gateway.js';
 import { SmtpSettingsRepository } from '../email/smtp-settings.repository.js';
 
 const SUPER_ADMIN_EMAIL = 'malkivian@gmail.com';
@@ -17,7 +19,13 @@ function requireSuperAdmin(repository: AuthRepository, env: ServerEnvironment) {
   }];
 }
 
-export function createAdminRouter(repository: AuthRepository, smtp: SmtpSettingsRepository, env: ServerEnvironment): Router {
+export function createAdminRouter(
+  repository: AuthRepository,
+  smtp: SmtpSettingsRepository,
+  emailLogs: EmailDeliveryLogRepository,
+  smtpEmail: SmtpEmailGateway,
+  env: ServerEnvironment,
+): Router {
   const router = Router();
   router.use(...requireSuperAdmin(repository, env));
   router.get('/users', async (_request, response) => response.json({ users: await repository.listUsersForAdmin() }));
@@ -37,6 +45,19 @@ export function createAdminRouter(repository: AuthRepository, smtp: SmtpSettings
     const value = z.object({ host: z.string().min(1).max(255), port: z.number().int().min(1).max(65535), secure: z.boolean(), username: z.string().max(255), from: z.string().email(), password: z.string().max(512).optional() }).parse(request.body);
     await smtp.save(value);
     response.status(204).end();
+  });
+  router.post('/smtp/test', async (request, response) => {
+    const { recipient } = z.object({ recipient: z.string().email().max(254) }).parse(request.body);
+    try {
+      const result = await smtpEmail.sendTestEmail(recipient);
+      response.json({ result: { ok: true, messageId: result.messageId } });
+    } catch (error) {
+      throw new HttpError(502, 'SMTP_TEST_FAILED', describeSmtpError(error));
+    }
+  });
+  router.get('/smtp/logs', async (request, response) => {
+    const { limit } = z.object({ limit: z.coerce.number().int().min(1).max(250).default(100) }).parse(request.query);
+    response.json({ logs: await emailLogs.list(limit) });
   });
   return router;
 }
