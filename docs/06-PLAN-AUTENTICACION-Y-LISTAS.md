@@ -22,9 +22,14 @@ vigente, sus garantías y sus brechas. Los hallazgos priorizados están en
 - Panel de cuenta con cambio de contraseña y facción predeterminada.
 - Guardado y carga exclusivamente desde la base de datos de la aplicación.
 - Borrado físico de listas propias y borrado lógico de cuentas.
+- Visibilidad privada o pública por lista, consulta en solo lectura y clonación.
+- Directorio público autenticado con filtros, ordenación y likes por usuario.
+- Página de términos y condiciones enlazada desde el footer y aceptación
+  obligatoria durante el registro.
 
-No forma parte de la primera versión: compartir listas entre usuarios,
-colaboración en tiempo real, perfiles públicos ni inicio de sesión social.
+No forma parte de la primera versión: colaboración en tiempo real, perfiles
+públicos completos ni funcionalidades sociales fuera de listas públicas y
+likes.
 
 ## Arquitectura actual
 
@@ -102,6 +107,8 @@ profiles
 saved_lists
   id: UUID, clave primaria
   owner_id: UUID, propietario autenticado
+  is_public: booleano, privado por defecto
+  published_at: fecha UTC o nulo
   name: texto
   race: ZERG | TERRAN | PROTOSS
   payload: JSON (ArmyList validada)
@@ -130,6 +137,7 @@ app_settings          configuración SMTP cifrada con AES-256-GCM
 email_delivery_logs   resultado y diagnóstico de cada intento de correo
                       (`VERIFY_EMAIL`, `RESET_PASSWORD`, `SMTP_TEST`,
                       `ACCOUNT_VERIFIED`)
+saved_list_likes       relación única usuario-lista pública y fecha del like
 schema_migrations     migraciones aplicadas
 ```
 
@@ -147,6 +155,11 @@ src/
     auth/AuthGate.tsx       acceso, registro y verificación
     lists/
       SavedListsPage.tsx
+      PublicListsPage.tsx       directorio, filtros, ordenación y likes
+      PublicListPage.tsx        consulta solo lectura y clonación
+      ListTable.tsx             tabla compartida de listas
+    home/
+      HomePage.tsx              últimas listas y accesos por raza
     account/
       AccountPage.tsx
       SuperAdminPanel.tsx
@@ -156,7 +169,7 @@ server/
     config/                      entorno y configuración segura
     modules/
       auth/                      registro, sesión, contraseña y correo
-      lists/                     CRUD y autorización de listas
+      lists/                     CRUD, publicación, likes y clonación
       admin/                     usuarios, SMTP y registros de correo
       email/                     transporte, configuración y trazas
     db/
@@ -180,6 +193,8 @@ credenciales reales nunca se incluirán en Git.
    sesión.
 3. Una vez autenticado y con correo verificado, accede al constructor y a sus
    listas remotas.
+4. La página de términos y condiciones es la única página legal accesible sin
+   iniciar sesión; el directorio de listas públicas sí requiere sesión.
 
 ### Acceso con Google
 
@@ -212,6 +227,9 @@ credenciales reales nunca se incluirán en Git.
 7. El panel permite borrar la cuenta con una confirmación reforzada. La acción
    es lógica: cierra las sesiones y desactiva la cuenta. La reautenticación es
    la contraseña o, si no la hay, Google.
+8. En el editor una lista es privada por defecto. El propietario puede hacerla
+   pública al guardar; otros usuarios pueden verla, darle/quitarle un like y
+   clonarla, pero no editar el original.
 
 ### Superadministrador
 
@@ -251,6 +269,10 @@ credenciales reales nunca se incluirán en Git.
 - Reautenticación para cambio de contraseña y borrado lógico de cuenta.
 - Consultas parametrizadas y filtrado de listas por propietario en servidor.
 - Contraseña SMTP cifrada con AES-256-GCM derivada de `SESSION_SECRET`.
+- Listas públicas filtradas por usuario activo y correo verificado; la edición
+  sigue limitada al propietario.
+- Likes con clave única `(list_id, user_id)` y endpoints protegidos por sesión.
+- Registro bloqueado hasta aceptar los términos de uso enlazados.
 
 ### Brechas abiertas
 
@@ -261,8 +283,8 @@ credenciales reales nunca se incluirán en Git.
 - El acceso con Google no comprueba `nonce`, así que un ID token robado puede
   reutilizarse hasta que caduque (una hora).
 - No existen límites de intentos para registro, acceso o recuperación.
-- La recuperación tiene API, pero no interfaz; tampoco hay reenvío de
-  verificación.
+- La recuperación y el reenvío de verificación ya tienen interfaz; falta
+  endurecer sus límites de intentos y cobertura de integración.
 - Si SMTP falla durante el registro, el usuario ya está creado y queda
   bloqueado hasta que el superadministrador lo verifique a mano desde el panel.
   Ese rescate no cubre el arranque en una base vacía: `AuthGate` deja al
@@ -286,16 +308,17 @@ credenciales reales nunca se incluirán en Git.
 |---|---|
 | Registro, login, logout y sesión | Implementado |
 | Acceso con Google y vinculación por correo | Implementado; falta prueba de integración con un token real |
-| Verificación de correo | Implementada por token y manualmente desde el panel de superadministración; innecesaria con Google; reenvío al propio usuario pendiente |
-| Recuperación de contraseña | Backend implementado; frontend pendiente |
+| Verificación de correo | Implementada por token y manualmente desde el panel de superadministración; innecesaria con Google; reenvío disponible |
+| Recuperación de contraseña | Backend y frontend implementados; faltan límites y pruebas de integración |
 | Perfil, raza predeterminada, apodo y avatar | Implementado |
 | Cambio de contraseña y borrado lógico | Implementado |
-| Listas remotas y control de propietario | Implementado; faltan pruebas de integración |
+| Listas remotas, visibilidad pública, clonación y likes | Implementado; faltan pruebas de integración |
 | Control de conflictos por revisión | Implementado en actualización; UX básica |
 | Administración de usuarios, SMTP y logs | Implementada, incluida la verificación manual de cuentas con aviso por correo, con autorización insegura por correo fijo |
 | Rate limiting y auditoría sensible | No implementado |
 | Validación semántica de listas en servidor | No implementada |
 | Pruebas API/BD y E2E | No implementadas |
+| Términos legales y aceptación en registro | Implementado; titular `starcraft-builder.com` |
 | Trabajo offline y sincronización posterior | No implementado |
 
 ## Plan original de desarrollo (histórico)

@@ -1,6 +1,6 @@
 # PRD — Constructor de listas de ejército · StarCraft: The Miniatures Game
 
-Versión 2.0 · Requisitos vigentes tras incorporar cuentas y listas sincronizadas
+Versión 2.1 · Requisitos vigentes tras incorporar listas públicas, likes y términos legales
 
 Este documento define el producto objetivo. El grado de cumplimiento y las
 brechas detectadas están en [`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md)
@@ -32,6 +32,8 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 - Consulta del catálogo de cartas (unidades, facción, tácticas).
 - Registro, acceso, verificación de correo, perfil y gestión de cuenta.
 - Guardado remoto de múltiples listas por usuario con control de conflictos.
+- Publicación opcional de listas, consulta en solo lectura y clonación para otros usuarios autenticados.
+- Directorio de listas públicas con búsqueda, filtros, ordenación y likes por usuario.
 - Importación y exportación de listas.
 - Impresión: hoja resumen A4, cartas de las unidades incluidas, exportación a PDF.
 - PWA instalable; el funcionamiento autenticado requiere conexión con la API.
@@ -47,7 +49,7 @@ Se traduce lo que explica, no lo que nombra. Nombres de unidades, armas, habilid
 - Asistente para ejecutar el draft en la mesa (tirada, descartes, afinidad de marcadores) — pendiente de confirmar.
 - Partidas por equipos (§9.1.8).
 - Listas cerradas (§9.1.10) — solo se contempla el modo abierto por defecto.
-- Cualquier funcionalidad multijugador o social.
+- Funcionalidades sociales fuera del directorio de listas públicas y sus likes.
 
 ## 4. Historias de usuario
 
@@ -162,6 +164,34 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-09b.5 Un seed creado con otra versión del catálogo se importa igualmente, detallando qué costes cambiaron o qué elementos ya no existen.
 - CA-09b.6 El seed usa un alfabeto sin caracteres ambiguos, para poder dictarse en voz alta.
 - CA-09b.7 El seed es autocontenido y no referencia un registro remoto.
+
+**US-14 · Publicar y descubrir listas** — ✅ Implementada
+
+Como usuario autenticado, quiero publicar una lista para que otros usuarios
+puedan consultarla, valorarla y clonarla sin modificar mi original.
+
+- CA-14.1 Una lista nueva es privada por defecto y el propietario puede cambiar
+  su visibilidad antes de guardarla.
+- CA-14.2 Una lista pública se puede ver en modo solo lectura y clonar como una
+  copia independiente.
+- CA-14.3 Solo el propietario puede editar, hacer privada o borrar la lista
+  original.
+- CA-14.4 Cada usuario puede dar como máximo un like a cada lista pública y
+  retirarlo posteriormente.
+- CA-14.5 El directorio muestra el contador de likes y permite ordenar por las
+  listas más valoradas.
+- CA-14.6 El acceso al directorio y a las listas públicas requiere iniciar
+  sesión.
+
+**US-15 · Aceptar los términos de uso** — ✅ Implementada
+
+Como usuario que crea una cuenta, debo aceptar los términos y condiciones
+mediante una casilla obligatoria con enlace a la página legal.
+
+- CA-15.1 La página legal está accesible desde el footer y desde el enlace del
+  formulario de registro.
+- CA-15.2 El registro no continúa si no se aceptan los términos.
+- CA-15.3 El titular se identifica mediante el dominio `starcraft-builder.com`.
 
 ### Bloque D — Consulta
 
