@@ -64,3 +64,7 @@ el evento `push`.
 Después de esta configuración, cada `push` a `main` hará que Plesk descargue el
 cambio, instale exactamente las dependencias del lockfile, compile frontend y
 backend, aplique migraciones pendientes y reinicie la aplicación.
+
+El script `deploy:plesk` ejecuta directamente los binarios instalados en
+`node_modules/.bin`. Esto evita depender de que `npm` permanezca disponible en
+el `PATH` interno de los scripts ejecutados por Nodeenv en Plesk.
