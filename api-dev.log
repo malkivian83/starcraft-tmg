@@ -421,3 +421,571 @@ API disponible en http://localhost:3001/api
 API disponible en http://localhost:3001/api
 17:28:46 [tsx] change in ./server\src\index.ts Restarting...
 API disponible en http://localhost:3001/api
+18:08:49 [tsx] change in ./server\src\modules\lists\list.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+18:09:11 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+18:09:18 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+18:09:24 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+18:09:34 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listPublic (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:96:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:46:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listPublic (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:96:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:46:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+18:13:16 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:68:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:33:19) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
+Error: Table 'starcraft_tmg.saved_list_likes' doesn't exist
+    at ListRepository.withLikeMetadata 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:154:36)
+    at ListRepository.listLatestForOwner 
+(D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:73:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:38:40) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.saved_list_likes' doesn't exist",
+  sql: 'SELECT list_id, COUNT(*) AS like_count,\n' +
+    '              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user\n' +
+    '         FROM saved_list_likes\n' +
+    '        WHERE list_id IN (?, ?, ?, ?, ?)\n' +
+    '        GROUP BY list_id'
+}
