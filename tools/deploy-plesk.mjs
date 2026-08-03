@@ -1,12 +1,16 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
-const pleskNpm = '/opt/plesk/node/22/bin/npm';
+const pleskBin = '/opt/plesk/node/22/bin';
+const pleskNpm = `${pleskBin}/npm`;
+const deploymentEnvironment = existsSync(pleskNpm)
+  ? { ...process.env, PATH: `${pleskBin}:${process.env.PATH ?? ''}` }
+  : process.env;
 
 if (existsSync(pleskNpm)) {
   const install = spawnSync(pleskNpm, ['ci', '--include=dev', '--include=optional'], {
     cwd: process.cwd(),
-    env: process.env,
+    env: deploymentEnvironment,
     stdio: 'inherit',
   });
   if (install.error) throw install.error;
@@ -23,7 +27,7 @@ const tasks = [
 for (const [entrypoint, arguments_] of tasks) {
   const result = spawnSync(process.execPath, [entrypoint, ...arguments_], {
     cwd: process.cwd(),
-    env: process.env,
+    env: deploymentEnvironment,
     stdio: 'inherit',
   });
   if (result.error) throw result.error;
