@@ -18,6 +18,16 @@ export interface AdminUser {
   savedLists: number;
 }
 export interface SmtpSettings { host: string; port: number; secure: boolean; username: string; from: string; passwordConfigured: boolean; password?: string; }
+export interface EmailDeliveryLog {
+  id: number;
+  recipient: string;
+  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST';
+  subject: string;
+  status: 'SENT' | 'FAILED';
+  providerMessageId: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+}
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
 
@@ -104,3 +114,11 @@ export async function setAdminUserPassword(id: string, password: string): Promis
 }
 export async function getSmtpSettings(): Promise<SmtpSettings | null> { return (await request<{ smtp: SmtpSettings | null }>('/admin/smtp')).smtp; }
 export async function saveSmtpSettings(settings: Omit<SmtpSettings, 'passwordConfigured'>): Promise<void> { await request('/admin/smtp', { method: 'PUT', body: JSON.stringify(settings) }); }
+export async function testSmtpSettings(recipient: string): Promise<{ ok: boolean; messageId: string | null }> {
+  return (await request<{ result: { ok: boolean; messageId: string | null } }>('/admin/smtp/test', {
+    method: 'POST', body: JSON.stringify({ recipient }),
+  })).result;
+}
+export async function getEmailDeliveryLogs(limit = 100): Promise<EmailDeliveryLog[]> {
+  return (await request<{ logs: EmailDeliveryLog[] }>(`/admin/smtp/logs?limit=${limit}`)).logs;
+}

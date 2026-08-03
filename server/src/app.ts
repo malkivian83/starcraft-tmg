@@ -8,14 +8,19 @@ import { AuthRepository } from './modules/auth/auth.repository.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
 import { createAdminRouter } from './modules/admin/admin.routes.js';
 import { SmtpSettingsRepository } from './modules/email/smtp-settings.repository.js';
-import type { EmailGateway } from './modules/email/email.gateway.js';
+import { DevelopmentEmailGateway, SmtpEmailGateway, type EmailGateway } from './modules/email/email.gateway.js';
+import { EmailDeliveryLogRepository } from './modules/email/email-delivery-log.repository.js';
 import { ListRepository } from './modules/lists/list.repository.js';
 import { createListRouter } from './modules/lists/list.routes.js';
 
-export function createApp(pool: DatabasePool, env: ServerEnvironment, email: EmailGateway) {
+export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverride?: EmailGateway) {
   const app = express();
   const authRepository = new AuthRepository(pool);
   const listRepository = new ListRepository(pool);
+  const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
+  const emailLogs = new EmailDeliveryLogRepository(pool);
+  const smtpEmail = new SmtpEmailGateway(smtpSettings, emailLogs, env);
+  const email = emailOverride ?? (env.NODE_ENV === 'production' ? smtpEmail : new DevelopmentEmailGateway(env));
 
   app.use((request, response, next) => {
     const origin = request.header('origin');
@@ -35,7 +40,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, email: Ema
     response.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email }));
-  app.use('/api/admin', createAdminRouter(authRepository, new SmtpSettingsRepository(pool, env.SESSION_SECRET), env));
+  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));
   app.use(errorHandler);
 
