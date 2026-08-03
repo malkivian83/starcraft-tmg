@@ -9,6 +9,8 @@ export interface RemoteList extends ArmyList {
   isPublic: boolean;
   publishedAt: string | null;
   ownerNickname: string | null;
+  likeCount: number;
+  likedByCurrentUser: boolean;
 }
 
 export interface HomeData {
@@ -63,6 +65,12 @@ export async function loadPublicList(id: string): Promise<RemoteList> {
 export async function clonePublicList(id: string): Promise<RemoteList> {
   return (await request<{ list: RemoteList }>(`/lists/public/${encodeURIComponent(id)}/clone`, {
     method: 'POST',
+  })).list;
+}
+
+export async function setPublicListLike(id: string, liked: boolean): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/public/${encodeURIComponent(id)}/like`, {
+    method: liked ? 'POST' : 'DELETE',
   })).list;
 }
 

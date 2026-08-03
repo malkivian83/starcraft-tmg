@@ -379,7 +379,7 @@ function CardDetail({
         <span className="chip chip--cost">{badge}</span>
       </div>
       {abilities.map((ability) => (
-        <p key={ability.name} className="small" style={{ margin: '6px 0' }}>
+        <p key={ability.name} className="small card-detail__ability" style={{ margin: '6px 0' }}>
           {/* Nombre en inglés, explicación en español (regla de idioma). */}
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
           <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase)}</span>

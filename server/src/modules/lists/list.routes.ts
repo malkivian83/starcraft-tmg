@@ -14,6 +14,8 @@ function payload(record: SavedListRecord) {
     isPublic: record.isPublic,
     publishedAt: record.publishedAt,
     ownerNickname: record.ownerNickname,
+    likeCount: record.likeCount,
+    likedByCurrentUser: record.likedByCurrentUser,
   };
 }
 
@@ -35,24 +37,40 @@ export function createListRouter(repository: ListRepository): Router {
   router.get('/home', async (request, response) => {
     const [recentLists, publicLists] = await Promise.all([
       repository.listLatestForOwner(request.authenticatedUser!.id, 5),
-      repository.listLatestPublic(10),
+      repository.listLatestPublic(request.authenticatedUser!.id, 10),
     ]);
     response.json({ recentLists: recentLists.map(payload), publicLists: publicLists.map(payload) });
   });
 
-  router.get('/public', async (_request, response) => {
-    const lists = await repository.listPublic();
+  router.get('/public', async (request, response) => {
+    const lists = await repository.listPublic(request.authenticatedUser!.id);
     response.json({ lists: lists.map(payload) });
   });
 
   router.get('/public/:id', async (request, response) => {
-    const list = await repository.findPublic(request.params.id);
+    const list = await repository.findPublic(request.params.id, request.authenticatedUser!.id);
     if (!list) throw new HttpError(404, 'PUBLIC_LIST_NOT_FOUND', 'No existe esa lista pública.');
     response.json({ list: payload(list) });
   });
 
+  router.post('/public/:id/like', async (request, response) => {
+    const list = await repository.findPublic(request.params.id, request.authenticatedUser!.id);
+    if (!list) throw new HttpError(404, 'PUBLIC_LIST_NOT_FOUND', 'No existe esa lista pública.');
+    await repository.like(list.id, request.authenticatedUser!.id);
+    const updated = await repository.findPublic(list.id, request.authenticatedUser!.id);
+    response.json({ list: payload(updated!) });
+  });
+
+  router.delete('/public/:id/like', async (request, response) => {
+    const list = await repository.findPublic(request.params.id, request.authenticatedUser!.id);
+    if (!list) throw new HttpError(404, 'PUBLIC_LIST_NOT_FOUND', 'No existe esa lista pública.');
+    await repository.unlike(list.id, request.authenticatedUser!.id);
+    const updated = await repository.findPublic(list.id, request.authenticatedUser!.id);
+    response.json({ list: payload(updated!) });
+  });
+
   router.post('/public/:id/clone', async (request, response) => {
-    const source = await repository.findPublic(request.params.id);
+    const source = await repository.findPublic(request.params.id, request.authenticatedUser!.id);
     if (!source) throw new HttpError(404, 'PUBLIC_LIST_NOT_FOUND', 'No existe esa lista pública.');
     const now = new Date().toISOString();
     const cloned = armyListPayloadSchema.parse({

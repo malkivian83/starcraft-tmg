@@ -11,6 +11,8 @@ export interface SavedListRecord {
   createdAt: string;
   updatedAt: string;
   payload: ArmyListPayload;
+  likeCount: number;
+  likedByCurrentUser: boolean;
 }
 
 interface SavedListRow extends RowDataPacket {
@@ -23,6 +25,12 @@ interface SavedListRow extends RowDataPacket {
   created_at: string;
   updated_at: string;
   payload: ArmyListPayload | string;
+}
+
+interface LikeSummaryRow extends RowDataPacket {
+  list_id: string;
+  like_count: number | string;
+  liked_by_current_user: number | string;
 }
 
 const recordColumns = `
@@ -43,6 +51,8 @@ function map(row: SavedListRow): SavedListRecord {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     payload: typeof row.payload === 'string' ? JSON.parse(row.payload) as ArmyListPayload : row.payload,
+    likeCount: 0,
+    likedByCurrentUser: false,
   };
 }
 
@@ -55,15 +65,15 @@ export class ListRepository {
 
   async listForOwner(ownerId: string): Promise<SavedListRecord[]> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns} WHERE l.owner_id = ? ORDER BY l.updated_at DESC`, [ownerId]);
-    return rows.map(map);
+    return this.withLikeMetadata(rows.map(map), ownerId);
   }
 
   async listLatestForOwner(ownerId: string, limit = 5): Promise<SavedListRecord[]> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns} WHERE l.owner_id = ? ORDER BY l.updated_at DESC LIMIT ${limitValue(limit)}`, [ownerId]);
-    return rows.map(map);
+    return this.withLikeMetadata(rows.map(map), ownerId);
   }
 
-  async listLatestPublic(limit = 10): Promise<SavedListRecord[]> {
+  async listLatestPublic(viewerId: string, limit = 10): Promise<SavedListRecord[]> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns}
     JOIN users u ON u.id = l.owner_id
    WHERE l.is_public = 1
@@ -72,10 +82,10 @@ export class ListRepository {
      AND u.email_verified_at IS NOT NULL
    ORDER BY l.published_at DESC, l.updated_at DESC
    LIMIT ${limitValue(limit)}`);
-    return rows.map(map);
+    return this.withLikeMetadata(rows.map(map), viewerId);
   }
 
-  async listPublic(): Promise<SavedListRecord[]> {
+  async listPublic(viewerId: string): Promise<SavedListRecord[]> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns}
     JOIN users u ON u.id = l.owner_id
    WHERE l.is_public = 1
@@ -83,15 +93,16 @@ export class ListRepository {
      AND u.deleted_at IS NULL
      AND u.email_verified_at IS NOT NULL
    ORDER BY l.published_at DESC, l.updated_at DESC`);
-    return rows.map(map);
+    return this.withLikeMetadata(rows.map(map), viewerId);
   }
 
   async findForOwner(id: string, ownerId: string): Promise<SavedListRecord | null> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns} WHERE l.id = ? AND l.owner_id = ?`, [id, ownerId]);
-    return rows[0] ? map(rows[0]) : null;
+    if (!rows[0]) return null;
+    return (await this.withLikeMetadata([map(rows[0])], ownerId))[0] ?? null;
   }
 
-  async findPublic(id: string): Promise<SavedListRecord | null> {
+  async findPublic(id: string, viewerId: string): Promise<SavedListRecord | null> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns}
     JOIN users u ON u.id = l.owner_id
    WHERE l.id = ?
@@ -99,7 +110,16 @@ export class ListRepository {
      AND u.is_active = 1
      AND u.deleted_at IS NULL
      AND u.email_verified_at IS NOT NULL`, [id]);
-    return rows[0] ? map(rows[0]) : null;
+    if (!rows[0]) return null;
+    return (await this.withLikeMetadata([map(rows[0])], viewerId))[0] ?? null;
+  }
+
+  async like(id: string, userId: string): Promise<void> {
+    await this.pool.execute('INSERT IGNORE INTO saved_list_likes (list_id, user_id) VALUES (?, ?)', [id, userId]);
+  }
+
+  async unlike(id: string, userId: string): Promise<void> {
+    await this.pool.execute('DELETE FROM saved_list_likes WHERE list_id = ? AND user_id = ?', [id, userId]);
   }
 
   async create(ownerId: string, payload: ArmyListPayload): Promise<SavedListRecord> {
@@ -125,5 +145,24 @@ export class ListRepository {
   async delete(id: string, ownerId: string): Promise<boolean> {
     const [result] = await this.pool.execute('DELETE FROM saved_lists WHERE id = ? AND owner_id = ?', [id, ownerId]);
     return 'affectedRows' in result && result.affectedRows > 0;
+  }
+
+  private async withLikeMetadata(records: SavedListRecord[], viewerId: string): Promise<SavedListRecord[]> {
+    if (records.length === 0) return records;
+    const ids = records.map((record) => record.id);
+    const placeholders = ids.map(() => '?').join(', ');
+    const [rows] = await this.pool.execute<LikeSummaryRow[]>(
+      `SELECT list_id, COUNT(*) AS like_count,
+              SUM(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS liked_by_current_user
+         FROM saved_list_likes
+        WHERE list_id IN (${placeholders})
+        GROUP BY list_id`,
+      [viewerId, ...ids],
+    );
+    const metadata = new Map(rows.map((row) => [row.list_id, {
+      likeCount: Number(row.like_count),
+      likedByCurrentUser: Number(row.liked_by_current_user) > 0,
+    }]));
+    return records.map((record) => ({ ...record, ...(metadata.get(record.id) ?? { likeCount: 0, likedByCurrentUser: false }) }));
   }
 }

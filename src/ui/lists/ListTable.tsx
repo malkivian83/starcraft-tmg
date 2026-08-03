@@ -20,6 +20,7 @@ export function ListTable({
   onOpen,
   onViewPublic,
   onClonePublic,
+  onLikePublic,
   showCreator = true,
   showVisibility = false,
   openLabel = 'Abrir',
@@ -28,6 +29,7 @@ export function ListTable({
   onOpen?: (list: RemoteList) => void;
   onViewPublic?: (id: string) => void;
   onClonePublic?: (id: string) => void;
+  onLikePublic?: (id: string, liked: boolean) => void;
   showCreator?: boolean;
   showVisibility?: boolean;
   openLabel?: string;
@@ -79,6 +81,7 @@ export function ListTable({
                   {onOpen && <button type="button" onClick={() => onOpen(row.list)}>{openLabel}</button>}
                   {row.list.isPublic && onViewPublic && <button type="button" onClick={() => onViewPublic(row.list.id)}>Ver lista</button>}
                   {row.list.isPublic && onClonePublic && <button type="button" onClick={() => onClonePublic(row.list.id)}>Clonar</button>}
+                  {row.list.isPublic && onLikePublic && <button type="button" className={`like-button${row.list.likedByCurrentUser ? ' like-button--active' : ''}`} aria-label={row.list.likedByCurrentUser ? 'Quitar me gusta' : 'Marcar con me gusta'} aria-pressed={row.list.likedByCurrentUser} onClick={(event) => { event.stopPropagation(); onLikePublic(row.list.id, row.list.likedByCurrentUser); }}><span className="like-button__icon" aria-hidden="true">{row.list.likedByCurrentUser ? '♥' : '♡'}</span><span>{row.list.likeCount}</span></button>}
                 </div>
               </td>
             </tr>

@@ -480,6 +480,35 @@ a {
   flex-wrap: nowrap;
 }
 
+.saved-list-table__actions .like-button {
+  min-width: 44px;
+  color: var(--text-dim);
+}
+
+.saved-list-table__actions .like-button--active {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+.like-button {
+  color: var(--text-dim);
+}
+
+.like-button__icon {
+  color: #ff5368;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.like-button--active {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+.public-list-like-error {
+  margin: 12px 24px;
+}
+
 .list-status {
   display: inline-block;
   padding: 3px 8px;

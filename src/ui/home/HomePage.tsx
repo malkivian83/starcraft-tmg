@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { loadHomeData, type RemoteList } from '@/auth/listService';
+import { loadHomeData, setPublicListLike, type RemoteList } from '@/auth/listService';
 import type { Race } from '@/engine/types';
 import { ListTable } from '../lists/ListTable';
 
@@ -40,6 +40,19 @@ export function HomePage({
     return () => { active = false; };
   }, []);
 
+  const handleLike = async (id: string, liked: boolean) => {
+    try {
+      const updated = await setPublicListLike(id, !liked);
+      setData((current) => current ? {
+        ...current,
+        recentLists: current.recentLists.map((list) => list.id === id ? updated : list),
+        publicLists: current.publicLists.map((list) => list.id === id ? updated : list),
+      } : current);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo actualizar el me gusta.');
+    }
+  };
+
   return (
     <main className="content page-content home-page no-print">
       <section className="home-brand" aria-label="Inicio">
@@ -77,7 +90,7 @@ export function HomePage({
             {data.recentLists.length === 0 ? (
               <div className="panel empty">Todavía no has guardado ninguna lista.</div>
             ) : (
-              <ListTable lists={data.recentLists} onOpen={onOpenOwn} onViewPublic={onViewPublic} onClonePublic={undefined} showCreator showVisibility={false} openLabel="Editar" />
+              <ListTable lists={data.recentLists} onOpen={onOpenOwn} onViewPublic={onViewPublic} onLikePublic={handleLike} onClonePublic={undefined} showCreator showVisibility={false} openLabel="Editar" />
             )}
           </section>
 
@@ -89,7 +102,7 @@ export function HomePage({
             {data.publicLists.length === 0 ? (
               <div className="panel empty">Todavía no hay listas públicas.</div>
             ) : (
-              <ListTable lists={data.publicLists} onViewPublic={onViewPublic} onClonePublic={onClonePublic} showCreator showVisibility={false} />
+              <ListTable lists={data.publicLists} onViewPublic={onViewPublic} onClonePublic={onClonePublic} onLikePublic={handleLike} showCreator showVisibility={false} />
             )}
           </section>
         </>

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { loadCatalog } from '@/catalog/loader';
 import { buildCatalogIndex } from '@/engine/catalogIndex';
-import { loadPublicLists, type RemoteList } from '@/auth/listService';
+import { loadPublicLists, setPublicListLike, type RemoteList } from '@/auth/listService';
 import type { Race, ScaleId } from '@/engine/types';
 import { validateList } from '@/engine/validate';
 import { ListTable } from './ListTable';
 
 type RaceFilter = 'ALL' | Race;
 type ValidityFilter = 'ALL' | 'VALID' | 'INVALID';
-type SortOption = 'updated-desc' | 'updated-asc' | 'name-asc' | 'name-desc' | 'race-asc' | 'scale-asc' | 'validity';
+type SortOption = 'updated-desc' | 'updated-asc' | 'likes-desc' | 'name-asc' | 'name-desc' | 'race-asc' | 'scale-asc' | 'validity';
 
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
 const SCALE_LABEL: Record<ScaleId, string> = { skirmish: 'Escaramuza', standard: 'Estándar', grand_offensive: 'Gran Ofensiva' };
@@ -41,6 +41,15 @@ export function PublicListsPage({
       });
     return () => { active = false; };
   }, []);
+
+  const handleLike = async (id: string, liked: boolean) => {
+    try {
+      const updated = await setPublicListLike(id, !liked);
+      setLists((current) => current.map((list) => list.id === id ? updated : list));
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo actualizar el me gusta.');
+    }
+  };
 
   const validityById = useMemo(() => new Map(lists.map((list) => [list.id, isListValid(list)])), [lists]);
   const visibleLists = useMemo(() => {
@@ -84,13 +93,13 @@ export function PublicListsPage({
           <label className="field">Raza<select value={raceFilter} onChange={(event) => setRaceFilter(event.target.value as RaceFilter)}><option value="ALL">Todas</option><option value="ZERG">Zerg</option><option value="TERRAN">Terran</option><option value="PROTOSS">Protoss</option></select></label>
           <label className="field">Escala<select value={scaleFilter} onChange={(event) => setScaleFilter(event.target.value as ScaleId | 'ALL')}><option value="ALL">Todas</option><option value="skirmish">Escaramuza</option><option value="standard">Estándar</option><option value="grand_offensive">Gran Ofensiva</option></select></label>
           <label className="field">Validez<select value={validityFilter} onChange={(event) => setValidityFilter(event.target.value as ValidityFilter)}><option value="ALL">Todas</option><option value="VALID">Válidas</option><option value="INVALID">No válidas</option></select></label>
-          <label className="field">Ordenar por<select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}><option value="updated-desc">Más recientes</option><option value="updated-asc">Más antiguas</option><option value="name-asc">Nombre A-Z</option><option value="name-desc">Nombre Z-A</option><option value="race-asc">Raza</option><option value="scale-asc">Escala</option><option value="validity">Validez</option></select></label>
+          <label className="field">Ordenar por<select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}><option value="updated-desc">Más recientes</option><option value="likes-desc">Más valoradas</option><option value="updated-asc">Más antiguas</option><option value="name-asc">Nombre A-Z</option><option value="name-desc">Nombre Z-A</option><option value="race-asc">Raza</option><option value="scale-asc">Escala</option><option value="validity">Validez</option></select></label>
           <div className="saved-list-filters__summary"><span className="muted small">{visibleLists.length} de {lists.length} listas</span>{(search || raceFilter !== 'ALL' || scaleFilter !== 'ALL' || validityFilter !== 'ALL' || sortBy !== 'updated-desc') && <button type="button" className="button-link button-link--compact" onClick={clearFilters}>Limpiar filtros</button>}</div>
         </section>
       )}
 
       {lists.length > 0 && visibleLists.length === 0 && <section className="panel empty">No hay listas públicas que coincidan con la búsqueda.</section>}
-      <ListTable lists={visibleLists} onViewPublic={onViewPublic} onClonePublic={onClonePublic} showCreator showVisibility={false} />
+      <ListTable lists={visibleLists} onViewPublic={onViewPublic} onClonePublic={onClonePublic} onLikePublic={handleLike} showCreator showVisibility={false} />
     </main>
   );
 }
@@ -105,6 +114,7 @@ function compareLists(a: RemoteList, b: RemoteList, sortBy: SortOption, validity
   switch (sortBy) {
     case 'updated-desc': comparison = b.remoteUpdatedAt.localeCompare(a.remoteUpdatedAt); break;
     case 'updated-asc': comparison = a.remoteUpdatedAt.localeCompare(b.remoteUpdatedAt); break;
+    case 'likes-desc': comparison = b.likeCount - a.likeCount; break;
     case 'name-asc': comparison = a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }); break;
     case 'name-desc': comparison = b.name.localeCompare(a.name, 'es', { sensitivity: 'base' }); break;
     case 'race-asc': comparison = RACE_LABEL[a.race].localeCompare(RACE_LABEL[b.race], 'es'); break;
