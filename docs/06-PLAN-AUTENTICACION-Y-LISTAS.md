@@ -1,4 +1,4 @@
-# Plan de autenticación, cuenta y listas sincronizadas
+# Estado de autenticación, cuenta y listas sincronizadas
 
 ## Objetivo
 
@@ -7,14 +7,15 @@ cuenta y pueda cargarlas desde cualquier dispositivo. La cuenta tendrá un panel
 para cambiar la contraseña y elegir una facción predeterminada. Al crear una
 lista nueva tras iniciar sesión, se usará esa facción.
 
-Este documento comenzó como planificación y ahora sirve como referencia de la
-implementación en curso.
+Este documento comenzó como planificación y ahora describe la implementación
+vigente, sus garantías y sus brechas. Los hallazgos priorizados están en
+[`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md).
 
 ## Alcance funcional
 
 - Registro con correo electrónico y contraseña.
-- Inicio y cierre de sesión, verificación de correo y restablecimiento de
-  contraseña.
+- Inicio y cierre de sesión y verificación de correo. La API de recuperación de
+  contraseña existe, pero la interfaz `/reset-password` todavía no.
 - Acceso al constructor y a cualquier dato de la aplicación sólo después de
   iniciar sesión.
 - Guardar, listar, cargar, renombrar y borrar listas propias en la nube.
@@ -25,27 +26,27 @@ implementación en curso.
 No forma parte de la primera versión: compartir listas entre usuarios,
 colaboración en tiempo real, perfiles públicos ni inicio de sesión social.
 
-## Arquitectura propuesta
+## Arquitectura actual
 
-La interfaz React no debe acceder directamente a la API ni a la base de datos.
-Se introducirá una capa de aplicación con dos contratos: autenticación y
-repositorio de listas. Así se preserva el motor de reglas y se mantiene aislado
-el protocolo del backend.
+La interfaz React accede a la API mediante `src/auth/authService.ts` y
+`src/auth/listService.ts`; nunca accede directamente a MariaDB. Zustand conserva
+la sesión y la lista en edición. El motor de reglas permanece independiente del
+protocolo y de React.
 
 ```text
 React (pantallas y componentes)
         |
 Zustand (sesión, preferencias, lista en edición)
         |
-auth/AuthService.ts        lists/ListRepository.ts
+authService.ts             listService.ts
         |                         |
-API propia                 Base de datos remota con propiedad por usuario
+API propia Express con autorización por sesión
         |
-Correo / restablecimiento
+MariaDB · SMTP
 ```
 
-La solución usará un **backend propio** con una API y una base de datos
-centralizada. La implementación usará MariaDB mediante XAMPP en desarrollo:
+La solución usa un **backend propio** con una API y una base de datos
+centralizada. En desarrollo puede usarse MariaDB mediante XAMPP:
 encaja con la relación usuario-listas, permite restricciones e índices claros y
 facilita copias de seguridad. El cliente sólo hablará con la API; nunca con la
 base de datos.
@@ -65,9 +66,9 @@ MariaDB centralizada
 
 ## Modelo de datos remoto
 
-Las contraseñas nunca se guardan en texto plano ni se procesan en el cliente.
-El backend almacenará exclusivamente hashes con Argon2id y gestionará sesiones
-de corta duración con renovación segura.
+Las contraseñas nunca se guardan en texto plano. El backend almacena hashes con
+Argon2id y emite JWT de 15 minutos en cookies `HttpOnly`; no existe renovación
+automática de sesión.
 
 ### Usuario y perfil
 
@@ -78,12 +79,17 @@ users
   password_hash: texto, sólo accesible al backend
   email_verified_at: fecha UTC o nulo
   deleted_at: fecha UTC o nulo; nulo significa cuenta activa
+  is_active: booleano administrativo
+  session_version: entero; revoca sesiones anteriores
+  last_login_at: fecha UTC o nulo
   created_at: fecha UTC
   updated_at: fecha UTC
 
 profiles
   user_id: UUID, clave primaria y referencia a users
   default_race: ZERG | TERRAN | PROTOSS
+  nickname: texto o nulo
+  avatar: texto o nulo
   created_at: fecha UTC
   updated_at: fecha UTC
 ```
@@ -99,6 +105,7 @@ saved_lists
   payload: JSON (ArmyList validada)
   catalog_content_version: texto
   schema_version: texto
+  revision: entero para control optimista
   created_at: fecha UTC
   updated_at: fecha UTC
 ```
@@ -113,56 +120,48 @@ revocarán todas sus sesiones y se bloqueará cualquier acceso futuro. Sus lista
 no se eliminarán automáticamente: quedarán asociadas al usuario desactivado y
 no serán accesibles mientras la cuenta permanezca borrada lógicamente.
 
-## Estructura prevista
+### Otras tablas
 
-Esta es la estructura objetivo para la futura implementación; aún no se crean
-estos módulos.
+```text
+account_tokens        verificación y recuperación; hash, propósito y caducidad
+app_settings          configuración SMTP cifrada con AES-256-GCM
+email_delivery_logs   resultado y diagnóstico de cada intento de correo
+schema_migrations     migraciones aplicadas
+```
+
+## Estructura implementada
 
 ```text
 src/
   auth/
-    AuthService.ts          contrato de autenticación
-    authClient.ts           cliente de la API de autenticación
-    authTypes.ts
-  lists/
-    ListRepository.ts       contrato de almacenamiento de listas
-    remoteListRepository.ts adaptador de base de datos remota
+    authService.ts          cliente de cuenta, perfil y administración
+    listService.ts          cliente de listas remotas
   store/
     authStore.ts            sesión, carga y estado de autenticación
-    preferencesStore.ts     preferencias del perfil
-    listStore.ts            lista en edición (existente)
+    listStore.ts            lista en edición y valores derivados
   ui/
-    auth/
-      LoginPage.tsx
-      RegisterPage.tsx
-      ResetPasswordPage.tsx
+    auth/AuthGate.tsx       acceso, registro y verificación
     lists/
       SavedListsPage.tsx
     account/
       AccountPage.tsx
-      PasswordForm.tsx
-      DefaultRaceForm.tsx
-      DeleteAccountForm.tsx
-  routes/
-    RequireAuthenticatedUser.tsx
-server/                         futuro backend propio
+      SuperAdminPanel.tsx
+server/
   src/
     app.ts                       creación del servidor y rutas
     config/                      entorno y configuración segura
     modules/
       auth/                      registro, sesión, contraseña y correo
-      users/                     perfil y preferencias
       lists/                     CRUD y autorización de listas
+      admin/                     usuarios, SMTP y registros de correo
+      email/                     transporte, configuración y trazas
     db/
       migrations/                evolución versionada de MariaDB
-      repositories/              acceso a datos, aislado de las rutas
-    middleware/                  autenticación, errores y límites
-  tests/
-    integration/                 API, autorización y base de datos
+    middleware/                  autenticación y correo verificado
 ```
 
-También se añadirán ejemplos de entorno separados para cliente y servidor. El
-cliente sólo conocerá `VITE_API_BASE_URL`; el servidor conservará `DATABASE_URL`,
+`.env.example` documenta el entorno común en la raíz. El cliente sólo conoce
+`VITE_API_BASE_URL`; el servidor conserva `DATABASE_URL`,
 secretos de sesión, configuración de correo y cualquier clave privada. Las
 credenciales reales nunca se incluirán en Git.
 
@@ -170,8 +169,8 @@ credenciales reales nunca se incluirán en Git.
 
 ### Usuario sin sesión
 
-1. Sólo puede acceder a las pantallas de registro, inicio de sesión y
-   recuperación de contraseña.
+1. Puede acceder a registro, inicio de sesión y verificación. La recuperación
+   existe en la API, pero carece de pantallas y cliente en la web.
 2. Cualquier ruta del constructor, de listas o de cuenta redirige a inicio de
    sesión.
 3. Una vez autenticado y con correo verificado, accede al constructor y a sus
@@ -197,25 +196,60 @@ credenciales reales nunca se incluirán en Git.
 
 ## Seguridad y privacidad
 
-- Hashes de contraseña con Argon2id, sal única por contraseña y parámetros
-  revisables.
-- Verificación de correo obligatoria antes de habilitar el guardado y la carga
-  de listas.
-- Restablecimiento de contraseña mediante un enlace propio, aleatorio, de un
-  solo uso y con caducidad corta.
-- Cambio de contraseña sólo en una sesión válida y con reautenticación.
-- Borrado lógico de cuenta sólo tras reautenticación y una confirmación
-  explícita; revoca todas las sesiones activas inmediatamente.
-- Cookies de sesión `HttpOnly`, `Secure` y `SameSite`, protección CSRF cuando
-  corresponda y rotación de tokens al renovarlos.
-- Límites de intentos y mensajes de error que no revelen si un correo existe.
-- Validar el `payload` tanto en cliente como en servidor antes de guardarlo.
-- Usar HTTPS en producción, rotar claves expuestas y limitar las variables de
-  entorno públicas a las estrictamente necesarias.
-- Definir retención y recuperación de cuentas antes del lanzamiento. El
-  borrado de cuenta será lógico y no eliminará listas automáticamente.
+### Implementado
 
-## Fases de desarrollo
+- Hashes de contraseña con Argon2id.
+- Tokens aleatorios de 32 bytes almacenados como SHA-256, de un solo uso y con
+  30 minutos de caducidad.
+- Cookie de sesión `HttpOnly`, `SameSite=Lax`, `Secure` en producción, ruta
+  `/api` y 15 minutos de duración.
+- `session_version` revoca sesiones al cambiar contraseña, desactivar o borrar
+  una cuenta.
+- Reautenticación para cambio de contraseña y borrado lógico de cuenta.
+- Consultas parametrizadas y filtrado de listas por propietario en servidor.
+- Contraseña SMTP cifrada con AES-256-GCM derivada de `SESSION_SECRET`.
+
+### Brechas abiertas
+
+- **Crítica:** el superadministrador se reconoce por un correo fijo en código y
+  no se exige que esté verificado. Debe sustituirse por roles persistidos y un
+  bootstrap fuera del registro público.
+- No existen límites de intentos para registro, acceso o recuperación.
+- La recuperación tiene API, pero no interfaz; tampoco hay reenvío de
+  verificación.
+- Si SMTP falla durante el registro, el usuario ya está creado y puede quedar
+  bloqueado. En una base vacía de producción esto también impide configurar
+  SMTP de forma segura desde el propio panel.
+- El servidor valida la estructura del payload, no sus referencias de catálogo
+  ni su legalidad.
+- No hay pruebas de integración de autenticación, autorización, administración
+  o MariaDB ni pruebas E2E.
+- Rotar `SESSION_SECRET` invalida sesiones y hace necesario volver a configurar
+  la contraseña SMTP cifrada.
+- Deben definirse retención, copias de seguridad y recuperación de cuentas
+  antes del lanzamiento.
+
+## Estado de implementación
+
+| Área | Estado |
+|---|---|
+| Registro, login, logout y sesión | Implementado |
+| Verificación de correo | Implementada; reenvío pendiente |
+| Recuperación de contraseña | Backend implementado; frontend pendiente |
+| Perfil, raza predeterminada, apodo y avatar | Implementado |
+| Cambio de contraseña y borrado lógico | Implementado |
+| Listas remotas y control de propietario | Implementado; faltan pruebas de integración |
+| Control de conflictos por revisión | Implementado en actualización; UX básica |
+| Administración de usuarios, SMTP y logs | Implementada con autorización insegura por correo fijo |
+| Rate limiting y auditoría sensible | No implementado |
+| Validación semántica de listas en servidor | No implementada |
+| Pruebas API/BD y E2E | No implementadas |
+| Trabajo offline y sincronización posterior | No implementado |
+
+## Plan original de desarrollo (histórico)
+
+Las fases siguientes explican la intención original. La tabla anterior, no esta
+lista, representa el estado vigente.
 
 ### Fase 0 - Decisiones y preparación
 
@@ -280,6 +314,10 @@ panel de cuenta.
 
 ## Criterios de aceptación
 
+Son criterios objetivo. La auditoría del 3 de agosto confirma el aislamiento por
+propietario en el código, pero no mediante pruebas de integración; recuperación,
+rate limiting y autorización administrativa todavía no los cumplen.
+
 - Un usuario no autenticado no puede acceder a listas de otra cuenta.
 - Un usuario no autenticado no puede acceder al constructor, a las listas ni al
   panel de cuenta, incluso navegando directamente a sus URL.
@@ -301,8 +339,8 @@ panel de cuenta.
 
 1. Confirmado: backend propio con una base de datos centralizada.
 2. Confirmado: acceso inicial sólo con correo y contraseña.
-3. Confirmado: no habrá listas locales; todas se guardan en la base de datos
-   centralizada de la aplicación.
+3. Confirmado: el guardado de producto es remoto; JSON y seed son formatos
+   portables y no constituyen una biblioteca local de listas.
 4. Confirmado: el correo debe verificarse antes de poder guardar o cargar
    listas.
 5. Confirmado: la aplicación sólo es accesible para usuarios autenticados; las

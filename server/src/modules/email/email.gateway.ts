@@ -37,8 +37,8 @@ export function describeSmtpError(error: unknown): string {
   switch (failure?.code) {
     case 'EAUTH': return withDetail('El servidor rechazó el usuario o la contraseña SMTP.');
     case 'EDNS': return withDetail('No se pudo encontrar el servidor SMTP. Revisa el nombre del host.');
-    case 'ECONNECTION': return withDetail('No se pudo conectar con el servidor SMTP. Revisa el host, el puerto y el cortafuegos.');
-    case 'ETIMEDOUT': return withDetail('La conexión SMTP agotó el tiempo de espera.');
+    case 'ECONNECTION': return withDetail('No se pudo conectar con el servidor SMTP. Revisa el host, el puerto y el cortafuegos. Si usas Cloudflare, el registro del host de correo debe estar en modo DNS only (nube gris).');
+    case 'ETIMEDOUT': return withDetail('La conexión SMTP agotó el tiempo de espera. Si usas Cloudflare, el registro del host de correo debe estar en modo DNS only (nube gris).');
     case 'ESOCKET': return withDetail('Falló la conexión segura SMTP. Revisa el puerto y la opción TLS/SSL.');
     case 'EENVELOPE': return withDetail('El servidor rechazó el remitente o el destinatario.');
     case 'EMESSAGE': return withDetail('El servidor rechazó el contenido del correo.');
@@ -68,10 +68,25 @@ export class SmtpEmailGateway implements EmailGateway {
       auth: settings.username
         ? { user: settings.username, pass: settings.password ?? '' }
         : undefined,
-      connectionTimeout: 15_000,
-      greetingTimeout: 15_000,
-      socketTimeout: 30_000,
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
     });
+  }
+
+  private async withTimeout<T>(operation: Promise<T>, timeoutMs: number, command: string): Promise<T> {
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const expired = new Promise<never>((_resolve, reject) => {
+      timeout = setTimeout(() => reject(Object.assign(
+        new Error(`La operación SMTP no respondió en ${Math.round(timeoutMs / 1000)} segundos.`),
+        { code: 'ETIMEDOUT', command },
+      )), timeoutMs);
+    });
+    try {
+      return await Promise.race([operation, expired]);
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
   }
 
   private async deliver(input: {
@@ -80,21 +95,23 @@ export class SmtpEmailGateway implements EmailGateway {
     subject: string;
     text: string;
     html: string;
-    verifyConnection?: boolean;
   }): Promise<SmtpDeliveryResult> {
     try {
       const settings = await this.settings.get(true);
       if (!settings) throw new Error('La configuración SMTP todavía no se ha guardado.');
       if (settings.username && !settings.password) throw new Error('Falta la contraseña SMTP.');
       const transporter = this.transporter(settings);
-      if (input.verifyConnection) await transporter.verify();
-      const result = await transporter.sendMail({
-        from: settings.from,
-        to: input.recipient,
-        subject: input.subject,
-        text: input.text,
-        html: input.html,
-      });
+      const result = await this.withTimeout(
+        transporter.sendMail({
+          from: settings.from,
+          to: input.recipient,
+          subject: input.subject,
+          text: input.text,
+          html: input.html,
+        }),
+        30_000,
+        'CONNECT / AUTH / SEND',
+      ).finally(() => transporter.close());
       const messageId = result.messageId || null;
       const accepted = result.accepted.map(String);
       const rejected = result.rejected.map(String);
@@ -157,7 +174,6 @@ export class SmtpEmailGateway implements EmailGateway {
       subject: 'Prueba SMTP · StarCraft TMG',
       text: 'La configuración SMTP funciona correctamente.',
       html: '<p>La configuración SMTP funciona correctamente.</p>',
-      verifyConnection: true,
     });
   }
 }

@@ -1,5 +1,7 @@
 # Modelo de datos — Constructor de listas de ejército
 
+Versión 1.1 · Alineada con los tipos y la persistencia remota vigentes.
+
 Versión 1.0 · Esquema del catálogo y de las listas guardadas
 
 ---
@@ -227,13 +229,15 @@ interface Ability {
 ```ts
 interface UnitEntry {
   id: string;                    // "zerg.entry.swarmling"
+  seedId: number;                // índice estable del códec de seed
   cardId: string;                // "zerg.card.zergling"
   race: Race;
-  name: Localized;               // "Swarmling (Zergling)"
+  name: ProperName;              // "Swarmling (Zergling)"
   tags: FactionTag[];            // determina la elegibilidad
   slotType: SlotType;
   combatRole: Localized;
-  summoned: boolean;             // true → no reclutable, no ocupa espacios
+  unique: boolean;
+  summoned: boolean;             // true → solo como referencia; no computa
   compositions: Composition[];
   upgrades: UpgradeOption[];
 }
@@ -248,7 +252,10 @@ interface Composition {
 
 `supplyValue` se guarda **en la composición**, no se deriva de `supplyProfile`. El apéndice de puntos lo indica explícitamente por opción; duplicar la lógica de bandas sería una fuente de discrepancias.
 
-`summoned: true` (Roachling, Point Defence Drone, Pylon) implica sin `compositions` de coste: no se incluyen en la lista (§9.1.9). Se catalogan porque el usuario querrá consultarlas.
+`summoned: true` (Roachling, Omega Worm, Point Defense Drone, Pylon) identifica
+una unidad que puede añadirse con `reference: true` para consultar sus
+estadísticas. Conserva una composición técnica, pero el motor no suma minerales
+ni espacios cuando está marcada como referencia (§9.1.9).
 
 ### 3.9 `MissionCard` y `DeploymentCard`
 
@@ -325,9 +332,10 @@ interface ArmyList {
   catalogContentVersion: string; // con qué versión se construyó
   schemaVersion: string;
 
+  race: Race;
   scaleId: string;
   mineralLimit: number;          // resuelto; en Gran Ofensiva lo fija el usuario
-  factionCardId: string;
+  factionCardId: string | null;
   tacticalCardIds: string[];     // con repeticiones si la carta no es UNIQUE
   creepCardId: string | null;    // Zerg: obligatorio exactamente uno (R11)
   entries: ListEntry[];
@@ -355,6 +363,19 @@ interface AppliedUpgrade {
 ```
 
 Nada de costes ni totales en la lista guardada. Todo se recalcula al cargar, contra el catálogo.
+
+La API envuelve el documento con metadatos remotos que no forman parte del
+payload portable:
+
+```ts
+interface RemoteList extends ArmyList {
+  revision: number;              // control optimista mediante If-Match
+  remoteUpdatedAt: string;       // fecha generada por MariaDB
+}
+```
+
+El propietario tampoco viaja dentro de `ArmyList`: el servidor lo obtiene de la
+sesión y lo guarda como `saved_lists.owner_id`.
 
 `instanceId` es imprescindible: el ejemplo del manual incluye dos unidades de Marines de 9 modelos con equipamiento potencialmente distinto. Sin identificador de instancia serían indistinguibles.
 
@@ -459,7 +480,9 @@ Resultado esperado del motor:
 | Eliminación o cambio de un `id` | Cambio mayor. Requiere migración explícita |
 | Campo nuevo en el esquema | Sube `schemaVersion`. Compatible hacia atrás |
 
-Una lista nunca se modifica en silencio al cambiar el catálogo. Si el cambio la afecta, se informa al usuario y decide él.
+Una lista nunca debe modificarse en silencio al cambiar el catálogo. El informe
+detallado de diferencias entre versiones sigue siendo comportamiento pendiente;
+hoy la lista se recalcula contra el catálogo disponible.
 
 ## 8. Validación del catálogo
 
@@ -474,3 +497,8 @@ Antes de publicar, un script debe comprobar:
 6. Coherencia entre `supplyProfile` de la carta y los `supplyValue` de las composiciones.
 
 El punto 3 es el que atrapa el fallo más probable de todo el proyecto: una unidad transcrita del PDF de cartas cuyo coste nunca se cruzó con el reglamento.
+
+**Estado actual:** las pruebas verifican esquema, referencias internas,
+unicidad de `seedId` y coherencia del catálogo. No existe todavía un cruce
+reproducible de principio a fin contra los PDF ni un registro histórico de
+`seedId` retirados; ambos controles siguen pendientes.

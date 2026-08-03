@@ -11,7 +11,8 @@ TypeScript genera el servidor en `server/dist/`.
 - Document root de Node.js: `httpdocs/dist`
 - Archivo de inicio: `app.js`
 - Modo de aplicación: `production`
-- Versión de Node.js: 20 o posterior
+- Versión de Node.js: 22 mientras `package.json` y el orquestador mantengan la
+  ruta `/opt/plesk/node/22/bin/node`
 
 ## Configuración inicial
 
@@ -30,8 +31,9 @@ NODE_ENV=production
 No fijar `PORT` en Plesk: el alojamiento Node.js debe proporcionar el puerto al
 proceso de la aplicación.
 
-Desde la pantalla Node.js de Plesk, ejecutar una vez `NPM Install`. Después,
-ejecutar el script `deploy:plesk` y habilitar la aplicación.
+Desde la pantalla Node.js de Plesk, ejecuta `deploy:plesk` y habilita la
+aplicación. No es necesario pulsar antes `NPM Install`, porque el propio script
+realiza `npm ci`.
 
 ## Repositorio Git de Plesk
 
@@ -46,14 +48,15 @@ En "Acciones adicionales de despliegue", configurar una orden por línea:
 
 ```sh
 cd httpdocs
-npm ci
 npm run deploy:plesk
 touch tmp/restart.txt
 ```
 
-Si Plesk indica que `npm` no existe, hay que sustituirlo por la ruta de npm de
-la versión de Node seleccionada en Plesk, por ejemplo
-`/opt/plesk/node/20/bin/npm`.
+No añadas otro `npm ci`: `deploy:plesk` ya ejecuta una instalación limpia con
+las dependencias de desarrollo y opcionales necesarias para compilar.
+
+Si Plesk indica que `npm` no existe, usa la ruta de la versión configurada:
+`/opt/plesk/node/22/bin/npm run deploy:plesk`.
 
 ## Webhook de GitHub
 
@@ -78,3 +81,41 @@ Rollup correspondiente a Linux.
 El orquestador añade `/opt/plesk/node/22/bin` al `PATH` de la instalación y la
 compilación para que los scripts nativos, como el de `argon2`, puedan invocar
 `node` dentro del entorno aislado de Plesk.
+
+## Comprobaciones y limitaciones conocidas
+
+Antes del primer despliegue y de cada cambio de esquema:
+
+1. Realiza una copia de seguridad de MariaDB.
+2. Comprueba que `.env` contiene `NODE_ENV=production`, un `SESSION_SECRET`
+   robusto y orígenes HTTPS exactos.
+3. Ejecuta el despliegue en un entorno de prueba y verifica `/api/health`.
+4. Conserva una versión anterior de `dist/`, `server/dist/` y la base de datos
+   para poder volver atrás.
+
+El ejecutor de migraciones actual no comprueba todavía el resultado de
+`GET_LOCK` y las operaciones DDL de MySQL pueden quedar aplicadas parcialmente
+aunque exista una transacción. Hasta corregirlo, una migración interrumpida debe
+revisarse manualmente antes de reintentar el despliegue.
+
+Existe además un bloqueo de bootstrap en una base vacía: producción exige SMTP
+para verificar al primer usuario, pero SMTP se configura desde un panel
+administrativo al que esa cuenta no puede llegar sin verificarse. El registro
+crea la cuenta antes de fallar el envío y no hay reenvío. Antes del lanzamiento
+debe existir un mecanismo seguro de provisión inicial —administrador creado
+fuera del registro público y SMTP por entorno/migración, o un flujo equivalente
+con recuperación idempotente—. No debe resolverse cambiando temporalmente el
+servidor a modo desarrollo.
+
+Conserva `SESSION_SECRET`: rotarlo revoca todas las sesiones y también impide
+descifrar la contraseña SMTP existente, porque ambas funciones comparten el
+secreto. Tras una rotación debe guardarse de nuevo la configuración SMTP.
+
+Las rutas de la SPA (`/verify-email`, `/reset-password` y cualquier futura ruta
+del cliente) necesitan fallback a `dist/index.html`, excluyendo `/api` y los
+ficheros reales. Esa regla no se genera hoy en `dist/`; debe configurarse en
+Apache/Plesk antes de probar enlaces abiertos directamente desde un correo.
+
+La publicación multiusuario debe esperar al cierre de los hallazgos P0 y P1 de
+[`docs/08-AUDITORIA-2026-08-03.md`](docs/08-AUDITORIA-2026-08-03.md), en
+especial el modelo de permisos de superadministración.

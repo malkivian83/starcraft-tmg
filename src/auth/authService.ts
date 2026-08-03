@@ -37,16 +37,24 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 20_000): Promise<T> {
   let response: Response;
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(() => controller.abort(), timeoutMs);
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {
       ...init,
       credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...init.headers },
+      signal: controller.signal,
     });
   } catch {
+    if (controller.signal.aborted) {
+      throw new ApiError(0, `El servidor no respondió en ${Math.round(timeoutMs / 1000)} segundos. Revisa los registros del servidor y la conectividad SMTP.`);
+    }
     throw new ApiError(0, 'No se puede conectar con el servidor de la aplicación.');
+  } finally {
+    globalThis.clearTimeout(timeout);
   }
   if (!response.ok) {
     const payload = await response.json().catch(() => null) as { error?: { message?: string } } | null;
@@ -118,7 +126,7 @@ export interface SmtpTestResult { ok: boolean; messageId: string | null; accepte
 export async function testSmtpSettings(recipient: string): Promise<SmtpTestResult> {
   return (await request<{ result: SmtpTestResult }>('/admin/smtp/test', {
     method: 'POST', body: JSON.stringify({ recipient }),
-  })).result;
+  }, 40_000)).result;
 }
 export async function getEmailDeliveryLogs(limit = 100): Promise<EmailDeliveryLog[]> {
   return (await request<{ logs: EmailDeliveryLog[] }>(`/admin/smtp/logs?limit=${limit}`)).logs;

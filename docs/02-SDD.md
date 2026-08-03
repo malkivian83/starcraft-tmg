@@ -1,15 +1,20 @@
 # SDD — Documento de diseño de software
 
 Constructor de listas de ejército · StarCraft: The Miniatures Game
-Versión 1.0
+Versión 2.0 · Arquitectura vigente a 3 de agosto de 2026
 
 Documento hermano: [`03-MODELO-DATOS.md`](03-MODELO-DATOS.md), que define el esquema de datos referenciado aquí.
+Riesgos y desviaciones actuales:
+[`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md).
 
 ---
 
 ## 1. Visión general
 
-Aplicación web de una sola página, sin servidor, que se sirve como ficheros estáticos desde una URL. Todo el catálogo del juego se empaqueta con la aplicación; todo el estado del usuario vive en su dispositivo.
+Aplicación web de una sola página con API propia. El catálogo y el motor se
+empaquetan con el cliente; la sesión, el perfil y las listas guardadas dependen
+del backend Express y de MariaDB. JSON y seed permiten transportar una lista,
+pero no sustituyen el almacenamiento remoto de la cuenta.
 
 **Principio rector del diseño:** el motor de reglas es una librería pura, independiente de React, del navegador y de la interfaz. Es lo único que decide si una lista es legal, y es lo único que se prueba exhaustivamente. Si esa separación se rompe, la corrección del producto deja de ser verificable.
 
@@ -19,13 +24,16 @@ Aplicación web de una sola página, sin servidor, que se sirve como ficheros es
 |---|---|---|
 | Lenguaje | TypeScript (modo estricto) | El dominio tiene muchas restricciones expresables en tipos; se detectan en compilación en lugar de en la mesa de juego |
 | Interfaz | React 19 | Ecosistema, componentes, conocido |
-| Construcción | Vite | Arranque rápido, PWA con plugin, salida estática |
+| Construcción | Vite | Arranque rápido, PWA y bundle del frontend |
 | Estado | Zustand | El estado es un único documento (la lista) más el catálogo de solo lectura; no hace falta más |
-| Enrutado | React Router | Rutas para construcción, catálogo, listas guardadas e impresión |
-| Estilos | CSS Modules + variables CSS | Sin dependencia de framework; control total sobre las hojas de impresión |
-| Persistencia | IndexedDB vía `idb` | localStorage se queda corto con varias listas y catálogo cacheado |
-| PDF | `@react-pdf/renderer` o impresión nativa | Ver §8 |
-| Pruebas | Vitest + Testing Library + Playwright | Unitarias del motor, componentes, y un flujo completo extremo a extremo |
+| Navegación | Estado React en `App.tsx` | Constructor, listas y cuenta sin un router activo |
+| Estilos | CSS global + variables CSS | Sin framework; control de temas y hojas de impresión |
+| API | Express 5 | Autenticación, perfil, administración y listas |
+| Persistencia | MariaDB mediante `mysql2` | Propiedad por usuario, revisiones y migraciones |
+| Sesión | JWT en cookie `HttpOnly` | Sesión corta y revocable por `session_version` |
+| Correo | Nodemailer + SMTP configurable | Verificación, recuperación y diagnóstico |
+| PDF | Impresión nativa | Ver §8 |
+| Pruebas | Vitest | Motor, catálogo, store y diagnóstico SMTP; integración y E2E pendientes |
 | Validación de datos | Zod | Un esquema, dos usos: validación en construcción del catálogo y validación de listas importadas |
 
 Node.js 24.18.1 ya está instalado en el equipo.
@@ -33,27 +41,19 @@ Node.js 24.18.1 ya está instalado en el equipo.
 ## 3. Arquitectura
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  Interfaz (React)                                   │
-│  Asistente · Catálogo · Listas · Vistas de impresión│
-└───────────────┬─────────────────────────────────────┘
-                │  solo lectura del resultado
-┌───────────────▼─────────────────────────────────────┐
-│  Estado de aplicación (Zustand)                     │
-│  lista en edición · listas guardadas · preferencias │
-└───────┬───────────────────────────────┬─────────────┘
-        │                               │
-┌───────▼──────────────┐   ┌────────────▼─────────────┐
-│  Motor de reglas     │   │  Persistencia            │
-│  TS puro, sin React  │   │  IndexedDB · import/export│
-│  validar · calcular  │   └──────────────────────────┘
-│  consultar elegibles │
-└───────┬──────────────┘
-        │
-┌───────▼──────────────────────────────────────────────┐
-│  Catálogo (JSON estático versionado, solo lectura)   │
-│  zerg.json · terran.json · protoss.json · core.json  │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ React + Zustand                                      │
+│ sesión · lista en edición · listas · cuenta · impresión│
+└──────────────┬───────────────────┬───────────────────┘
+               │                   │ HTTPS / JSON
+┌──────────────▼─────────────┐  ┌──▼───────────────────┐
+│ Motor puro + catálogo JSON │  │ API Express          │
+│ validar · calcular · seed  │  │ auth · listas · admin│
+└────────────────────────────┘  └──┬───────────────────┘
+                                   │
+                         ┌─────────▼─────────┐
+                         │ MariaDB + SMTP    │
+                         └───────────────────┘
 ```
 
 Las dependencias apuntan siempre hacia abajo. El motor no sabe que existe React; la interfaz no reimplementa ninguna regla.
@@ -73,18 +73,23 @@ src/
     loader.ts        ← carga y valida el catálogo
     data/            ← JSON del catálogo
   store/
+  auth/              ← clientes HTTP de autenticación y listas
   ui/
     builder/         ← asistente de construcción
-    browser/         ← consulta de cartas
     lists/           ← gestión de listas guardadas
+    account/         ← perfil, seguridad y administración
+    auth/            ← acceso, registro y verificación
     print/           ← vistas de impresión y PDF
     common/
-  i18n/              ← textos en español + glosario
+server/src/
+  modules/           ← auth, lists, admin y email
+  middleware/        ← sesión y autorización
+  db/                ← pool, migraciones y ejecutor
 tools/
   extract/           ← scripts de extracción desde los PDF
-  verify/            ← verificación cruzada del catálogo
+  deploy-plesk.mjs   ← compilación, migración y despliegue
 tests/
-  fixtures/          ← listas de referencia, incluida la del manual
+  engine/ · catalog/ · store/ · server/
 ```
 
 ## 4. Motor de reglas
@@ -200,7 +205,11 @@ Las imágenes de las cartas se extraen con `pdftoppm` a PNG, recortadas por cart
 
 ### 5.2 Carga en la aplicación
 
-El catálogo se importa dinámicamente por raza: la versión 1 solo carga Zerg, y Terran y Protoss no penalizan el arranque cuando se añadan. El catálogo de escenarios (`scenarios.json`) se carga siempre, porque es común a las tres razas y no depende de ninguna. Se valida con Zod en la primera carga y se cachea en IndexedDB junto con su `contentVersion`.
+El cargador actual importa estáticamente los catálogos Zerg, Terran y Protoss,
+además del núcleo y los escenarios comunes. Todos se incluyen en el chunk
+principal y se validan con Zod al cargarlos. La compilación auditada genera un
+chunk de unos 732 kB (188 kB gzip); la carga dinámica por raza queda como mejora
+de rendimiento, no como comportamiento implementado.
 
 ### 5.3 Cambios de versión
 
@@ -353,13 +362,36 @@ Los nombres propios (`ProperName` en el modelo) se muestran **siempre en inglés
 
 | Almacén | Contenido |
 |---|---|
-| `lists` | Listas del usuario, indexadas por id |
-| `catalogCache` | Catálogo validado con su `contentVersion` |
-| `prefs` | Preferencias de interfaz |
+| MariaDB `saved_lists` | Payload de listas, propietario y revisión |
+| MariaDB `users`/`profiles` | Identidad, estado, versión de sesión y preferencias |
+| MariaDB `account_tokens` | Tokens de verificación y recuperación, almacenados como hash |
+| MariaDB `app_settings` | Configuración SMTP cifrada |
+| MariaDB `email_delivery_logs` | Resultado de los intentos de correo |
+| Estado Zustand | Sesión y lista que se está editando; no es persistencia durable |
 
-Exportación: JSON con la lista más su `catalogContentVersion`. La importación valida con Zod, comprueba que todas las referencias existen en el catálogo actual y, si no, explica exactamente qué falta en lugar de fallar en genérico.
+La API obtiene siempre el propietario desde la sesión y usa `revision`/`If-Match`
+para evitar una sobrescritura silenciosa. El servidor valida hoy la estructura
+del payload, pero aún debe validar referencias de catálogo y coherencia de raza.
 
-### 7.1 Códec de seed (compartir por código)
+Exportación: JSON con la lista más su `catalogContentVersion`. La importación
+valida el esquema y vuelve a calcular costes y legalidad en el cliente.
+
+### 7.1 Sesión y autorización
+
+- Contraseñas con Argon2id.
+- JWT de 15 minutos en cookie `HttpOnly`, `SameSite=Lax`, `Secure` en
+  producción y ruta `/api`.
+- `session_version` revoca sesiones al cambiar contraseña, desactivar o borrar
+  una cuenta.
+- Tokens de cuenta aleatorios de 32 bytes, almacenados como SHA-256, de un solo
+  uso y con caducidad de 30 minutos.
+- Consultas parametrizadas y propiedad de listas filtrada en el servidor.
+
+Deuda abierta: roles administrativos persistidos, verificación obligatoria para
+administrar, límites de intentos, recuperación completa en el frontend,
+reenvío de verificación y pruebas de integración de estas garantías.
+
+### 7.2 Códec de seed (compartir por código)
 
 Además del fichero JSON, una lista se puede exportar como **seed**: una cadena corta que la codifica por completo y que se comparte pegándola en un chat.
 
@@ -367,7 +399,9 @@ Además del fichero JSON, una lista se puede exportar como **seed**: una cadena 
 SCT1-K7M2P-Q4XR9-B3NF6-W8HD2
 ```
 
-**El seed contiene la lista, no la referencia.** No hay servidor, así que un identificador que apuntara a un registro remoto no funcionaría sin conexión ni sobreviviría al cierre del proyecto. Todo va dentro de la cadena.
+**El seed contiene la lista, no la referencia.** Aunque existe un servidor, el
+formato se mantiene autocontenido para compartir y conservar una lista sin
+depender de permisos, del identificador remoto o de la vida del servicio.
 
 **Formato:**
 
@@ -428,7 +462,8 @@ interface SeedDecodeResult {
 
 Propiedad que debe cumplirse y se prueba con generación aleatoria: `decodeSeed(encodeSeed(l)) === l` para cualquier lista válida.
 
-El modelo está preparado para añadir sincronización más adelante (decisión «dispositivo ahora, cuentas después»): las listas ya tienen `id` estable y marcas de tiempo, que es lo que necesitaría una sincronización futura. No se implementa nada de servidor ahora.
+La sincronización con cuenta ya está implementada. El `id` estable identifica la
+lista y la revisión remota detecta conflictos entre sesiones.
 
 ## 8. Impresión y PDF
 
@@ -457,24 +492,31 @@ Consecuencia técnica: **no hace falta `@react-pdf/renderer`**. Basta `@media pr
 
 La hoja resumen A4 se genera en español; las imágenes de las cartas quedan en su inglés original.
 
-Contrapartida asumida: las imágenes de carta aumentan el tamaño del paquete offline. Se mitiga cargándolas de forma diferida y cacheándolas bajo demanda, no en el precacheo inicial.
+Las imágenes de cartas se cargan de forma diferida y se cachean bajo demanda.
+El logo y los emblemas de facción no están incluidos expresamente en esa regla
+de caché y deben revisarse si se decide soportar un modo offline real.
 
 ## 9. PWA y despliegue
 
-`vite-plugin-pwa` con precacheo de la aplicación, el catálogo y las imágenes de cartas. Tras la primera visita, la app funciona íntegramente sin conexión (US-15).
+`vite-plugin-pwa` genera manifest, service worker y caché de la interfaz. La PWA
+es instalable, pero la restauración de sesión y el acceso a las listas requieren
+la API; no se garantiza funcionamiento íntegro sin conexión.
 
-Despliegue como sitio estático. Al ser de uso privado, se protege el acceso a la URL (hosting con acceso restringido o enlace no indexado, según prefieras).
+El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
+`server/dist/`, `app.js` carga la API y MariaDB conserva los datos. Consulta
+[`../PLESK_DEPLOYMENT.md`](../PLESK_DEPLOYMENT.md).
 
 ## 10. Plan de pruebas
 
 | Nivel | Alcance | Herramienta |
 |---|---|---|
-| Unitario | Cada regla R1–R10 y aviso A1–A5, con casos límite | Vitest |
+| Unitario | Cada regla R1–R13 y aviso A1–A5, con casos límite | Vitest |
 | Datos | Esquema del catálogo, integridad referencial, cruce reglamento ↔ cartas | Vitest + Zod |
 | Regresión | Lista del manual §9.1: 1 670 minerales, 185 gas, 8/8 Núcleo, 2/2 Élite, 2/3 Apoyo, 1/1 Héroe, 0/1 Aéreo | Vitest |
-| Componentes | Interacciones del asistente | Testing Library |
+| Componentes | Interacciones del asistente | **Pendiente** |
 | Propiedades | `decodeSeed(encodeSeed(l)) === l` con listas generadas aleatoriamente; corrupción detectada siempre | Vitest + fast-check |
-| Extremo a extremo | Construir, guardar, exportar, importar por seed e imprimir una lista Zerg | Playwright |
+| API/BD | Autenticación, autorización, conflictos y administración | **Pendiente** |
+| Extremo a extremo | Registro, verificación, listas, cuenta e impresión | **Pendiente** |
 | Impresión | Salida A4 sin elementos de interfaz y legible en gris | Revisión manual |
 
 El caso de regresión del manual es la prueba más valiosa del proyecto: es el único punto donde una fuente externa e independiente confirma que datos y reglas son correctos a la vez.
@@ -484,8 +526,8 @@ El caso de regresión del manual es la prueba más valiosa del proyecto: es el �
 | Decisión | Motivo | Alternativa descartada |
 |---|---|---|
 | Motor puro separado de React | Permite probar la corrección sin renderizar; es lo que hace verificable el producto | Validar dentro de los componentes |
-| Sin backend | Coste cero, sin datos personales, sin mantenimiento; cubre el uso descrito | API con base de datos |
-| Catálogo JSON versionado y empaquetado | Funciona sin conexión y hace reproducible cualquier lista | Catálogo servido desde una API |
+| Backend propio | Cuentas, propiedad de listas y sincronización entre dispositivos | Persistencia solo local |
+| Catálogo JSON versionado y empaquetado | Motor reproducible y seed estable sin una API de catálogo | Catálogo servido desde una API |
 | `UnitCard` separado de `UnitEntry` | Las variantes de cepa lo exigen; el patrón se repite en Terran | Entidad única con costes opcionales |
 | Coste de mejora por composición | Es como está definido en el reglamento | Coste escalar por mejora |
 | Nada derivado se persiste | Un fichero editado a mano no puede mentir sobre su legalidad | Guardar totales en la lista |
@@ -493,4 +535,6 @@ El caso de regresión del manual es la prueba más valiosa del proyecto: es el �
 
 ## 12. Fuera de alcance en esta versión
 
-Partidas por equipos (§9.1.8), listas cerradas (§9.1.10), seguimiento de partida, misiones y despliegues, cuentas de usuario, y cualquier función colaborativa.
+Partidas por equipos (§9.1.8), listas cerradas (§9.1.10), seguimiento de partida,
+colaboración en tiempo real, perfiles públicos y funcionamiento offline con
+sincronización diferida.
