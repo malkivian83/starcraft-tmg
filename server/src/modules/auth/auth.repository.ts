@@ -2,11 +2,20 @@ import { randomUUID } from 'node:crypto';
 import type { Pool, PoolConnection, RowDataPacket } from 'mysql2/promise';
 
 export type Race = 'ZERG' | 'TERRAN' | 'PROTOSS';
+export type AuthProvider = 'PASSWORD' | 'GOOGLE' | 'BOTH';
+
+/** Cómo puede entrar la cuenta hoy, no cómo se creó: al añadir contraseña o vincular Google, cambia. */
+export function authProviderOf(user: { passwordHash: string | null; googleSub: string | null }): AuthProvider {
+  if (user.googleSub && user.passwordHash) return 'BOTH';
+  return user.googleSub ? 'GOOGLE' : 'PASSWORD';
+}
 
 export interface UserRecord {
   id: string;
   email: string;
-  passwordHash: string;
+  // Nulo mientras la cuenta sólo tenga acceso con Google.
+  passwordHash: string | null;
+  googleSub: string | null;
   emailVerifiedAt: string | null;
   deletedAt: string | null;
   sessionVersion: number;
@@ -20,7 +29,8 @@ export interface UserRecord {
 interface UserRow extends RowDataPacket {
   id: string;
   email: string;
-  password_hash: string;
+  password_hash: string | null;
+  google_sub: string | null;
   email_verified_at: string | null;
   deleted_at: string | null;
   session_version: number;
@@ -32,10 +42,10 @@ interface UserRow extends RowDataPacket {
 }
 
 function mapUser(row: UserRow): UserRecord {
-  return { id: row.id, email: row.email, passwordHash: row.password_hash, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, nickname: row.nickname, avatar: row.avatar, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at };
+  return { id: row.id, email: row.email, passwordHash: row.password_hash, googleSub: row.google_sub, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, nickname: row.nickname, avatar: row.avatar, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at };
 }
 
-const userColumns = `SELECT u.id, u.email, u.password_hash, u.email_verified_at, u.deleted_at, u.is_active, u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
+const userColumns = `SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
 
 export class AuthRepository {
   constructor(private readonly pool: Pool) {}
@@ -58,6 +68,31 @@ export class AuthRepository {
       const [rows] = await connection.execute<UserRow[]>(`${userColumns} WHERE u.id = ?`, [id]);
       return mapUser(rows[0]!);
     });
+  }
+
+  async findByGoogleSub(googleSub: string): Promise<UserRecord | null> {
+    const [rows] = await this.pool.execute<UserRow[]>(`${userColumns} WHERE u.google_sub = ?`, [googleSub]);
+    return rows[0] ? mapUser(rows[0]) : null;
+  }
+
+  /** Alta de una cuenta cuya identidad la respalda Google: sin contraseña y ya verificada. */
+  async createGoogleUser(email: string, emailNormalized: string, googleSub: string, nickname: string | null): Promise<UserRecord> {
+    return this.transaction(async (connection) => {
+      const id = randomUUID();
+      await connection.execute('INSERT INTO users (id, email, email_normalized, password_hash, google_sub, email_verified_at) VALUES (?, ?, ?, NULL, ?, NOW())', [id, email, emailNormalized, googleSub]);
+      await connection.execute('INSERT INTO profiles (user_id, nickname) VALUES (?, ?)', [id, nickname]);
+      const [rows] = await connection.execute<UserRow[]>(`${userColumns} WHERE u.id = ?`, [id]);
+      return mapUser(rows[0]!);
+    });
+  }
+
+  /**
+   * Vincula Google a una cuenta previa. Google ya comprobó el correo, así que
+   * la verificación pendiente se da por buena en ese momento.
+   */
+  async linkGoogleAccount(userId: string, googleSub: string): Promise<UserRecord> {
+    await this.pool.execute('UPDATE users SET google_sub = ?, email_verified_at = COALESCE(email_verified_at, NOW()) WHERE id = ?', [googleSub, userId]);
+    return (await this.findById(userId))!;
   }
 
   async createToken(userId: string, tokenHash: string, purpose: 'VERIFY_EMAIL' | 'RESET_PASSWORD'): Promise<void> {
@@ -87,9 +122,9 @@ export class AuthRepository {
   async recordLogin(userId: string): Promise<void> { await this.pool.execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', [userId]); }
   async setUserActive(userId: string, isActive: boolean): Promise<void> { await this.pool.execute('UPDATE users SET is_active = ?, session_version = session_version + 1 WHERE id = ?', [isActive, userId]); }
 
-  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; emailVerifiedAt: string | null; lastLoginAt: string | null; savedLists: number }>> {
-    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.last_login_at ORDER BY u.created_at DESC`);
-    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), emailVerifiedAt: row.email_verified_at, lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
+  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; emailVerifiedAt: string | null; authProvider: AuthProvider; lastLoginAt: string | null; savedLists: number }>> {
+    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.google_sub, u.password_hash IS NOT NULL AS has_password, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.google_sub, has_password, u.last_login_at ORDER BY u.created_at DESC`);
+    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), emailVerifiedAt: row.email_verified_at, authProvider: authProviderOf({ googleSub: row.google_sub, passwordHash: Number(row.has_password) ? 'set' : null }), lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
   }
 
   async updateDefaultRace(userId: string, defaultRace: Race): Promise<UserRecord> {

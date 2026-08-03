@@ -205,7 +205,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 ### Bloque G — Cuenta y seguridad
 
 **US-17 · Acceder y verificar la cuenta**
-- CA-17.1 Registro y acceso con correo y contraseña.
+- CA-17.1 Registro y acceso con correo y contraseña, o con Google.
 - CA-17.2 El constructor y las listas exigen sesión y correo verificado.
 - CA-17.3 La verificación puede reenviarse sin crear otra cuenta.
 - CA-17.4 Un fallo de correo no deja una cuenta irrecuperable.
@@ -214,6 +214,11 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-17.6 Al verificar una cuenta a mano, su titular recibe un correo que lo
   comunica; si ese envío falla, la cuenta sigue verificada y el administrador ve
   el aviso.
+- CA-17.7 Entrar con Google no exige verificación propia, y sólo se acepta si
+  Google confirma el correo. Si ya existía una cuenta con ese correo, se vincula
+  en lugar de duplicarla.
+- CA-17.8 Una cuenta de Google puede añadir contraseña y conservar ambos
+  accesos. Las operaciones sensibles sin contraseña se reautentican con Google.
 
 **US-18 · Recuperar el acceso**
 - CA-18.1 El usuario puede solicitar un enlace sin revelar si el correo existe.

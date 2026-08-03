@@ -6,6 +6,14 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/a
 export interface RemoteList extends ArmyList {
   revision: number;
   remoteUpdatedAt: string;
+  isPublic: boolean;
+  publishedAt: string | null;
+  ownerNickname: string | null;
+}
+
+export interface HomeData {
+  recentLists: RemoteList[];
+  publicLists: RemoteList[];
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -38,6 +46,31 @@ export async function saveRemoteList(list: ArmyList, revision: number | null): P
 
 export async function loadRemoteLists(): Promise<RemoteList[]> {
   return (await request<{ lists: RemoteList[] }>('/lists')).lists;
+}
+
+export async function loadPublicLists(): Promise<RemoteList[]> {
+  return (await request<{ lists: RemoteList[] }>('/lists/public')).lists;
+}
+
+export async function loadHomeData(): Promise<HomeData> {
+  return request<HomeData>('/lists/home');
+}
+
+export async function loadPublicList(id: string): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/public/${encodeURIComponent(id)}`)).list;
+}
+
+export async function clonePublicList(id: string): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/public/${encodeURIComponent(id)}/clone`, {
+    method: 'POST',
+  })).list;
+}
+
+export async function setListPublic(id: string, isPublic: boolean): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/${encodeURIComponent(id)}/visibility`, {
+    method: 'PUT',
+    body: JSON.stringify({ isPublic }),
+  })).list;
 }
 
 export async function deleteRemoteList(id: string): Promise<void> {

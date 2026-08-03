@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { deleteRemoteList, loadRemoteLists, type RemoteList } from '@/auth/listService';
+import { deleteRemoteList, loadRemoteLists, setListPublic, type RemoteList } from '@/auth/listService';
 import { loadCatalog } from '@/catalog/loader';
 import { buildCatalogIndex } from '@/engine/catalogIndex';
 import { computeCosts } from '@/engine/costing';
@@ -44,9 +44,11 @@ interface SavedListRow {
 export function SavedListsPage({
   onCreate,
   onLoad,
+  onViewPublic,
 }: {
   onCreate: () => void;
   onLoad: (list: ArmyList, revision: number) => void;
+  onViewPublic: (id: string) => void;
 }) {
   const [lists, setLists] = useState<RemoteList[]>([]);
   const [message, setMessage] = useState('Cargando listas…');
@@ -89,6 +91,15 @@ export function SavedListsPage({
       await refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'No se pudo borrar la lista.');
+    }
+  };
+
+  const togglePublic = async (list: RemoteList) => {
+    try {
+      const updated = await setListPublic(list.id, !list.isPublic);
+      setLists((current) => current.map((item) => item.id === updated.id ? updated : item));
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'No se pudo cambiar la visibilidad.');
     }
   };
 
@@ -167,13 +178,14 @@ export function SavedListsPage({
 
       {visibleRows.length > 0 && (
         <section className="panel saved-list-table-wrap">
-          <table className="saved-list-table">
+          <table className="saved-list-table saved-list-table--owner">
             <thead>
               <tr>
                 <th scope="col">Lista</th>
                 <th scope="col">Raza</th>
                 <th scope="col">Escala</th>
                 <th scope="col">Validez</th>
+                <th scope="col">Visibilidad</th>
                 <th scope="col">Coste</th>
                 <th scope="col">Actualizada</th>
                 <th scope="col"><span className="sr-only">Acciones</span></th>
@@ -204,6 +216,11 @@ export function SavedListsPage({
                     </span>
                   </td>
                   <td>
+                    <span className={`list-visibility ${row.list.isPublic ? 'list-visibility--public' : ''}`}>
+                      {row.list.isPublic ? 'Pública' : 'Privada'}
+                    </span>
+                  </td>
+                  <td>
                     <span className="saved-list-table__cost">{row.summary.mineralsSpent}/{row.summary.mineralLimit} min.</span>
                     <span className="saved-list-table__cost">{row.summary.vespeneSpent}/{row.summary.vespeneLimit} gas</span>
                   </td>
@@ -211,6 +228,8 @@ export function SavedListsPage({
                   <td>
                     <div className="row saved-list-table__actions">
                       <button type="button" onClick={() => onLoad(row.list, row.list.revision)}>Abrir</button>
+                      {row.list.isPublic && <button type="button" onClick={() => onViewPublic(row.list.id)}>Ver lista</button>}
+                      <button type="button" onClick={() => { void togglePublic(row.list); }}>{row.list.isPublic ? 'Hacer privada' : 'Hacer pública'}</button>
                       <button type="button" onClick={() => { void remove(row.list); }}>Borrar</button>
                     </div>
                   </td>

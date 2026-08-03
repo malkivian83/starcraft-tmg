@@ -27,3 +27,397 @@ API disponible en http://localhost:3001/api
 API disponible en http://localhost:3001/api
 16:49:36 [tsx] change in ./server\src\modules\admin\admin.routes.ts Restarting...
 API disponible en http://localhost:3001/api
+16:59:38 [tsx] unlink in ./server\src\modules\lists\list.repository.ts Restarting...
+node.exe : node:internal/modules/esm/resolve:271
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (node:internal/modules/esm/resolve:271:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 
+'D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.js' imported from 
+D:\Programación\starcraft-tmg\server\src\app.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:271:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolveBaseSync (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/tsx/dist/register-zZ7SWseA.mjs:2:9102)
+    at resolveDirectorySync 
+(file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/tsx/dist/register-zZ7SWseA.mjs:2:10315)
+    at resolveTsPathsSync 
+(file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/tsx/dist/register-zZ7SWseA.mjs:2:11547)
+    at resolve (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/tsx/dist/register-zZ7SWseA.mjs:2:13365) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///D:/Programaci%C3%B3n/starcraft-tmg/server/src/modules/lists/list.repository.js'
+}
+
+Node.js v24.18.1
+16:59:41 [tsx] change in ./server\src\modules\lists\list.repository.ts Rerunning...
+API disponible en http://localhost:3001/api
+17:00:07 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+Error: Unknown column 'l.is_public' in 'field list'
+    at ListRepository.listForOwner (D:\Programación\starcraft-tmg\server\src\modules\lists\list.repository.ts:57:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\list.routes.ts:31:36)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'l.is_public' in 'field list'",
+  sql: '\n' +
+    '  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,\n' +
+    '         l.revision, l.created_at, l.updated_at, l.payload\n' +
+    '    FROM saved_lists l\n' +
+    '    JOIN profiles p ON p.user_id = l.owner_id\n' +
+    ' WHERE l.owner_id = ? ORDER BY l.updated_at DESC'
+}
+17:01:42 [tsx] change in ./server\src\config\env.ts Restarting...
+API disponible en http://localhost:3001/api
+17:01:46 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+17:01:48 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+17:01:55 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+17:02:08 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:47:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:102:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:47:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:102:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+17:02:33 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+17:02:39 [tsx] change in ./server\src\modules\auth\auth.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:05 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:07 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:17 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:29 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:33 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:44 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:03:51 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+Error: Unknown column 'u.google_sub' in 'field list'
+    at AuthRepository.findByEmail (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.repository.ts:54:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\auth\auth.routes.ts:131:35)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\middleware\rate-limit.ts:50:5)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'u.google_sub' in 'field list'",
+  sql: 'SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, 
+u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = 
+u.id WHERE u.email_normalized = ?'
+}
+17:18:04 [tsx] change in ./server\src\index.ts Restarting...
+API disponible en http://localhost:3001/api
+17:19:01 [tsx] change in ./server\src\modules\auth\auth.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:23:51 [tsx] change in ./server\src\modules\lists\list.repository.ts Restarting...
+API disponible en http://localhost:3001/api
+17:23:59 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+17:28:46 [tsx] change in ./server\src\index.ts Restarting...
+API disponible en http://localhost:3001/api

@@ -1,4 +1,6 @@
 import { findComposition, upgradeCostFor } from '@/engine/costing';
+import type { CatalogIndex } from '@/engine/catalogIndex';
+import type { ArmyList, CostSummary, ValidationResult } from '@/engine/types';
 import { SLOT_TYPES } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
@@ -19,8 +21,19 @@ const SCALE_LABEL: Record<string, string> = {
  * elemento de interfaz, y con las unidades invocadas separadas en su propio
  * bloque para que nadie las confunda con parte del ejército.
  */
-export function PrintSheet() {
-  const { list, index, summary, validation } = useListStore();
+export interface PrintSheetData {
+  list: ArmyList;
+  index: CatalogIndex;
+  summary: CostSummary;
+  validation: ValidationResult;
+}
+
+export function PrintSheet({ data }: { data?: PrintSheetData } = {}) {
+  const store = useListStore();
+  const list = data?.list ?? store.list;
+  const index = data?.index ?? store.index;
+  const summary = data?.summary ?? store.summary;
+  const validation = data?.validation ?? store.validation;
 
   const faction = list.factionCardId
     ? index.factionCards.get(list.factionCardId)
@@ -205,7 +218,7 @@ export function PrintSheet() {
         </section>
       )}
 
-      <UnitReference />
+      <UnitReference data={data} />
     </div>
   );
 }
@@ -218,8 +231,10 @@ export function PrintSheet() {
  * dice «Adrenal Glands» pero no qué hace, que es justo lo que se olvida en
  * mitad de una partida.
  */
-function UnitReference() {
-  const { list, index } = useListStore();
+function UnitReference({ data }: { data?: PrintSheetData }) {
+  const store = useListStore();
+  const list = data?.list ?? store.list;
+  const index = data?.index ?? store.index;
   if (list.entries.length === 0) return null;
 
   // Una ficha por unidad DISTINTA: dos escuadras de Zerglings con el mismo

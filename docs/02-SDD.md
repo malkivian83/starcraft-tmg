@@ -363,7 +363,7 @@ Los nombres propios (`ProperName` en el modelo) se muestran **siempre en inglés
 | Almacén | Contenido |
 |---|---|
 | MariaDB `saved_lists` | Payload de listas, propietario y revisión |
-| MariaDB `users`/`profiles` | Identidad, estado, versión de sesión y preferencias |
+| MariaDB `users`/`profiles` | Identidad, proveedor de acceso (`password_hash`, `google_sub`), estado, versión de sesión y preferencias |
 | MariaDB `account_tokens` | Tokens de verificación y recuperación, almacenados como hash |
 | MariaDB `app_settings` | Configuración SMTP cifrada |
 | MariaDB `email_delivery_logs` | Resultado de los intentos de correo |
@@ -378,7 +378,11 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 
 ### 7.1 Sesión y autorización
 
-- Contraseñas con Argon2id.
+- Contraseñas con Argon2id. Una cuenta creada con Google no tiene contraseña
+  hasta que su titular decide añadirla.
+- El ID token de Google se valida con `google-auth-library` y se exige
+  `email_verified`; la sesión que se emite después es la propia de la
+  aplicación, igual que en el acceso con contraseña.
 - JWT de 15 minutos en cookie `HttpOnly`, `SameSite=Lax`, `Secure` en
   producción y ruta `/api`.
 - `session_version` revoca sesiones al cambiar contraseña, desactivar o borrar

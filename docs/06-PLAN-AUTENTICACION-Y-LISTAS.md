@@ -76,7 +76,9 @@ automática de sesión.
 users
   user_id: UUID, clave primaria
   email: texto único, normalizado
-  password_hash: texto, sólo accesible al backend
+  password_hash: texto o nulo, sólo accesible al backend; nulo mientras la
+                 cuenta sólo entre con Google
+  google_sub: identificador estable de Google, único, o nulo
   email_verified_at: fecha UTC o nulo
   deleted_at: fecha UTC o nulo; nulo significa cuenta activa
   is_active: booleano administrativo
@@ -163,7 +165,8 @@ server/
 ```
 
 `.env.example` documenta el entorno común en la raíz. El cliente sólo conoce
-`VITE_API_BASE_URL`; el servidor conserva `DATABASE_URL`,
+`VITE_API_BASE_URL` y `VITE_GOOGLE_CLIENT_ID` —el identificador de cliente de
+Google es público por diseño—; el servidor conserva `DATABASE_URL`,
 secretos de sesión, configuración de correo y cualquier clave privada. Las
 credenciales reales nunca se incluirán en Git.
 
@@ -178,6 +181,22 @@ credenciales reales nunca se incluirán en Git.
 3. Una vez autenticado y con correo verificado, accede al constructor y a sus
    listas remotas.
 
+### Acceso con Google
+
+1. El botón oficial de Google Identity Services devuelve un ID token al
+   cliente; `POST /api/auth/google` lo verifica con `google-auth-library`
+   (firma, emisor, destinatario y caducidad) y emite la sesión propia.
+2. Se exige `email_verified` en el token. Es lo único que justifica dar el
+   correo por bueno sin verificación propia y vincularlo a una cuenta previa.
+3. La cuenta se resuelve por `google_sub`, luego por correo —vinculando el
+   registro anterior y dando por verificado el correo pendiente— y sólo se crea
+   una cuenta nueva si no existe ninguna. Una cuenta borrada o desactivada se
+   rechaza igual que en el acceso con contraseña.
+4. La cuenta creada así nace con `email_verified_at` y sin contraseña, y toma
+   el nombre de Google como apodo inicial.
+5. Sin `GOOGLE_CLIENT_ID` configurado, el botón no aparece y la ruta responde
+   `503`: el acceso con contraseña sigue funcionando igual.
+
 ### Usuario autenticado
 
 1. Al abrir la aplicación se recuperan perfil y listas guardadas.
@@ -185,9 +204,14 @@ credenciales reales nunca se incluirán en Git.
 3. «Guardar» crea o actualiza la lista remota y muestra su estado.
 4. El panel «Mis listas» permite cargar, renombrar y borrar sólo las listas
    propias.
-5. El panel «Cuenta» permite cambiar contraseña y facción predeterminada.
-6. El panel permite borrar la cuenta con una confirmación reforzada. La acción
-   es lógica: cierra las sesiones y desactiva la cuenta.
+5. El panel «Cuenta» permite cambiar contraseña y facción predeterminada, y
+   muestra con qué proveedor entra la cuenta.
+6. Una cuenta sin contraseña puede establecer una desde ahí y quedarse con los
+   dos accesos. Al no haber contraseña anterior que comprobar, la
+   reautenticación la aporta Google.
+7. El panel permite borrar la cuenta con una confirmación reforzada. La acción
+   es lógica: cierra las sesiones y desactiva la cuenta. La reautenticación es
+   la contraseña o, si no la hay, Google.
 
 ### Superadministrador
 
@@ -232,7 +256,10 @@ credenciales reales nunca se incluirán en Git.
 
 - **Crítica:** el superadministrador se reconoce por un correo fijo en código y
   no se exige que esté verificado. Debe sustituirse por roles persistidos y un
-  bootstrap fuera del registro público.
+  bootstrap fuera del registro público. Al ser una dirección de Gmail, el
+  acceso con Google añade un segundo camino hacia ese privilegio.
+- El acceso con Google no comprueba `nonce`, así que un ID token robado puede
+  reutilizarse hasta que caduque (una hora).
 - No existen límites de intentos para registro, acceso o recuperación.
 - La recuperación tiene API, pero no interfaz; tampoco hay reenvío de
   verificación.
@@ -258,7 +285,8 @@ credenciales reales nunca se incluirán en Git.
 | Área | Estado |
 |---|---|
 | Registro, login, logout y sesión | Implementado |
-| Verificación de correo | Implementada por token y manualmente desde el panel de superadministración; reenvío al propio usuario pendiente |
+| Acceso con Google y vinculación por correo | Implementado; falta prueba de integración con un token real |
+| Verificación de correo | Implementada por token y manualmente desde el panel de superadministración; innecesaria con Google; reenvío al propio usuario pendiente |
 | Recuperación de contraseña | Backend implementado; frontend pendiente |
 | Perfil, raza predeterminada, apodo y avatar | Implementado |
 | Cambio de contraseña y borrado lógico | Implementado |

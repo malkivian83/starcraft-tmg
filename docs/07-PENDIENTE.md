@@ -178,7 +178,12 @@ nunca llegó, `AuthGate` lo retiene en la pantalla de verificación pendiente y 
 llega al panel para configurar SMTP. Sólo puede salir llamando a `/api/admin`
 directamente, porque esas rutas aceptan sesiones sin verificar (ver D6).
 
-Falta además registro de auditoría de quién verifica cada cuenta y cuándo.
+El acceso con Google evita el problema de raíz cuando el usuario lo elige: no
+necesita verificación propia ni correo saliente. No lo sustituye, porque el
+registro con contraseña sigue dependiendo de SMTP.
+
+Falta además registro de auditoría de quién verifica cada cuenta y cuándo, y
+comprobación de `nonce` en el token de Google.
 
 ### D8 · Defensa y cobertura del backend (`AUD-06`, `AUD-09`)
 
