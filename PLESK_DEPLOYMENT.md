@@ -74,3 +74,7 @@ Antes de compilar, el orquestador ejecuta una instalación limpia mediante
 `npm ci --include=dev --include=optional`. Las dependencias de desarrollo son
 necesarias para TypeScript y Vite; las opcionales incluyen el binario nativo de
 Rollup correspondiente a Linux.
+
+El orquestador añade `/opt/plesk/node/22/bin` al `PATH` de la instalación y la
+compilación para que los scripts nativos, como el de `argon2`, puedan invocar
+`node` dentro del entorno aislado de Plesk.
