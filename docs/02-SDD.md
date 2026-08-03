@@ -386,10 +386,14 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 - Tokens de cuenta aleatorios de 32 bytes, almacenados como SHA-256, de un solo
   uso y con caducidad de 30 minutos.
 - Consultas parametrizadas y propiedad de listas filtrada en el servidor.
+- El superadministrador puede verificar o desverificar un correo a mano
+  (`PUT /api/admin/users/:id/verified`), sin token y sin poder aplicarlo a su
+  propia cuenta. Es la vía de rescate cuando el correo de verificación no llega.
 
 Deuda abierta: roles administrativos persistidos, verificación obligatoria para
 administrar, límites de intentos, recuperación completa en el frontend,
-reenvío de verificación y pruebas de integración de estas garantías.
+reenvío de verificación, auditoría de las verificaciones manuales y pruebas de
+integración de estas garantías.
 
 ### 7.2 Códec de seed (compartir por código)
 

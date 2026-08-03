@@ -311,6 +311,10 @@
     display: block;
   }
 
+  .review-layout {
+    display: block;
+  }
+
   .panel {
     border: none;
     background: none;

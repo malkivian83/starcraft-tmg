@@ -8,8 +8,8 @@ export function StepReview() {
   const { summary, validation } = useListStore();
 
   return (
-    <div className="stack">
-      <section className="panel no-print">
+    <div className="review-layout">
+      <section className="panel no-print review-layout__validation">
         <h2 className="panel__title">Validación</h2>
         {validation.legal ? (
           <p style={{ color: 'var(--ok)', margin: 0 }}>
@@ -45,6 +45,7 @@ export function StepReview() {
         </div>
       </section>
 
+      <div className="review-layout__main stack">
       <section className="panel no-print">
         <h2 className="panel__title">
           Libro mayor de espacios — de dónde sale cada uno
@@ -102,12 +103,14 @@ export function StepReview() {
       <section className="panel no-print">
         <h2 className="panel__title">Hoja de lista</h2>
         <p className="small muted" style={{ marginTop: 0 }}>
-          Usa <strong>Imprimir</strong> en la barra superior. Para obtener un
-          PDF, elige «Guardar como PDF» en el destino de impresión.
+          Imprime la hoja de tu lista o guárdala como PDF desde el destino de
+          impresión.
         </p>
+        <button onClick={() => window.print()}>Imprimir / PDF</button>
       </section>
 
       <PrintSheet />
+      </div>
     </div>
   );
 }

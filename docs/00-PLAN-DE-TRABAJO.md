@@ -167,7 +167,8 @@ pendiente una segunda revisión humana de costes y algunos perfiles indicados en
 
 ### Fase 9 — Cuentas, API y listas sincronizadas: parcial
 
-Registro, acceso, verificación, perfiles, listas remotas, control de propietario,
+Registro, acceso, verificación —por token o manualmente desde el panel de
+superadministración—, perfiles, listas remotas, control de propietario,
 administración y SMTP están implementados. Antes de producción deben corregirse
 el modelo de superadministración, la recuperación de contraseña en la web, el
 reenvío de verificación, los límites de intentos y la cobertura de integración.

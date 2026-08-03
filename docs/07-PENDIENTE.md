@@ -167,9 +167,17 @@ persistidos y provisión inicial fuera del registro público.
 ### D7 · Flujos de cuenta incompletos (`AUD-02`, `AUD-03`)
 
 La recuperación existe en la API, pero no en la interfaz. Tampoco existe reenvío
-de verificación y un fallo SMTP puede dejar una cuenta creada pero inutilizable.
-Este diseño produce además un bloqueo al configurar el primer administrador y
-SMTP en producción desde una base vacía.
+de verificación para el propio usuario.
+
+Un fallo SMTP ya no deja la cuenta inutilizable de forma definitiva: el panel de
+superadministración permite verificarla a mano (`PUT /api/admin/users/:id/verified`).
+Sigue siendo un rescate manual, no una solución del flujo, y **no resuelve el
+arranque desde una base vacía**: si el correo del propio superadministrador
+nunca llegó, `AuthGate` lo retiene en la pantalla de verificación pendiente y no
+llega al panel para configurar SMTP. Sólo puede salir llamando a `/api/admin`
+directamente, porque esas rutas aceptan sesiones sin verificar (ver D6).
+
+Falta además registro de auditoría de quién verifica cada cuenta y cuándo.
 
 ### D8 · Defensa y cobertura del backend (`AUD-06`, `AUD-09`)
 
@@ -187,7 +195,9 @@ ruta y disponer de rollback operativo.
 ### D10 · Experiencia web y accesibilidad (`AUD-04`, `AUD-05`, `AUD-08`, `AUD-10`)
 
 - En móvil se oculta la única acción visible para cerrar sesión.
-- “Nueva lista” y cambiar de raza descartan trabajo sin confirmación.
+- “Nueva lista”, cambiar de raza, cargar otra lista, importar y cerrar sesión ya
+  piden confirmación cuando hay cambios sin guardar, pero sólo mientras se está
+  en el constructor: fuera de él la lista en edición se descarta en silencio.
 - La PWA depende de la API y no soporta el modo offline que se prometía.
 - Las pestañas y selecciones no comunican todo su estado a tecnologías de
   asistencia.

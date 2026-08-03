@@ -187,6 +187,18 @@ credenciales reales nunca se incluirán en Git.
 6. El panel permite borrar la cuenta con una confirmación reforzada. La acción
    es lógica: cierra las sesiones y desactiva la cuenta.
 
+### Superadministrador
+
+1. El panel «Super administración» agrupa en pestañas usuarios, configuración
+   SMTP e historial de correos.
+2. Sobre cada cuenta puede activarla o desactivarla, cambiar su contraseña y
+   **verificar su correo manualmente** o retirar esa verificación. La ficha
+   muestra el estado (`Verificada` / `Sin verificar`) y la fecha.
+3. La verificación manual escribe `email_verified_at` sin consumir ningún token
+   y desbloquea de inmediato el acceso que exige `requireVerifiedUser`. Sirve
+   para rescatar cuentas creadas cuando SMTP falla.
+4. No puede desactivar ni retirarse la verificación a sí mismo.
+
 ### Conflictos de edición
 
 - Antes de guardar, cada lista se validará con el esquema `armyListSchema`.
@@ -217,9 +229,14 @@ credenciales reales nunca se incluirán en Git.
 - No existen límites de intentos para registro, acceso o recuperación.
 - La recuperación tiene API, pero no interfaz; tampoco hay reenvío de
   verificación.
-- Si SMTP falla durante el registro, el usuario ya está creado y puede quedar
-  bloqueado. En una base vacía de producción esto también impide configurar
-  SMTP de forma segura desde el propio panel.
+- Si SMTP falla durante el registro, el usuario ya está creado y queda
+  bloqueado hasta que el superadministrador lo verifique a mano desde el panel.
+  Ese rescate no cubre el arranque en una base vacía: `AuthGate` deja al
+  superadministrador sin verificar en la pantalla de verificación pendiente, de
+  modo que no alcanza el panel por la web para configurar SMTP. Las rutas
+  `/api/admin` sí responden con sesión sin verificar —usan `requireUser`, no
+  `requireVerifiedUser`—, lo que es a la vez la salida de emergencia y una
+  brecha de autorización.
 - El servidor valida la estructura del payload, no sus referencias de catálogo
   ni su legalidad.
 - No hay pruebas de integración de autenticación, autorización, administración
@@ -234,13 +251,13 @@ credenciales reales nunca se incluirán en Git.
 | Área | Estado |
 |---|---|
 | Registro, login, logout y sesión | Implementado |
-| Verificación de correo | Implementada; reenvío pendiente |
+| Verificación de correo | Implementada por token y manualmente desde el panel de superadministración; reenvío al propio usuario pendiente |
 | Recuperación de contraseña | Backend implementado; frontend pendiente |
 | Perfil, raza predeterminada, apodo y avatar | Implementado |
 | Cambio de contraseña y borrado lógico | Implementado |
 | Listas remotas y control de propietario | Implementado; faltan pruebas de integración |
 | Control de conflictos por revisión | Implementado en actualización; UX básica |
-| Administración de usuarios, SMTP y logs | Implementada con autorización insegura por correo fijo |
+| Administración de usuarios, SMTP y logs | Implementada, incluida la verificación manual de cuentas, con autorización insegura por correo fijo |
 | Rate limiting y auditoría sensible | No implementado |
 | Validación semántica de listas en servidor | No implementada |
 | Pruebas API/BD y E2E | No implementadas |

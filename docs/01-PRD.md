@@ -209,6 +209,8 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-17.2 El constructor y las listas exigen sesión y correo verificado.
 - CA-17.3 La verificación puede reenviarse sin crear otra cuenta.
 - CA-17.4 Un fallo de correo no deja una cuenta irrecuperable.
+- CA-17.5 El superadministrador puede verificar o desverificar una cuenta a mano
+  desde su panel, sin token y sin poder aplicarlo a la suya propia.
 
 **US-18 · Recuperar el acceso**
 - CA-18.1 El usuario puede solicitar un enlace sin revelar si el correo existe.

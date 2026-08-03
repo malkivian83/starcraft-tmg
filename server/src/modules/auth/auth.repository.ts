@@ -77,6 +77,7 @@ export class AuthRepository {
   }
 
   async verifyEmail(userId: string): Promise<void> { await this.pool.execute('UPDATE users SET email_verified_at = NOW() WHERE id = ?', [userId]); }
+  async setEmailVerified(userId: string, isVerified: boolean): Promise<void> { await this.pool.execute('UPDATE users SET email_verified_at = ? WHERE id = ?', [isVerified ? new Date() : null, userId]); }
 
   async updatePassword(userId: string, passwordHash: string): Promise<UserRecord> {
     await this.pool.execute('UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?', [passwordHash, userId]);
@@ -86,9 +87,9 @@ export class AuthRepository {
   async recordLogin(userId: string): Promise<void> { await this.pool.execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', [userId]); }
   async setUserActive(userId: string, isActive: boolean): Promise<void> { await this.pool.execute('UPDATE users SET is_active = ?, session_version = session_version + 1 WHERE id = ?', [isActive, userId]); }
 
-  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; lastLoginAt: string | null; savedLists: number }>> {
-    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.last_login_at ORDER BY u.created_at DESC`);
-    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
+  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; emailVerifiedAt: string | null; lastLoginAt: string | null; savedLists: number }>> {
+    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.last_login_at ORDER BY u.created_at DESC`);
+    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), emailVerifiedAt: row.email_verified_at, lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
   }
 
   async updateDefaultRace(userId: string, defaultRace: Race): Promise<UserRecord> {

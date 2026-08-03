@@ -14,6 +14,7 @@ export interface AdminUser {
   email: string;
   nickname: string | null;
   isActive: boolean;
+  emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   savedLists: number;
 }
@@ -132,6 +133,10 @@ export async function listAdminUsers(): Promise<AdminUser[]> {
 
 export async function setAdminUserActive(id: string, isActive: boolean): Promise<void> {
   await request(`/admin/users/${id}/active`, { method: 'PUT', body: JSON.stringify({ isActive }) });
+}
+
+export async function setAdminUserVerified(id: string, isVerified: boolean): Promise<void> {
+  await request(`/admin/users/${id}/verified`, { method: 'PUT', body: JSON.stringify({ isVerified }) });
 }
 
 export async function setAdminUserPassword(id: string, password: string): Promise<void> {

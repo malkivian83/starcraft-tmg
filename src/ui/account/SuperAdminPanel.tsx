@@ -52,6 +52,16 @@ export function SuperAdminPanel() {
     catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo actualizar el usuario.'); }
   };
 
+  const toggleVerified = async (user: auth.AdminUser) => {
+    const verify = !user.emailVerifiedAt;
+    if (!verify && !window.confirm(`¿Retirar la verificación de ${user.email}? No podrá acceder hasta volver a verificarse.`)) return;
+    try {
+      await auth.setAdminUserVerified(user.id, verify);
+      await refreshUsers();
+      setMessage(verify ? `Cuenta de ${user.email} verificada manualmente.` : `Verificación retirada a ${user.email}.`);
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo actualizar la verificación.'); }
+  };
+
   const resetPassword = async (user: auth.AdminUser) => {
     const password = window.prompt(`Nueva contraseña para ${user.email} (mínimo 12 caracteres):`);
     if (!password) return;
@@ -133,8 +143,8 @@ export function SuperAdminPanel() {
       <header className="admin-section__heading"><div><h3>Usuarios registrados</h3><p className="muted small">Administra el acceso de las cuentas y sus contraseñas.</p></div></header>
       <div className="admin-user-list">
         {users.map((user) => <article className="admin-user" key={user.id}>
-          <div><strong>{user.nickname || user.email}</strong><span>{user.email}</span><small>Último acceso: {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Nunca'} · Listas: {user.savedLists}</small></div>
-          <div className="row"><span className={`chip ${user.isActive ? '' : 'chip--unique'}`}>{user.isActive ? 'Activa' : 'Desactivada'}</span><button onClick={() => { void toggleActive(user); }}>{user.isActive ? 'Desactivar' : 'Activar'}</button><button onClick={() => { void resetPassword(user); }}>Cambiar contraseña</button></div>
+          <div><strong>{user.nickname || user.email}</strong><span>{user.email}</span><small>Último acceso: {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Nunca'} · Listas: {user.savedLists}{user.emailVerifiedAt && ` · Verificada: ${new Date(user.emailVerifiedAt).toLocaleString()}`}</small></div>
+          <div className="row"><span className={`chip ${user.isActive ? '' : 'chip--unique'}`}>{user.isActive ? 'Activa' : 'Desactivada'}</span><span className={`chip ${user.emailVerifiedAt ? '' : 'chip--unique'}`}>{user.emailVerifiedAt ? 'Verificada' : 'Sin verificar'}</span><button onClick={() => { void toggleVerified(user); }}>{user.emailVerifiedAt ? 'Quitar verificación' : 'Verificar'}</button><button onClick={() => { void toggleActive(user); }}>{user.isActive ? 'Desactivar' : 'Activar'}</button><button onClick={() => { void resetPassword(user); }}>Cambiar contraseña</button></div>
         </article>)}
       </div>
     </section>}

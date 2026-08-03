@@ -19,6 +19,30 @@
   padding: 16px;
 }
 
+.modal__box--card-preview {
+  width: min(560px, 100%);
+}
+
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal__header h2 {
+  margin: 2px 0 0;
+  font-size: 20px;
+}
+
+.modal__close {
+  flex: 0 0 auto;
+  min-width: 32px;
+  padding: 5px;
+  font-size: 18px;
+}
+
 .seed-box {
   width: 100%;
   font-family: 'Cascadia Mono', 'Consolas', monospace;

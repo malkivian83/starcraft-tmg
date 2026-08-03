@@ -35,6 +35,12 @@ export function createAdminRouter(
     await repository.setUserActive(request.params.id, isActive);
     response.status(204).end();
   });
+  router.put('/users/:id/verified', async (request, response) => {
+    const { isVerified } = z.object({ isVerified: z.boolean() }).parse(request.body);
+    if (request.params.id === request.authenticatedUser!.id && !isVerified) throw new HttpError(400, 'INVALID_INPUT', 'No puedes retirar la verificación de tu propia cuenta de superadministrador.');
+    await repository.setEmailVerified(request.params.id, isVerified);
+    response.status(204).end();
+  });
   router.put('/users/:id/password', async (request, response) => {
     const { password } = z.object({ password: z.string().min(12).max(128) }).parse(request.body);
     await repository.updatePassword(request.params.id, await argon2.hash(password, { type: argon2.argon2id }));
