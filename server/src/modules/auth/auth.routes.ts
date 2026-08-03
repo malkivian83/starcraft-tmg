@@ -4,8 +4,9 @@ import { Router } from 'express';
 import { z } from 'zod';
 import type { ServerEnvironment } from '../../config/env.js';
 import { HttpError } from '../../lib/errors.js';
+import { rateLimit } from '../../middleware/rate-limit.js';
 import { requireUser } from '../../middleware/require-user.js';
-import { describeSmtpError, type EmailGateway } from '../email/email.gateway.js';
+import { type EmailGateway } from '../email/email.gateway.js';
 import { AuthRepository, type UserRecord } from './auth.repository.js';
 import { clearSession, issueSession } from './session.js';
 
@@ -18,6 +19,14 @@ const tokenSchema = z.object({ token: z.string().min(32).max(512) });
 
 function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase('en-US');
+}
+
+function credentialRateKey(request: Parameters<ReturnType<typeof rateLimit>>[0]): string {
+  const email = typeof request.body?.email === 'string'
+    ? normalizeEmail(request.body.email)
+    : '';
+  const identity = createHash('sha256').update(email || 'missing-email').digest('hex');
+  return `${request.ip}:${identity}`;
 }
 
 function createToken(): { raw: string; hash: string } {
@@ -55,8 +64,14 @@ export interface AuthRouteDependencies {
 export function createAuthRouter({ repository, env, email }: AuthRouteDependencies): Router {
   const router = Router();
   const authenticated = requireUser(repository, env);
+  const registrationByIp = rateLimit({ windowMs: 60 * 60 * 1000, max: 5 });
+  const registrationByIdentity = rateLimit({ windowMs: 60 * 60 * 1000, max: 3, key: credentialRateKey });
+  const loginByIp = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+  const loginByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 8, key: credentialRateKey });
+  const emailByIp = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
+  const emailByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, key: credentialRateKey });
 
-  router.post('/register', async (request, response) => {
+  router.post('/register', registrationByIp, registrationByIdentity, async (request, response) => {
     const { email: inputEmail, password } = body(credentialsSchema, request.body);
     const emailNormalized = normalizeEmail(inputEmail);
     const existing = await repository.findByEmail(emailNormalized);
@@ -65,21 +80,24 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     const user = await repository.createUser(inputEmail.trim(), emailNormalized, await hashPassword(password));
     const token = createToken();
     await repository.createToken(user.id, token.hash, 'VERIFY_EMAIL');
+    let emailDeliveryWarning: string | null = null;
     try {
       await email.sendVerificationEmail(user.email, token.raw);
     } catch (error) {
-      throw new HttpError(502, 'EMAIL_DELIVERY_FAILED', `La cuenta se creó, pero no se pudo enviar el correo de verificación. ${describeSmtpError(error)}`);
+      console.error('No se pudo enviar el correo de verificación inicial.', error);
+      emailDeliveryWarning = 'La cuenta se creó, pero el correo no pudo enviarse todavía. Usa «Reenviar correo» dentro de unos minutos.';
     }
-    response.status(201).json({
+    response.status(emailDeliveryWarning ? 202 : 201).json({
       user: publicUser(user),
       verificationRequired: true,
+      emailDeliveryWarning,
       developmentVerificationUrl: env.NODE_ENV === 'development'
         ? `${env.APP_BASE_URL}/verify-email?token=${token.raw}`
         : null,
     });
   });
 
-  router.post('/login', async (request, response) => {
+  router.post('/login', loginByIp, loginByIdentity, async (request, response) => {
     const { email: inputEmail, password } = body(credentialsSchema, request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
     const valid = user && !user.deletedAt && user.isActive && await argon2.verify(user.passwordHash, password);
@@ -102,13 +120,34 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     response.status(204).end();
   });
 
-  router.post('/request-password-reset', async (request, response) => {
+  router.post('/request-verification', emailByIp, emailByIdentity, async (request, response) => {
     const { email: inputEmail } = body(z.object({ email: z.string().email().max(254) }), request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
-    if (user && !user.deletedAt) {
+    if (user && !user.deletedAt && user.isActive && !user.emailVerifiedAt) {
+      const token = createToken();
+      await repository.createToken(user.id, token.hash, 'VERIFY_EMAIL');
+      try {
+        await email.sendVerificationEmail(user.email, token.raw);
+      } catch (error) {
+        console.error('No se pudo reenviar el correo de verificación.', error);
+      }
+    }
+    response.status(204).end();
+  });
+
+  router.post('/request-password-reset', emailByIp, emailByIdentity, async (request, response) => {
+    const { email: inputEmail } = body(z.object({ email: z.string().email().max(254) }), request.body);
+    const user = await repository.findByEmail(normalizeEmail(inputEmail));
+    if (user && !user.deletedAt && user.isActive) {
       const token = createToken();
       await repository.createToken(user.id, token.hash, 'RESET_PASSWORD');
-      await email.sendPasswordResetEmail(user.email, token.raw);
+      try {
+        await email.sendPasswordResetEmail(user.email, token.raw);
+      } catch (error) {
+        // La respuesta se mantiene indistinguible para no revelar cuentas
+        // existentes ni el estado del proveedor de correo.
+        console.error('No se pudo enviar el correo de restablecimiento.', error);
+      }
     }
     response.status(204).end();
   });
