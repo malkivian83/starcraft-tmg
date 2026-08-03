@@ -7,6 +7,8 @@ const messageTypeLabel: Record<auth.EmailDeliveryLog['messageType'], string> = {
   SMTP_TEST: 'Prueba SMTP',
 };
 
+type AdminSection = 'users' | 'smtp' | 'email-logs';
+
 export function SuperAdminPanel() {
   const [users, setUsers] = useState<auth.AdminUser[]>([]);
   const [message, setMessage] = useState('Cargando usuarios…');
@@ -15,6 +17,7 @@ export function SuperAdminPanel() {
   const [testRecipient, setTestRecipient] = useState('');
   const [smtpPending, setSmtpPending] = useState(false);
   const [emailLogs, setEmailLogs] = useState<auth.EmailDeliveryLog[]>([]);
+  const [activeSection, setActiveSection] = useState<AdminSection>('users');
 
   const refreshUsers = async () => {
     try {
@@ -26,9 +29,11 @@ export function SuperAdminPanel() {
     }
   };
 
-  const refreshEmailLogs = async () => {
+  const refreshEmailLogs = async (reportError = true) => {
     try { setEmailLogs(await auth.getEmailDeliveryLogs()); }
-    catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo cargar el historial de correos.'); }
+    catch (error) {
+      if (reportError) setMessage(error instanceof Error ? error.message : 'No se pudo cargar el historial de correos.');
+    }
   };
 
   useEffect(() => {
@@ -39,7 +44,7 @@ export function SuperAdminPanel() {
       setSmtp({ host: value.host, port: value.port, secure: value.secure, username: value.username, from: value.from, password: '' });
       setSmtpConfigured(value.passwordConfigured);
       setTestRecipient(value.from);
-    }).catch(() => undefined);
+    }).catch((error) => setMessage(error instanceof Error ? error.message : 'No se pudo cargar la configuración SMTP.'));
   }, []);
 
   const toggleActive = async (user: auth.AdminUser) => {
@@ -83,31 +88,58 @@ export function SuperAdminPanel() {
       return;
     }
     setSmtpPending(true);
-    setMessage('Comprobando conexión y enviando correo de prueba…');
+    setMessage('Guardando la configuración SMTP…');
     try {
       await persistSmtp();
+      setMessage(`Conectando con ${smtp.host}:${smtp.port} y enviando el correo de prueba…`);
       const result = await auth.testSmtpSettings(testRecipient.trim());
-      setMessage(`SMTP correcto. Correo de prueba enviado${result.messageId ? ` (${result.messageId})` : ''}.`);
+      const serverResponse = result.response ? ` Respuesta: ${result.response}` : '';
+      setMessage(`El servidor SMTP aceptó el correo para ${result.accepted.join(', ')}${result.messageId ? ` (ID: ${result.messageId})` : ''}.${serverResponse}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'La prueba SMTP ha fallado.');
     } finally {
-      await refreshEmailLogs();
       setSmtpPending(false);
+      void refreshEmailLogs(false);
     }
   };
 
+  const failedEmailCount = emailLogs.filter((entry) => entry.status === 'FAILED').length;
+  const tabs: Array<{ id: AdminSection; label: string; count?: number }> = [
+    { id: 'users', label: 'Usuarios', count: users.length },
+    { id: 'smtp', label: 'Configuración SMTP' },
+    { id: 'email-logs', label: 'Historial de correos', count: failedEmailCount || undefined },
+  ];
+
   return <section className="panel stack super-admin-panel">
     <div><p className="eyebrow">Acceso restringido</p><h2>Super administración</h2><p className="muted">Gestiona cuentas registradas, correo y listas guardadas.</p></div>
+    <nav className="tabs admin-tabs" role="tablist" aria-label="Secciones de super administración">
+      {tabs.map((tab) => <button
+        className={`tab${activeSection === tab.id ? ' tab--active' : ''}`}
+        id={`admin-tab-${tab.id}`}
+        key={tab.id}
+        type="button"
+        role="tab"
+        aria-selected={activeSection === tab.id}
+        aria-controls={`admin-panel-${tab.id}`}
+        onClick={() => setActiveSection(tab.id)}
+      >
+        {tab.label}
+        {tab.count !== undefined && <span className={tab.id === 'email-logs' ? 'tab__badge' : 'admin-tab-count'}>{tab.count}</span>}
+      </button>)}
+    </nav>
     {message && <p className="page-message" role="status">{message}</p>}
 
-    <div className="admin-user-list">
-      {users.map((user) => <article className="admin-user" key={user.id}>
-        <div><strong>{user.nickname || user.email}</strong><span>{user.email}</span><small>Último acceso: {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Nunca'} · Listas: {user.savedLists}</small></div>
-        <div className="row"><span className={`chip ${user.isActive ? '' : 'chip--unique'}`}>{user.isActive ? 'Activa' : 'Desactivada'}</span><button onClick={() => { void toggleActive(user); }}>{user.isActive ? 'Desactivar' : 'Activar'}</button><button onClick={() => { void resetPassword(user); }}>Cambiar contraseña</button></div>
-      </article>)}
-    </div>
+    {activeSection === 'users' && <section className="admin-section stack" id="admin-panel-users" role="tabpanel" aria-labelledby="admin-tab-users">
+      <header className="admin-section__heading"><div><h3>Usuarios registrados</h3><p className="muted small">Administra el acceso de las cuentas y sus contraseñas.</p></div></header>
+      <div className="admin-user-list">
+        {users.map((user) => <article className="admin-user" key={user.id}>
+          <div><strong>{user.nickname || user.email}</strong><span>{user.email}</span><small>Último acceso: {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Nunca'} · Listas: {user.savedLists}</small></div>
+          <div className="row"><span className={`chip ${user.isActive ? '' : 'chip--unique'}`}>{user.isActive ? 'Activa' : 'Desactivada'}</span><button onClick={() => { void toggleActive(user); }}>{user.isActive ? 'Desactivar' : 'Activar'}</button><button onClick={() => { void resetPassword(user); }}>Cambiar contraseña</button></div>
+        </article>)}
+      </div>
+    </section>}
 
-    <form className="admin-smtp stack" onSubmit={saveSmtp}>
+    {activeSection === 'smtp' && <form className="admin-section admin-smtp stack" id="admin-panel-smtp" role="tabpanel" aria-labelledby="admin-tab-smtp" onSubmit={saveSmtp}>
       <div><h3>Envío de correos SMTP</h3><p className="muted small">La prueba guarda la configuración, comprueba la conexión y envía un mensaje real. La contraseña se cifra y no vuelve a mostrarse.</p></div>
       <div className="settings-grid">
         <label className="field">Servidor<input required value={smtp.host} onChange={(event) => setSmtp({ ...smtp, host: event.target.value })} placeholder="smtp.ejemplo.com" /></label>
@@ -119,11 +151,11 @@ export function SuperAdminPanel() {
       <label className="row"><input type="checkbox" checked={smtp.secure} onChange={(event) => setSmtp({ ...smtp, secure: event.target.checked })} /> Usar TLS/SSL implícito (habitualmente puerto 465)</label>
       <div className="smtp-test-row">
         <label className="field">Destinatario de prueba<input type="email" value={testRecipient} onChange={(event) => setTestRecipient(event.target.value)} placeholder="tu@correo.com" /></label>
-        <div className="row"><button type="submit" disabled={smtpPending}>Guardar SMTP</button><button type="button" disabled={smtpPending} onClick={() => { void testSmtp(); }}>Probar conexión y envío</button></div>
+        <div className="row"><button type="submit" disabled={smtpPending}>Guardar SMTP</button><button type="button" disabled={smtpPending} onClick={() => { void testSmtp(); }}>{smtpPending ? 'Procesando…' : 'Probar conexión y envío'}</button></div>
       </div>
-    </form>
+    </form>}
 
-    <section className="email-log-section stack">
+    {activeSection === 'email-logs' && <section className="admin-section email-log-section stack" id="admin-panel-email-logs" role="tabpanel" aria-labelledby="admin-tab-email-logs">
       <div className="row email-log-heading"><div><h3>Historial de correos</h3><p className="muted small">Últimos 100 intentos. No se guarda el contenido ni las contraseñas.</p></div><button onClick={() => { void refreshEmailLogs(); }}>Actualizar</button></div>
       {emailLogs.length === 0
         ? <p className="muted">Todavía no hay envíos registrados.</p>
@@ -131,6 +163,6 @@ export function SuperAdminPanel() {
           <div><strong>{entry.subject}</strong><span>{entry.recipient}</span><small>{new Date(entry.createdAt).toLocaleString()} · {messageTypeLabel[entry.messageType]}</small></div>
           <div className="email-log-result"><span className={`chip ${entry.status === 'FAILED' ? 'chip--unique' : ''}`}>{entry.status === 'SENT' ? 'Enviado' : 'Error'}</span>{entry.errorMessage && <small className="email-log-error">{entry.errorMessage}</small>}{entry.providerMessageId && <small>ID: {entry.providerMessageId}</small>}</div>
         </article>)}</div>}
-    </section>
+    </section>}
   </section>;
 }

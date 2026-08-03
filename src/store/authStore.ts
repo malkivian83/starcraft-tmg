@@ -7,6 +7,7 @@ interface AuthState {
   status: AuthStatus;
   user: auth.AuthenticatedUser | null;
   developmentVerificationUrl: string | null;
+  emailDeliveryWarning: string | null;
   restore: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
@@ -22,20 +23,21 @@ export const useAuthStore = create<AuthState>((set) => ({
   status: 'checking',
   user: null,
   developmentVerificationUrl: null,
+  emailDeliveryWarning: null,
   restore: async () => {
     try {
-      set({ ...stateFor(await auth.currentUser()), developmentVerificationUrl: null });
+      set({ ...stateFor(await auth.currentUser()), developmentVerificationUrl: null, emailDeliveryWarning: null });
     } catch {
-      set({ status: 'anonymous', user: null, developmentVerificationUrl: null });
+      set({ status: 'anonymous', user: null, developmentVerificationUrl: null, emailDeliveryWarning: null });
     }
   },
-  login: async (email, password) => set({ ...stateFor(await auth.login(email, password)), developmentVerificationUrl: null }),
+  login: async (email, password) => set({ ...stateFor(await auth.login(email, password)), developmentVerificationUrl: null, emailDeliveryWarning: null }),
   register: async (email, password) => {
-    const developmentVerificationUrl = await auth.register(email, password);
-    set({ status: 'unverified', user: null, developmentVerificationUrl });
+    const result = await auth.register(email, password);
+    set({ status: 'unverified', user: result.user, developmentVerificationUrl: result.developmentVerificationUrl, emailDeliveryWarning: result.emailDeliveryWarning });
   },
-  setUser: (user) => set({ ...stateFor(user), developmentVerificationUrl: null }),
+  setUser: (user) => set({ ...stateFor(user), developmentVerificationUrl: null, emailDeliveryWarning: null }),
   logout: async () => {
-    try { await auth.logout(); } finally { set({ status: 'anonymous', user: null, developmentVerificationUrl: null }); }
+    try { await auth.logout(); } finally { set({ status: 'anonymous', user: null, developmentVerificationUrl: null, emailDeliveryWarning: null }); }
   },
 }));

@@ -1,12 +1,18 @@
 # PRD — Constructor de listas de ejército · StarCraft: The Miniatures Game
 
-Versión 1.0 · Documento de requisitos de producto
+Versión 2.0 · Requisitos vigentes tras incorporar cuentas y listas sincronizadas
+
+Este documento define el producto objetivo. El grado de cumplimiento y las
+brechas detectadas están en [`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md)
+y [`07-PENDIENTE.md`](07-PENDIENTE.md).
 
 ---
 
 ## 1. Objetivo
 
-Aplicación web accesible desde una URL, utilizable en escritorio y móvil, que permita construir listas de ejército legales para StarCraft: The Miniatures Game, consultarlas y llevarlas impresas a la mesa de juego.
+Aplicación web con cuenta de usuario, accesible desde escritorio y móvil, que
+permita construir listas legales para StarCraft: The Miniatures Game,
+sincronizarlas entre dispositivos, consultarlas y llevarlas impresas a la mesa.
 
 El valor central no es «una hoja de cálculo bonita»: es **garantizar que la lista es legal**. El usuario debe poder confiar en que si la app dice que la lista es válida, lo es.
 
@@ -21,13 +27,14 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 ## 3. Alcance de la versión 1
 
 ### Incluido
-- Construcción de listas Zerg completas y validadas.
+- Construcción de listas Zerg, Terran y Protoss completas y validadas.
 - Selección de cartas de misión y despliegue (disponible para las tres razas desde el inicio).
 - Consulta del catálogo de cartas (unidades, facción, tácticas).
-- Guardado local de múltiples listas.
+- Registro, acceso, verificación de correo, perfil y gestión de cuenta.
+- Guardado remoto de múltiples listas por usuario con control de conflictos.
 - Importación y exportación de listas.
 - Impresión: hoja resumen A4, cartas de las unidades incluidas, exportación a PDF.
-- Funcionamiento sin conexión (PWA instalable).
+- PWA instalable; el funcionamiento autenticado requiere conexión con la API.
 - Interfaz en español, con nombres propios en inglés.
 
 ### Regla de idioma
@@ -35,8 +42,7 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 Se traduce lo que explica, no lo que nombra. Nombres de unidades, armas, habilidades, cartas y palabras clave de regla permanecen en **inglés**, igual que en las cartas físicas. Textos de efecto, interfaz, errores y términos estructurales (Minerales, Suministro, Núcleo…) van en **español**.
 
 ### Excluido explícitamente
-- Terran y Protoss (llegan en la versión 2, sin cambios de arquitectura).
-- Cuentas de usuario y sincronización entre dispositivos.
+- Funcionamiento íntegro sin conexión y sincronización diferida.
 - Acompañante de partida (heridas, recursos por ronda, fases).
 - Asistente para ejecutar el draft en la mesa (tirada, descartes, afinidad de marcadores) — pendiente de confirmar.
 - Partidas por equipos (§9.1.8).
@@ -135,10 +141,13 @@ Como jugador, quiero seleccionar las 2 cartas de misión y las 2 de despliegue q
 
 **US-08 · Guardar y recuperar listas**
 - CA-08.1 Varias listas guardadas con nombre, raza, escala y fecha.
-- CA-08.2 Los datos persisten al cerrar el navegador.
+- CA-08.2 Las listas se recuperan desde la cuenta en otro navegador o
+  dispositivo.
 - CA-08.3 Duplicar una lista para crear variantes.
 - CA-08.4 Cada lista registra la versión del catálogo con la que se creó.
 - CA-08.5 Si el catálogo cambia y afecta a una lista guardada, la app avisa y detalla qué cambió.
+- CA-08.6 Una actualización debe incluir la revisión conocida y avisar si otra
+  sesión modificó la lista.
 
 **US-09 · Compartir listas por fichero**
 - CA-09.1 Exportar a fichero JSON.
@@ -152,7 +161,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-09b.4 Un seed incompleto o alterado se detecta y se rechaza con un mensaje claro; nunca produce una lista incorrecta en silencio.
 - CA-09b.5 Un seed creado con otra versión del catálogo se importa igualmente, detallando qué costes cambiaron o qué elementos ya no existen.
 - CA-09b.6 El seed usa un alfabeto sin caracteres ambiguos, para poder dictarse en voz alta.
-- CA-09b.7 Funciona sin conexión, tanto al generar como al importar.
+- CA-09b.7 El seed es autocontenido y no referencia un registro remoto.
 
 ### Bloque D — Consulta
 
@@ -177,7 +186,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 
 **US-13 · Exportar a PDF**
 - CA-13.1 Descarga de un PDF con el mismo contenido que la impresión.
-- CA-13.2 Funciona sin conexión (generación en el cliente).
+- CA-13.2 Se genera en el cliente mediante la vista de impresión del navegador.
 
 ### Bloque F — Plataforma
 
@@ -186,9 +195,33 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-14.2 Objetivos táctiles adecuados; nada que requiera precisión de ratón.
 - CA-14.3 Sin pérdida de funcionalidad respecto a escritorio.
 
-**US-15 · Usar la app sin conexión**
+**US-15 · Instalar la aplicación**
 - CA-15.1 Instalable como PWA.
-- CA-15.2 Tras la primera carga, funciona íntegramente sin red.
+- CA-15.2 Si la API no responde, muestra un estado de servicio no disponible y
+  una acción de reintento; no presenta un formulario que no pueda funcionar.
+- CA-15.3 La documentación y la interfaz no prometen edición offline mientras
+  no existan sesión cacheada, borrador local y sincronización posterior.
+
+### Bloque G — Cuenta y seguridad
+
+**US-17 · Acceder y verificar la cuenta**
+- CA-17.1 Registro y acceso con correo y contraseña.
+- CA-17.2 El constructor y las listas exigen sesión y correo verificado.
+- CA-17.3 La verificación puede reenviarse sin crear otra cuenta.
+- CA-17.4 Un fallo de correo no deja una cuenta irrecuperable.
+
+**US-18 · Recuperar el acceso**
+- CA-18.1 El usuario puede solicitar un enlace sin revelar si el correo existe.
+- CA-18.2 El enlace es aleatorio, de un solo uso y con caducidad corta.
+- CA-18.3 La web dispone de una pantalla funcional para establecer la nueva
+  contraseña.
+
+**US-19 · Administrar con privilegios explícitos**
+- CA-19.1 Los roles proceden de la base de datos y no de un correo codificado.
+- CA-19.2 El primer administrador se provisiona fuera del registro público.
+- CA-19.3 Las operaciones sensibles exigen cuenta verificada, reautenticación y
+  registro de auditoría.
+- CA-19.4 Registro, acceso y correo tienen límites de intentos.
 
 ## 5. Requisitos no funcionales
 
@@ -198,7 +231,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 | Carga inicial | Aplicación utilizable en menos de 3 s en 4G |
 | Fiabilidad de datos | Cobertura de pruebas del motor de reglas al 100 % de las reglas R1–R10 |
 | Accesibilidad | Contraste AA; navegación por teclado en escritorio |
-| Privacidad | Ningún dato sale del dispositivo; sin telemetría ni terceros |
+| Privacidad | Solo se envían a la API propia los datos necesarios para cuenta y listas; contraseñas únicamente sobre HTTPS y almacenadas como hash Argon2id |
 | Mantenibilidad | Añadir una raza nueva no debe requerir cambios en el motor de reglas ni en la interfaz |
 
 ## 6. Métrica de éxito
@@ -206,4 +239,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 La versión 1 se considera terminada cuando:
 1. La lista de ejemplo del reglamento se reproduce en la app y valida con el desglose exacto de minerales y espacios que aparece impreso en el manual.
 2. El usuario construye una lista Zerg completa, la imprime y la usa en una partida real sin necesitar consultar el PDF.
-3. Añadir Terran consiste únicamente en añadir ficheros de catálogo.
+3. Las tres razas se cargan sin duplicar reglas en la interfaz.
+4. Una lista guardada se recupera desde otro dispositivo con la misma cuenta.
+5. Los flujos de registro, verificación, recuperación y autorización superan
+   pruebas de integración y E2E.

@@ -6,13 +6,23 @@ el catálogo y la interfaz claramente separados y verificables.
 
 ## Requisitos
 
-- Node.js 20 o posterior (se recomienda una versión LTS).
+- Node.js 20 o posterior para desarrollo; Node.js 22 para reproducir el
+  despliegue, actualmente acoplado a `/opt/plesk/node/22`.
 - npm, incluido con Node.js.
+- MariaDB para los flujos de cuenta, listas y administración.
 
 ## Puesta en marcha
 
 ```bash
 npm install
+```
+
+Copia `.env.example` a `.env`, crea la base de datos y arranca, en terminales
+separadas:
+
+```bash
+npm run db:migrate
+npm run dev:server
 npm run dev
 ```
 
@@ -48,8 +58,10 @@ pruebas al guardar cambios.
 ```text
 src/engine/   Reglas, validación y cálculos; TypeScript puro.
 src/catalog/  Esquemas Zod y datos JSON del contenido del juego.
-src/store/    Estado de la lista y persistencia local.
-src/ui/       Componentes React, estilos e impresión.
+src/store/    Estado de sesión y de la lista en edición.
+src/auth/     Clientes HTTP de autenticación y listas remotas.
+src/ui/       Componentes React, cuenta, listas, estilos e impresión.
+server/src/   API Express, repositorios MariaDB, correo y migraciones.
 tests/        Pruebas de reglas e integridad del catálogo.
 docs/         Especificaciones y material de referencia.
 ```
@@ -59,6 +71,8 @@ docs/         Especificaciones y material de referencia.
   No dupliques esos datos dentro del motor o de la interfaz.
 - Los valores derivados —costes, espacios usados y legalidad— se calculan; no
   se persisten en las listas.
+- El cliente nunca decide la identidad del propietario de una lista; la API la
+  deriva de la sesión y filtra todas las consultas por `owner_id`.
 - Mantén los identificadores y `seedId` existentes: son referencias estables
   para listas guardadas y códigos compartibles.
 
@@ -93,6 +107,25 @@ reglamento; cualquier cambio que la afecte debe revisarse con especial cuidado.
 - Las garantías estructurales de datos se prueban en `tests/catalog/`.
 - Prueba explícitamente los límites: máximos, mínimos, incompatibilidades y
   combinaciones legales e ilegales.
+
+El inventario del 3 de agosto de 2026 contiene 132 pruebas, todas correctas,
+pero todavía no cubre componentes ni flujos E2E. Tampoco hay integración
+completa para registro, verificación, recuperación, autorización por
+propietario y administración. Cualquier cambio en esas áreas debe añadir esa
+cobertura antes de considerarse listo para producción.
+
+## Seguridad y operaciones
+
+- Los privilegios administrativos deben proceder de roles persistidos, no de
+  comparar una dirección de correo en código.
+- Los flujos sensibles deben exigir cuenta verificada y, cuando corresponda,
+  reautenticación.
+- Registro, acceso y recuperación necesitan límites de intentos y protección
+  frente a abuso de correo.
+- Las migraciones deben comprobar la adquisición del bloqueo y ser seguras al
+  reintentarse tras un fallo parcial.
+- Consulta [`docs/08-AUDITORIA-2026-08-03.md`](docs/08-AUDITORIA-2026-08-03.md)
+  antes de trabajar en autenticación, administración o despliegue.
 
 ## Commits y pull requests
 

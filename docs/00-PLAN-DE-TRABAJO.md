@@ -1,6 +1,11 @@
 # Plan de trabajo — Constructor de listas de ejército · StarCraft: The Miniatures Game
 
-Versión 2 · Incorpora los hallazgos de la extracción de `docs/` y las decisiones tomadas.
+Versión 3 · Estado actualizado tras la auditoría técnica del 3 de agosto de 2026.
+
+Este documento conserva el razonamiento y los hallazgos de extracción, pero su
+plan de ejecución original ya no representa la arquitectura vigente. El estado
+operativo se resume aquí y los riesgos actuales están en
+[`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md).
 
 ---
 
@@ -8,15 +13,16 @@ Versión 2 · Incorpora los hallazgos de la extracción de `docs/` y las decisio
 
 | Tema | Decisión |
 |---|---|
-| Stack | React + TypeScript + Vite, PWA estática |
-| Alcance v1 | Construcción de listas + impresión + consulta de cartas |
-| Persistencia | En el dispositivo; modelo preparado para añadir cuentas después |
+| Stack | React + TypeScript + Vite; API Express y MariaDB |
+| Alcance actual | Construcción, validación, impresión, cuentas y listas remotas |
+| Persistencia | MariaDB por cuenta; JSON y seed como formatos portables |
 | Contenido | Cartas completas (texto e imágenes); uso privado, no publicada |
 | Idioma | **Nombres propios en inglés, textos explicativos en español** |
-| Razas | **Zerg primero**, luego Terran y Protoss |
+| Razas | Zerg, Terran y Protoss implementadas |
 | Impresión | Hoja resumen A4 + cartas de las unidades + exportación a PDF |
 | Cartas impresas | **Recorte de la imagen original en inglés** del PDF |
 | Versión de reglas | Los PDFs actuales (`May 2026, v.1.0`) son la fuente vigente |
+| PWA | Instalable; el acceso autenticado requiere conexión con la API |
 
 ### Regla de idioma (Q11 resuelta)
 
@@ -108,9 +114,9 @@ Tanto la carta de facción como las tácticas aportan recurso por ronda (`+1 CP`
 
 ---
 
-## Fases
+## Estado de las fases
 
-### Fase 1 — Documentación (en curso)
+### Fase 1 — Documentación: completada y en mantenimiento
 
 | Documento | Contenido | Estado |
 |---|---|---|
@@ -121,38 +127,50 @@ Tanto la carta de facción como las tácticas aportan recurso por ronda (`+1 CP`
 
 Ya no hace falta un glosario de traducción de nombres: al mantenerlos en inglés, solo se traducen los términos estructurales, que son una veintena y están recogidos en la tabla de la regla de idioma.
 
-### Fase 2 — Catálogo Zerg
+### Fase 2 — Catálogo Zerg: implementada
 
-1. Extraer y recortar las imágenes de las cartas (`pdftoppm -r 300`), anverso y reverso.
-2. Transcribir a JSON siguiendo `03-MODELO-DATOS.md`, con nombres en inglés.
-3. Traducir al español únicamente los textos de efecto.
-4. Validar contra JSON Schema.
-5. **Verificación cruzada obligatoria**: script que comprueba que toda entrada de puntos tiene carta y viceversa; revisión humana de costes y suministros.
-6. **Contraste con la app de referencia**: sus cifras coinciden con el reglamento en las 11 unidades comprobadas, así que sirve como segunda opinión gratuita sobre el resto del catálogo Zerg.
+El catálogo, sus esquemas y las pruebas de integridad están implementados. La
+revisión humana de costes sigue siendo un control editorial obligatorio.
 
-### Fase 3 — Motor de reglas
+### Fase 3 — Motor de reglas: implementada
 
-Librería pura de TypeScript, sin dependencias de interfaz, con pruebas unitarias de R1–R10 (ver SDD). **Se completa antes de escribir la interfaz.** Caso de regresión: la lista de ejemplo del manual (§9.1, Raynor's Raiders) debe validarse como legal con el desglose exacto de espacios y minerales.
+Librería pura de TypeScript, sin dependencias de interfaz, con reglas R1–R13,
+avisos y caso de regresión de la lista del manual.
 
-### Fase 4 — Interfaz de construcción
+### Fase 4 — Interfaz de construcción: implementada con deuda UX
 
-Asistente de 6 pasos con edición no lineal y barra de recursos permanente. Escritorio primero, adaptación móvil inmediatamente después.
+Asistente de cuatro pasos, barra de recursos, escritorio y adaptación móvil.
+Quedan pendientes la prevención de descartes accidentales, semántica accesible
+de pestañas y una acción visible para cerrar sesión en móvil.
 
-### Fase 5 — Persistencia y consulta de cartas
+### Fase 5 — Persistencia y consulta: parcial
 
-Guardado local, importación/exportación, buscador de cartas.
+Las listas se guardan en MariaDB por usuario y se pueden importar/exportar como
+JSON o seed. La búsqueda avanzada y los filtros generales siguen pendientes.
 
-### Fase 6 — Impresión y PDF
+### Fase 6 — Impresión y PDF: implementada
 
-Hoja resumen A4, cartas de las unidades incluidas, exportación a PDF.
+La hoja resumen se genera con CSS de impresión y el navegador permite guardarla
+como PDF. El inventario de imágenes completas de cartas permanece incompleto.
 
-### Fase 7 — PWA y despliegue
+### Fase 7 — PWA y despliegue: parcial
 
-Modo offline, instalación en móvil, despliegue en hosting estático.
+La PWA es instalable y existe un flujo de despliegue de frontend, backend y
+migraciones en Plesk. No hay modo offline soportado porque la restauración de
+sesión y las listas dependen de la API.
 
-### Fase 8 — Terran y Protoss
+### Fase 8 — Terran y Protoss: implementada
 
-Repetir Fase 2 para las otras dos razas. Si el modelo de datos es correcto, no requiere tocar el motor de reglas ni la interfaz — es la prueba de que la Fase 2 se hizo bien.
+Ambos catálogos están cargados y cubiertos por pruebas de integridad. Continúa
+pendiente una segunda revisión humana de costes y algunos perfiles indicados en
+`07-PENDIENTE.md`.
+
+### Fase 9 — Cuentas, API y listas sincronizadas: parcial
+
+Registro, acceso, verificación, perfiles, listas remotas, control de propietario,
+administración y SMTP están implementados. Antes de producción deben corregirse
+el modelo de superadministración, la recuperación de contraseña en la web, el
+reenvío de verificación, los límites de intentos y la cobertura de integración.
 
 ---
 

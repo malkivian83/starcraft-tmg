@@ -50,7 +50,7 @@ export function createAdminRouter(
     const { recipient } = z.object({ recipient: z.string().email().max(254) }).parse(request.body);
     try {
       const result = await smtpEmail.sendTestEmail(recipient);
-      response.json({ result: { ok: true, messageId: result.messageId } });
+      response.json({ result: { ok: true, ...result } });
     } catch (error) {
       throw new HttpError(502, 'SMTP_TEST_FAILED', describeSmtpError(error));
     }

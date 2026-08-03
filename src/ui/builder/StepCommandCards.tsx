@@ -12,7 +12,7 @@ import { SlotChips, UniqueChip } from '../common/Chips';
  * obligatoria y exactamente una (R11), así que enterrarla entre cartas
  * opcionales llevaría a listas ilegales sin que nadie lo note.
  */
-export function StepCommandCards() {
+export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionChange?: () => boolean }) {
   const { list, index, summary, validation } = useListStore();
   const selectFactionCard = useListStore((s) => s.selectFactionCard);
   const addTacticalCard = useListStore((s) => s.addTacticalCard);
@@ -35,7 +35,10 @@ export function StepCommandCards() {
               <button
                 key={card.id}
                 className={`card${list.factionCardId === card.id ? ' card--selected' : ''}`}
-                onClick={() => selectFactionCard(card.id)}
+                onClick={() => {
+                  if (list.factionCardId !== card.id && onBeforeFactionChange && !onBeforeFactionChange()) return;
+                  selectFactionCard(card.id);
+                }}
               >
                 <div className="card__head">
                   <span className="card__name">{card.name}</span>

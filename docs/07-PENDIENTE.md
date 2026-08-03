@@ -1,7 +1,11 @@
 # Pendiente y sin terminar
 
-Estado a 2 de agosto de 2026. Inventario honesto de lo que falta, lo que está
+Estado a 3 de agosto de 2026. Inventario honesto de lo que falta, lo que está
 a medias y lo que se dio por bueno sin verificar.
+
+Los riesgos técnicos y de producto se identifican de forma estable como
+`AUD-01`…`AUD-14` en
+[`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md).
 
 Prioridad: **A** = afecta a la corrección de las listas · **B** = afecta al uso
 diario · **C** = mejora deseable.
@@ -53,7 +57,7 @@ completaron perfiles como `Raynor's Raider`, `Goliath`, `Adept`, `Sentry` y
 |---|---|---|---|
 | Zerg | — | `Omega Worm` (intencional) | — |
 | Terran | `Point Defense Drone` (intencional) | — | `Medic`, `Jim Raynor` |
-| Protoss | — | `Praetor Guard`, `Artanis`, `Pylon` (estructura intencional) | — |
+| Protoss | — | `Pylon` (estructura intencional) | — |
 
 Se puede regenerar esta tabla con:
 
@@ -77,15 +81,13 @@ con las cartas antes de mostrarse como información fiable.
 | `Jim Raynor` | Tamaño |
 | `Point Defense Drone` | Tamaño y velocidad |
 
-### B3 · Faltan las imágenes de carta
-Solo se han recortado los **retratos de miniatura** (18 de 19 unidades; falta
-`Point Defense Drone`, que no tiene página propia). No están recortadas:
+### B3 · Faltan las imágenes completas de carta
+
+Están disponibles los retratos de las 26 unidades y los 10 diagramas de
+despliegue. No están recortadas:
 
 - Anverso y reverso de las cartas de unidad (`imageRefFront` / `imageRefBack`).
 - Cartas de facción, tácticas y Creep.
-- **Diagramas de despliegue** — `imageRef` es obligatorio en el modelo y apunta
-  a ficheros que no existen, así que el paso 3 muestra las cartas sin su mapa
-  de marcadores. Es la ausencia más visible.
 
 La interfaz oculta las imágenes que faltan, así que nada se rompe.
 
@@ -129,9 +131,10 @@ Estas comprobaciones deben incorporarse a pruebas de interfaz antes de dar una
 auditoría de cartas por cerrada.
 
 ### D1 · Sin pruebas de interfaz
-Hay 110 pruebas del motor, el catálogo y el códec de seed, pero **ninguna de
-componentes ni de extremo a extremo**. El SDD las contempla (Testing Library y
-Playwright) y no se han escrito. Los tres fallos que aparecieron usando la app
+Hay 132 pruebas en 10 ficheros del motor, catálogo, códec de seed, store y
+diagnóstico SMTP, pero **ninguna de componentes ni de extremo a extremo**.
+Tampoco hay integración de API/MariaDB para autenticación, autorización o
+administración. Los tres fallos que aparecieron usando la app
 —cartas UNIQUE que no se podían quitar, copias que no se añadían y el coste
 solapado— eran todos de interfaz y ninguno lo habría detectado el motor.
 
@@ -150,8 +153,51 @@ transcripción de perfiles, habilidades y costes se hizo a mano leyendo el texto
 extraído: no hay forma de regenerarla ni de detectar si un PDF nuevo cambia
 algo.
 
-### D5 · `Point Defense Drone` sin retrato
-No tiene página de carta propia en la hoja P2P Terran.
+### D5 · `Point Defense Drone` sin carta completa propia
+El retrato existe en `public/cards/terran/mini-point_defense_drone.jpg`, pero no
+tiene página de carta completa propia en la hoja P2P Terran.
+
+### D6 · Seguridad de superadministración (`AUD-01`)
+
+El backend concede privilegios comparando un correo fijo y no exige correo
+verificado. En una instalación nueva existe riesgo de apropiación de la cuenta
+administrativa. Bloquea el despliegue multiusuario hasta introducir roles
+persistidos y provisión inicial fuera del registro público.
+
+### D7 · Flujos de cuenta incompletos (`AUD-02`, `AUD-03`)
+
+La recuperación existe en la API, pero no en la interfaz. Tampoco existe reenvío
+de verificación y un fallo SMTP puede dejar una cuenta creada pero inutilizable.
+Este diseño produce además un bloqueo al configurar el primer administrador y
+SMTP en producción desde una base vacía.
+
+### D8 · Defensa y cobertura del backend (`AUD-06`, `AUD-09`)
+
+Faltan límites de intentos, pruebas de aislamiento entre propietarios y
+validación semántica de identificadores, raza y catálogo en las listas enviadas
+directamente a la API.
+
+### D9 · Migraciones y despliegue (`AUD-07`, `AUD-13`)
+
+El ejecutor no comprueba el resultado de `GET_LOCK` y las operaciones DDL pueden
+quedar aplicadas parcialmente. Plesk está acoplado a Node 22; se ha corregido la
+guía para evitar instalaciones duplicadas, pero el código debe parametrizar la
+ruta y disponer de rollback operativo.
+
+### D10 · Experiencia web y accesibilidad (`AUD-04`, `AUD-05`, `AUD-08`, `AUD-10`)
+
+- En móvil se oculta la única acción visible para cerrar sesión.
+- “Nueva lista” y cambiar de raza descartan trabajo sin confirmación.
+- La PWA depende de la API y no soporta el modo offline que se prometía.
+- Las pestañas y selecciones no comunican todo su estado a tecnologías de
+  asistencia.
+
+### D11 · Dependencias y carga inicial (`AUD-11`, `AUD-12`)
+
+`react-router-dom` no se usa y mantiene dos avisos altos de `npm audit`. Los
+tres catálogos se incluyen en un único chunk de unos 732 kB; quedan pendientes
+la eliminación de la dependencia, la división por raza y la revisión de caché
+de recursos PWA.
 
 ---
 
@@ -165,7 +211,7 @@ No tiene página de carta propia en la hoja P2P Terran.
 | Cartas tácticas | 9 | 10 | 10 |
 | Creep Cards | 2 | — | — |
 | Mejoras con texto | ✅ | ✅ | ✅ |
-| Retratos de miniatura | 12/12 | 6/7 | 7/7 |
+| Retratos de miniatura | 12/12 | 7/7 | 7/7 |
 | Armas y habilidades | Parcial | Parcial | Parcial |
 
 Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
@@ -174,11 +220,11 @@ Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
 
 ## Qué haría a continuación
 
-1. **Completar armas y habilidades** de las cartas de B1. Es lo que más se nota
-   y lo que motivó el aviso del `Swarmling`.
-2. **Recortar los diagramas de despliegue** (B4). Sin ellos el paso 3 está a
-   medias, y son datos que no se pueden transcribir a texto.
-3. **Revisión humana de los costes** (A1). El riesgo mayor, y el único que no
-   se puede cerrar sin ti.
-4. **Pruebas de extremo a extremo** (D1). Los fallos que has encontrado usando
-   la aplicación eran todos de interfaz.
+1. **Cerrar la autorización administrativa** (`AUD-01`); bloquea producción.
+2. **Completar recuperación, reenvío y bootstrap SMTP** (`AUD-02`, `AUD-03`).
+3. **Añadir límites y pruebas API/E2E** (`AUD-06`, D1).
+4. **Endurecer migraciones y despliegue** (`AUD-07`).
+5. **Corregir salida móvil y pérdida silenciosa de cambios** (`AUD-04`,
+   `AUD-08`).
+6. **Revisión humana de costes Terran y Protoss** (A1).
+7. **Completar perfiles e imágenes completas de carta** (B1–B3).
