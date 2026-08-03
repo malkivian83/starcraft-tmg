@@ -1,8 +1,10 @@
 # Ideas de mejora
 
-Versión 1.0 · Propuestas más allá del alcance acordado
+Versión 1.1 · Backlog revisado a 3 de agosto de 2026
 
-**Nada de este documento está aprobado.** Es un catálogo de posibilidades para que decidas. El alcance comprometido sigue siendo el del [`01-PRD.md`](01-PRD.md).
+Salvo I13, que ya está implementada, este documento es un catálogo de
+posibilidades. El alcance vigente sigue siendo el de
+[`01-PRD.md`](01-PRD.md).
 
 Criterio de coste: **bajo** = se apoya en datos y motor que ya tendremos; **medio** = requiere trabajo propio; **alto** = es un subproyecto.
 
@@ -89,16 +91,20 @@ Anotar la intención táctica de cada unidad («flanquear por la derecha», «gu
 ### I12 · Filtros y búsqueda avanzada en el catálogo
 **Coste: bajo.**
 
-Filtrar por rol de combate, palabra clave (`SPECIALIST`, `INDIRECT FIRE`), alcance, tipo de espacio o coste. Necesario en cuanto entren las tres razas.
+Filtrar por rol de combate, palabra clave (`SPECIALIST`, `INDIRECT FIRE`),
+alcance, tipo de espacio o coste. Las tres razas ya están presentes, por lo que
+esta mejora ha pasado de previsión a necesidad de uso.
 
 ---
 
 ## Valor a largo plazo
 
-### I13 · Sincronización con cuenta
-**Coste: alto.** Requiere backend, hosting con coste y gestión de datos personales.
+### I13 · Sincronización con cuenta — implementada
 
-Ya decidido: no en la v1, pero el modelo está preparado. Las listas tienen identificador estable y marcas de tiempo.
+Existe backend propio, cuentas, propiedad por usuario, listas en MariaDB y
+control optimista de revisión. Su endurecimiento de seguridad y las pruebas de
+integración se gestionan en
+[`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md), no como idea futura.
 
 ### I14 · Acompañante de partida
 **Coste: alto.** Es prácticamente otra aplicación.

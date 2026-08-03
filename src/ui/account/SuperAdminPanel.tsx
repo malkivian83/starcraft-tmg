@@ -29,9 +29,11 @@ export function SuperAdminPanel() {
     }
   };
 
-  const refreshEmailLogs = async () => {
+  const refreshEmailLogs = async (reportError = true) => {
     try { setEmailLogs(await auth.getEmailDeliveryLogs()); }
-    catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo cargar el historial de correos.'); }
+    catch (error) {
+      if (reportError) setMessage(error instanceof Error ? error.message : 'No se pudo cargar el historial de correos.');
+    }
   };
 
   useEffect(() => {
@@ -86,17 +88,18 @@ export function SuperAdminPanel() {
       return;
     }
     setSmtpPending(true);
-    setMessage('Comprobando conexión y enviando correo de prueba…');
+    setMessage('Guardando la configuración SMTP…');
     try {
       await persistSmtp();
+      setMessage(`Conectando con ${smtp.host}:${smtp.port} y enviando el correo de prueba…`);
       const result = await auth.testSmtpSettings(testRecipient.trim());
       const serverResponse = result.response ? ` Respuesta: ${result.response}` : '';
       setMessage(`El servidor SMTP aceptó el correo para ${result.accepted.join(', ')}${result.messageId ? ` (ID: ${result.messageId})` : ''}.${serverResponse}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'La prueba SMTP ha fallado.');
     } finally {
-      await refreshEmailLogs();
       setSmtpPending(false);
+      void refreshEmailLogs(false);
     }
   };
 
@@ -148,7 +151,7 @@ export function SuperAdminPanel() {
       <label className="row"><input type="checkbox" checked={smtp.secure} onChange={(event) => setSmtp({ ...smtp, secure: event.target.checked })} /> Usar TLS/SSL implícito (habitualmente puerto 465)</label>
       <div className="smtp-test-row">
         <label className="field">Destinatario de prueba<input type="email" value={testRecipient} onChange={(event) => setTestRecipient(event.target.value)} placeholder="tu@correo.com" /></label>
-        <div className="row"><button type="submit" disabled={smtpPending}>Guardar SMTP</button><button type="button" disabled={smtpPending} onClick={() => { void testSmtp(); }}>Probar conexión y envío</button></div>
+        <div className="row"><button type="submit" disabled={smtpPending}>Guardar SMTP</button><button type="button" disabled={smtpPending} onClick={() => { void testSmtp(); }}>{smtpPending ? 'Procesando…' : 'Probar conexión y envío'}</button></div>
       </div>
     </form>}
 

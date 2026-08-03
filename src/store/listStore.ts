@@ -45,9 +45,11 @@ interface ListState {
   summary: CostSummary;
   validation: ValidationResult;
   remoteRevision: number | null;
+  isDirty: boolean;
 
   setList: (list: ArmyList) => void;
   setRemoteRevision: (revision: number | null) => void;
+  markSaved: () => void;
   resetForRace: (race: Race) => void;
   patch: (changes: Partial<ArmyList>) => void;
 
@@ -107,16 +109,18 @@ export const useListStore = create<ListState>((set, get) => {
       ...changes,
       updatedAt: new Date().toISOString(),
     };
-    set(derive(next, index ?? state.index));
+    set({ ...derive(next, index ?? state.index), isDirty: true });
   };
 
   return {
     ...derive(initialList, initialIndex),
     remoteRevision: null,
+    isDirty: false,
 
-    setList: (list) => set({ ...derive(list, indexFor(list.race)), remoteRevision: null }),
+    setList: (list) => set({ ...derive(list, indexFor(list.race)), remoteRevision: null, isDirty: true }),
     setRemoteRevision: (remoteRevision) => set({ remoteRevision }),
-    resetForRace: (race) => set({ ...derive(createEmptyList(race), indexFor(race)), remoteRevision: null }),
+    markSaved: () => set({ isDirty: false }),
+    resetForRace: (race) => set({ ...derive(createEmptyList(race), indexFor(race)), remoteRevision: null, isDirty: false }),
     patch: (changes) => apply(changes),
 
     setRace: (race) => {
@@ -127,7 +131,7 @@ export const useListStore = create<ListState>((set, get) => {
       fresh.name = list.name;
       fresh.scaleId = list.scaleId;
       fresh.mineralLimit = list.mineralLimit;
-      set({ ...derive(fresh, indexFor(race)), remoteRevision: null });
+      set({ ...derive(fresh, indexFor(race)), remoteRevision: null, isDirty: true });
     },
 
     setScale: (scaleId) => {

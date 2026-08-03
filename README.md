@@ -1,8 +1,14 @@
 # Constructor de listas de ejército · StarCraft: The Miniatures Game
 
 Aplicación web para construir, validar, guardar e imprimir listas de ejército.
-Funciona en escritorio y móvil desde una URL, e instalable como PWA para usarla
-sin conexión.
+Funciona en escritorio y móvil, permite instalar la interfaz como PWA y guarda
+las listas en una cuenta centralizada mediante una API propia y MariaDB.
+
+> **Estado actual:** la aplicación requiere conexión con la API para restaurar
+> la sesión y acceder al constructor. La instalación PWA no implica todavía
+> funcionamiento íntegro sin conexión. Consulta
+> [`docs/08-AUDITORIA-2026-08-03.md`](docs/08-AUDITORIA-2026-08-03.md) para ver
+> los riesgos y mejoras pendientes antes de un despliegue multiusuario.
 
 ## Puesta en marcha
 
@@ -10,62 +16,58 @@ sin conexión.
 npm install
 ```
 
-```bash
-npm run dev
-```
+1. Copia `.env.example` a `.env` y ajusta la conexión a MariaDB y los orígenes.
+2. Inicia MariaDB y aplica las migraciones:
 
-```bash
-npm test
-```
+   ```bash
+   npm run db:migrate
+   ```
 
-```bash
-npm run build
-```
+3. Arranca API e interfaz en terminales distintas:
+
+   ```bash
+   npm run dev:server
+   npm run dev
+   ```
+
+4. Ejecuta las comprobaciones:
+
+   ```bash
+   npm run typecheck
+   npm test
+   npm run build
+   npm run build:server
+   ```
 
 ## Desarrollo con cuentas de usuario
 
-El registro necesita la API y MariaDB de XAMPP. Copia `.env.example` a `.env`,
-define un `SESSION_SECRET` largo e inicia el servicio **MySQL** desde el panel
-de XAMPP. Después crea una base de datos y un usuario de aplicación (o usa los
-ya configurados en tu `.env`) y aplica el esquema:
+El registro necesita la API y MariaDB. En desarrollo puede usarse MariaDB de
+XAMPP. Define un `SESSION_SECRET` largo, crea la base de datos y un usuario de
+aplicación, y aplica el esquema antes de iniciar el servidor.
 
 ```bash
 npm run db:migrate
 npm run dev:server
 ```
 
-La interfaz sigue arrancando con `npm run dev`. En desarrollo, los enlaces de
-verificación de correo se muestran también en la pantalla tras registrarse.
-Para producción se debe configurar un proveedor SMTP y una base de datos
-MariaDB accesible por el backend desplegado.
+En desarrollo, los enlaces de verificación se muestran también en la pantalla
+tras registrarse cuando no hay SMTP configurado. En producción deben existir
+SMTP, HTTPS, MariaDB y el backend desplegado.
 
-La compilación deja en `dist/` un sitio **estático**: no hay servidor ni base de
-datos. Se sube tal cual a cualquier hosting.
+La compilación del frontend queda en `dist/` y la del backend en
+`server/dist/`. `dist/` es estático, pero no constituye por sí solo una
+aplicación funcional: el cliente depende de la API para autenticación, perfil y
+listas guardadas.
 
-## Despliegue en hosting propio
+## Despliegue
 
-1. `npm run build`
-2. Sube el contenido de `dist/` a la raíz pública de tu hosting.
-3. Configura el servidor para que **todas las rutas devuelvan `index.html`**
-   (es una aplicación de una sola página).
+El despliegue vigente compila frontend y backend, aplica migraciones y arranca
+`app.js` como aplicación Node. La configuración concreta de Plesk está en
+[`PLESK_DEPLOYMENT.md`](PLESK_DEPLOYMENT.md).
 
-Con Apache, un `.htaccess` en la raíz:
-
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-```
-
-Con Nginx:
-
-```nginx
-location / { try_files $uri $uri/ /index.html; }
-```
-
-**HTTPS es obligatorio** para que funcionen la PWA y el modo sin conexión: los
-service workers no se registran sobre HTTP salvo en `localhost`.
+HTTPS es obligatorio en producción para proteger cookies y credenciales y para
+registrar el service worker de la PWA. Antes de publicar debe cerrarse al menos
+el hallazgo crítico de superadministración recogido en la auditoría.
 
 ## Estructura
 
@@ -74,8 +76,11 @@ src/
   engine/     motor de reglas: TypeScript puro, sin React ni navegador
     seed/     códec de seed para compartir listas por código
   catalog/    esquemas Zod y datos JSON del catálogo
-  store/      estado de la lista y persistencia en IndexedDB
-  ui/         interfaz React
+  auth/       clientes de autenticación y listas remotas
+  store/      sesión y estado de la lista en edición
+  ui/         interfaz React, cuenta, listas e impresión
+server/
+  src/        API Express, autenticación, administración y migraciones
 docs/         PRD, SDD, modelo de datos y análisis
 tests/        pruebas del motor y de integridad del catálogo
 ```
@@ -83,6 +88,9 @@ tests/        pruebas del motor y de integridad del catálogo
 El motor de reglas no importa nada de la interfaz. Es lo único que decide si
 una lista es legal y es lo que está cubierto por pruebas: si esa separación se
 rompe, la corrección del producto deja de ser verificable.
+
+Las listas guardadas se persisten en MariaDB. JSON y seed siguen siendo formatos
+portables de importación y exportación, no el almacén principal de la cuenta.
 
 ## Estado del contenido
 
@@ -104,8 +112,13 @@ de carta siguen siendo opcionales: la interfaz las oculta si no existen.
 
 ## Verificación
 
-La prueba más importante es `tests/engine/regression-manual.test.ts`: reproduce
+Actualmente hay **132 pruebas**. La más importante es
+`tests/engine/regression-manual.test.ts`: reproduce
 la lista de ejemplo del reglamento §9.1 y comprueba las cifras **publicadas por
 el fabricante** — 1670 minerales, 185 de gas, 8/8 Núcleo, 2/2 Élite, 2/3 Apoyo,
 1/1 Héroe, 0/1 Aéreo. Es el único punto donde una fuente externa confirma a la
 vez que los datos y las reglas son correctos.
+
+La cobertura actual no incluye todavía pruebas E2E ni integración completa de
+las rutas de autenticación, autorización y listas. Esa ausencia está registrada
+en la auditoría y en `docs/07-PENDIENTE.md`.

@@ -2,6 +2,10 @@
 
 Versión 1.0 · Basado en las capturas aportadas por el usuario
 
+> **Documento histórico.** El análisis visual sigue siendo válido, pero varias
+> decisiones de alcance fueron sustituidas posteriormente: la aplicación actual
+> incluye misión y despliegue, cuentas y guardado remoto.
+
 Objetivo: identificar qué resuelve bien la aplicación existente (y conviene conservar) y dónde están sus carencias (donde está nuestra oportunidad de hacerlo mejor).
 
 ---
@@ -109,8 +113,12 @@ Lo que haremos distinto, y por qué:
 
 **Móvil** — pestañas inferiores, barra de recursos contraíble, catálogo en hoja deslizante sobre la lista.
 
-## 6. Qué no copiamos
+## 6. Decisiones iniciales y evolución
 
-- La tercera pestaña «Mission & Deploy»: fuera del encargo original (pendiente de Q13).
-- El guardado en nube: la decisión fue almacenamiento en el dispositivo, sin cuentas.
-- La estética íntegramente en inglés.
+- La pestaña «Mission & Deploy» se descartó inicialmente, pero quedó resuelta a
+  favor de incluir misión y despliegue como tercer paso.
+- El almacenamiento exclusivamente local fue sustituido por cuentas y listas
+  remotas en MariaDB.
+- Se mantiene la decisión de no copiar una estética íntegramente en inglés: los
+  nombres de juego permanecen en inglés y la interfaz explicativa está en
+  español.
