@@ -5,7 +5,7 @@ import { z } from 'zod';
 import type { ServerEnvironment } from '../../config/env.js';
 import { HttpError } from '../../lib/errors.js';
 import { requireUser } from '../../middleware/require-user.js';
-import type { EmailGateway } from '../email/email.gateway.js';
+import { describeSmtpError, type EmailGateway } from '../email/email.gateway.js';
 import { AuthRepository, type UserRecord } from './auth.repository.js';
 import { clearSession, issueSession } from './session.js';
 
@@ -65,7 +65,11 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     const user = await repository.createUser(inputEmail.trim(), emailNormalized, await hashPassword(password));
     const token = createToken();
     await repository.createToken(user.id, token.hash, 'VERIFY_EMAIL');
-    await email.sendVerificationEmail(user.email, token.raw);
+    try {
+      await email.sendVerificationEmail(user.email, token.raw);
+    } catch (error) {
+      throw new HttpError(502, 'EMAIL_DELIVERY_FAILED', `La cuenta se creó, pero no se pudo enviar el correo de verificación. ${describeSmtpError(error)}`);
+    }
     response.status(201).json({
       user: publicUser(user),
       verificationRequired: true,

@@ -96,6 +96,23 @@ describe('Catálogo Protoss', () => {
     ]);
   });
 
+  it('incluye las Psi Blades del Praetor Guard', () => {
+    expect(index.unitCards.get('protoss.card.praetor_guard')!.weapons).toEqual([
+      {
+        name: 'Psi Blades',
+        phase: 'COMBAT',
+        range: 'E',
+        target: 'Ground',
+        rateOfAttack: '4',
+        hit: '3+',
+        surgeType: 'Light',
+        surgeDice: 'D3',
+        damage: '3',
+        keywords: [],
+      },
+    ]);
+  });
+
   it('el coste de las mejoras del Stalker depende de la composición', () => {
     const stalker = index.unitEntries.get('protoss.entry.stalker')!;
     const path = stalker.upgrades.find((u) => u.id === 'path_of_shadows')!;

@@ -53,7 +53,7 @@ completaron perfiles como `Raynor's Raider`, `Goliath`, `Adept`, `Sentry` y
 |---|---|---|---|
 | Zerg | — | `Omega Worm` (intencional) | — |
 | Terran | `Point Defense Drone` (intencional) | — | `Medic`, `Jim Raynor` |
-| Protoss | — | `Praetor Guard`, `Artanis`, `Pylon` (estructura intencional) | — |
+| Protoss | — | `Pylon` (estructura intencional) | — |
 
 Se puede regenerar esta tabla con:
 

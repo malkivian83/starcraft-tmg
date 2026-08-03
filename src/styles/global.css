@@ -280,14 +280,30 @@ a {
 .saved-list-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .saved-list-card__faction-logo { width: 52px; height: 52px; object-fit: contain; flex: 0 0 auto; }
 .saved-list-card__faction, .saved-list-card__costs, .saved-list-card__slots { margin: 6px 0; font-size: 13px; color: var(--text-dim); }
-.super-admin-panel { margin-top: var(--gap); }
+.super-admin-panel { margin-top: var(--gap); gap: 12px; }
+.admin-tabs { margin: 2px -12px 0; padding-inline: 12px; }
+.admin-tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: 2px;
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-dim);
+  background: var(--bg-raised);
+  font-size: 11px;
+}
+.admin-section { min-height: 220px; padding-top: 4px; }
+.admin-section__heading h3, .admin-section__heading p { margin: 0; }
 .admin-user-list { display: grid; gap: 8px; }
 .admin-user { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
 .admin-user > div:first-child { display: grid; gap: 3px; min-width: 0; }
 .admin-user span, .admin-user small { color: var(--text-dim); }
-.admin-smtp { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.admin-smtp { padding-top: 4px; }
 .smtp-test-row { display: grid; grid-template-columns: minmax(280px, 1fr) auto; align-items: end; gap: var(--gap); }
-.email-log-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.email-log-section { padding-top: 4px; }
 .email-log-heading { justify-content: space-between; align-items: flex-start; }
 .email-log-heading h3, .email-log-heading p { margin: 0; }
 .email-log-list { display: grid; gap: 8px; }
@@ -297,6 +313,8 @@ a {
 .email-log-result { justify-items: end; text-align: right; }
 .email-log-error { color: var(--danger) !important; max-width: 520px; }
 @media (max-width: 700px) {
+  .admin-tabs { padding-inline: 8px; }
+  .admin-tabs .tab { padding-inline: 11px; }
   .admin-user { align-items: flex-start; flex-direction: column; }
   .smtp-test-row, .email-log-item { grid-template-columns: 1fr; }
   .email-log-result { justify-items: start; text-align: left; }

@@ -114,8 +114,9 @@ export async function setAdminUserPassword(id: string, password: string): Promis
 }
 export async function getSmtpSettings(): Promise<SmtpSettings | null> { return (await request<{ smtp: SmtpSettings | null }>('/admin/smtp')).smtp; }
 export async function saveSmtpSettings(settings: Omit<SmtpSettings, 'passwordConfigured'>): Promise<void> { await request('/admin/smtp', { method: 'PUT', body: JSON.stringify(settings) }); }
-export async function testSmtpSettings(recipient: string): Promise<{ ok: boolean; messageId: string | null }> {
-  return (await request<{ result: { ok: boolean; messageId: string | null } }>('/admin/smtp/test', {
+export interface SmtpTestResult { ok: boolean; messageId: string | null; accepted: string[]; rejected: string[]; response: string | null; }
+export async function testSmtpSettings(recipient: string): Promise<SmtpTestResult> {
+  return (await request<{ result: SmtpTestResult }>('/admin/smtp/test', {
     method: 'POST', body: JSON.stringify({ recipient }),
   })).result;
 }

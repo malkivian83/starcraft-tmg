@@ -20,7 +20,21 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
   const emailLogs = new EmailDeliveryLogRepository(pool);
   const smtpEmail = new SmtpEmailGateway(smtpSettings, emailLogs, env);
-  const email = emailOverride ?? (env.NODE_ENV === 'production' ? smtpEmail : new DevelopmentEmailGateway(env));
+  const developmentEmail = new DevelopmentEmailGateway(env);
+  const email = emailOverride ?? {
+    sendVerificationEmail: async (address: string, token: string) => {
+      const configured = await smtpSettings.get();
+      return env.NODE_ENV === 'production' || configured
+        ? smtpEmail.sendVerificationEmail(address, token)
+        : developmentEmail.sendVerificationEmail(address, token);
+    },
+    sendPasswordResetEmail: async (address: string, token: string) => {
+      const configured = await smtpSettings.get();
+      return env.NODE_ENV === 'production' || configured
+        ? smtpEmail.sendPasswordResetEmail(address, token)
+        : developmentEmail.sendPasswordResetEmail(address, token);
+    },
+  } satisfies EmailGateway;
 
   app.use((request, response, next) => {
     const origin = request.header('origin');

@@ -16,4 +16,11 @@ describe('diagnóstico SMTP', () => {
   it('conserva un mensaje desconocido sin exceder el límite del registro', () => {
     expect(describeSmtpError(new Error('x'.repeat(1200)))).toHaveLength(1000);
   });
+
+  it('incluye la respuesta técnica segura del servidor', () => {
+    const error = Object.assign(new Error('falló la autenticación'), {
+      code: 'EAUTH', command: 'AUTH PLAIN', response: '535 5.7.8 Authentication failed',
+    });
+    expect(describeSmtpError(error)).toContain('EAUTH · AUTH PLAIN · 535 5.7.8');
+  });
 });
