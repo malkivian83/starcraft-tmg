@@ -9,7 +9,7 @@
     "db:migrate": "tsx server/src/db/migrate.ts",
     "build": "tsc -b && vite build",
     "build:server": "tsc -p tsconfig.server.json",
-    "deploy:plesk": "npm run build && npm run build:server && npm run db:migrate",
+    "deploy:plesk": "/opt/plesk/node/22/bin/node tools/deploy-plesk.mjs",
     "start:server": "node server/dist/index.js",
     "preview": "vite preview",
     "test": "vitest run",
