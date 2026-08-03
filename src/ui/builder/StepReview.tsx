@@ -101,6 +101,7 @@ export function StepReview() {
 
       <section className="panel no-print">
         <h2 className="panel__title">Hoja de lista</h2>
+        <button onClick={() => window.print()}>Imprimir / PDF</button>
         <p className="small muted" style={{ marginTop: 0 }}>
           Usa <strong>Imprimir</strong> en la barra superior. Para obtener un
           PDF, elige «Guardar como PDF» en el destino de impresión.

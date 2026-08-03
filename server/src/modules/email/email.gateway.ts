@@ -65,5 +65,23 @@ export class SmtpEmailGateway implements EmailGateway {
     const url = `${this.env.APP_BASE_URL}/reset-password?token=${encodeURIComponent(token)}`;
     await this.deliver({ recipient: email, messageType: 'RESET_PASSWORD', subject: 'StarCraft TMG - Restablece tu contrasena', text: `Restablece tu contrasena: ${url}\n\nSi no solicitaste este cambio, ignora este correo.`, html: emailTemplate({ preheader: 'Restablece de forma segura el acceso a tu cuenta.', title: 'Restablece tu contrasena', heading: 'Recupera el acceso', message: 'Hemos recibido una solicitud para cambiar la contrasena de tu cuenta.', action: 'Cambiar mi contrasena', url, securityNote: 'Si no solicitaste este cambio, puedes ignorar este correo. Tu contrasena seguira siendo la misma.', appBaseUrl: this.env.APP_BASE_URL }) });
   }
-  async sendTestEmail(recipient: string): Promise<SmtpDeliveryResult> { return this.deliver({ recipient, messageType: 'SMTP_TEST', subject: 'StarCraft TMG - Prueba SMTP', text: 'La configuracion SMTP funciona correctamente.', html: '<p>La configuracion SMTP funciona correctamente.</p>' }); }
+  async sendTestEmail(recipient: string): Promise<SmtpDeliveryResult> {
+    const url = this.env.APP_BASE_URL;
+    return this.deliver({
+      recipient,
+      messageType: 'SMTP_TEST',
+      subject: 'StarCraft TMG - Prueba SMTP',
+      text: `La configuracion SMTP funciona correctamente. Abre la aplicacion: ${url}`,
+      html: emailTemplate({
+        preheader: 'La configuracion SMTP funciona correctamente.',
+        title: 'Prueba SMTP correcta',
+        heading: 'Comunicaciones listas',
+        message: 'El servidor ha aceptado y enviado este correo de prueba con la plantilla oficial de StarCraft TMG.',
+        action: 'Abrir StarCraft TMG',
+        url,
+        securityNote: 'Este es un correo de prueba solicitado desde el panel de administracion.',
+        appBaseUrl: this.env.APP_BASE_URL,
+      }),
+    });
+  }
 }

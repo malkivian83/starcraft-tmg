@@ -56,12 +56,14 @@ function ArmyBuilderApp() {
     units: validation.errors.filter((error) => ['R1', 'R3', 'R4', 'R6', 'R8', 'R9', 'R10'].includes(error.rule)).length,
     scenario: validation.errors.filter((error) => error.rule === 'R12').length, review: 0,
   };
-  const confirmDiscard = (action: string) => !isDirty || window.confirm(`${action} reemplazara los cambios sin guardar de esta lista. Quieres continuar?`);
-  const createList = () => { if (!confirmDiscard('Crear una lista nueva')) return; resetForRace(user?.defaultRace ?? 'ZERG'); setSeedVisible(false); setPage('builder'); };
+  const clearList = () => {
+    if (!window.confirm('Borrar esta lista? Se eliminaran todos los cambios no guardados.')) return;
+    resetForRace(list.race);
+    setSeedVisible(false);
+    setPage('builder');
+  };
+  const returnToBuilder = () => { setSeedVisible(false); setPage('builder'); };
   const onImportFile = async (file: File) => {
-    // La confirmacion debe ocurrir antes de la lectura asincrona del fichero:
-    // de otro modo puede aparecer cuando el usuario ya ha cambiado de vista.
-    if (!confirmDiscard('Importar una lista')) return;
     const result = importListFromJson(await file.text());
     if (result.list) {
       setList(result.list);
@@ -71,23 +73,20 @@ function ArmyBuilderApp() {
     } else setToast(result.error ?? 'No se pudo importar el fichero.');
   };
   const saveList = async () => { try { const saved = await saveRemoteList(list, remoteRevision); setRemoteRevision(saved.revision); markSaved(); setToast('Lista guardada en tu cuenta.'); } catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); } };
-  const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard('Cargar otra lista')) return; setList(loaded); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPage('builder'); setToast('Lista cargada.'); };
-  const changeRace = (race: Race) => { if (race !== list.race && !confirmDiscard('Cambiar de raza')) return; setRace(race); };
-  const confirmFactionChange = () => {
-    const hasDependentSelections = list.tacticalCardIds.length > 0 || list.entries.length > 0 || list.creepCardId !== null;
-    return !hasDependentSelections || window.confirm('Cambiar de Carta de Faccion eliminara las unidades y cartas dependientes. Quieres continuar?');
-  };
+  const loadList = (loaded: typeof list, revision: number) => { setList(loaded); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPage('builder'); setToast('Lista cargada.'); };
+  const changeRace = (race: Race) => { if (race !== list.race) setRace(race); };
+  const confirmFactionChange = () => true;
 
   return <div className="app" data-race={list.race}>
-    <header className="topbar app-header no-print"><img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} /><span className="topbar__title">Listas de ejército</span><nav className="primary-nav" aria-label="Navegación principal"><button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => setPage('lists')}>Mis listas</button><button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={createList}>Nueva lista</button></nav><div className="topbar__spacer" />{user && <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => setPage('profile')} aria-label="Abrir perfil"><ProfileAvatar user={user} /><span className="profile-trigger__name">{profileName(user)}</span></button>}<button className="header-logout" onClick={() => { void logout(); }}>Salir</button></header>
+    <header className="topbar app-header no-print"><img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} /><span className="topbar__title">Listas de ejército</span><nav className="primary-nav" aria-label="Navegación principal"><button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => setPage('lists')}>Mis listas</button><button className="primary-nav__item" onClick={clearList}>Borrar lista</button></nav><div className="topbar__spacer" />{user && <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => setPage('profile')} aria-label="Abrir perfil"><ProfileAvatar user={user} /><span className="profile-trigger__name">{profileName(user)}</span></button>}<button className="header-logout" onClick={() => { void logout(); }}>Salir</button></header>
     {page === 'builder' && <>
       <section className="builder-toolbar no-print" aria-label="Opciones de la lista"><div className="field"><label htmlFor="list-name">Nombre</label><input id="list-name" value={list.name} onChange={(event) => setName(event.target.value)} /></div><div className="field"><label htmlFor="race">Raza</label><select id="race" value={list.race} onChange={(event) => changeRace(event.target.value as Race)}>{availableRaces().map((race) => <option key={race} value={race}>{RACE_LABEL[race]}</option>)}</select></div><div className="field"><label htmlFor="scale">Escala</label><select id="scale" value={list.scaleId} onChange={(event) => setScale(event.target.value as ScaleId)}>{index.catalog.scales.map((scale) => <option key={scale.id} value={scale.id}>{scale.name.es}</option>)}</select></div><div className="field"><label htmlFor="minerals">Minerales</label><input id="minerals" type="number" min={100} step={50} value={list.mineralLimit} onChange={(event) => setMineralLimit(Number(event.target.value))} /></div><div className="builder-toolbar__actions"><button onClick={() => { void saveList(); }}>Guardar</button><button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? 'Cerrar seed' : 'Seed'}</button><label className="button-like">Importar<input type="file" accept="application/json" hidden onChange={(event) => { const file = event.target.files?.[0]; if (file) void onImportFile(file); event.target.value = ''; }} /></label><button onClick={() => downloadJson(list)}>Exportar</button><button onClick={() => window.print()}>Imprimir / PDF</button></div></section>
       <ResourceBar summary={summary} hasErrors={!validation.legal} />
       <nav className="tabs no-print">{STEPS.map((item) => <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>{item.label}{errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}</button>)}</nav>
-      {seedVisible && <div className="content content--tool"><SeedPanel onImported={(imported) => { if (!confirmDiscard('Importar una lista desde la seed')) return; setList(imported); setRemoteRevision(null); setToast('Lista importada desde seed.'); }} /></div>}
+      {seedVisible && <div className="content content--tool"><SeedPanel onImported={(imported) => { setList(imported); setRemoteRevision(null); setToast('Lista importada desde seed.'); }} /></div>}
       <main className="content">{step === 'cards' && <StepCommandCards onBeforeFactionChange={confirmFactionChange} />}{step === 'units' && <StepMusterUnits />}{step === 'scenario' && <StepScenario />}{step === 'review' && <StepReview />}</main>
     </>}
-    {page === 'lists' && <SavedListsPage onCreate={createList} onLoad={loadList} />}
+    {page === 'lists' && <SavedListsPage onCreate={returnToBuilder} onLoad={loadList} />}
     {page === 'profile' && <AccountPage />}
     {toast && <div className="toast no-print">{toast}</div>}
   </div>;

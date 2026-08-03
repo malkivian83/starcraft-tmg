@@ -21,7 +21,7 @@ export function SavedListsPage({ onCreate, onLoad }: { onCreate: () => void; onL
     catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo borrar la lista.'); }
   };
   return <main className="content page-content no-print">
-    <section className="page-heading"><div><p className="eyebrow">Biblioteca</p><h1>Mis listas</h1><p className="muted">Todas tus listas guardadas se sincronizan con tu cuenta.</p></div><button onClick={onCreate}>Crear lista</button></section>
+    <section className="page-heading"><div><p className="eyebrow">Biblioteca</p><h1>Mis listas</h1><p className="muted">Todas tus listas guardadas se sincronizan con tu cuenta.</p></div><button onClick={onCreate}>Volver al editor</button></section>
     {message && <section className="panel empty">{message}</section>}
     <section className="saved-list-grid">{lists.map((list) => <SavedListCard key={list.id} list={list} onLoad={onLoad} onRemove={remove} />)}</section>
   </main>;
