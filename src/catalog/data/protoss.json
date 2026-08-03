@@ -371,7 +371,20 @@
       "name": "Praetor Guard (Zealot)",
       "baseSize": "Ø 40MM",
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": "3" },
-      "weapons": [],
+      "weapons": [
+        {
+          "name": "Psi Blades",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "4",
+          "hit": "3+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
+          "damage": "3",
+          "keywords": []
+        }
+      ],
       "abilities": [
         {
           "name": "Shield Overcharge",
