@@ -65,7 +65,12 @@ Después de esta configuración, cada `push` a `main` hará que Plesk descargue 
 cambio, instale exactamente las dependencias del lockfile, compile frontend y
 backend, aplique migraciones pendientes y reinicie la aplicación.
 
-El script `deploy:plesk` ejecuta mediante `node` los archivos JavaScript
-instalados por cada herramienta. Esto evita depender de que `npm` permanezca
-disponible en el `PATH` interno de Nodeenv y de los permisos ejecutables de los
-lanzadores de `node_modules/.bin` en Plesk.
+El script `deploy:plesk` arranca el orquestador con la instalación seleccionada
+de Plesk (`/opt/plesk/node/22/bin/node`). El orquestador reutiliza ese mismo
+ejecutable para cada herramienta. Esto evita depender de `node` o `npm` en el
+`PATH` interno de Nodeenv y de los permisos de `node_modules/.bin`.
+
+Antes de compilar, el orquestador ejecuta una instalación limpia mediante
+`npm ci --include=dev --include=optional`. Las dependencias de desarrollo son
+necesarias para TypeScript y Vite; las opcionales incluyen el binario nativo de
+Rollup correspondiente a Linux.
