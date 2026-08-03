@@ -3,12 +3,13 @@ import type { ServerEnvironment } from '../../config/env.js';
 import type { EmailDeliveryLogRepository, EmailMessageType } from './email-delivery-log.repository.js';
 import type { SmtpSettings, SmtpSettingsRepository } from './smtp-settings.repository.js';
 
-export interface EmailGateway { sendVerificationEmail(email: string, token: string): Promise<void>; sendPasswordResetEmail(email: string, token: string): Promise<void>; }
+export interface EmailGateway { sendVerificationEmail(email: string, token: string): Promise<void>; sendPasswordResetEmail(email: string, token: string): Promise<void>; sendAccountVerifiedEmail(email: string): Promise<void>; }
 
 export class DevelopmentEmailGateway implements EmailGateway {
   constructor(private readonly env: ServerEnvironment) {}
   async sendVerificationEmail(email: string, token: string): Promise<void> { console.info(`Verification for ${email}: ${this.env.APP_BASE_URL}/verify-email?token=${token}`); }
   async sendPasswordResetEmail(email: string, token: string): Promise<void> { console.info(`Password reset for ${email}: ${this.env.APP_BASE_URL}/reset-password?token=${token}`); }
+  async sendAccountVerifiedEmail(email: string): Promise<void> { console.info(`Account verified by the administrator for ${email}: ${this.env.APP_BASE_URL}`); }
 }
 
 interface SmtpFailure extends Error { code?: string; command?: string; response?: string; }
@@ -64,6 +65,10 @@ export class SmtpEmailGateway implements EmailGateway {
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
     const url = `${this.env.APP_BASE_URL}/reset-password?token=${encodeURIComponent(token)}`;
     await this.deliver({ recipient: email, messageType: 'RESET_PASSWORD', subject: 'StarCraft TMG - Restablece tu contrasena', text: `Restablece tu contrasena: ${url}\n\nSi no solicitaste este cambio, ignora este correo.`, html: emailTemplate({ preheader: 'Restablece de forma segura el acceso a tu cuenta.', title: 'Restablece tu contrasena', heading: 'Recupera el acceso', message: 'Hemos recibido una solicitud para cambiar la contrasena de tu cuenta.', action: 'Cambiar mi contrasena', url, securityNote: 'Si no solicitaste este cambio, puedes ignorar este correo. Tu contrasena seguira siendo la misma.', appBaseUrl: this.env.APP_BASE_URL }) });
+  }
+  async sendAccountVerifiedEmail(email: string): Promise<void> {
+    const url = this.env.APP_BASE_URL;
+    await this.deliver({ recipient: email, messageType: 'ACCOUNT_VERIFIED', subject: 'StarCraft TMG - Tu cuenta ya esta verificada', text: `Un administrador ha verificado tu cuenta manualmente. Ya puedes entrar y gestionar tus listas: ${url}\n\nSi no reconoces esta cuenta, ignora este correo.`, html: emailTemplate({ preheader: 'Un administrador ha verificado tu cuenta.', title: 'Cuenta verificada', heading: 'Tu cuenta ya esta verificada', message: 'Un administrador ha verificado tu correo manualmente. Ya puedes acceder con tu contrasena habitual y gestionar tus listas de ejercito.', action: 'Entrar en la aplicacion', url, securityNote: 'No hace falta que hagas nada mas. Si no reconoces esta cuenta, puedes ignorar este correo.', appBaseUrl: this.env.APP_BASE_URL }) });
   }
   async sendTestEmail(recipient: string): Promise<SmtpDeliveryResult> {
     const url = this.env.APP_BASE_URL;

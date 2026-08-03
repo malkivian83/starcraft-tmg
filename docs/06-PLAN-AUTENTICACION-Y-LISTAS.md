@@ -126,6 +126,8 @@ no serán accesibles mientras la cuenta permanezca borrada lógicamente.
 account_tokens        verificación y recuperación; hash, propósito y caducidad
 app_settings          configuración SMTP cifrada con AES-256-GCM
 email_delivery_logs   resultado y diagnóstico de cada intento de correo
+                      (`VERIFY_EMAIL`, `RESET_PASSWORD`, `SMTP_TEST`,
+                      `ACCOUNT_VERIFIED`)
 schema_migrations     migraciones aplicadas
 ```
 
@@ -197,7 +199,12 @@ credenciales reales nunca se incluirán en Git.
 3. La verificación manual escribe `email_verified_at` sin consumir ningún token
    y desbloquea de inmediato el acceso que exige `requireVerifiedUser`. Sirve
    para rescatar cuentas creadas cuando SMTP falla.
-4. No puede desactivar ni retirarse la verificación a sí mismo.
+4. Al verificar una cuenta que no lo estaba se le envía un correo
+   (`ACCOUNT_VERIFIED`) avisando de que un administrador la ha verificado y ya
+   puede entrar. El aviso es informativo: si el envío falla, la verificación se
+   mantiene y el superadministrador ve la advertencia en el panel. Retirar la
+   verificación no envía ningún correo.
+5. No puede desactivar ni retirarse la verificación a sí mismo.
 
 ### Conflictos de edición
 
@@ -257,7 +264,7 @@ credenciales reales nunca se incluirán en Git.
 | Cambio de contraseña y borrado lógico | Implementado |
 | Listas remotas y control de propietario | Implementado; faltan pruebas de integración |
 | Control de conflictos por revisión | Implementado en actualización; UX básica |
-| Administración de usuarios, SMTP y logs | Implementada, incluida la verificación manual de cuentas, con autorización insegura por correo fijo |
+| Administración de usuarios, SMTP y logs | Implementada, incluida la verificación manual de cuentas con aviso por correo, con autorización insegura por correo fijo |
 | Rate limiting y auditoría sensible | No implementado |
 | Validación semántica de listas en servidor | No implementada |
 | Pruebas API/BD y E2E | No implementadas |

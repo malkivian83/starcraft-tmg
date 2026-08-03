@@ -22,7 +22,7 @@ export interface SmtpSettings { host: string; port: number; secure: boolean; use
 export interface EmailDeliveryLog {
   id: number;
   recipient: string;
-  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST';
+  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED';
   subject: string;
   status: 'SENT' | 'FAILED';
   providerMessageId: string | null;
@@ -135,8 +135,8 @@ export async function setAdminUserActive(id: string, isActive: boolean): Promise
   await request(`/admin/users/${id}/active`, { method: 'PUT', body: JSON.stringify({ isActive }) });
 }
 
-export async function setAdminUserVerified(id: string, isVerified: boolean): Promise<void> {
-  await request(`/admin/users/${id}/verified`, { method: 'PUT', body: JSON.stringify({ isVerified }) });
+export async function setAdminUserVerified(id: string, isVerified: boolean): Promise<{ emailDeliveryWarning: string | null }> {
+  return request(`/admin/users/${id}/verified`, { method: 'PUT', body: JSON.stringify({ isVerified }) });
 }
 
 export async function setAdminUserPassword(id: string, password: string): Promise<void> {

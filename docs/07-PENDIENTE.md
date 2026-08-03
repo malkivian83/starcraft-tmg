@@ -170,7 +170,8 @@ La recuperación existe en la API, pero no en la interfaz. Tampoco existe reenv�
 de verificación para el propio usuario.
 
 Un fallo SMTP ya no deja la cuenta inutilizable de forma definitiva: el panel de
-superadministración permite verificarla a mano (`PUT /api/admin/users/:id/verified`).
+superadministración permite verificarla a mano (`PUT /api/admin/users/:id/verified`)
+y avisa al usuario con un correo `ACCOUNT_VERIFIED`.
 Sigue siendo un rescate manual, no una solución del flujo, y **no resuelve el
 arranque desde una base vacía**: si el correo del propio superadministrador
 nunca llegó, `AuthGate` lo retiene en la pantalla de verificación pendiente y no

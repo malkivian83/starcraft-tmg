@@ -389,6 +389,9 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 - El superadministrador puede verificar o desverificar un correo a mano
   (`PUT /api/admin/users/:id/verified`), sin token y sin poder aplicarlo a su
   propia cuenta. Es la vía de rescate cuando el correo de verificación no llega.
+  Verificar una cuenta que no lo estaba envía el aviso `ACCOUNT_VERIFIED` al
+  usuario; el fallo de ese envío se devuelve como advertencia y no revierte la
+  verificación.
 
 Deuda abierta: roles administrativos persistidos, verificación obligatoria para
 administrar, límites de intentos, recuperación completa en el frontend,

@@ -5,6 +5,7 @@ const messageTypeLabel: Record<auth.EmailDeliveryLog['messageType'], string> = {
   VERIFY_EMAIL: 'Verificación',
   RESET_PASSWORD: 'Restablecimiento',
   SMTP_TEST: 'Prueba SMTP',
+  ACCOUNT_VERIFIED: 'Verificada por admin',
 };
 
 type AdminSection = 'users' | 'smtp' | 'email-logs';
@@ -56,9 +57,11 @@ export function SuperAdminPanel() {
     const verify = !user.emailVerifiedAt;
     if (!verify && !window.confirm(`¿Retirar la verificación de ${user.email}? No podrá acceder hasta volver a verificarse.`)) return;
     try {
-      await auth.setAdminUserVerified(user.id, verify);
+      const { emailDeliveryWarning } = await auth.setAdminUserVerified(user.id, verify);
       await refreshUsers();
-      setMessage(verify ? `Cuenta de ${user.email} verificada manualmente.` : `Verificación retirada a ${user.email}.`);
+      void refreshEmailLogs(false);
+      if (!verify) setMessage(`Verificación retirada a ${user.email}.`);
+      else setMessage(emailDeliveryWarning ?? `Cuenta de ${user.email} verificada manualmente. Se le ha avisado por correo.`);
     } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo actualizar la verificación.'); }
   };
 
