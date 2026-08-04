@@ -1,7 +1,7 @@
 # SDD — Documento de diseño de software
 
 Constructor de listas de ejército · StarCraft: The Miniatures Game
-Versión 2.0 · Arquitectura vigente a 3 de agosto de 2026
+Versión 2.1 · Arquitectura objetivo acordada a 4 de agosto de 2026
 
 Documento hermano: [`03-MODELO-DATOS.md`](03-MODELO-DATOS.md), que define el esquema de datos referenciado aquí.
 Riesgos y desviaciones actuales:
@@ -12,9 +12,11 @@ Riesgos y desviaciones actuales:
 ## 1. Visión general
 
 Aplicación web de una sola página con API propia. El catálogo y el motor se
-empaquetan con el cliente; la sesión, el perfil y las listas guardadas dependen
-del backend Express y de MariaDB. JSON y seed permiten transportar una lista,
-pero no sustituyen el almacenamiento remoto de la cuenta.
+empaquetan con el cliente, por lo que `/crear-lista` puede ofrecer públicamente
+construcción, validación, formatos portables e impresión. La sesión, el perfil y
+las listas guardadas dependen del backend Express y de MariaDB. JSON y seed
+permiten transportar una lista, pero no sustituyen el almacenamiento remoto de
+la cuenta.
 
 **Principio rector del diseño:** el motor de reglas es una librería pura, independiente de React, del navegador y de la interfaz. Es lo único que decide si una lista es legal, y es lo único que se prueba exhaustivamente. Si esa separación se rompe, la corrección del producto deja de ser verificable.
 
@@ -26,7 +28,7 @@ pero no sustituyen el almacenamiento remoto de la cuenta.
 | Interfaz | React 19 | Ecosistema, componentes, conocido |
 | Construcción | Vite | Arranque rápido, PWA y bundle del frontend |
 | Estado | Zustand | El estado es un único documento (la lista) más el catálogo de solo lectura; no hace falta más |
-| Navegación | Estado React en `App.tsx` | Constructor, listas y cuenta sin un router activo |
+| Navegación | URL pública de entrada + estado React | `/crear-lista` es pública; constructor, listas y cuenta conservan navegación interna |
 | Estilos | CSS global + variables CSS | Sin framework; control de temas y hojas de impresión |
 | API | Express 5 | Autenticación, perfil, administración y listas |
 | Persistencia | MariaDB mediante `mysql2` | Propiedad por usuario, revisiones y migraciones |
@@ -57,6 +59,24 @@ Node.js 24.18.1 ya está instalado en el equipo.
 ```
 
 Las dependencias apuntan siempre hacia abajo. El motor no sabe que existe React; la interfaz no reimplementa ninguna regla.
+
+El acceso público y el autenticado comparten el mismo motor y el mismo estado de
+edición, pero no las mismas capacidades:
+
+```text
+/crear-lista (público)
+        |
+        v
+Zustand en RAM -> motor + catálogo -> validar / JSON / seed / imprimir
+        |
+        | iniciar sesión o registrarse sin recargar
+        v
+sesión verificada -> API protegida -> guardar / Mis listas / perfil
+```
+
+No existe un usuario invitado en la base de datos ni un endpoint de listas
+público. La autorización de la API continúa siendo la frontera de seguridad; la
+interfaz oculta capacidades para guiar al usuario, no para sustituirla.
 
 ### Estructura de carpetas
 
@@ -358,6 +378,32 @@ Requisito explícito. La barra de la cabecera **nunca se oculta ni se desplaza f
 
 Los nombres propios (`ProperName` en el modelo) se muestran **siempre en inglés**; el resto, en español. Un chip de mejora se lee `+ Adrenal Glands (+20)`, y su descripción, en español. Palabras clave como `SPECIALIST` o `LONG RANGE (18")` se mantienen en inglés porque son términos de regla impresos en las cartas.
 
+### 6.9 Modo invitado y capacidades
+
+La URL pública `/crear-lista` abre únicamente el constructor. El modo no se
+modela como una cuenta ficticia: es una política de capacidades sobre el mismo
+editor que usa un usuario autenticado.
+
+| Capacidad | Invitado | Usuario autenticado y verificado |
+|---|---:|---:|
+| Crear, editar y validar | Sí | Sí |
+| Importar/exportar JSON | Sí | Sí |
+| Generar/importar seed | Sí | Sí |
+| Imprimir o guardar como PDF | Sí | Sí |
+| Guardar remotamente | No | Sí |
+| Abrir «Mis listas» | No | Sí |
+| Abrir el perfil | No | Sí |
+
+Las acciones no autorizadas no se renderizan para el invitado y sus manejadores
+deben comprobar también la capacidad antes de llamar al cliente HTTP. Esta doble
+comprobación evita llamadas accidentales, mientras que el middleware del
+servidor mantiene la garantía real frente a peticiones manipuladas.
+
+Al pasar del constructor al acceso o registro se mantiene la misma instancia de
+la lista en Zustand. Una autenticación completada habilita el guardado de ese
+borrador, pero no lo envía automáticamente. Recargar, cerrar la pestaña o salir
+del flujo antes de guardarlo destruye el estado; la interfaz debe advertirlo.
+
 ## 7. Persistencia
 
 | Almacén | Contenido |
@@ -376,6 +422,16 @@ del payload, pero aún debe validar referencias de catálogo y coherencia de raz
 Exportación: JSON con la lista más su `catalogContentVersion`. La importación
 valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 
+El borrador invitado reside exclusivamente en el estado Zustand de la ejecución
+actual. No se escribe automáticamente en `localStorage`, `sessionStorage`,
+IndexedDB ni MariaDB. Exportar JSON, copiar un seed o guardar la impresión como
+PDF son acciones explícitas del usuario y no cambian este ciclo de vida.
+
+El estado debe sobrevivir al cambio interno de invitado a las pantallas de
+autenticación para que pueda guardarse después, siempre que la SPA no se
+recargue. La primera escritura remota ocurre únicamente al pulsar «Guardar» con
+una sesión válida.
+
 ### 7.1 Sesión y autorización
 
 - Contraseñas con Argon2id.
@@ -386,6 +442,8 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 - Tokens de cuenta aleatorios de 32 bytes, almacenados como SHA-256, de un solo
   uso y con caducidad de 30 minutos.
 - Consultas parametrizadas y propiedad de listas filtrada en el servidor.
+- Los endpoints de guardado, biblioteca y perfil exigen sesión; la ruta pública
+  `/crear-lista` no elimina ni relaja esos middlewares.
 
 Deuda abierta: roles administrativos persistidos, verificación obligatoria para
 administrar, límites de intentos, recuperación completa en el frontend,
@@ -475,6 +533,11 @@ Tres salidas, según lo decidido:
 
 **Exportación a PDF** — descarga del mismo contenido.
 
+La impresión no se bloquea cuando la lista es inválida. Tanto invitados como
+usuarios autenticados pueden continuar, pero la hoja muestra un aviso visible
+de «LISTA NO VÁLIDA» para que el documento no pueda confundirse con una lista
+legal.
+
 ### Implementación (Q12 resuelta: recortes en inglés)
 
 Las cartas se imprimen como **imagen original recortada del PDF**, sin regenerarlas. Esto simplifica sustancialmente la fase:
@@ -499,8 +562,13 @@ de caché y deben revisarse si se decide soportar un modo offline real.
 ## 9. PWA y despliegue
 
 `vite-plugin-pwa` genera manifest, service worker y caché de la interfaz. La PWA
-es instalable, pero la restauración de sesión y el acceso a las listas requieren
-la API; no se garantiza funcionamiento íntegro sin conexión.
+es instalable y el constructor público no depende de endpoints de listas, pero
+no se garantiza funcionamiento íntegro sin conexión. La restauración de sesión,
+el perfil y el acceso a listas remotas requieren la API, y el borrador invitado
+en RAM no sobrevive a una recarga.
+
+El alojamiento debe aplicar fallback de SPA para `/crear-lista`, excluyendo
+`/api` y los recursos estáticos reales.
 
 El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
 `server/dist/`, `app.js` carga la API y MariaDB conserva los datos. Consulta
@@ -516,7 +584,7 @@ El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
 | Componentes | Interacciones del asistente | **Pendiente** |
 | Propiedades | `decodeSeed(encodeSeed(l)) === l` con listas generadas aleatoriamente; corrupción detectada siempre | Vitest + fast-check |
 | API/BD | Autenticación, autorización, conflictos y administración | **Pendiente** |
-| Extremo a extremo | Registro, verificación, listas, cuenta e impresión | **Pendiente** |
+| Extremo a extremo | Invitado, transición a cuenta, registro, verificación, listas, cuenta e impresión | **Pendiente** |
 | Impresión | Salida A4 sin elementos de interfaz y legible en gris | Revisión manual |
 
 El caso de regresión del manual es la prueba más valiosa del proyecto: es el único punto donde una fuente externa e independiente confirma que datos y reglas son correctos a la vez.
@@ -527,6 +595,8 @@ El caso de regresión del manual es la prueba más valiosa del proyecto: es el �
 |---|---|---|
 | Motor puro separado de React | Permite probar la corrección sin renderizar; es lo que hace verificable el producto | Validar dentro de los componentes |
 | Backend propio | Cuentas, propiedad de listas y sincronización entre dispositivos | Persistencia solo local |
+| Invitado como política de capacidades | Comparte editor y motor sin crear identidad ni endpoints públicos | Usuario invitado ficticio en la base de datos |
+| Borrador invitado sólo en RAM | Evita persistencia implícita y mantiene explícitos JSON, seed y PDF | Guardado automático local |
 | Catálogo JSON versionado y empaquetado | Motor reproducible y seed estable sin una API de catálogo | Catálogo servido desde una API |
 | `UnitCard` separado de `UnitEntry` | Las variantes de cepa lo exigen; el patrón se repite en Terran | Entidad única con costes opcionales |
 | Coste de mejora por composición | Es como está definido en el reglamento | Coste escalar por mejora |

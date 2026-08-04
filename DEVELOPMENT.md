@@ -108,11 +108,12 @@ reglamento; cualquier cambio que la afecte debe revisarse con especial cuidado.
 - Prueba explícitamente los límites: máximos, mínimos, incompatibilidades y
   combinaciones legales e ilegales.
 
-El inventario del 3 de agosto de 2026 contiene 132 pruebas, todas correctas,
-pero todavía no cubre componentes ni flujos E2E. Tampoco hay integración
-completa para registro, verificación, recuperación, autorización por
-propietario y administración. Cualquier cambio en esas áreas debe añadir esa
-cobertura antes de considerarse listo para producción.
+El inventario del 4 de agosto de 2026 contiene 140 pruebas, todas correctas.
+Incluye pruebas de capacidades y renderizado estático del modo invitado y una
+regresión HTTP para las rutas anónimas de listas, pero todavía no cubre flujos
+E2E completos ni integración de registro, verificación, recuperación,
+autorización por propietario y administración. Cualquier cambio en esas áreas
+debe añadir esa cobertura antes de considerarse listo para producción.
 
 ## Seguridad y operaciones
 

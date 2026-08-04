@@ -1,14 +1,17 @@
-# Estado de autenticación, cuenta y listas sincronizadas
+# Estado de autenticación, acceso invitado y listas sincronizadas
 
 ## Objetivo
 
-Permitir que cada jugador se registre e inicie sesión, guarde sus listas en su
-cuenta y pueda cargarlas desde cualquier dispositivo. La cuenta tendrá un panel
-para cambiar la contraseña y elegir una facción predeterminada. Al crear una
-lista nueva tras iniciar sesión, se usará esa facción.
+Permitir que cualquier jugador cree, valide e imprima una lista desde la URL
+pública `/crear-lista`, sin obligarle a registrarse. Quien inicie sesión podrá
+además guardar sus listas en una cuenta, cargarlas desde cualquier dispositivo y
+gestionar su perfil. Al crear una lista nueva tras iniciar sesión, se usará la
+facción predeterminada de la cuenta.
 
 Este documento comenzó como planificación y ahora describe la implementación
-vigente, sus garantías y sus brechas. Los hallazgos priorizados están en
+vigente, sus garantías y sus brechas. El modo invitado recoge el contrato
+acordado y está implementado en el cliente, con pruebas de capacidades, ruta
+pública, impresión y rechazo HTTP anónimo. Los hallazgos priorizados están en
 [`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md).
 
 ## Alcance funcional
@@ -16,11 +19,14 @@ vigente, sus garantías y sus brechas. Los hallazgos priorizados están en
 - Registro con correo electrónico y contraseña.
 - Inicio y cierre de sesión y verificación de correo. La API de recuperación de
   contraseña existe, pero la interfaz `/reset-password` todavía no.
-- Acceso al constructor y a cualquier dato de la aplicación sólo después de
-  iniciar sesión.
+- Acceso público al constructor en `/crear-lista` para crear, validar, importar o
+  exportar JSON, generar o importar seeds e imprimir o guardar como PDF.
+- El invitado no puede guardar remotamente, abrir «Mis listas» ni acceder al
+  perfil.
 - Guardar, listar, cargar, renombrar y borrar listas propias en la nube.
 - Panel de cuenta con cambio de contraseña y facción predeterminada.
-- Guardado y carga exclusivamente desde la base de datos de la aplicación.
+- Guardado de producto exclusivamente remoto; el borrador invitado sólo vive en
+  RAM. JSON y seed son formatos portables iniciados por el usuario.
 - Borrado físico de listas propias y borrado lógico de cuentas.
 
 No forma parte de la primera versión: compartir listas entre usuarios,
@@ -30,19 +36,20 @@ colaboración en tiempo real, perfiles públicos ni inicio de sesión social.
 
 La interfaz React accede a la API mediante `src/auth/authService.ts` y
 `src/auth/listService.ts`; nunca accede directamente a MariaDB. Zustand conserva
-la sesión y la lista en edición. El motor de reglas permanece independiente del
-protocolo y de React.
+la sesión y la lista en edición. En modo invitado, el constructor usa el catálogo
+y el motor empaquetados en el cliente y no llama al servicio de listas remotas.
+El motor de reglas permanece independiente del protocolo y de React.
 
 ```text
-React (pantallas y componentes)
-        |
-Zustand (sesión, preferencias, lista en edición)
-        |
-authService.ts             listService.ts
-        |                         |
-API propia Express con autorización por sesión
-        |
-MariaDB · SMTP
+/crear-lista público                 Cuenta autenticada
+        |                                    |
+React + Zustand (borrador en RAM, sesión y capacidades)
+        |                                    |
+motor · JSON · seed · impresión       authService/listService
+                                             |
+                              API Express protegida por sesión
+                                             |
+                                      MariaDB · SMTP
 ```
 
 La solución usa un **backend propio** con una API y una base de datos
@@ -63,6 +70,12 @@ API propia
         |
 MariaDB centralizada
 ```
+
+`/crear-lista` es una ruta de la SPA, no una ruta de API. El servidor web debe
+resolverla con el documento de entrada del frontend. `/api/lists`, las rutas de
+perfil y cualquier operación administrativa conservan sus middlewares de sesión
+y autorización; no se añade un propietario anónimo ni almacenamiento remoto de
+invitados.
 
 ## Modelo de datos remoto
 
@@ -167,14 +180,22 @@ credenciales reales nunca se incluirán en Git.
 
 ## Flujos de usuario
 
-### Usuario sin sesión
+### Invitado sin sesión
 
-1. Puede acceder a registro, inicio de sesión y verificación. La recuperación
-   existe en la API, pero carece de pantallas y cliente en la web.
-2. Cualquier ruta del constructor, de listas o de cuenta redirige a inicio de
-   sesión.
-3. Una vez autenticado y con correo verificado, accede al constructor y a sus
-   listas remotas.
+1. Puede abrir `/crear-lista` y usar exclusivamente el constructor.
+2. Puede crear y validar listas, importar o exportar JSON, generar o importar un
+   seed e imprimir o guardar como PDF.
+3. Puede imprimir una lista inválida; la hoja conserva el aviso visible de que
+   no es válida.
+4. No puede guardar remotamente, abrir «Mis listas» ni acceder al perfil. Intentar
+   llamar directamente a esas rutas de API sigue devolviendo un error de
+   autenticación.
+5. El borrador sólo vive en RAM y se pierde al recargar, cerrar la pestaña o
+   abandonar el flujo. La interfaz debe advertirlo.
+6. Si inicia acceso o registro dentro de la misma ejecución de la SPA, el
+   borrador se conserva durante la autenticación. Después de obtener una sesión
+   válida y cumplir la verificación, puede guardarlo expresamente en su cuenta.
+   No se guarda ni se envía de forma automática durante la transición.
 
 ### Usuario autenticado
 
@@ -186,6 +207,8 @@ credenciales reales nunca se incluirán en Git.
 5. El panel «Cuenta» permite cambiar contraseña y facción predeterminada.
 6. El panel permite borrar la cuenta con una confirmación reforzada. La acción
    es lógica: cierra las sesiones y desactiva la cuenta.
+7. Si llega desde el modo invitado sin haber recargado, continúa editando el
+   mismo borrador y puede guardarlo en la cuenta.
 
 ### Conflictos de edición
 
@@ -207,6 +230,10 @@ credenciales reales nunca se incluirán en Git.
   una cuenta.
 - Reautenticación para cambio de contraseña y borrado lógico de cuenta.
 - Consultas parametrizadas y filtrado de listas por propietario en servidor.
+- `/api/lists` y las rutas de perfil continúan protegidas por sesión; el modo
+  invitado no dispone de endpoints de escritura ni identidad remota.
+- El borrador invitado permanece en memoria y no se guarda automáticamente en
+  almacenamiento del navegador ni se transmite durante la autenticación.
 - Contraseña SMTP cifrada con AES-256-GCM derivada de `SESSION_SECRET`.
 
 ### Brechas abiertas
@@ -222,8 +249,9 @@ credenciales reales nunca se incluirán en Git.
   SMTP de forma segura desde el propio panel.
 - El servidor valida la estructura del payload, no sus referencias de catálogo
   ni su legalidad.
-- No hay pruebas de integración de autenticación, autorización, administración
-  o MariaDB ni pruebas E2E.
+- No hay pruebas de integración completas de autenticación, administración,
+  propiedad de listas o MariaDB ni pruebas E2E de navegador. Sí existe una
+  prueba HTTP de regresión para rechazar las operaciones anónimas de listas.
 - Rotar `SESSION_SECRET` invalida sesiones y hace necesario volver a configurar
   la contraseña SMTP cifrada.
 - Deben definirse retención, copias de seguridad y recuperación de cuentas
@@ -239,11 +267,12 @@ credenciales reales nunca se incluirán en Git.
 | Perfil, raza predeterminada, apodo y avatar | Implementado |
 | Cambio de contraseña y borrado lógico | Implementado |
 | Listas remotas y control de propietario | Implementado; faltan pruebas de integración |
+| Modo invitado en `/crear-lista` | Implementado; capacidades y ruta cubiertas por pruebas |
 | Control de conflictos por revisión | Implementado en actualización; UX básica |
 | Administración de usuarios, SMTP y logs | Implementada con autorización insegura por correo fijo |
 | Rate limiting y auditoría sensible | No implementado |
 | Validación semántica de listas en servidor | No implementada |
-| Pruebas API/BD y E2E | No implementadas |
+| Pruebas API/BD y E2E | Parciales: rechazo HTTP anónimo cubierto; E2E completo pendiente |
 | Trabajo offline y sincronización posterior | No implementado |
 
 ## Plan original de desarrollo (histórico)
@@ -269,8 +298,9 @@ producto aún.
   la API propia.
 - Implementar registro, inicio/cierre de sesión, verificación y recuperación
   de contraseña.
-- Proteger todas las rutas de producto con
-  `RequireAuthenticatedUser` y comprobar la sesión al recargar la página.
+- Proteger todas las rutas de datos privados con `RequireAuthenticatedUser` y
+  comprobar la sesión al recargar la página. El constructor público no debe
+  relajar la protección de la API.
 - Añadir pruebas de autorización que demuestren que un usuario no puede leer ni
   modificar listas de otro.
 
@@ -306,8 +336,8 @@ panel de cuenta.
 
 - Pruebas unitarias de adaptadores y stores.
 - Pruebas de integración para políticas de acceso y control de conflictos.
-- Pruebas E2E: registro, inicio, guardado, carga, cambio de contraseña y
-  preferencia de facción.
+- Pruebas E2E: invitado, transición del borrador a una cuenta, registro, inicio,
+  guardado, carga, cambio de contraseña y preferencia de facción.
 - Revisión de accesibilidad, estados sin conexión, telemetría de errores y
   copias de seguridad de la base de datos.
 - Despliegue gradual con cuentas de prueba antes de habilitarlo a todos.
@@ -319,12 +349,19 @@ propietario en el código, pero no mediante pruebas de integración; recuperaci�
 rate limiting y autorización administrativa todavía no los cumplen.
 
 - Un usuario no autenticado no puede acceder a listas de otra cuenta.
-- Un usuario no autenticado no puede acceder al constructor, a las listas ni al
-  panel de cuenta, incluso navegando directamente a sus URL.
+- Un usuario no autenticado puede acceder a `/crear-lista`, pero no a «Mis
+  listas», al perfil ni a ninguna operación remota de listas.
+- Un invitado puede crear, validar, importar/exportar JSON, usar seeds e imprimir
+  sin que el borrador se envíe a la API.
+- Una lista inválida puede imprimirse, siempre con un aviso inequívoco en la
+  salida.
+- El borrador invitado se pierde al recargar o abandonar, pero se conserva en
+  RAM durante el flujo interno de autenticación para permitir un guardado
+  explícito posterior.
 - Una lista guardada por una cuenta se recupera correctamente desde otro
   navegador tras iniciar sesión.
-- Ninguna lista se guarda fuera de la base de datos centralizada de la
-  aplicación.
+- Ninguna lista se guarda automáticamente fuera de la base de datos centralizada
+  de la aplicación; JSON, seed y PDF son exportaciones explícitas y portables.
 - Cambiar la facción predeterminada afecta a la siguiente lista nueva y no
   altera listas guardadas.
 - Cambiar o recuperar contraseña no expone contraseñas ni tokens en consola,
@@ -338,12 +375,18 @@ rate limiting y autorización administrativa todavía no los cumplen.
 ## Decisiones confirmadas
 
 1. Confirmado: backend propio con una base de datos centralizada.
-2. Confirmado: acceso inicial sólo con correo y contraseña.
+2. Confirmado: `/crear-lista` es pública; el acceso con correo y contraseña se
+   exige para capacidades de cuenta.
 3. Confirmado: el guardado de producto es remoto; JSON y seed son formatos
    portables y no constituyen una biblioteca local de listas.
 4. Confirmado: el correo debe verificarse antes de poder guardar o cargar
    listas.
-5. Confirmado: la aplicación sólo es accesible para usuarios autenticados; las
-   únicas pantallas públicas son registro, acceso y recuperación de contraseña.
+5. Confirmado: el invitado sólo accede al constructor público y a sus formatos
+   locales; «Mis listas», perfil y API de listas siguen siendo privados.
 6. Confirmado: las listas se borran físicamente; las cuentas se borran de forma
    lógica, conservando los datos y bloqueando el acceso.
+7. Confirmado: el borrador invitado sólo vive en RAM, se conserva durante una
+   autenticación sin recarga y nunca se guarda remotamente hasta que el usuario
+   autenticado pulsa «Guardar».
+8. Confirmado: imprimir una lista inválida está permitido con un aviso visible
+   en la hoja.

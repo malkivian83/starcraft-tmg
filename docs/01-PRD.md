@@ -1,6 +1,6 @@
 # PRD — Constructor de listas de ejército · StarCraft: The Miniatures Game
 
-Versión 2.0 · Requisitos vigentes tras incorporar cuentas y listas sincronizadas
+Versión 2.1 · Requisitos vigentes para acceso invitado, cuentas y listas sincronizadas
 
 Este documento define el producto objetivo. El grado de cumplimiento y las
 brechas detectadas están en [`08-AUDITORIA-2026-08-03.md`](08-AUDITORIA-2026-08-03.md)
@@ -10,9 +10,10 @@ y [`07-PENDIENTE.md`](07-PENDIENTE.md).
 
 ## 1. Objetivo
 
-Aplicación web con cuenta de usuario, accesible desde escritorio y móvil, que
-permita construir listas legales para StarCraft: The Miniatures Game,
-sincronizarlas entre dispositivos, consultarlas y llevarlas impresas a la mesa.
+Aplicación web accesible desde escritorio y móvil que permita construir listas
+para StarCraft: The Miniatures Game sin exigir una cuenta. Los usuarios
+registrados pueden además guardarlas, sincronizarlas entre dispositivos y
+gestionarlas desde su perfil.
 
 El valor central no es «una hoja de cálculo bonita»: es **garantizar que la lista es legal**. El usuario debe poder confiar en que si la app dice que la lista es válida, lo es.
 
@@ -20,6 +21,7 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 
 | Perfil | Contexto | Necesidad principal |
 |---|---|---|
+| Invitado | Primera visita o uso puntual | Crear, validar, intercambiar e imprimir una lista sin registrarse |
 | Constructor | En casa, escritorio, con tiempo | Explorar composiciones, comparar costes, optimizar |
 | Jugador en mesa | Club o tienda, móvil, con prisa | Consultar su lista y los perfiles de sus unidades |
 | Oponente | Frente al usuario | Ver la lista rival (regla de listas abiertas, §9.1.10) |
@@ -28,6 +30,7 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 
 ### Incluido
 - Construcción de listas Zerg, Terran y Protoss completas y validadas.
+- Constructor público para invitados en `/crear-lista`, sin acceso a datos de cuenta.
 - Selección de cartas de misión y despliegue (disponible para las tres razas desde el inicio).
 - Consulta del catálogo de cartas (unidades, facción, tácticas).
 - Registro, acceso, verificación de correo, perfil y gestión de cuenta.
@@ -135,7 +138,8 @@ Como jugador, quiero seleccionar las 2 cartas de misión y las 2 de despliegue q
 **US-07 · Saber si mi lista es legal**
 - CA-07.1 La app distingue **errores** (lista ilegal) de **avisos** (legal pero cuestionable, p. ej. espacios sin usar o recursos sin gastar).
 - CA-07.2 Cada error indica la regla concreta del reglamento que se incumple y qué hacer para resolverlo.
-- CA-07.3 Una lista con errores puede guardarse, pero se marca visiblemente como no válida y no se imprime sin advertencia.
+- CA-07.3 Una lista con errores puede guardarse o imprimirse, pero se marca
+  visiblemente como no válida tanto en pantalla como en la salida impresa.
 
 ### Bloque C — Gestión
 
@@ -148,10 +152,15 @@ Como jugador, quiero seleccionar las 2 cartas de misión y las 2 de despliegue q
 - CA-08.5 Si el catálogo cambia y afecta a una lista guardada, la app avisa y detalla qué cambió.
 - CA-08.6 Una actualización debe incluir la revisión conocida y avisar si otra
   sesión modificó la lista.
+- CA-08.7 Guardar, cargar, renombrar o borrar listas remotas requiere una sesión
+  válida y el nivel de verificación exigido por la cuenta; nunca está disponible
+  para un invitado.
 
 **US-09 · Compartir listas por fichero**
 - CA-09.1 Exportar a fichero JSON.
 - CA-09.2 Importar desde fichero, con validación y mensaje claro si el fichero no es válido.
+- CA-09.3 Importar y exportar JSON está disponible también en el constructor de
+  invitado y se realiza localmente, sin guardar la lista en la API.
 
 **US-09b · Compartir listas por seed**
 Como jugador, quiero compartir una lista pegando un código corto en un chat, y recuperarla pegándolo en la app.
@@ -162,6 +171,8 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-09b.5 Un seed creado con otra versión del catálogo se importa igualmente, detallando qué costes cambiaron o qué elementos ya no existen.
 - CA-09b.6 El seed usa un alfabeto sin caracteres ambiguos, para poder dictarse en voz alta.
 - CA-09b.7 El seed es autocontenido y no referencia un registro remoto.
+- CA-09b.8 Generar e importar seeds está disponible también para invitados y no
+  exige una sesión.
 
 ### Bloque D — Consulta
 
@@ -177,6 +188,8 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 - CA-11.1 Hoja A4 con: nombre, escala, carta de facción, cartas tácticas, Creep Card, unidades con composición y mejoras por modelo, misiones y despliegues elegidos, y desglose de recursos y espacios.
 - CA-11.2 Legible en blanco y negro.
 - CA-11.3 Sin elementos de interfaz en la salida impresa.
+- CA-11.4 La impresión está disponible para invitados. Si la lista es inválida,
+  se permite continuar y la hoja incluye un aviso inequívoco.
 
 **US-12 · Imprimir las cartas de las unidades**
 - CA-12.1 Se imprimen las cartas de las unidades incluidas en la lista.
@@ -197,16 +210,19 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 
 **US-15 · Instalar la aplicación**
 - CA-15.1 Instalable como PWA.
-- CA-15.2 Si la API no responde, muestra un estado de servicio no disponible y
-  una acción de reintento; no presenta un formulario que no pueda funcionar.
+- CA-15.2 Si la API no responde, las funciones de cuenta muestran un estado de
+  servicio no disponible y una acción de reintento. El constructor público puede
+  seguir funcionando mientras sus recursos estáticos estén disponibles.
 - CA-15.3 La documentación y la interfaz no prometen edición offline mientras
-  no existan sesión cacheada, borrador local y sincronización posterior.
+  no existan caché completa, borrador durable y sincronización posterior. El
+  borrador invitado en RAM no constituye soporte offline ni recuperación.
 
 ### Bloque G — Cuenta y seguridad
 
 **US-17 · Acceder y verificar la cuenta**
 - CA-17.1 Registro y acceso con correo y contraseña.
-- CA-17.2 El constructor y las listas exigen sesión y correo verificado.
+- CA-17.2 El guardado remoto, «Mis listas» y el perfil exigen sesión y el nivel
+  de verificación correspondiente; el constructor público `/crear-lista` no.
 - CA-17.3 La verificación puede reenviarse sin crear otra cuenta.
 - CA-17.4 Un fallo de correo no deja una cuenta irrecuperable.
 
@@ -223,6 +239,26 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
   registro de auditoría.
 - CA-19.4 Registro, acceso y correo tienen límites de intentos.
 
+**US-20 · Crear una lista como invitado**
+
+Como visitante, quiero probar el constructor y obtener una lista utilizable sin
+crear primero una cuenta.
+
+- CA-20.1 `/crear-lista` es una URL pública y abre exclusivamente el constructor.
+- CA-20.2 El invitado puede crear, editar, validar, importar y exportar JSON,
+  generar o importar un seed e imprimir o guardar como PDF.
+- CA-20.3 El invitado no puede guardar remotamente, abrir «Mis listas» ni acceder
+  al perfil; la interfaz no muestra esas acciones y la API continúa rechazándolas
+  sin una sesión válida.
+- CA-20.4 El borrador se mantiene únicamente en RAM y se pierde al recargar,
+  cerrar la pestaña o abandonar el flujo. La interfaz lo comunica antes de que
+  el usuario empiece y al intentar salir con cambios.
+- CA-20.5 Si el invitado inicia sesión o se registra dentro de la misma ejecución
+  de la SPA, el borrador permanece en memoria y, después de autenticarse y
+  verificarse, puede guardarlo en su cuenta.
+- CA-20.6 La transición a autenticación no envía ni persiste el borrador hasta
+  que el usuario autenticado ejecuta expresamente «Guardar».
+
 ## 5. Requisitos no funcionales
 
 | Requisito | Criterio |
@@ -231,7 +267,7 @@ Como jugador, quiero compartir una lista pegando un código corto en un chat, y 
 | Carga inicial | Aplicación utilizable en menos de 3 s en 4G |
 | Fiabilidad de datos | Cobertura de pruebas del motor de reglas al 100 % de las reglas R1–R10 |
 | Accesibilidad | Contraste AA; navegación por teclado en escritorio |
-| Privacidad | Solo se envían a la API propia los datos necesarios para cuenta y listas; contraseñas únicamente sobre HTTPS y almacenadas como hash Argon2id |
+| Privacidad | El borrador invitado no se envía a la API; sólo un guardado remoto explícito tras autenticarse transmite la lista. Contraseñas únicamente sobre HTTPS y almacenadas como hash Argon2id |
 | Mantenibilidad | Añadir una raza nueva no debe requerir cambios en el motor de reglas ni en la interfaz |
 
 ## 6. Métrica de éxito
@@ -243,3 +279,5 @@ La versión 1 se considera terminada cuando:
 4. Una lista guardada se recupera desde otro dispositivo con la misma cuenta.
 5. Los flujos de registro, verificación, recuperación y autorización superan
    pruebas de integración y E2E.
+6. Un invitado completa el flujo público, imprime la lista y comprueba que no
+   puede acceder al guardado remoto, «Mis listas» ni perfil.

@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
@@ -15,6 +17,7 @@ import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
+import { PrintSheet } from './ui/print/PrintSheet';
 import './ui/app.css';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review';
@@ -25,9 +28,60 @@ const STEPS: Array<{ id: StepId; label: string }> = [
 ];
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
 
-export function App() { return <AuthGate><ArmyBuilderApp /></AuthGate>; }
+interface DraftNavigationState {
+  preserveGuestDraft?: boolean;
+}
 
-function ArmyBuilderApp() {
+export function App() {
+  return <Routes>
+    <Route path="/crear-lista" element={<GuestBuilderRoute />} />
+    <Route path="*" element={<AccountRoute />} />
+  </Routes>;
+}
+
+function GuestBuilderRoute() {
+  const navigate = useNavigate();
+  const status = useAuthStore((state) => state.status);
+  if (status === 'authenticated') return <Navigate to="/" replace />;
+  return <ArmyBuilderApp
+    mode="guest"
+    onRequestAuthentication={() => navigate('/', { state: { preserveGuestDraft: true } satisfies DraftNavigationState })}
+  />;
+}
+
+function AccountRoute() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const status = useAuthStore((state) => state.status);
+  const resetForRace = useListStore((state) => state.resetForRace);
+  const previousStatus = useRef(status);
+  const navigationState = location.state as DraftNavigationState | null;
+  const preserveGuestDraft = navigationState?.preserveGuestDraft === true;
+  const consumeGuestDraft = useCallback(() => {
+    if (!preserveGuestDraft) return;
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, navigate, preserveGuestDraft]);
+  useEffect(() => {
+    const priorStatus = previousStatus.current;
+    previousStatus.current = status;
+    if (priorStatus === 'authenticated' && status === 'anonymous') resetForRace('ZERG');
+  }, [resetForRace, status]);
+
+  return <AuthGate>
+    <ArmyBuilderApp
+      mode="account"
+      preserveDraftOnMount={preserveGuestDraft}
+      onDraftClaimed={consumeGuestDraft}
+    />
+  </AuthGate>;
+}
+
+function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onRequestAuthentication }: {
+  mode: AccessMode;
+  preserveDraftOnMount?: boolean;
+  onDraftClaimed?: () => void;
+  onRequestAuthentication?: () => void;
+}) {
   const [step, setStep] = useState<StepId>('cards');
   const [page, setPage] = useState<PageId>('builder');
   const [seedVisible, setSeedVisible] = useState(false);
@@ -43,8 +97,18 @@ function ArmyBuilderApp() {
   const resetForRace = useListStore((state) => state.resetForRace);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const capabilities = capabilitiesFor(mode);
+  const initializedUser = useRef<string | null>(null);
 
-  useEffect(() => { if (user) resetForRace(user.defaultRace); }, [resetForRace, user?.id]);
+  useEffect(() => {
+    if (mode !== 'account' || !user || initializedUser.current === user.id) return;
+    initializedUser.current = user.id;
+    if (!preserveDraftOnMount) resetForRace(user.defaultRace);
+    onDraftClaimed?.();
+  }, [mode, onDraftClaimed, preserveDraftOnMount, resetForRace, user]);
+  useEffect(() => {
+    if (page !== 'builder' && (!capabilities.viewSavedLists || !capabilities.manageAccount)) setPage('builder');
+  }, [capabilities.manageAccount, capabilities.viewSavedLists, page]);
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => { if (!isDirty) return; event.preventDefault(); event.returnValue = ''; };
     window.addEventListener('beforeunload', warnBeforeUnload);
@@ -72,22 +136,28 @@ function ArmyBuilderApp() {
       setToast('Lista importada.');
     } else setToast(result.error ?? 'No se pudo importar el fichero.');
   };
-  const saveList = async () => { try { const saved = await saveRemoteList(list, remoteRevision); setRemoteRevision(saved.revision); markSaved(); setToast('Lista guardada en tu cuenta.'); } catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); } };
+  const saveList = async () => {
+    if (!capabilities.saveRemoteLists) { onRequestAuthentication?.(); return; }
+    try { const saved = await saveRemoteList(list, remoteRevision); setRemoteRevision(saved.revision); markSaved(); setToast('Lista guardada en tu cuenta.'); }
+    catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); }
+  };
   const loadList = (loaded: typeof list, revision: number) => { setList(loaded); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPage('builder'); setToast('Lista cargada.'); };
   const changeRace = (race: Race) => { if (race !== list.race) setRace(race); };
   const confirmFactionChange = () => true;
 
   return <div className="app" data-race={list.race}>
-    <header className="topbar app-header no-print"><img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} /><span className="topbar__title">Listas de ejército</span><nav className="primary-nav" aria-label="Navegación principal"><button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => setPage('lists')}>Mis listas</button><button className="primary-nav__item" onClick={clearList}>Borrar lista</button></nav><div className="topbar__spacer" />{user && <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => setPage('profile')} aria-label="Abrir perfil"><ProfileAvatar user={user} /><span className="profile-trigger__name">{profileName(user)}</span></button>}<button className="header-logout" onClick={() => { void logout(); }}>Salir</button></header>
+    <header className="topbar app-header no-print"><img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} /><span className="topbar__title">Listas de ejército</span><nav className="primary-nav" aria-label="Navegación principal">{capabilities.viewSavedLists && <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => setPage('lists')}>Mis listas</button>}<button className="primary-nav__item" onClick={clearList}>Borrar lista</button></nav><div className="topbar__spacer" />{mode === 'guest' && <span className="guest-mode">Modo invitado</span>}{capabilities.manageAccount && user && <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => setPage('profile')} aria-label="Abrir perfil"><ProfileAvatar user={user} /><span className="profile-trigger__name">{profileName(user)}</span></button>}{mode === 'account' && <button className="header-logout" onClick={() => { void logout(); }}>Salir</button>}</header>
+    {mode === 'guest' && <aside className="guest-notice no-print" role="status">Esta lista se perderá al cerrar o recargar. Puedes imprimirla, exportarla o iniciar sesión para guardarla en tu cuenta.</aside>}
     {page === 'builder' && <>
-      <section className="builder-toolbar no-print" aria-label="Opciones de la lista"><div className="field"><label htmlFor="list-name">Nombre</label><input id="list-name" value={list.name} onChange={(event) => setName(event.target.value)} /></div><div className="field"><label htmlFor="race">Raza</label><select id="race" value={list.race} onChange={(event) => changeRace(event.target.value as Race)}>{availableRaces().map((race) => <option key={race} value={race}>{RACE_LABEL[race]}</option>)}</select></div><div className="field"><label htmlFor="scale">Escala</label><select id="scale" value={list.scaleId} onChange={(event) => setScale(event.target.value as ScaleId)}>{index.catalog.scales.map((scale) => <option key={scale.id} value={scale.id}>{scale.name.es}</option>)}</select></div><div className="field"><label htmlFor="minerals">Minerales</label><input id="minerals" type="number" min={100} step={50} value={list.mineralLimit} onChange={(event) => setMineralLimit(Number(event.target.value))} /></div><div className="builder-toolbar__actions"><button onClick={() => { void saveList(); }}>Guardar</button><button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? 'Cerrar seed' : 'Seed'}</button><label className="button-like">Importar<input type="file" accept="application/json" hidden onChange={(event) => { const file = event.target.files?.[0]; if (file) void onImportFile(file); event.target.value = ''; }} /></label><button onClick={() => downloadJson(list)}>Exportar</button><button onClick={() => window.print()}>Imprimir / PDF</button></div></section>
+      <section className="builder-toolbar no-print" aria-label="Opciones de la lista"><div className="field"><label htmlFor="list-name">Nombre</label><input id="list-name" value={list.name} onChange={(event) => setName(event.target.value)} /></div><div className="field"><label htmlFor="race">Raza</label><select id="race" value={list.race} onChange={(event) => changeRace(event.target.value as Race)}>{availableRaces().map((race) => <option key={race} value={race}>{RACE_LABEL[race]}</option>)}</select></div><div className="field"><label htmlFor="scale">Escala</label><select id="scale" value={list.scaleId} onChange={(event) => setScale(event.target.value as ScaleId)}>{index.catalog.scales.map((scale) => <option key={scale.id} value={scale.id}>{scale.name.es}</option>)}</select></div><div className="field"><label htmlFor="minerals">Minerales</label><input id="minerals" type="number" min={100} step={50} value={list.mineralLimit} onChange={(event) => setMineralLimit(Number(event.target.value))} /></div><div className="builder-toolbar__actions"><button onClick={() => { void saveList(); }}>{capabilities.saveRemoteLists ? 'Guardar' : 'Inicia sesión para guardar'}</button>{capabilities.usePortableFormats && <><button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? 'Cerrar seed' : 'Seed'}</button><label className="button-like">Importar<input type="file" accept="application/json" hidden onChange={(event) => { const file = event.target.files?.[0]; if (file) void onImportFile(file); event.target.value = ''; }} /></label><button onClick={() => downloadJson(list)}>Exportar</button></>}{capabilities.printLists && <button onClick={() => window.print()}>Imprimir / PDF</button>}</div></section>
       <ResourceBar summary={summary} hasErrors={!validation.legal} />
       <nav className="tabs no-print">{STEPS.map((item) => <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>{item.label}{errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}</button>)}</nav>
-      {seedVisible && <div className="content content--tool"><SeedPanel onImported={(imported) => { setList(imported); setRemoteRevision(null); setToast('Lista importada desde seed.'); }} /></div>}
-      <main className="content">{step === 'cards' && <StepCommandCards onBeforeFactionChange={confirmFactionChange} />}{step === 'units' && <StepMusterUnits />}{step === 'scenario' && <StepScenario />}{step === 'review' && <StepReview />}</main>
+      {seedVisible && <div className="content content--tool no-print"><SeedPanel onImported={(imported) => { setList(imported); setRemoteRevision(null); setToast('Lista importada desde seed.'); }} /></div>}
+      <main className="content no-print">{step === 'cards' && <StepCommandCards onBeforeFactionChange={confirmFactionChange} />}{step === 'units' && <StepMusterUnits />}{step === 'scenario' && <StepScenario />}{step === 'review' && <StepReview />}</main>
+      <div className={`content print-sheet-host${step === 'review' ? ' print-sheet-host--preview' : ''}`}><PrintSheet /></div>
     </>}
-    {page === 'lists' && <SavedListsPage onCreate={returnToBuilder} onLoad={loadList} />}
-    {page === 'profile' && <AccountPage />}
+    {page === 'lists' && capabilities.viewSavedLists && <SavedListsPage onCreate={returnToBuilder} onLoad={loadList} />}
+    {page === 'profile' && capabilities.manageAccount && <AccountPage />}
     {toast && <div className="toast no-print">{toast}</div>}
   </div>;
 }

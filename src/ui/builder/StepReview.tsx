@@ -1,7 +1,6 @@
 import { SLOT_TYPES } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
-import { PrintSheet } from '../print/PrintSheet';
 
 /** Paso 4 — Revisión, libro mayor de espacios e impresión. */
 export function StepReview() {
@@ -107,8 +106,6 @@ export function StepReview() {
           PDF, elige «Guardar como PDF» en el destino de impresión.
         </p>
       </section>
-
-      <PrintSheet />
     </div>
   );
 }
