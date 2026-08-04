@@ -2,7 +2,7 @@ import { SLOT_TYPES, type CostSummary, type SlotType } from '@/engine/types';
 import './ResourceBar.css';
 
 const SLOT_LABEL: Record<SlotType, string> = {
-  CORE: 'Núcleo',
+  CORE: 'Core',
   ELITE: 'Élite',
   SUPPORT: 'Apoyo',
   AIR: 'Aéreo',

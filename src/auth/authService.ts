@@ -101,6 +101,10 @@ export async function logout(): Promise<void> {
   await request('/auth/logout', { method: 'POST' });
 }
 
+export async function refreshSession(): Promise<void> {
+  await request('/auth/refresh', { method: 'POST' });
+}
+
 export async function verifyEmail(token: string): Promise<void> {
   await request('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token }) });
 }

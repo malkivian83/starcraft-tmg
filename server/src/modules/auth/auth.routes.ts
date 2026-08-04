@@ -152,6 +152,12 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     response.status(204).end();
   });
 
+  router.post('/refresh', authenticated, (request, response) => {
+    const user = request.authenticatedUser!;
+    issueSession(response, user.id, user.sessionVersion, env);
+    response.status(204).end();
+  });
+
   router.post('/verify-email', async (request, response) => {
     const { token } = body(tokenSchema, request.body);
     const user = await repository.consumeToken(createHash('sha256').update(token).digest('hex'), 'VERIFY_EMAIL');

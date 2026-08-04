@@ -4,6 +4,7 @@ import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
+import { clearDraft, loadDraft, saveDraft, type DraftScope } from '@/store/draftPersistence';
 import { downloadJson, importListFromJson } from '@/store/persistence';
 import { clonePublicList as cloneRemotePublicList, loadPublicList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
 import { useAuthStore } from '@/store/authStore';
@@ -119,18 +120,41 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const capabilities = capabilitiesFor(mode);
-  const initializedUser = useRef<string | null>(null);
+  const draftScope: DraftScope | null = mode === 'account' && user ? `account:${user.id}` : null;
+  const hydratedDraftScope = useRef<DraftScope | null>(null);
 
   useEffect(() => {
-    if (mode !== 'account' || !user || initializedUser.current === user.id) return;
-    initializedUser.current = user.id;
-    if (!preserveDraftOnMount) {
+    if (!draftScope || hydratedDraftScope.current === draftScope) return;
+    hydratedDraftScope.current = draftScope;
+
+    // Al pasar del constructor invitado al login se conserva el estado vivo
+    // del store; solo se crea el borrador persistente cuando ya hay cuenta.
+    if (mode === 'account' && preserveDraftOnMount) {
+      onDraftClaimed?.();
+      return;
+    }
+
+    const draft = loadDraft(draftScope);
+    if (draft) {
+      setList(draft.list);
+      setPage('builder');
+      setListIsPublic(draft.isPublic);
+      setListVisibilityDirty(false);
+      setRemoteRevision(draft.remoteRevision);
+      setSeedVisible(false);
+      setToast('Se ha recuperado tu borrador de lista.');
+    } else if (mode === 'account' && user) {
       resetForRace(user.defaultRace);
       setListIsPublic(false);
       setListVisibilityDirty(false);
     }
     onDraftClaimed?.();
-  }, [mode, onDraftClaimed, preserveDraftOnMount, resetForRace, user]);
+  }, [draftScope, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, user]);
+  useEffect(() => {
+    if (!draftScope || hydratedDraftScope.current !== draftScope) return;
+    if (isDirty || listVisibilityDirty) saveDraft(draftScope, { list, remoteRevision, isPublic: listIsPublic });
+    else clearDraft(draftScope);
+  }, [draftScope, isDirty, list, listIsPublic, listVisibilityDirty, remoteRevision]);
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
       if (!isDirty && !listVisibilityDirty) return;

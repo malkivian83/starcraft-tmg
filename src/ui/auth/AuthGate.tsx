@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { requestPasswordReset, requestVerification, resetPassword, verifyEmail } from '@/auth/authService';
+import { ApiError, requestPasswordReset, requestVerification, resetPassword, verifyEmail } from '@/auth/authService';
 import { googleSignInEnabled } from '@/auth/googleIdentity';
 import { useAuthStore } from '@/store/authStore';
 import { GoogleSignInButton } from './GoogleSignInButton';
@@ -9,6 +9,27 @@ import { TermsPage } from './TermsPage';
 export function AuthGate({ children }: { children: ReactNode }) {
   const { status, restore, user, developmentVerificationUrl, emailDeliveryWarning } = useAuthStore();
   useEffect(() => { void restore(); }, [restore]);
+  const refreshSession = useAuthStore((state) => state.refreshSession);
+  useEffect(() => {
+    if (status !== 'authenticated') return undefined;
+
+    const refresh = () => {
+      void refreshSession().catch((error) => {
+        if (error instanceof ApiError && error.status === 401) void restore();
+      });
+    };
+    const onVisibilityChange = () => {
+      if (!document.hidden) refresh();
+    };
+    const interval = window.setInterval(refresh, 5 * 60 * 1000);
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [refreshSession, restore, status]);
   if (window.location.pathname === '/terminos-y-condiciones') return <TermsPage />;
   if (status === 'checking') return <AuthLoading />;
   if (window.location.pathname === '/verify-email') return <VerifyEmail />;
