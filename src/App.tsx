@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
@@ -18,6 +20,7 @@ import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
+import { PrintSheet } from './ui/print/PrintSheet';
 import './ui/app.css';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review';
@@ -32,9 +35,60 @@ const publicListPath = () => {
   return match?.[1] ? decodeURIComponent(match[1]) : null;
 };
 
-export function App() { return <AuthGate><ArmyBuilderApp /></AuthGate>; }
+interface DraftNavigationState {
+  preserveGuestDraft?: boolean;
+}
 
-function ArmyBuilderApp() {
+export function App() {
+  return <Routes>
+    <Route path="/crear-lista" element={<GuestBuilderRoute />} />
+    <Route path="*" element={<AccountRoute />} />
+  </Routes>;
+}
+
+function GuestBuilderRoute() {
+  const navigate = useNavigate();
+  const status = useAuthStore((state) => state.status);
+  if (status === 'authenticated') return <Navigate to="/" replace />;
+  return <ArmyBuilderApp
+    mode="guest"
+    onRequestAuthentication={() => navigate('/', { state: { preserveGuestDraft: true } satisfies DraftNavigationState })}
+  />;
+}
+
+function AccountRoute() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const status = useAuthStore((state) => state.status);
+  const resetForRace = useListStore((state) => state.resetForRace);
+  const previousStatus = useRef(status);
+  const navigationState = location.state as DraftNavigationState | null;
+  const preserveGuestDraft = navigationState?.preserveGuestDraft === true;
+  const consumeGuestDraft = useCallback(() => {
+    if (!preserveGuestDraft) return;
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, navigate, preserveGuestDraft]);
+  useEffect(() => {
+    const priorStatus = previousStatus.current;
+    previousStatus.current = status;
+    if (priorStatus === 'authenticated' && status === 'anonymous') resetForRace('ZERG');
+  }, [resetForRace, status]);
+
+  return <AuthGate>
+    <ArmyBuilderApp
+      mode="account"
+      preserveDraftOnMount={preserveGuestDraft}
+      onDraftClaimed={consumeGuestDraft}
+    />
+  </AuthGate>;
+}
+
+function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onRequestAuthentication }: {
+  mode: AccessMode;
+  preserveDraftOnMount?: boolean;
+  onDraftClaimed?: () => void;
+  onRequestAuthentication?: () => void;
+}) {
   const [step, setStep] = useState<StepId>('cards');
   const initialPublicListId = publicListPath();
   const [page, setPage] = useState<PageId>(initialPublicListId ? 'public-list' : 'home');
@@ -55,6 +109,8 @@ function ArmyBuilderApp() {
   const resetForRace = useListStore((state) => state.resetForRace);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const capabilities = capabilitiesFor(mode);
+  const initializedUser = useRef<string | null>(null);
 
   useEffect(() => { if (user) { resetForRace(user.defaultRace); setListIsPublic(false); setListVisibilityDirty(false); } }, [resetForRace, user?.id]);
   useEffect(() => {
@@ -160,6 +216,9 @@ function ArmyBuilderApp() {
     const hasDependentSelections = list.tacticalCardIds.length > 0 || list.entries.length > 0 || list.creepCardId !== null;
     return !hasDependentSelections || window.confirm('Cambiar de Carta de Faccion eliminara las unidades y cartas dependientes. Quieres continuar?');
   };
+  const loadList = (loaded: typeof list, revision: number) => { setList(loaded); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPage('builder'); setToast('Lista cargada.'); };
+  const changeRace = (race: Race) => { if (race !== list.race) setRace(race); };
+  const confirmFactionChange = () => true;
 
   return <div className="app" data-race={list.race}>
     <header className="topbar app-header no-print"><img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} role="button" tabIndex={0} onClick={() => navigateToPage('home', 'Inicio')} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') navigateToPage('home', 'Inicio'); }} /><span className="topbar__title">Listas de ejército</span><nav className="primary-nav" aria-label="Navegación principal"><button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', 'Inicio')}>Inicio</button><button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', 'Mis listas')}>Mis listas</button><button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', 'Listas públicas')}>Listas públicas</button><button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}>Nueva lista</button></nav><div className="topbar__spacer" />{user && <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => navigateToPage('profile', 'tu perfil')} aria-label="Abrir perfil"><ProfileAvatar user={user} /><span className="profile-trigger__name">{profileName(user)}</span></button>}<button className="header-logout" onClick={logoutFromApp}>Salir</button></header>

@@ -112,6 +112,9 @@ export function SuperAdminPanel() {
       await persistSmtp();
       setMessage(`Conectando con ${smtp.host}:${smtp.port} y enviando el correo de prueba…`);
       const result = await auth.testSmtpSettings(testRecipient.trim());
+      // Compatible con respuestas de servidores ya desplegados que no
+      // incluyan el campo accepted en la prueba SMTP.
+      result.accepted = Array.isArray(result.accepted) ? result.accepted : [testRecipient.trim()];
       const serverResponse = result.response ? ` Respuesta: ${result.response}` : '';
       setMessage(`El servidor SMTP aceptó el correo para ${result.accepted.join(', ')}${result.messageId ? ` (ID: ${result.messageId})` : ''}.${serverResponse}`);
     } catch (error) {

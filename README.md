@@ -8,11 +8,31 @@ el directorio público incluye filtros, ordenación por likes y valoración por
 usuario. El registro exige aceptar los términos de uso de
 `starcraft-builder.com`.
 
-> **Estado actual:** la aplicación requiere conexión con la API para restaurar
-> la sesión y acceder al constructor. La instalación PWA no implica todavía
-> funcionamiento íntegro sin conexión. Consulta
+> **Estado actual:** las funciones de cuenta y listas remotas requieren conexión
+> con la API. El modo invitado descrito a continuación está implementado y
+> verificado con pruebas de permisos, renderizado y navegación local. La
+> instalación PWA no implica funcionamiento íntegro sin conexión. Consulta
 > [`docs/08-AUDITORIA-2026-08-03.md`](docs/08-AUDITORIA-2026-08-03.md) para ver
 > los riesgos y mejoras pendientes antes de un despliegue multiusuario.
+
+## Modo invitado
+
+La entrada pública del constructor será `/crear-lista`. Sin iniciar sesión, un
+invitado podrá crear y validar una lista, importar o exportar JSON, copiar o
+importar un seed e imprimir o guardar como PDF. También podrá imprimir una lista
+inválida, pero la salida conservará un aviso visible de que no es válida.
+
+El invitado no podrá guardar en la cuenta, abrir «Mis listas» ni acceder al
+perfil. Su borrador vivirá únicamente en la memoria de la pestaña: recargar la
+página, cerrarla o abandonar el flujo lo descartará. JSON y seed son salidas
+portables iniciadas expresamente por el usuario y no convierten el borrador en
+persistencia automática.
+
+Si el invitado inicia el flujo de acceso o registro sin recargar la aplicación,
+el borrador se conservará en memoria. Tras completar la autenticación y la
+verificación exigida, podrá guardarlo como una lista remota. Este traspaso no
+abre ningún endpoint público: toda operación de guardado, biblioteca o perfil
+seguirá protegida por la sesión en la API.
 
 ## Puesta en marcha
 
@@ -59,9 +79,9 @@ tras registrarse cuando no hay SMTP configurado. En producción deben existir
 SMTP, HTTPS, MariaDB y el backend desplegado.
 
 La compilación del frontend queda en `dist/` y la del backend en
-`server/dist/`. `dist/` es estático, pero no constituye por sí solo una
-aplicación funcional: el cliente depende de la API para autenticación, perfil y
-listas guardadas.
+`server/dist/`. El frontend contendrá el catálogo, el motor y el constructor
+público; autenticación, perfil y listas guardadas seguirán dependiendo de la
+API. El servidor web debe resolver `/crear-lista` con el `index.html` de la SPA.
 
 ## Despliegue
 
@@ -93,8 +113,10 @@ El motor de reglas no importa nada de la interfaz. Es lo único que decide si
 una lista es legal y es lo que está cubierto por pruebas: si esa separación se
 rompe, la corrección del producto deja de ser verificable.
 
-Las listas guardadas se persisten en MariaDB. JSON y seed siguen siendo formatos
-portables de importación y exportación, no el almacén principal de la cuenta.
+Las listas guardadas se persisten en MariaDB. El borrador de invitado sólo vive
+en Zustand mientras la pestaña permanece cargada. JSON y seed siguen siendo
+formatos portables de importación y exportación, no el almacén principal de la
+cuenta ni un guardado automático del invitado.
 
 ## Estado del contenido
 

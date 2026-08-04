@@ -1,7 +1,6 @@
 import { SLOT_TYPES } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
-import { PrintSheet } from '../print/PrintSheet';
 
 /** Paso 4 — Revisión, libro mayor de espacios e impresión. */
 export function StepReview() {
@@ -102,6 +101,7 @@ export function StepReview() {
 
       <section className="panel no-print">
         <h2 className="panel__title">Hoja de lista</h2>
+        <button onClick={() => window.print()}>Imprimir / PDF</button>
         <p className="small muted" style={{ marginTop: 0 }}>
           Imprime la hoja de tu lista o guárdala como PDF desde el destino de
           impresión.

@@ -12,6 +12,14 @@
   line-height: 1.35;
 }
 
+.print-sheet-host {
+  display: none;
+}
+
+.print-sheet-host--preview {
+  display: block;
+}
+
 .sheet__head {
   display: flex;
   justify-content: space-between;
@@ -319,6 +327,10 @@
     border: none;
     background: none;
     padding: 0;
+  }
+
+  .print-sheet-host {
+    display: block !important;
   }
 
   .sheet {
