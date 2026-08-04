@@ -78,6 +78,10 @@ function AuthForm() {
 
   return (
     <AuthLayout>
+      <Link className="auth-guest-button" to="/crear-lista">
+        <span className="auth-guest-button__label">Crear una lista como invitado</span>
+        <span className="auth-guest-button__hint">Sin cuenta · Puedes imprimirla o exportarla</span>
+      </Link>
       <h1>{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h1>
       <form className="stack" onSubmit={submit}>
         <label className="field">
@@ -103,7 +107,6 @@ function AuthForm() {
       {googleSignInEnabled && <><p className="auth-separator">o</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} /><p className="muted small">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p></>}
       {mode === 'login' && <a href="/reset-password">He olvidado mi contraseña</a>}
       <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? 'Crear una cuenta' : 'Ya tengo una cuenta'}</button>
-      <Link to="/crear-lista">Crear una lista como invitado</Link>
     </AuthLayout>
   );
 }
