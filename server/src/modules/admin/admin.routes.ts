@@ -6,7 +6,7 @@ import { HttpError } from '../../lib/errors.js';
 import { requireUser } from '../../middleware/require-user.js';
 import { AuthRepository } from '../auth/auth.repository.js';
 import { EmailDeliveryLogRepository } from '../email/email-delivery-log.repository.js';
-import { describeSmtpError, SmtpEmailGateway } from '../email/email.gateway.js';
+import { describeSmtpError, type EmailGateway, SmtpEmailGateway } from '../email/email.gateway.js';
 import { SmtpSettingsRepository } from '../email/smtp-settings.repository.js';
 
 const SUPER_ADMIN_EMAIL = 'malkivian@gmail.com';
@@ -24,6 +24,7 @@ export function createAdminRouter(
   smtp: SmtpSettingsRepository,
   emailLogs: EmailDeliveryLogRepository,
   smtpEmail: SmtpEmailGateway,
+  email: EmailGateway,
   env: ServerEnvironment,
 ): Router {
   const router = Router();
@@ -34,6 +35,22 @@ export function createAdminRouter(
     if (request.params.id === request.authenticatedUser!.id && !isActive) throw new HttpError(400, 'INVALID_INPUT', 'No puedes desactivar tu propia cuenta de superadministrador.');
     await repository.setUserActive(request.params.id, isActive);
     response.status(204).end();
+  });
+  router.put('/users/:id/verified', async (request, response) => {
+    const { isVerified } = z.object({ isVerified: z.boolean() }).parse(request.body);
+    if (request.params.id === request.authenticatedUser!.id && !isVerified) throw new HttpError(400, 'INVALID_INPUT', 'No puedes retirar la verificación de tu propia cuenta de superadministrador.');
+    const user = await repository.findById(request.params.id);
+    if (!user) throw new HttpError(404, 'NOT_FOUND', 'La cuenta indicada no existe.');
+    const wasVerified = Boolean(user.emailVerifiedAt);
+    await repository.setEmailVerified(user.id, isVerified);
+    // El aviso es informativo: si el correo falla, la verificación ya está hecha
+    // y el superadministrador recibe la advertencia en lugar de un error.
+    let emailDeliveryWarning: string | null = null;
+    if (isVerified && !wasVerified) {
+      try { await email.sendAccountVerifiedEmail(user.email); }
+      catch (error) { emailDeliveryWarning = `La cuenta quedó verificada, pero no se pudo avisar por correo: ${error instanceof Error ? error.message : 'error desconocido'}`; }
+    }
+    response.json({ emailDeliveryWarning });
   });
   router.put('/users/:id/password', async (request, response) => {
     const { password } = z.object({ password: z.string().min(12).max(128) }).parse(request.body);

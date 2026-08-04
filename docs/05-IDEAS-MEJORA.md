@@ -124,5 +124,5 @@ Presupuesto compartido repartido entre jugadores. Solo tiene sentido si juegas 2
 |---|---|
 | Asistente de draft | Descartada expresamente. El draft se resuelve en mesa |
 | Constructor automático de listas | Un generador que decide por ti vacía de sentido la parte divertida del juego |
-| Compartir listas en comunidad | La app es de uso privado; implicaría hosting, moderación y exposición de derechos |
+| Compartir listas sin autenticación | El directorio público requiere sesión; así se mantiene el control de acceso y la trazabilidad |
 | Simulador de dados / probabilidades | Pertenece al acompañante de partida, no al constructor de listas |

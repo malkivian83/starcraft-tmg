@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import {
   getEligibleCreepCards,
   getEligibleTacticalCards,
 } from '@/engine/eligibility';
 import { useListStore } from '@/store/listStore';
+import type { TacticalCard } from '@/engine/types';
 import { SlotChips, UniqueChip } from '../common/Chips';
 
 /**
@@ -14,6 +16,7 @@ import { SlotChips, UniqueChip } from '../common/Chips';
  */
 export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionChange?: () => boolean }) {
   const { list, index, summary, validation } = useListStore();
+  const [previewCard, setPreviewCard] = useState<TacticalCard | null>(null);
   const selectFactionCard = useListStore((s) => s.selectFactionCard);
   const addTacticalCard = useListStore((s) => s.addTacticalCard);
   const removeTacticalCard = useListStore((s) => s.removeTacticalCard);
@@ -24,6 +27,15 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
   const creep = getEligibleCreepCards(list, index, summary);
 
   const creepMissing = validation.errors.some((e) => e.rule === 'R11');
+
+  useEffect(() => {
+    if (!previewCard) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPreviewCard(null);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [previewCard]);
 
   return (
     <div className="split">
@@ -169,8 +181,20 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                             )}
                           </>
                         )}
-                        <div className="row">
+                        <div className="row card-actions">
                           <button
+                            type="button"
+                            className="card-action card-action--preview"
+                            title={`Ver ${card.name}`}
+                            aria-label={`Ver carta ${card.name}`}
+                            onClick={() => setPreviewCard(card)}
+                          >
+                            <span className="card-action__icon" aria-hidden="true">▣</span>
+                            Ver carta
+                          </button>
+                          <button
+                            type="button"
+                            className="card-action card-action--add"
                             disabled={!canAdd}
                             title={
                               card.unique && count > 0
@@ -180,13 +204,17 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                             aria-label={`Añadir ${card.name}`}
                             onClick={() => addTacticalCard(card.id)}
                           >
+                            <span className="card-action__icon" aria-hidden="true">+</span>
                             Añadir
                           </button>
                           {count > 0 && (
                             <button
+                              type="button"
+                              className="card-action card-action--remove"
                               aria-label={`Quitar ${card.name}`}
                               onClick={() => removeTacticalCard(card.id)}
                             >
+                              <span className="card-action__icon" aria-hidden="true">−</span>
                               Quitar
                             </button>
                           )}
@@ -206,6 +234,61 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
       </div>
 
       <ActiveCards />
+      {previewCard && (
+        <TacticalCardModal
+          card={previewCard}
+          onClose={() => setPreviewCard(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function TacticalCardModal({
+  card,
+  onClose,
+}: {
+  card: TacticalCard;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="modal"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="modal__box modal__box--card-preview"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tactical-card-preview-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div className="modal__header">
+          <div>
+            <p className="eyebrow">Previsualización</p>
+            <h2 id="tactical-card-preview-title">Vista de carta táctica</h2>
+          </div>
+          <button
+            type="button"
+            className="card-action modal__close"
+            onClick={onClose}
+            aria-label="Cerrar previsualización"
+            title="Cerrar"
+          >
+            <span className="card-action__icon" aria-hidden="true">×</span>
+          </button>
+        </div>
+        <CardDetail
+          title={card.name}
+          kind="Carta Táctica"
+          badge={`${card.vespeneCost} gas`}
+          slots={card.slotsGranted}
+          abilities={card.abilities}
+        />
+      </div>
     </div>
   );
 }
@@ -296,7 +379,7 @@ function CardDetail({
         <span className="chip chip--cost">{badge}</span>
       </div>
       {abilities.map((ability) => (
-        <p key={ability.name} className="small" style={{ margin: '6px 0' }}>
+        <p key={ability.name} className="small card-detail__ability" style={{ margin: '6px 0' }}>
           {/* Nombre en inglés, explicación en español (regla de idioma). */}
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
           <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase)}</span>

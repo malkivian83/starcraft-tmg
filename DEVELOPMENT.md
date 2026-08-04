@@ -108,7 +108,7 @@ reglamento; cualquier cambio que la afecte debe revisarse con especial cuidado.
 - Prueba explícitamente los límites: máximos, mínimos, incompatibilidades y
   combinaciones legales e ilegales.
 
-El inventario del 3 de agosto de 2026 contiene 132 pruebas, todas correctas,
+El inventario del 3 de agosto de 2026 contiene 141 pruebas, todas correctas,
 pero todavía no cubre componentes ni flujos E2E. Tampoco hay integración
 completa para registro, verificación, recuperación, autorización por
 propietario y administración. Cualquier cambio en esas áreas debe añadir esa

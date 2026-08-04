@@ -7,7 +7,8 @@ import { HttpError } from '../../lib/errors.js';
 import { rateLimit } from '../../middleware/rate-limit.js';
 import { requireUser } from '../../middleware/require-user.js';
 import { type EmailGateway } from '../email/email.gateway.js';
-import { AuthRepository, type UserRecord } from './auth.repository.js';
+import { AuthRepository, authProviderOf, type UserRecord } from './auth.repository.js';
+import { createGoogleVerifier, type GoogleIdentity } from './google.js';
 import { clearSession, issueSession } from './session.js';
 
 const passwordSchema = z.string().min(12).max(128);
@@ -16,6 +17,7 @@ const credentialsSchema = z.object({
   password: passwordSchema,
 });
 const tokenSchema = z.object({ token: z.string().min(32).max(512) });
+const googleCredentialSchema = z.object({ credential: z.string().min(64).max(4096) });
 
 function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase('en-US');
@@ -39,6 +41,7 @@ function publicUser(user: UserRecord) {
     id: user.id,
     email: user.email,
     emailVerified: Boolean(user.emailVerifiedAt),
+    authProvider: authProviderOf(user),
     defaultRace: user.defaultRace,
     nickname: user.nickname,
     avatar: user.avatar,
@@ -64,10 +67,36 @@ export interface AuthRouteDependencies {
 export function createAuthRouter({ repository, env, email }: AuthRouteDependencies): Router {
   const router = Router();
   const authenticated = requireUser(repository, env);
+  const googleVerifier = createGoogleVerifier(env);
+
+  const verifyGoogleCredential = async (credential: string): Promise<GoogleIdentity> => {
+    if (!googleVerifier) throw new HttpError(503, 'GOOGLE_DISABLED', 'El acceso con Google no está configurado en este servidor.');
+    return googleVerifier(credential);
+  };
+
+  /**
+   * Resuelve la cuenta por identificador de Google, luego por correo —lo que
+   * vincula el acceso con Google a un registro previo— y sólo crea una cuenta
+   * nueva si no existe ninguna.
+   */
+  const resolveGoogleUser = async (identity: GoogleIdentity): Promise<UserRecord> => {
+    const linked = await repository.findByGoogleSub(identity.sub);
+    const user = linked ?? await repository.findByEmail(identity.emailNormalized);
+    if (!user) return repository.createGoogleUser(identity.email, identity.emailNormalized, identity.sub, identity.nickname);
+    if (user.deletedAt || !user.isActive) throw new HttpError(403, 'ACCOUNT_UNAVAILABLE', 'Esa cuenta no está disponible. Contacta con el administrador.');
+    if (user.googleSub && user.googleSub !== identity.sub) throw new HttpError(409, 'GOOGLE_ALREADY_LINKED', 'Ese correo ya está vinculado a otra cuenta de Google.');
+    return user.googleSub ? user : repository.linkGoogleAccount(user.id, identity.sub);
+  };
+
+  /** Reautenticación: el token debe ser de la cuenta con la sesión abierta. */
+  const requireGoogleReauthentication = async (user: UserRecord, credential: string): Promise<void> => {
+    const identity = await verifyGoogleCredential(credential);
+    if (!user.googleSub || user.googleSub !== identity.sub) throw new HttpError(401, 'INVALID_CREDENTIALS', 'La cuenta de Google no coincide con la sesión actual.');
+  };
   const registrationByIp = rateLimit({ windowMs: 60 * 60 * 1000, max: 5 });
   const registrationByIdentity = rateLimit({ windowMs: 60 * 60 * 1000, max: 3, key: credentialRateKey });
   const loginByIp = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
-  const loginByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 8, key: credentialRateKey });
+  const loginByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 12, key: credentialRateKey });
   const emailByIp = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
   const emailByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, key: credentialRateKey });
 
@@ -100,8 +129,19 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
   router.post('/login', loginByIp, loginByIdentity, async (request, response) => {
     const { email: inputEmail, password } = body(credentialsSchema, request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
-    const valid = user && !user.deletedAt && user.isActive && await argon2.verify(user.passwordHash, password);
+    // Una cuenta sólo de Google no tiene contraseña: se responde igual que ante
+    // una contraseña incorrecta para no revelar cómo se registró nadie.
+    const valid = user && !user.deletedAt && user.isActive && user.passwordHash && await argon2.verify(user.passwordHash, password);
     if (!valid) throw new HttpError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos.');
+    issueSession(response, user.id, user.sessionVersion, env);
+    await repository.recordLogin(user.id);
+    response.json({ user: publicUser(user) });
+  });
+
+  router.post('/google', loginByIp, async (request, response) => {
+    const { credential } = body(googleCredentialSchema, request.body);
+    const identity = await verifyGoogleCredential(credential);
+    const user = await resolveGoogleUser(identity);
     issueSession(response, user.id, user.sessionVersion, env);
     await repository.recordLogin(user.id);
     response.json({ user: publicUser(user) });
@@ -186,6 +226,7 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
       request.body,
     );
     const user = request.authenticatedUser!;
+    if (!user.passwordHash) throw new HttpError(409, 'PASSWORD_NOT_SET', 'Esta cuenta todavía no tiene contraseña. Usa «Establecer contraseña».');
     if (!await argon2.verify(user.passwordHash, currentPassword)) {
       throw new HttpError(401, 'INVALID_CREDENTIALS', 'La contraseña actual no es correcta.');
     }
@@ -194,12 +235,28 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     response.status(204).end();
   });
 
-  router.delete('/account', authenticated, async (request, response) => {
-    const { password } = body(z.object({ password: passwordSchema }), request.body);
+  // Primera contraseña de una cuenta de Google: como no hay contraseña anterior
+  // que comprobar, la reautenticación la aporta el propio Google.
+  router.post('/set-password', authenticated, async (request, response) => {
+    const { credential, newPassword } = body(googleCredentialSchema.extend({ newPassword: passwordSchema }), request.body);
     const user = request.authenticatedUser!;
-    if (!await argon2.verify(user.passwordHash, password)) {
-      throw new HttpError(401, 'INVALID_CREDENTIALS', 'La contraseña no es correcta.');
-    }
+    if (user.passwordHash) throw new HttpError(409, 'PASSWORD_ALREADY_SET', 'Esta cuenta ya tiene contraseña. Usa «Cambiar contraseña».');
+    await requireGoogleReauthentication(user, credential);
+    const updated = await repository.updatePassword(user.id, await hashPassword(newPassword));
+    issueSession(response, updated.id, updated.sessionVersion, env);
+    response.json({ user: publicUser(updated) });
+  });
+
+  router.delete('/account', authenticated, async (request, response) => {
+    const { password, credential } = body(
+      z.object({ password: passwordSchema.optional(), credential: googleCredentialSchema.shape.credential.optional() }),
+      request.body,
+    );
+    const user = request.authenticatedUser!;
+    if (credential) await requireGoogleReauthentication(user, credential);
+    else if (password && user.passwordHash) {
+      if (!await argon2.verify(user.passwordHash, password)) throw new HttpError(401, 'INVALID_CREDENTIALS', 'La contraseña no es correcta.');
+    } else throw new HttpError(401, 'REAUTHENTICATION_REQUIRED', 'Confirma tu identidad para borrar la cuenta.');
     await repository.softDeleteUser(user.id);
     clearSession(response, env);
     response.status(204).end();

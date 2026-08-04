@@ -7,6 +7,7 @@
   justify-content: center;
   padding: 16px;
   background: rgb(0 0 0 / 62%);
+  overflow: auto;
 }
 
 .modal__box {
@@ -17,6 +18,36 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 16px;
+}
+
+.modal__box--card-preview {
+  width: min(560px, 100%);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal__header h2 {
+  margin: 2px 0 0;
+  font-size: 20px;
+}
+
+.modal__close {
+  flex: 0 0 auto;
+  min-width: 32px;
+  padding: 5px;
+  font-size: 18px;
+}
+
+.card-detail__ability {
+  overflow-wrap: anywhere;
 }
 
 .seed-box {
@@ -50,5 +81,50 @@
 @media (max-width: 900px) {
   .toast {
     bottom: 128px;
+  }
+}
+
+@media (max-width: 620px) {
+  .modal {
+    align-items: flex-start;
+    padding: 12px;
+    overflow-x: hidden;
+  }
+
+  .modal__box,
+  .modal__box--card-preview {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .modal__header {
+    gap: 8px;
+  }
+
+  .modal__header > div {
+    min-width: 0;
+  }
+
+  .modal__header h2 {
+    font-size: 18px;
+    overflow-wrap: anywhere;
+  }
+
+  .modal__box--card-preview .card__head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .modal__box--card-preview .card__head h3 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .modal__box--card-preview .card-detail__ability {
+    line-height: 1.45;
   }
 }

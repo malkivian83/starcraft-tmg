@@ -371,6 +371,11 @@ payload portable:
 interface RemoteList extends ArmyList {
   revision: number;              // control optimista mediante If-Match
   remoteUpdatedAt: string;       // fecha generada por MariaDB
+  isPublic: boolean;             // visibilidad controlada por el propietario
+  publishedAt: string | null;
+  ownerNickname: string | null;  // apodo visible en el directorio público
+  likeCount: number;
+  likedByCurrentUser: boolean;
 }
 ```
 
@@ -382,6 +387,26 @@ sesión y lo guarda como `saved_lists.owner_id`.
 `modelIndex` nomina el modelo que porta una mejora SPECIALIST, tal como exige §9.1.7.
 
 `reference: true` marca las unidades invocadas (`Roachling`, `Omega Worm`, `Point Defence Drone`, `Pylon`). Se añaden para tener sus stats a mano en la app y en la impresión, pero **no cuestan minerales ni ocupan espacios de ejército** (§9.1.9). Es una bandera explícita en lugar de deducirlo de `summoned` en el catálogo: así el motor filtra por un solo campo y la hoja impresa puede separarlas visualmente en un bloque de «unidades invocadas (referencia)», que es lo que evita que alguien las confunda con parte de la lista.
+
+### Metadatos de publicación y likes
+
+La visibilidad no forma parte del `ArmyList` portable. Se guarda en `saved_lists`
+junto con `owner_id`, `is_public` y `published_at`. El servidor solo devuelve una
+lista pública si el propietario está activo y tiene el correo verificado.
+
+Los likes se almacenan fuera del payload en una tabla relacional:
+
+```text
+saved_list_likes
+  list_id: UUID, referencia a saved_lists
+  user_id: UUID, referencia al usuario que vota
+  created_at: fecha UTC
+  PRIMARY KEY (list_id, user_id)
+```
+
+La clave compuesta impide likes duplicados. El API devuelve `likeCount` y
+`likedByCurrentUser`; las rutas de alta y retirada son
+`POST`/`DELETE /api/lists/public/:id/like` y requieren sesión verificada.
 
 ## 5. Resultado de la validación
 

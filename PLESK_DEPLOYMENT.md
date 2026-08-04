@@ -21,6 +21,8 @@ guarda en Git y debe permanecer únicamente en el servidor.
 
 ```env
 VITE_API_BASE_URL=https://starcraft-builder.com/api
+VITE_GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
 APP_ORIGIN=https://starcraft-builder.com
 APP_BASE_URL=https://starcraft-builder.com
 DATABASE_URL=mysql://USUARIO:CONTRASENA_CODIFICADA@localhost:3306/BASE_DE_DATOS
@@ -30,6 +32,17 @@ NODE_ENV=production
 
 No fijar `PORT` en Plesk: el alojamiento Node.js debe proporcionar el puerto al
 proceso de la aplicación.
+
+Las dos variables de Google llevan el mismo valor: el identificador de cliente
+es público por diseño y el secreto de OAuth no se usa. `VITE_GOOGLE_CLIENT_ID`
+se incrusta en el bundle durante `vite build`, así que debe estar en `.env`
+**antes** de desplegar; cambiarla después obliga a reconstruir. Si falta, el
+botón de Google no aparece y el resto de la aplicación funciona igual.
+
+En Google Cloud Console, el dominio de producción debe figurar en «Orígenes de
+JavaScript autorizados» (`https://starcraft-builder.com`, sin barra final) y la
+pantalla de consentimiento debe estar publicada: en modo de prueba sólo entran
+las cuentas añadidas como usuarios de prueba.
 
 Desde la pantalla Node.js de Plesk, ejecuta `deploy:plesk` y habilita la
 aplicación. No es necesario pulsar antes `NPM Install`, porque el propio script

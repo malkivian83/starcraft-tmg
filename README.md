@@ -3,6 +3,10 @@
 Aplicación web para construir, validar, guardar e imprimir listas de ejército.
 Funciona en escritorio y móvil, permite instalar la interfaz como PWA y guarda
 las listas en una cuenta centralizada mediante una API propia y MariaDB.
+Las listas pueden mantenerse privadas o publicarse para consulta y clonación;
+el directorio público incluye filtros, ordenación por likes y valoración por
+usuario. El registro exige aceptar los términos de uso de
+`starcraft-builder.com`.
 
 > **Estado actual:** la aplicación requiere conexión con la API para restaurar
 > la sesión y acceder al constructor. La instalación PWA no implica todavía
@@ -112,7 +116,7 @@ de carta siguen siendo opcionales: la interfaz las oculta si no existen.
 
 ## Verificación
 
-Actualmente hay **132 pruebas**. La más importante es
+Actualmente hay **141 pruebas**. La más importante es
 `tests/engine/regression-manual.test.ts`: reproduce
 la lista de ejemplo del reglamento §9.1 y comprueba las cifras **publicadas por
 el fabricante** — 1670 minerales, 185 de gas, 8/8 Núcleo, 2/2 Élite, 2/3 Apoyo,

@@ -1,6 +1,6 @@
 # Plan de trabajo — Constructor de listas de ejército · StarCraft: The Miniatures Game
 
-Versión 3 · Estado actualizado tras la auditoría técnica del 3 de agosto de 2026.
+Versión 4 · Estado actualizado tras la auditoría funcional del 3 de agosto de 2026.
 
 Este documento conserva el razonamiento y los hallazgos de extracción, pero su
 plan de ejecución original ya no representa la arquitectura vigente. El estado
@@ -14,9 +14,9 @@ operativo se resume aquí y los riesgos actuales están en
 | Tema | Decisión |
 |---|---|
 | Stack | React + TypeScript + Vite; API Express y MariaDB |
-| Alcance actual | Construcción, validación, impresión, cuentas y listas remotas |
+| Alcance actual | Construcción, validación, impresión, cuentas, listas remotas y directorio público |
 | Persistencia | MariaDB por cuenta; JSON y seed como formatos portables |
-| Contenido | Cartas completas (texto e imágenes); uso privado, no publicada |
+| Contenido | Cartas completas (texto e imágenes); listas privadas o públicas bajo control del propietario |
 | Idioma | **Nombres propios en inglés, textos explicativos en español** |
 | Razas | Zerg, Terran y Protoss implementadas |
 | Impresión | Hoja resumen A4 + cartas de las unidades + exportación a PDF |
@@ -43,7 +43,8 @@ Ventaja: cualquier nombre que veas en la app se localiza tal cual en tus cartas 
 
 ### Supuesto que mantengo
 
-**Uso privado.** No se publica la aplicación en abierto; se despliega en una URL de acceso restringido.
+**Acceso autenticado.** La aplicación y el directorio de listas requieren sesión. Una lista puede marcarse como
+pública para que otros usuarios autenticados la consulten y la clonen, sin editar el original.
 
 ---
 
@@ -124,6 +125,7 @@ Tanto la carta de facción como las tácticas aportan recurso por ronda (`+1 CP`
 | `02-SDD.md` | Arquitectura, motor de reglas, impresión, pruebas | ✅ |
 | `03-MODELO-DATOS.md` | Esquema del catálogo y de las listas | ✅ |
 | `04-ANALISIS-REFERENCIA.md` | Análisis de la app existente y decisiones de diseño D1–D10 | ✅ |
+| `08-AUDITORIA-2026-08-03.md` | Contraste de funcionalidades implementadas y pendientes | ✅ |
 
 Ya no hace falta un glosario de traducción de nombres: al mantenerlos en inglés, solo se traducen los términos estructurales, que son una veintena y están recogidos en la tabla de la regla de idioma.
 
@@ -140,13 +142,16 @@ avisos y caso de regresión de la lista del manual.
 ### Fase 4 — Interfaz de construcción: implementada con deuda UX
 
 Asistente de cuatro pasos, barra de recursos, escritorio y adaptación móvil.
-Quedan pendientes la prevención de descartes accidentales, semántica accesible
-de pestañas y una acción visible para cerrar sesión en móvil.
+La prevención de descartes accidentales y la previsualización de cartas tácticas
+están implementadas. Quedan pendientes la semántica accesible de pestañas y una
+acción visible para cerrar sesión en móvil.
 
 ### Fase 5 — Persistencia y consulta: parcial
 
 Las listas se guardan en MariaDB por usuario y se pueden importar/exportar como
-JSON o seed. La búsqueda avanzada y los filtros generales siguen pendientes.
+JSON o seed. Las listas públicas tienen página propia con búsqueda, filtros,
+ordenación, clonación y likes por usuario. La búsqueda avanzada del catálogo
+de cartas sigue pendiente.
 
 ### Fase 6 — Impresión y PDF: implementada
 
@@ -167,10 +172,12 @@ pendiente una segunda revisión humana de costes y algunos perfiles indicados en
 
 ### Fase 9 — Cuentas, API y listas sincronizadas: parcial
 
-Registro, acceso, verificación, perfiles, listas remotas, control de propietario,
-administración y SMTP están implementados. Antes de producción deben corregirse
-el modelo de superadministración, la recuperación de contraseña en la web, el
-reenvío de verificación, los límites de intentos y la cobertura de integración.
+Registro, acceso con contraseña o con Google, verificación —por token o
+manualmente desde el panel de superadministración—, recuperación, reenvío de
+verificación, términos legales, perfiles, listas remotas, visibilidad pública,
+clonación, likes, control de propietario, administración y SMTP están
+implementados. Antes de producción deben corregirse el modelo de
+superadministración, los límites de intentos y la cobertura de integración.
 
 ---
 

@@ -1,7 +1,7 @@
 # SDD — Documento de diseño de software
 
 Constructor de listas de ejército · StarCraft: The Miniatures Game
-Versión 2.0 · Arquitectura vigente a 3 de agosto de 2026
+Versión 2.1 · Arquitectura vigente a 3 de agosto de 2026
 
 Documento hermano: [`03-MODELO-DATOS.md`](03-MODELO-DATOS.md), que define el esquema de datos referenciado aquí.
 Riesgos y desviaciones actuales:
@@ -76,9 +76,9 @@ src/
   auth/              ← clientes HTTP de autenticación y listas
   ui/
     builder/         ← asistente de construcción
-    lists/           ← gestión de listas guardadas
+    lists/           ← listas guardadas, públicas, likes y clonación
     account/         ← perfil, seguridad y administración
-    auth/            ← acceso, registro y verificación
+    auth/            ← acceso, registro, términos y verificación
     print/           ← vistas de impresión y PDF
     common/
 server/src/
@@ -363,7 +363,7 @@ Los nombres propios (`ProperName` en el modelo) se muestran **siempre en inglés
 | Almacén | Contenido |
 |---|---|
 | MariaDB `saved_lists` | Payload de listas, propietario y revisión |
-| MariaDB `users`/`profiles` | Identidad, estado, versión de sesión y preferencias |
+| MariaDB `users`/`profiles` | Identidad, proveedor de acceso (`password_hash`, `google_sub`), estado, versión de sesión y preferencias |
 | MariaDB `account_tokens` | Tokens de verificación y recuperación, almacenados como hash |
 | MariaDB `app_settings` | Configuración SMTP cifrada |
 | MariaDB `email_delivery_logs` | Resultado de los intentos de correo |
@@ -378,7 +378,11 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 
 ### 7.1 Sesión y autorización
 
-- Contraseñas con Argon2id.
+- Contraseñas con Argon2id. Una cuenta creada con Google no tiene contraseña
+  hasta que su titular decide añadirla.
+- El ID token de Google se valida con `google-auth-library` y se exige
+  `email_verified`; la sesión que se emite después es la propia de la
+  aplicación, igual que en el acceso con contraseña.
 - JWT de 15 minutos en cookie `HttpOnly`, `SameSite=Lax`, `Secure` en
   producción y ruta `/api`.
 - `session_version` revoca sesiones al cambiar contraseña, desactivar o borrar
@@ -386,10 +390,17 @@ valida el esquema y vuelve a calcular costes y legalidad en el cliente.
 - Tokens de cuenta aleatorios de 32 bytes, almacenados como SHA-256, de un solo
   uso y con caducidad de 30 minutos.
 - Consultas parametrizadas y propiedad de listas filtrada en el servidor.
+- El superadministrador puede verificar o desverificar un correo a mano
+  (`PUT /api/admin/users/:id/verified`), sin token y sin poder aplicarlo a su
+  propia cuenta. Es la vía de rescate cuando el correo de verificación no llega.
+  Verificar una cuenta que no lo estaba envía el aviso `ACCOUNT_VERIFIED` al
+  usuario; el fallo de ese envío se devuelve como advertencia y no revierte la
+  verificación.
 
 Deuda abierta: roles administrativos persistidos, verificación obligatoria para
 administrar, límites de intentos, recuperación completa en el frontend,
-reenvío de verificación y pruebas de integración de estas garantías.
+reenvío de verificación, auditoría de las verificaciones manuales y pruebas de
+integración de estas garantías.
 
 ### 7.2 Códec de seed (compartir por código)
 
@@ -496,7 +507,23 @@ Las imágenes de cartas se cargan de forma diferida y se cachean bajo demanda.
 El logo y los emblemas de facción no están incluidos expresamente en esa regla
 de caché y deben revisarse si se decide soportar un modo offline real.
 
-## 9. PWA y despliegue
+## 9. Listas públicas, likes y términos
+
+Las listas públicas siguen protegidas por `requireVerifiedUser`: el acceso no
+es anónimo, aunque la lista se pueda consultar en modo solo lectura. El
+propietario cambia `isPublic` desde el editor; otros usuarios solo pueden
+abrirla, darle o quitarle un like y clonarla como una lista propia.
+
+El API devuelve el contador y el estado del usuario (`likeCount` y
+`likedByCurrentUser`). La tabla `saved_list_likes` usa una clave primaria
+compuesta `(list_id, user_id)` para impedir duplicados. La página pública aplica
+los filtros en cliente y ofrece el orden «Más valoradas» por ese contador.
+
+La ruta `/terminos-y-condiciones` se sirve desde `AuthGate` antes de exigir
+sesión. El footer y el registro enlazan con ella; la casilla de aceptación es
+obligatoria y el titular se identifica como `starcraft-builder.com`.
+
+## 10. PWA y despliegue
 
 `vite-plugin-pwa` genera manifest, service worker y caché de la interfaz. La PWA
 es instalable, pero la restauración de sesión y el acceso a las listas requieren
@@ -506,7 +533,7 @@ El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
 `server/dist/`, `app.js` carga la API y MariaDB conserva los datos. Consulta
 [`../PLESK_DEPLOYMENT.md`](../PLESK_DEPLOYMENT.md).
 
-## 10. Plan de pruebas
+## 11. Plan de pruebas
 
 | Nivel | Alcance | Herramienta |
 |---|---|---|
@@ -521,7 +548,7 @@ El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
 
 El caso de regresión del manual es la prueba más valiosa del proyecto: es el único punto donde una fuente externa e independiente confirma que datos y reglas son correctos a la vez.
 
-## 11. Decisiones de diseño y sus motivos
+## 12. Decisiones de diseño y sus motivos
 
 | Decisión | Motivo | Alternativa descartada |
 |---|---|---|
@@ -533,7 +560,7 @@ El caso de regresión del manual es la prueba más valiosa del proyecto: es el �
 | Nada derivado se persiste | Un fichero editado a mano no puede mentir sobre su legalidad | Guardar totales en la lista |
 | Español con original en inglés visible | Las cartas físicas están en inglés; sin el original, contrastar es incómodo | Traducción pura |
 
-## 12. Fuera de alcance en esta versión
+## 13. Fuera de alcance en esta versión
 
 Partidas por equipos (§9.1.8), listas cerradas (§9.1.10), seguimiento de partida,
 colaboración en tiempo real, perfiles públicos y funcionamiento offline con

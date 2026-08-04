@@ -12,6 +12,24 @@ diario · **C** = mejora deseable.
 
 ---
 
+## Funcionalidades cerradas en esta revisión
+
+Estos puntos ya no deben tratarse como pendientes:
+
+- Listas públicas privadas por defecto, consulta en solo lectura y clonación.
+- Directorio de listas públicas con búsqueda, filtros por raza/escala/validez y
+  ordenación por likes.
+- Likes únicos por usuario y lista, con contador y retirada del like.
+- Página de inicio con listas recientes propias, accesos por raza y publicaciones
+  públicas recientes.
+- Página de términos y condiciones enlazada desde los footers y casilla
+  obligatoria en el registro. El titular es `starcraft-builder.com`.
+- Previsualización de cartas tácticas en modal y ajuste responsive para móvil.
+- Confirmación de cambios sin guardar al cambiar de sección del constructor y
+  botón de impresión en la sección de revisión.
+
+---
+
 ## A · Datos que pueden dar listas incorrectas
 
 ### A1 · Costes Zerg verificados; Terran y Protoss pendientes
@@ -131,7 +149,7 @@ Estas comprobaciones deben incorporarse a pruebas de interfaz antes de dar una
 auditoría de cartas por cerrada.
 
 ### D1 · Sin pruebas de interfaz
-Hay 132 pruebas en 10 ficheros del motor, catálogo, códec de seed, store y
+Hay 141 pruebas en 11 ficheros del motor, catálogo, códec de seed, store y
 diagnóstico SMTP, pero **ninguna de componentes ni de extremo a extremo**.
 Tampoco hay integración de API/MariaDB para autenticación, autorización o
 administración. Los tres fallos que aparecieron usando la app
@@ -166,10 +184,25 @@ persistidos y provisión inicial fuera del registro público.
 
 ### D7 · Flujos de cuenta incompletos (`AUD-02`, `AUD-03`)
 
-La recuperación existe en la API, pero no en la interfaz. Tampoco existe reenvío
-de verificación y un fallo SMTP puede dejar una cuenta creada pero inutilizable.
-Este diseño produce además un bloqueo al configurar el primer administrador y
-SMTP en producción desde una base vacía.
+La recuperación y el reenvío de verificación ya están disponibles en la
+interfaz. Siguen pendientes los límites de intentos, la auditoría del flujo y
+el bootstrap seguro de SMTP para una base de datos vacía.
+
+Un fallo SMTP ya no deja la cuenta inutilizable de forma definitiva: el panel de
+superadministración permite verificarla a mano (`PUT /api/admin/users/:id/verified`)
+y avisa al usuario con un correo `ACCOUNT_VERIFIED`.
+Sigue siendo un rescate manual, no una solución del flujo, y **no resuelve el
+arranque desde una base vacía**: si el correo del propio superadministrador
+nunca llegó, `AuthGate` lo retiene en la pantalla de verificación pendiente y no
+llega al panel para configurar SMTP. Sólo puede salir llamando a `/api/admin`
+directamente, porque esas rutas aceptan sesiones sin verificar (ver D6).
+
+El acceso con Google evita el problema de raíz cuando el usuario lo elige: no
+necesita verificación propia ni correo saliente. No lo sustituye, porque el
+registro con contraseña sigue dependiendo de SMTP.
+
+Falta además registro de auditoría de quién verifica cada cuenta y cuándo, y
+comprobación de `nonce` en el token de Google.
 
 ### D8 · Defensa y cobertura del backend (`AUD-06`, `AUD-09`)
 
@@ -187,7 +220,9 @@ ruta y disponer de rollback operativo.
 ### D10 · Experiencia web y accesibilidad (`AUD-04`, `AUD-05`, `AUD-08`, `AUD-10`)
 
 - En móvil se oculta la única acción visible para cerrar sesión.
-- “Nueva lista” y cambiar de raza descartan trabajo sin confirmación.
+- “Nueva lista”, cambiar de raza, cargar otra lista, importar y cerrar sesión ya
+  piden confirmación cuando hay cambios sin guardar, pero sólo mientras se está
+  en el constructor: fuera de él la lista en edición se descarta en silencio.
 - La PWA depende de la API y no soporta el modo offline que se prometía.
 - Las pestañas y selecciones no comunican todo su estado a tecnologías de
   asistencia.
@@ -221,7 +256,7 @@ Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
 ## Qué haría a continuación
 
 1. **Cerrar la autorización administrativa** (`AUD-01`); bloquea producción.
-2. **Completar recuperación, reenvío y bootstrap SMTP** (`AUD-02`, `AUD-03`).
+2. **Completar límites, auditoría y bootstrap SMTP** (`AUD-02`, `AUD-03`).
 3. **Añadir límites y pruebas API/E2E** (`AUD-06`, D1).
 4. **Endurecer migraciones y despliegue** (`AUD-07`).
 5. **Corregir salida móvil y pérdida silenciosa de cambios** (`AUD-04`,
