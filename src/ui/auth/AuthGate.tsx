@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { requestPasswordReset, requestVerification, resetPassword, verifyEmail } from '@/auth/authService';
 import { googleSignInEnabled } from '@/auth/googleIdentity';
 import { useAuthStore } from '@/store/authStore';
@@ -102,6 +103,7 @@ function AuthForm() {
       {googleSignInEnabled && <><p className="auth-separator">o</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} /><p className="muted small">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p></>}
       {mode === 'login' && <a href="/reset-password">He olvidado mi contraseña</a>}
       <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? 'Crear una cuenta' : 'Ya tengo una cuenta'}</button>
+      <Link to="/crear-lista">Crear una lista como invitado</Link>
     </AuthLayout>
   );
 }

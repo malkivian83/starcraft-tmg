@@ -656,11 +656,11 @@
           "range": "E",
           "target": "Ground",
           "rateOfAttack": "2",
-          "hit": "3+",
-          "surgeType": "Light, Armoured",
-          "surgeDice": "D6",
+          "hit": "4+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
           "damage": "1",
-          "keywords": ["INSTANT"]
+          "keywords": []
         }
       ],
       "abilities": [
@@ -1086,8 +1086,9 @@
       "baseSize": "Ø 80MM",
       "profile": { "size": "3", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
       "weapons": [
-        { "name": "Talons", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "3", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] },
-        { "name": "Acid Spines", "phase": "ASSAULT", "range": "12", "target": "Flying", "rateOfAttack": "4", "hit": "4+", "surgeType": "Light, Armoured", "surgeDice": "D3", "damage": "2", "keywords": [] }
+        { "name": "Talons", "phase": "ASSAULT", "range": "6", "target": "Ground", "rateOfAttack": "4", "hit": "4+", "surgeType": "Light", "surgeDice": "D3", "damage": "2", "keywords": [] },
+        { "name": "Acid Spines", "phase": "ASSAULT", "range": "12", "target": "Flying", "rateOfAttack": "4", "hit": "4+", "surgeType": "Light, Armoured", "surgeDice": "D3", "damage": "2", "keywords": [] },
+        { "name": "Talons", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "3", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }
       ],
       "abilities": [
         {
