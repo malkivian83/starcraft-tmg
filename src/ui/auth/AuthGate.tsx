@@ -19,7 +19,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
 }
 
 function AuthLayout({ children }: { children: ReactNode }) {
-  return <div className="auth-page"><main className="auth-page__main"><img className="auth-page__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} /><section className="panel stack auth-page__panel">{children}</section></main><AuthFooter /></div>;
+  return <AuthShell><section className="panel stack auth-page__panel">{children}</section></AuthShell>;
+}
+
+function AuthShell({ children, mainClassName = '' }: { children: ReactNode; mainClassName?: string }) {
+  return <div className="auth-page"><main className={`auth-page__main ${mainClassName}`.trim()}><img className="auth-page__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} />{children}</main><AuthFooter /></div>;
 }
 
 function AuthLoading() {
@@ -77,37 +81,47 @@ function AuthForm() {
   };
 
   return (
-    <AuthLayout>
-      <Link className="auth-guest-button" to="/crear-lista">
-        <span className="auth-guest-button__label">Crear una lista como invitado</span>
-        <span className="auth-guest-button__hint">Sin cuenta · Puedes imprimirla o exportarla</span>
-      </Link>
-      <h1>{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h1>
-      <form className="stack" onSubmit={submit}>
-        <label className="field">
-          Correo
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
-        </label>
-        <label className="field">
-          Contraseña
-          <span className="password-field">
-            <input type={passwordVisible ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} required minLength={12} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
-            <button type="button" className="password-field__toggle" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={passwordVisible}>{passwordVisible ? 'Ocultar' : 'Ver'}</button>
-          </span>
-        </label>
-        {mode === 'register' && (
-          <label className="terms-check">
-            <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required />
-            <span>Acepto los <a href="/terminos-y-condiciones" target="_blank" rel="noreferrer">términos y condiciones de uso</a>.</span>
-          </label>
-        )}
-        {error && <p className="issue issue--error">{error}</p>}
-        <button type="submit" disabled={pending}>{pending ? 'Procesando...' : mode === 'login' ? 'Entrar' : 'Registrarme'}</button>
-      </form>
-      {googleSignInEnabled && <><p className="auth-separator">o</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} /><p className="muted small">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p></>}
-      {mode === 'login' && <a href="/reset-password">He olvidado mi contraseña</a>}
-      <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? 'Crear una cuenta' : 'Ya tengo una cuenta'}</button>
-    </AuthLayout>
+    <AuthShell mainClassName="auth-page__main--split">
+      <div className="auth-page__panels">
+        <section className="panel stack auth-page__panel auth-page__panel--account">
+          <h1>{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h1>
+          <form className="stack" onSubmit={submit}>
+            <label className="field">
+              Correo
+              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
+            </label>
+            <label className="field">
+              Contraseña
+              <span className="password-field">
+                <input type={passwordVisible ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} required minLength={12} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
+                <button type="button" className="password-field__toggle" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={passwordVisible}>{passwordVisible ? 'Ocultar' : 'Ver'}</button>
+              </span>
+            </label>
+            {mode === 'register' && (
+              <label className="terms-check">
+                <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required />
+                <span>Acepto los <a href="/terminos-y-condiciones" target="_blank" rel="noreferrer">términos y condiciones de uso</a>.</span>
+              </label>
+            )}
+            {error && <p className="issue issue--error">{error}</p>}
+            <button type="submit" disabled={pending}>{pending ? 'Procesando...' : mode === 'login' ? 'Entrar' : 'Registrarme'}</button>
+          </form>
+          {googleSignInEnabled && <><p className="auth-separator">o</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} /><p className="muted small">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p></>}
+          {mode === 'login' && <a href="/reset-password">He olvidado mi contraseña</a>}
+          <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? 'Crear una cuenta' : 'Ya tengo una cuenta'}</button>
+        </section>
+
+        <section className="panel stack auth-page__panel auth-page__panel--guest" aria-labelledby="guest-panel-title">
+          <p className="auth-panel__eyebrow">Sin cuenta</p>
+          <h2 id="guest-panel-title">Crear una lista como invitado</h2>
+          <p className="muted">Prueba el creador de listas sin registrarte. Puedes imprimir o exportar tu lista cuando termines.</p>
+          <Link className="auth-guest-button" to="/crear-lista">
+            <span className="auth-guest-button__label">Abrir creador de listas</span>
+            <span className="auth-guest-button__hint">Inicia sesión más tarde para guardarla</span>
+          </Link>
+        </section>
+      </div>
+    </AuthShell>
   );
 }
 
