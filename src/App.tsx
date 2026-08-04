@@ -39,9 +39,10 @@ const NAV_ITEMS = [
   { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
 ];
 const navLabel = (item: typeof NAV_ITEMS[number]) => item.page === 'public-lists' ? 'LISTAS P\u00DABLICAS' : item.label;
+const publicAssetPrefix = window.location.pathname === '/dist' || window.location.pathname.startsWith('/dist/') ? '/dist' : '';
 
 function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
-  return <img className="primary-nav__icon" src={`/icons/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`} alt="" aria-hidden="true" />;
+  return <img className="primary-nav__icon" src={`${publicAssetPrefix}/icons/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`} alt="" aria-hidden="true" />;
 }
 
 function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; race: Race; onNavigate: (page: PageId, label: string) => void; onCreate: () => void }) {

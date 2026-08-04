@@ -273,7 +273,7 @@ a {
   width: 18px;
   height: 18px;
   flex: 0 0 auto;
-  background: center / contain no-repeat url('/icons/navigation/industrial/listas-publicas.svg');
+  background: center / contain no-repeat url('/icons/navigation/industrial/listas-publicas.svg'), center / contain no-repeat url('/dist/icons/navigation/industrial/listas-publicas.svg');
 }
 
 .primary-nav__buttons .primary-nav__item:nth-child(3) {
@@ -285,8 +285,8 @@ a {
   font-size: 13px;
 }
 
-.app[data-race='ZERG'] .primary-nav__buttons .primary-nav__item:nth-child(3)::before { background-image: url('/icons/navigation/organico/listas-publicas.svg'); }
-.app[data-race='PROTOSS'] .primary-nav__buttons .primary-nav__item:nth-child(3)::before { background-image: url('/icons/navigation/cristal/listas-publicas.svg'); }
+.app[data-race='ZERG'] .primary-nav__buttons .primary-nav__item:nth-child(3)::before { background-image: url('/icons/navigation/organico/listas-publicas.svg'), url('/dist/icons/navigation/organico/listas-publicas.svg'); }
+.app[data-race='PROTOSS'] .primary-nav__buttons .primary-nav__item:nth-child(3)::before { background-image: url('/icons/navigation/cristal/listas-publicas.svg'), url('/dist/icons/navigation/cristal/listas-publicas.svg'); }
 
 .primary-nav__buttons .primary-nav__item,
 .primary-nav__mobile,
