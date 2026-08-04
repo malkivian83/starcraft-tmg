@@ -30,6 +30,7 @@ const environment: ServerEnvironment = {
 const email: EmailGateway = {
   sendVerificationEmail: vi.fn(async () => undefined),
   sendPasswordResetEmail: vi.fn(async () => undefined),
+  sendAccountVerifiedEmail: vi.fn(async () => undefined),
 };
 
 describe('autorizacion HTTP de listas', () => {

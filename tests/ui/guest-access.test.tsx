@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { App } from '@/App';
+import { App, initialPageFor } from '@/App';
 import { useAuthStore } from '@/store/authStore';
 import { useListStore } from '@/store/listStore';
 
@@ -26,6 +26,8 @@ describe('ruta pública del constructor', () => {
     expect(html).toContain('Exportar');
     expect(html).toContain('Imprimir / PDF');
     expect(html).not.toContain('Mis listas');
+    expect(html).not.toContain('Listas públicas');
+    expect(html).not.toContain('Visibilidad');
     expect(html).not.toContain('Abrir perfil');
     expect(html).not.toContain('header-logout');
   });
@@ -40,5 +42,11 @@ describe('ruta pública del constructor', () => {
     expect(html).toContain('print-sheet-host');
     expect(html).toContain('class="sheet"');
     expect(html).toContain('LISTA NO VÁLIDA');
+  });
+
+  it('abre el constructor al reclamar un borrador invitado', () => {
+    expect(initialPageFor('account', true, null)).toBe('builder');
+    expect(initialPageFor('account', false, null)).toBe('home');
+    expect(initialPageFor('account', false, 'public-list-id')).toBe('public-list');
   });
 });
