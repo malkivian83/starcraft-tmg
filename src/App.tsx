@@ -39,14 +39,14 @@ const NAV_ITEMS = [
   { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
 ];
 const navLabel = (item: typeof NAV_ITEMS[number]) => item.page === 'public-lists' ? 'LISTAS P\u00DABLICAS' : item.label;
-const publicAssetPrefix = window.location.pathname === '/dist' || window.location.pathname.startsWith('/dist/') ? '/dist' : '';
+const NAV_ICON_SOURCES = import.meta.glob('./assets/navigation/**/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 
 function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
-  const iconPath = `/icons/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`;
-  const fallbackPath = `/dist${iconPath}`;
+  const sourcePath = `./assets/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`;
+  const dataUri = `data:image/svg+xml,${encodeURIComponent(NAV_ICON_SOURCES[sourcePath] ?? '')}`;
   return <span
     className="primary-nav__icon"
-    style={{ backgroundImage: `url("${publicAssetPrefix}${iconPath}"), url("${publicAssetPrefix ? iconPath : fallbackPath}")` }}
+    style={{ backgroundImage: `url("${dataUri}")` }}
     aria-hidden="true"
   />;
 }
