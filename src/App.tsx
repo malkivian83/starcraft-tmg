@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
@@ -31,6 +31,33 @@ const STEPS: Array<{ id: StepId; label: string }> = [
   { id: 'scenario', label: '3 · Misión y despliegue' }, { id: 'review', label: '4 · Revisión e impresión' },
 ];
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
+const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'industrial', PROTOSS: 'cristal' };
+const NAV_ITEMS = [
+  { page: 'home' as const, label: 'INICIO', icon: 'inicio' },
+  { page: 'lists' as const, label: 'MIS LISTAS', icon: 'mis-listas' },
+  { page: 'public-lists' as const, label: 'LISTAS PÚBLICAS', icon: 'listas-publicas' },
+  { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
+];
+const navLabel = (item: typeof NAV_ITEMS[number]) => item.page === 'public-lists' ? 'LISTAS P\u00DABLICAS' : item.label;
+
+function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
+  return <img className="primary-nav__icon" src={`/icons/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`} alt="" aria-hidden="true" />;
+}
+
+function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; race: Race; onNavigate: (page: PageId, label: string) => void; onCreate: () => void }) {
+  const current = NAV_ITEMS.find((item) => item.page === page) ?? NAV_ITEMS[0]!;
+  const selectItem = (item: typeof NAV_ITEMS[number], event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.closest('details')?.removeAttribute('open');
+    if (item.page === 'builder') onCreate();
+    else onNavigate(item.page, navLabel(item));
+  };
+  return <details className="primary-nav__mobile">
+    <summary><NavigationIcon race={race} icon={current.icon} /><span>{navLabel(current)}</span></summary>
+    <div className="primary-nav__mobile-menu">
+      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}><NavigationIcon race={race} icon={item.icon} /><span>{navLabel(item)}</span></button>)}
+    </div>
+  </details>;
+}
 const publicListPath = () => {
   const match = window.location.pathname.match(/^\/public-lists\/([^/]+)$/);
   return match?.[1] ? decodeURIComponent(match[1]) : null;
@@ -316,10 +343,28 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             <button className="primary-nav__item" onClick={clearList}>Borrar lista</button>
           ) : (
             <>
-              <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', 'Inicio')}>Inicio</button>
-              <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', 'Mis listas')}>Mis listas</button>
-              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', 'Listas públicas')}>Listas públicas</button>
-              <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}>Nueva lista</button>
+            <div className="primary-nav__buttons">
+              <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', 'Inicio')}><NavigationIcon race={list.race} icon="inicio" />Inicio</button>
+              <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', 'Mis listas')}><NavigationIcon race={list.race} icon="mis-listas" />Mis listas</button>
+              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', 'Listas pÃºblicas')}>Listas pÃºblicas</button>
+              <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />Nueva lista</button>
+            </div>
+            <MobileNavigation page={page} race={list.race} onNavigate={navigateToPage} onCreate={() => createList()} />
+            <select
+              className="primary-nav__select"
+              aria-label="Navegación principal"
+              value={page === 'public-list' ? 'home' : page}
+              onChange={(event) => {
+                const destination = event.target.value as PageId;
+                if (destination === 'builder') createList();
+                else navigateToPage(destination, destination === 'home' ? 'Inicio' : destination === 'lists' ? 'Mis listas' : 'Listas públicas');
+              }}
+            >
+              <option value="home">Inicio</option>
+              <option value="lists">Mis listas</option>
+              <option value="public-lists">Listas públicas</option>
+              <option value="builder">Nueva lista</option>
+            </select>
             </>
           )}
         </nav>
@@ -389,7 +434,6 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
                   <button onClick={() => downloadJson(list)}>Exportar</button>
                 </>
               )}
-              {capabilities.printLists && <button onClick={() => window.print()}>Imprimir / PDF</button>}
             </div>
           </section>
           <ResourceBar summary={summary} hasErrors={!validation.legal} />
