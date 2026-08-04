@@ -1,9 +1,12 @@
 export type Race = 'ZERG' | 'TERRAN' | 'PROTOSS';
 
+export type AuthProvider = 'PASSWORD' | 'GOOGLE' | 'BOTH';
+
 export interface AuthenticatedUser {
   id: string;
   email: string;
   emailVerified: boolean;
+  authProvider: AuthProvider;
   defaultRace: Race;
   nickname: string | null;
   avatar: string | null;
@@ -14,6 +17,8 @@ export interface AdminUser {
   email: string;
   nickname: string | null;
   isActive: boolean;
+  emailVerifiedAt: string | null;
+  authProvider: AuthProvider;
   lastLoginAt: string | null;
   savedLists: number;
 }
@@ -21,7 +26,7 @@ export interface SmtpSettings { host: string; port: number; secure: boolean; use
 export interface EmailDeliveryLog {
   id: number;
   recipient: string;
-  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST';
+  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED';
   subject: string;
   status: 'SENT' | 'FAILED';
   providerMessageId: string | null;
@@ -86,6 +91,12 @@ export async function register(email: string, password: string): Promise<Registr
   });
 }
 
+export async function loginWithGoogle(credential: string): Promise<AuthenticatedUser> {
+  return (await request<{ user: AuthenticatedUser }>('/auth/google', {
+    method: 'POST', body: JSON.stringify({ credential }),
+  })).user;
+}
+
 export async function logout(): Promise<void> {
   await request('/auth/logout', { method: 'POST' });
 }
@@ -122,8 +133,14 @@ export async function changePassword(currentPassword: string, newPassword: strin
   await request('/auth/change-password', { method: 'POST', body: JSON.stringify({ currentPassword, newPassword }) });
 }
 
-export async function deleteAccount(password: string): Promise<void> {
-  await request('/auth/account', { method: 'DELETE', body: JSON.stringify({ password }) });
+export async function setPassword(credential: string, newPassword: string): Promise<AuthenticatedUser> {
+  return (await request<{ user: AuthenticatedUser }>('/auth/set-password', {
+    method: 'POST', body: JSON.stringify({ credential, newPassword }),
+  })).user;
+}
+
+export async function deleteAccount(reauthentication: { password: string } | { credential: string }): Promise<void> {
+  await request('/auth/account', { method: 'DELETE', body: JSON.stringify(reauthentication) });
 }
 
 export async function listAdminUsers(): Promise<AdminUser[]> {
@@ -132,6 +149,10 @@ export async function listAdminUsers(): Promise<AdminUser[]> {
 
 export async function setAdminUserActive(id: string, isActive: boolean): Promise<void> {
   await request(`/admin/users/${id}/active`, { method: 'PUT', body: JSON.stringify({ isActive }) });
+}
+
+export async function setAdminUserVerified(id: string, isVerified: boolean): Promise<{ emailDeliveryWarning: string | null }> {
+  return request(`/admin/users/${id}/verified`, { method: 'PUT', body: JSON.stringify({ isVerified }) });
 }
 
 export async function setAdminUserPassword(id: string, password: string): Promise<void> {

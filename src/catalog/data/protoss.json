@@ -381,7 +381,7 @@
           "hit": "3+",
           "surgeType": "Light",
           "surgeDice": "D3",
-          "damage": "3",
+          "damage": "1",
           "keywords": []
         }
       ],
@@ -406,6 +406,50 @@
           "text": {
             "es": "Esta unidad realiza una acción de Movimiento de 2\". No cuenta para su límite de acciones.",
             "en": "This Unit performs a 2\" Move action. This does not count towards its action limit."
+          }
+        },
+        {
+          "name": "Charge",
+          "phase": "ASSAULT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado mayor para sumarlo a su característica de Velocidad.",
+            "en": "When determining Charge Distance for this Unit, roll 2D6 instead of D6 and use the higher result to add to the Unit's Speed characteristic."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (3) 4+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (3) 4+ effect."
+          }
+        },
+        {
+          "name": "Titan Killers",
+          "phase": "COMBAT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando esta unidad hace un Ataque de Combate Cuerpo a Cuerpo y el objetivo es de Tamaño 3 o mayor, la característica de Daño del arma se trata como 2.",
+            "en": "When this Unit makes a Close Combat Attack, and the target is Size 3 or larger, the weapon's Damage characteristic is treated as 2."
+          }
+        },
+        {
+          "name": "Precognition",
+          "phase": "COMBAT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad puede hacer una Tirada de Evasión contra todos los ataques que la tengan por objetivo.",
+            "en": "This Unit is eligible to make an Evade roll against all attacks targeting it."
           }
         }
       ],
@@ -434,6 +478,18 @@
           "surgeDice": "D3+1",
           "damage": "1",
           "keywords": ["ANTI-EVADE (1)"]
+        },
+        {
+          "name": "Strike",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "1",
+          "hit": "4+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
         }
       ],
       "abilities": [{ "name": "Psionic Transfer", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Shade; al final de la ronda puedes recolocar la unidad en coherencia con ella.", "en": "Set a Shade token; at the End of the Round this Unit may be set in coherency with it." } }, { "name": "Psionic Presence", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Las armas amigas contra un enemigo a 4\" de su Shade ganan PRECISION (1).", "en": "Friendly weapons targeting an Enemy Within 4\" of its Shade gain PRECISION (1)." } }],
@@ -462,6 +518,18 @@
           "surgeDice": null,
           "damage": "1",
           "keywords": ["INSTANT"]
+        },
+        {
+          "name": "Beam",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "1",
+          "keywords": []
         }
       ],
       "abilities": [{ "name": "Guardian Shield", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Los ataques a distancia contra aliados a 4\" tiran un dado menos.", "en": "Ranged Attacks targeting Friendly Units Within 4\" use 1 fewer die." } }, { "name": "Force Field", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un Force Field a 8\"; las unidades de tamaño 2 o menor no pueden cruzarlo.", "en": "Set a Force Field Within 8\"; Size 2 or lower Units cannot move across it." } }, { "name": "Restoration", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Retira todos los DEBUFFS de una unidad amiga a 4\".", "en": "Remove all DEBUFFS from a Friendly Unit Within 4\"." } }],
@@ -490,6 +558,17 @@
             "es": "La Coherencia Horizontal de esta unidad es de 4\".",
             "en": "This Unit's Horizontal Coherency is 4\"."
           }
+        },
+        {
+          "name": "Blink",
+          "phase": "MOVEMENT",
+          "type": "ACTIVE",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Resuelve el efecto PLACE (6). Los modelos colocados por este efecto no pueden situarse dentro del Alcance de Trabazón de ninguna unidad enemiga.",
+            "en": "Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit."
+          }
         }
       ],
       "supplyProfile": [
@@ -517,8 +596,52 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Trata la característica de Suministro de esta unidad como aumentada en 1 para controlar y disputar Marcadores de Misión y para completar objetivos.",
-            "en": "Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers and completing objectives."
+            "es": "Trata la característica de Suministro de esta unidad como aumentada en 1 para controlar y disputar Marcadores de Misión, completar objetivos y resolver chequeos de Destrabar.",
+            "en": "Treat this Unit's Supply characteristic as increased by 1 for Controlling and Contesting Mission Markers, completing objectives, and resolving Disengage checks."
+          }
+        },
+        {
+          "name": "Phase Prism",
+          "phase": "MOVEMENT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando Artanis es designado para desplegarse desde Reservas, puede resolver el efecto PLACE (0) de otra unidad amiga. Esa unidad amiga se retira del campo de batalla y vuelve a Reservas. La activación de Artanis termina.",
+            "en": "When Artanis is nominated to deploy from Reserves, it may resolve the PLACE (0) effect from another Friendly Unit. That Friendly Unit is removed from the battlefield and returned to Reserves. Artanis' Activation ends."
+          }
+        },
+        {
+          "name": "Lightning Dash",
+          "phase": "ASSAULT",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Después de que esta unidad resuelva una acción de Carga con éxito, puede declarar una segunda acción de Carga contra una unidad enemiga distinta, ignorando la restricción de cargar estando trabada. La habilidad Devastating Charge no se activa una segunda vez.",
+            "en": "After this Unit resolves a successful Charge action, it may declare a second Charge action against a different Enemy Unit, ignoring the restriction on Charging while Engaged. The Devastating Charge ability does not trigger a second time."
+          }
+        },
+        {
+          "name": "Hierarch's Stand",
+          "phase": "ASSAULT",
+          "type": "REACTION",
+          "cost": 1,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando otra unidad amiga a menos de 8\" es declarada objetivo de un Ataque a Distancia y esta unidad es un objetivo válido, redirige el ataque a esta unidad. Esta unidad puede hacer una Tirada de Evasión contra el ataque redirigido. Esta Habilidad Especial permanece activa hasta el final de la activación actual.",
+            "en": "When another Friendly Unit Within 8\" is declared as the target of a Ranged Attack and this Unit is a valid target, redirect the attack to this Unit. This Unit is eligible to make an Evade Roll against the redirected attack. This Special Ability remains active until the End of the current Activation."
+          }
+        },
+        {
+          "name": "Devastating Charge",
+          "phase": "ASSAULT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (6) 4+.",
+            "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (6) 4+ effect."
           }
         }
       ],
@@ -541,8 +664,30 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Esta unidad no puede activarse.",
-            "en": "This Unit cannot be Activated."
+            "es": "Esta unidad no puede activarse en ninguna fase ni realizar acciones. Además, su Valor de Suministro actual se trata como 0 y nunca puede controlar ni disputar Marcadores de Misión, ignorando la Excepción de Suministro Cero estándar. Esta unidad no puede ser objetivo de una habilidad, salvo que se indique lo contrario.",
+            "en": "This Unit cannot be Activated in any Phase and cannot perform actions. Additionally, its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise."
+          }
+        },
+        {
+          "name": "Khalai Ingenuity",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por ronda, cuando una unidad amiga a menos de 4\" de este Pylon usa una Habilidad Especial que cuesta Energía Psiónica, el coste de PE de esa habilidad se reduce en 1.",
+            "en": "Once per Round, when a Friendly Unit Within 4\" of this Pylon uses a Special Ability that costs Psionic Energy, that ability's PE cost is reduced by 1."
+          }
+        },
+        {
+          "name": "Warp Conduit",
+          "phase": "MOVEMENT",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Una vez por ronda, el jugador que la controla puede desplegar una unidad terrestre desde Reservas usando la peana de este Pylon como Borde de Entrada. La activación de esa unidad termina.",
+            "en": "Once per Round, the controlling player may deploy a Ground Unit from Reserves using this Pylon base as the Entry Edge. This Unit's Activation ends."
           }
         }
       ],

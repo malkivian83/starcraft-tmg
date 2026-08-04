@@ -417,7 +417,7 @@
       "baseSize": "Ø 32MM",
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
       "weapons": [{ "name": "C-14 Rifle", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "2", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": [] }, { "name": "Bayonet", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
-      "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad sufre DAÑO NO LETAL (2), gana BUFF Speed (3) y sus armas ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2), gains BUFF Speed (3), and its weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver Stimpack con 1 CP menos.", "en": "When deploying from Reserves, it may resolve Stimpack with its CP cost reduced by 1." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver PLACE (10) desde otra unidad amiga; no puede colocarse a 8\" de enemigos.", "en": "When deploying from Reserves, it may resolve PLACE (10) from another Friendly Unit, no closer than 8\" to an Enemy." } }],
+      "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad sufre DAÑO NO LETAL (2), gana BUFF Speed (3) y sus armas ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2), gains BUFF Speed (3), and its weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver Stimpack con 1 CP menos.", "en": "When deploying from Reserves, it may resolve Stimpack with its CP cost reduced by 1." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver PLACE (10) desde otra unidad amiga; no puede colocarse a 8\" de enemigos.", "en": "When deploying from Reserves, it may resolve PLACE (10) from another Friendly Unit, no closer than 8\" to an Enemy." } }, { "name": "Slugthrower", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", esa arma gana ANTI-EVADE (1).", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon gains ANTI-EVADE (1)." } }, { "name": "Grenades - Frag", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", el Dado de Oleada de esa arma se sustituye por D6.", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon's S Dice is replaced by D6." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
       "imageRefFront": "cards/terran/unit-raynors-raider-front.png",
       "imageRefBack": "cards/terran/unit-raynors-raider-back.png"
@@ -563,8 +563,8 @@
       "id": "terran.card.goliath",
       "race": "TERRAN",
       "name": "Goliath",
-      "baseSize": "Ø 50MM",
-      "profile": { "size": "—", "hitPoints": "—", "evade": "—", "armour": "—", "speed": "—", "shield": null },
+      "baseSize": "Ø 80MM",
+      "profile": { "size": "3", "hitPoints": "10", "evade": "—", "armour": "4+", "speed": "7", "shield": null },
       "weapons": [{ "name": "Autocannon", "phase": "ASSAULT", "range": "12", "target": "Ground", "rateOfAttack": "9", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": ["LONG RANGE (18\")"] }, { "name": "Underbelly Machine Gun", "phase": "ASSAULT", "range": "8", "target": "Ground", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["PINPOINT", "SIDEARM"] }, { "name": "Hellfire Missiles", "phase": "ASSAULT", "range": "16", "target": "Flying", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["ANTI-EVADE (1)", "SIDEARM"] }, { "name": "Stomp", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "4", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [{ "name": "Target Lock", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Un Goliath amigo gana contra el objetivo elegido dados de oleada Light y Armoured D3+1 con Autocannon.", "en": "Friendly Goliaths targeting the selected enemy with Autocannon gain Light and Armoured surge D3+1." } }, { "name": "Indomitable", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Mientras está trabada puede atacar y ser atacada por unidades enemigas no trabadas.", "en": "While Engaged, this Unit may target and be targeted by Unengaged Enemy Units." } }, { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Tras una carga exitosa resuelve IMPACT (4) 3+.", "en": "After a successful Charge, resolve IMPACT (4) 3+." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 2 }],
@@ -589,11 +589,33 @@
           "surgeDice": "D3",
           "damage": "1",
           "keywords": ["BULKY", "PIERCE Armoured (3)"]
+        },
+        {
+          "name": "\"Justice\" Revolver",
+          "phase": "ASSAULT",
+          "range": "6",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "3+",
+          "surgeType": null,
+          "surgeDice": null,
+          "damage": "2",
+          "keywords": ["ANTI-EVADE (2)", "SIDEARM", "PINPOINT"]
+        },
+        {
+          "name": "Bayonet",
+          "phase": "COMBAT",
+          "range": "E",
+          "target": "Ground",
+          "rateOfAttack": "2",
+          "hit": "4+",
+          "surgeType": "Light",
+          "surgeDice": "D3",
+          "damage": "1",
+          "keywords": []
         }
       ],
       "abilities": [
-        { "name": "Bayonet", "phase": "COMBAT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Arma de combate: E, Ground, RdA 2, Impacto 4+, oleada Light D3, Daño 1.", "en": "Close Combat Weapon: E, Ground, RoA 2, Hit 4+, Light D3, Damage 1." } },
-        { "name": "Justice Revolver", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Arma a distancia: 6\", Ground, RdA 2, Impacto 3+, Daño 2; ANTI-EVADE (2), SIDEARM y PINPOINT.", "en": "Ranged Weapon: 6\", Ground, RoA 2, Hit 3+, Damage 2; ANTI-EVADE (2), SIDEARM, PINPOINT." } },
         { "name": "Orders", "phase": "MOVEMENT", "type": "ACTIVE", "cost": "X", "fromUpgrade": false, "text": { "es": "REPEATABLE. Elige otra unidad biológica amiga a 8\" y gasta CP para otorgar CRITICAL HIT (2), ignorar Desenganche o retirar su marcador de activación.", "en": "REPEATABLE. Select another Friendly Biological Unit Within 8\" and spend CP to grant Critical Hit, ignore Disengage, or remove its Activation Marker." } },
         { "name": "Commander", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Su suministro aumenta en 1 al controlar o disputar marcadores, completar objetivos y resolver Desenganche.", "en": "Its Supply is increased by 1 for controlling or contesting markers, objectives, and Disengage checks." } },
         { "name": "Freedom Fighters", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "El suministro de las unidades amigas a 8\" no puede reducirse por debajo de 1 al disputar marcadores y completar objetivos.", "en": "Friendly Units Within 8\" cannot have Supply reduced below 1 for contesting markers and objectives." } }
@@ -609,7 +631,41 @@
       "baseSize": "Ø 32MM",
       "profile": { "size": "—", "hitPoints": "3", "evade": "6+", "armour": "6+", "speed": "—", "shield": null },
       "weapons": [],
-      "abilities": [],
+      "abilities": [
+        {
+          "name": "Point Defense Laser",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Cuando otra unidad amiga a menos de 4\" es objetivo de un Ataque a Distancia sin la palabra clave INSTANT, retira hasta 2 dados de la Reserva de Ataque. Después, retira esta unidad del campo de batalla.",
+            "en": "When another Friendly Unit Within 4\" is targeted by a Ranged Attack without the INSTANT keyword, remove up to 2 dice from the Attack Pool. Then remove this Unit from the battlefield."
+          }
+        },
+        {
+          "name": "Structure",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Esta unidad no puede activarse en ninguna fase ni realizar acciones. Además, su Valor de Suministro actual se trata como 0 y nunca puede controlar ni disputar Marcadores de Misión, ignorando la Excepción de Suministro Cero estándar. Esta unidad no puede ser objetivo de una habilidad, salvo que se indique lo contrario.",
+            "en": "This Unit cannot be Activated in any Phase and cannot perform actions. Additionally, its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise."
+          }
+        },
+        {
+          "name": "Gliding",
+          "phase": "ANY",
+          "type": "PASSIVE",
+          "cost": null,
+          "fromUpgrade": false,
+          "text": {
+            "es": "Este modelo tiene DISPLACEMENT.",
+            "en": "This model has DISPLACEMENT."
+          }
+        }
+      ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
       "imageRefFront": "cards/terran/unit-point-defense-drone-front.png",
       "imageRefBack": "cards/terran/unit-point-defense-drone-back.png"

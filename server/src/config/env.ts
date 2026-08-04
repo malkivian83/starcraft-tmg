@@ -7,6 +7,9 @@ const environmentSchema = z.object({
   APP_BASE_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
   SESSION_SECRET: z.string().min(32),
+  // Sin identificador de cliente, el acceso con Google queda desactivado en vez
+  // de impedir que el servidor arranque.
+  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });
 

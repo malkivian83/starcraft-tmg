@@ -107,7 +107,8 @@ describe('Catálogo Protoss', () => {
         hit: '3+',
         surgeType: 'Light',
         surgeDice: 'D3',
-        damage: '3',
+        // La carta imprime Daño 1; el 2 contra Tamaño 3+ lo aporta Titan Killers.
+        damage: '1',
         keywords: [],
       },
     ]);

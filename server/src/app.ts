@@ -34,6 +34,12 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
         ? smtpEmail.sendPasswordResetEmail(address, token)
         : developmentEmail.sendPasswordResetEmail(address, token);
     },
+    sendAccountVerifiedEmail: async (address: string) => {
+      const configured = await smtpSettings.get();
+      return env.NODE_ENV === 'production' || configured
+        ? smtpEmail.sendAccountVerifiedEmail(address)
+        : developmentEmail.sendAccountVerifiedEmail(address);
+    },
   } satisfies EmailGateway;
 
   app.use((request, response, next) => {
@@ -54,7 +60,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
     response.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email }));
-  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, env));
+  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));
   app.use(errorHandler);
 

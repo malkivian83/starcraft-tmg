@@ -114,6 +114,11 @@ regresión HTTP para las rutas anónimas de listas, pero todavía no cubre flujo
 E2E completos ni integración de registro, verificación, recuperación,
 autorización por propietario y administración. Cualquier cambio en esas áreas
 debe añadir esa cobertura antes de considerarse listo para producción.
+El inventario del 3 de agosto de 2026 contiene 141 pruebas, todas correctas,
+pero todavía no cubre componentes ni flujos E2E. Tampoco hay integración
+completa para registro, verificación, recuperación, autorización por
+propietario y administración. Cualquier cambio en esas áreas debe añadir esa
+cobertura antes de considerarse listo para producción.
 
 ## Seguridad y operaciones
 

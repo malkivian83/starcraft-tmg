@@ -10,6 +10,7 @@ interface AuthState {
   emailDeliveryWarning: string | null;
   restore: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   setUser: (user: auth.AuthenticatedUser) => void;
   logout: () => Promise<void>;
@@ -32,6 +33,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
   login: async (email, password) => set({ ...stateFor(await auth.login(email, password)), developmentVerificationUrl: null, emailDeliveryWarning: null }),
+  loginWithGoogle: async (credential) => set({ ...stateFor(await auth.loginWithGoogle(credential)), developmentVerificationUrl: null, emailDeliveryWarning: null }),
   register: async (email, password) => {
     const result = await auth.register(email, password);
     set({ status: 'unverified', user: result.user, developmentVerificationUrl: result.developmentVerificationUrl, emailDeliveryWarning: result.emailDeliveryWarning });
