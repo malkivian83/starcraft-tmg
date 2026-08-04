@@ -3,6 +3,8 @@ import type { Response } from 'express';
 import type { ServerEnvironment } from '../../config/env.js';
 
 export const SESSION_COOKIE = 'sctmg_session';
+export const SESSION_TTL_SECONDS = 60 * 60;
+export const SESSION_TTL_MS = SESSION_TTL_SECONDS * 1000;
 
 export interface SessionPayload {
   sub: string;
@@ -10,12 +12,12 @@ export interface SessionPayload {
 }
 
 export function issueSession(response: Response, userId: string, sessionVersion: number, env: ServerEnvironment): void {
-  const token = jwt.sign({ sub: userId, sv: sessionVersion }, env.SESSION_SECRET, { expiresIn: '15m' });
+  const token = jwt.sign({ sub: userId, sv: sessionVersion }, env.SESSION_SECRET, { expiresIn: SESSION_TTL_SECONDS });
   response.cookie(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 15,
+    maxAge: SESSION_TTL_MS,
     path: '/api',
   });
 }

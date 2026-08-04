@@ -45,6 +45,24 @@
   min-width: 0;
 }
 
+.unitcard__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.unitcard__actions .card-action {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 4px 7px;
+}
+
+.roster__hint {
+  margin: -2px 0 2px;
+}
+
 .unitcard__profile {
   margin-top: 10px;
   padding-top: 8px;

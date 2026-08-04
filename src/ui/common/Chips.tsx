@@ -1,7 +1,7 @@
 import { SLOT_TYPES, type SlotPool, type SlotType } from '@/engine/types';
 
 const SLOT_LABEL: Record<SlotType, string> = {
-  CORE: 'Núcleo',
+  CORE: 'Core',
   ELITE: 'Élite',
   SUPPORT: 'Apoyo',
   AIR: 'Aéreo',

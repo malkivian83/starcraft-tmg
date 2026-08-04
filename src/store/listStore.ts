@@ -66,6 +66,7 @@ interface ListState {
   addUnit: (unitEntryId: string, compositionId: string) => void;
   addReferenceUnit: (unitEntryId: string) => void;
   removeUnit: (instanceId: string) => void;
+  moveUnit: (instanceId: string, direction: 'up' | 'down') => void;
   changeComposition: (instanceId: string, compositionId: string) => void;
   toggleUpgrade: (instanceId: string, upgradeId: string) => void;
   setUpgradeModel: (
@@ -220,6 +221,23 @@ export const useListStore = create<ListState>((set, get) => {
       apply({
         entries: get().list.entries.filter((e) => e.instanceId !== instanceId),
       }),
+
+    moveUnit: (instanceId, direction) => {
+      const { list } = get();
+      const from = list.entries.findIndex((entry) => entry.instanceId === instanceId);
+      if (from === -1) return;
+
+      const to = from + (direction === 'up' ? -1 : 1);
+      if (to < 0 || to >= list.entries.length) return;
+
+      const entries = [...list.entries];
+      const current = entries[from];
+      const target = entries[to];
+      if (!current || !target) return;
+      entries[from] = target;
+      entries[to] = current;
+      apply({ entries });
+    },
 
     changeComposition: (instanceId, compositionId) => {
       const { list, index } = get();
