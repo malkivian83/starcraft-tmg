@@ -44,17 +44,10 @@ const publicAssetPrefix = window.location.pathname === '/dist' || window.locatio
 function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
   const iconPath = `/icons/navigation/${NAV_ICON_THEME[race]}/${icon}.svg`;
   const fallbackPath = `/dist${iconPath}`;
-  return <img
+  return <span
     className="primary-nav__icon"
-    src={`${publicAssetPrefix}${iconPath}`}
-    alt=""
+    style={{ backgroundImage: `url("${publicAssetPrefix}${iconPath}"), url("${publicAssetPrefix ? iconPath : fallbackPath}")` }}
     aria-hidden="true"
-    onError={(event) => {
-      const image = event.currentTarget;
-      if (image.dataset.fallbackApplied === 'true') return;
-      image.dataset.fallbackApplied = 'true';
-      image.src = publicAssetPrefix ? iconPath : fallbackPath;
-    }}
   />;
 }
 
