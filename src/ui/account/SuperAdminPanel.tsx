@@ -6,6 +6,8 @@ const messageTypeLabel: Record<auth.EmailDeliveryLog['messageType'], string> = {
   RESET_PASSWORD: 'Restablecimiento',
   SMTP_TEST: 'Prueba SMTP',
   ACCOUNT_VERIFIED: 'Verificada por admin',
+  SUPPORT_CREATED: 'Nuevo soporte',
+  SUPPORT_REPLY: 'Respuesta de soporte',
 };
 
 export const AUTH_PROVIDER_LABEL: Record<auth.AuthProvider, string> = {
@@ -14,7 +16,8 @@ export const AUTH_PROVIDER_LABEL: Record<auth.AuthProvider, string> = {
   BOTH: 'Google y contraseña',
 };
 
-type AdminSection = 'users' | 'smtp' | 'email-logs';
+type AdminSection = 'users' | 'support' | 'smtp' | 'email-logs';
+const supportStatusLabel: Record<auth.SupportStatus, string> = { OPEN: 'Abierto', ANSWERED: 'Respondido', CLOSED: 'Cerrado' };
 
 export function SuperAdminPanel() {
   const [users, setUsers] = useState<auth.AdminUser[]>([]);
@@ -24,6 +27,13 @@ export function SuperAdminPanel() {
   const [testRecipient, setTestRecipient] = useState('');
   const [smtpPending, setSmtpPending] = useState(false);
   const [emailLogs, setEmailLogs] = useState<auth.EmailDeliveryLog[]>([]);
+  const [supportTickets, setSupportTickets] = useState<auth.SupportTicket[]>([]);
+  const [supportOpenCount, setSupportOpenCount] = useState(0);
+  const [supportStatusFilter, setSupportStatusFilter] = useState<auth.SupportStatus | ''>('');
+  const [selectedSupportId, setSelectedSupportId] = useState<string | null>(null);
+  const [selectedSupport, setSelectedSupport] = useState<auth.SupportTicket | null>(null);
+  const [supportReply, setSupportReply] = useState('');
+  const [supportPending, setSupportPending] = useState(false);
   const [activeSection, setActiveSection] = useState<AdminSection>('users');
 
   const refreshUsers = async () => {
@@ -43,9 +53,26 @@ export function SuperAdminPanel() {
     }
   };
 
+  const refreshSupport = async (reportError = true) => {
+    try {
+      const result = await auth.listSupportTickets(supportStatusFilter || undefined);
+      setSupportTickets(result.tickets);
+      setSupportOpenCount(result.openCount);
+      setSelectedSupportId((current) => current && result.tickets.some((ticket) => ticket.id === current) ? current : result.tickets[0]?.id ?? null);
+    } catch (error) {
+      if (reportError) setMessage(error instanceof Error ? error.message : 'No se pudieron cargar las solicitudes de soporte.');
+    }
+  };
+
+  const refreshSelectedSupport = async (id: string) => {
+    try { setSelectedSupport(await auth.getSupportTicket(id)); }
+    catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo cargar la solicitud de soporte.'); }
+  };
+
   useEffect(() => {
     void refreshUsers();
     void refreshEmailLogs();
+    void refreshSupport();
     void auth.getSmtpSettings().then((value) => {
       if (!value) return;
       setSmtp({ host: value.host, port: value.port, secure: value.secure, username: value.username, from: value.from, password: '' });
@@ -53,6 +80,13 @@ export function SuperAdminPanel() {
       setTestRecipient(value.from);
     }).catch((error) => setMessage(error instanceof Error ? error.message : 'No se pudo cargar la configuración SMTP.'));
   }, []);
+
+  useEffect(() => {
+    if (!selectedSupportId) { setSelectedSupport(null); return; }
+    void refreshSelectedSupport(selectedSupportId);
+  }, [selectedSupportId]);
+
+  useEffect(() => { if (activeSection === 'support') void refreshSupport(false); }, [activeSection, supportStatusFilter]);
 
   const toggleActive = async (user: auth.AdminUser) => {
     try { await auth.setAdminUserActive(user.id, !user.isActive); await refreshUsers(); }
@@ -128,6 +162,7 @@ export function SuperAdminPanel() {
   const failedEmailCount = emailLogs.filter((entry) => entry.status === 'FAILED').length;
   const tabs: Array<{ id: AdminSection; label: string; count?: number }> = [
     { id: 'users', label: 'Usuarios', count: users.length },
+    { id: 'support', label: 'Soporte', count: supportOpenCount || undefined },
     { id: 'smtp', label: 'Configuración SMTP' },
     { id: 'email-logs', label: 'Historial de correos', count: failedEmailCount || undefined },
   ];
@@ -158,6 +193,22 @@ export function SuperAdminPanel() {
           <div><strong>{user.nickname || user.email}</strong><span>{user.email}</span><small>Acceso: {AUTH_PROVIDER_LABEL[user.authProvider]} · Último acceso: {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Nunca'} · Listas: {user.savedLists}{user.emailVerifiedAt && ` · Verificada: ${new Date(user.emailVerifiedAt).toLocaleString()}`}</small></div>
           <div className="row"><span className={`chip ${user.isActive ? '' : 'chip--unique'}`}>{user.isActive ? 'Activa' : 'Desactivada'}</span><span className="chip">{AUTH_PROVIDER_LABEL[user.authProvider]}</span><span className={`chip ${user.emailVerifiedAt ? '' : 'chip--unique'}`}>{user.emailVerifiedAt ? 'Verificada' : 'Sin verificar'}</span><button onClick={() => { void toggleVerified(user); }}>{user.emailVerifiedAt ? 'Quitar verificación' : 'Verificar'}</button><button onClick={() => { void toggleActive(user); }}>{user.isActive ? 'Desactivar' : 'Activar'}</button><button onClick={() => { void resetPassword(user); }}>Cambiar contraseña</button></div>
         </article>)}
+      </div>
+    </section>}
+
+    {activeSection === 'support' && <section className="admin-section admin-support stack" id="admin-panel-support" role="tabpanel" aria-labelledby="admin-tab-support">
+      <div className="row email-log-heading"><div><h3>Solicitudes de soporte</h3><p className="muted small">Gestiona conversaciones y responde por correo. Abiertas: {supportOpenCount}.</p></div><div className="row"><select aria-label="Filtrar soportes por estado" value={supportStatusFilter} onChange={(event) => setSupportStatusFilter(event.target.value as auth.SupportStatus | '')}><option value="">Todos los estados</option><option value="OPEN">Abiertos</option><option value="ANSWERED">Respondidos</option><option value="CLOSED">Cerrados</option></select><button type="button" onClick={() => { void refreshSupport(); }}>Actualizar</button></div></div>
+      <div className="admin-support-layout">
+        <div className="admin-support-list">
+          {supportTickets.length === 0 ? <p className="muted">No hay solicitudes con este filtro.</p> : supportTickets.map((ticket) => <button type="button" className={`admin-support-ticket${ticket.id === selectedSupportId ? ' admin-support-ticket--active' : ''}`} key={ticket.id} onClick={() => setSelectedSupportId(ticket.id)}><strong>{ticket.subject}</strong><span>{ticket.contactEmail}</span><small>{supportStatusLabel[ticket.status]} · {new Date(ticket.updatedAt).toLocaleString()}</small></button>)}
+        </div>
+        <article className="admin-support-detail">
+          {!selectedSupport ? <p className="muted">Selecciona una solicitud para ver la conversación.</p> : <>
+            <header className="admin-support-detail__heading"><div><p className="eyebrow">Ticket {selectedSupport.id}</p><h4>{selectedSupport.subject}</h4><p className="muted small">{selectedSupport.contactEmail} · Creado {new Date(selectedSupport.createdAt).toLocaleString()}</p></div><select aria-label="Estado del soporte" value={selectedSupport.status} onChange={async (event) => { const status = event.target.value as auth.SupportStatus; try { await auth.setSupportStatus(selectedSupport.id, status); setSelectedSupport({ ...selectedSupport, status }); await refreshSupport(false); } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo actualizar el estado.'); } }}><option value="OPEN">Abierto</option><option value="ANSWERED">Respondido</option><option value="CLOSED">Cerrado</option></select></header>
+            <div className="admin-support-thread">{selectedSupport.messages?.map((item) => <div className={`admin-support-message admin-support-message--${item.authorType.toLowerCase()}`} key={item.id}><div className="admin-support-message__meta"><strong>{item.authorType === 'ADMIN' ? 'Administrador' : selectedSupport.contactEmail}</strong><span>{new Date(item.createdAt).toLocaleString()}</span>{item.authorType === 'ADMIN' && <span className={`chip ${item.deliveryStatus === 'FAILED' ? 'chip--unique' : ''}`}>{item.deliveryStatus === 'SENT' ? 'Correo enviado' : item.deliveryStatus === 'FAILED' ? 'Correo fallido' : 'Pendiente'}</span>}</div><p>{item.body}</p>{item.deliveryError && <small className="email-log-error">{item.deliveryError}</small>}</div>)}</div>
+            <form className="admin-support-reply stack" onSubmit={async (event) => { event.preventDefault(); if (!supportReply.trim()) return; setSupportPending(true); try { const result = await auth.replyToSupport(selectedSupport.id, supportReply.trim()); setSupportReply(''); await refreshSelectedSupport(selectedSupport.id); await refreshSupport(false); setMessage(result.emailDeliveryWarning ?? 'Respuesta guardada y enviada.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo guardar la respuesta.'); } finally { setSupportPending(false); } }}><label className="field">Responder<textarea value={supportReply} onChange={(event) => setSupportReply(event.target.value)} required maxLength={10000} rows={5} placeholder="Escribe la respuesta que recibirá el usuario por correo." /></label><div className="row"><button type="submit" disabled={supportPending}>{supportPending ? 'Enviando…' : 'Enviar respuesta'}</button></div></form>
+          </>}
+        </article>
       </div>
     </section>}
 

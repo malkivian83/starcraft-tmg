@@ -22,10 +22,11 @@ import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
 import { PrintSheet } from './ui/print/PrintSheet';
+import { SupportPage } from './ui/support/SupportPage';
 import './ui/app.css';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review';
-type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list';
+type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list' | 'support';
 const STEPS: Array<{ id: StepId; label: string }> = [
   { id: 'cards', label: '1 · Cartas de mando' }, { id: 'units', label: '2 · Reclutamiento' },
   { id: 'scenario', label: '3 · Misión y despliegue' }, { id: 'review', label: '4 · Revisión e impresión' },
@@ -37,6 +38,7 @@ const NAV_ITEMS = [
   { page: 'lists' as const, label: 'MIS LISTAS', icon: 'mis-listas' },
   { page: 'public-lists' as const, label: 'LISTAS PÚBLICAS', icon: 'listas-publicas' },
   { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
+  { page: 'support' as const, label: 'SOPORTE', icon: null },
 ];
 const navLabel = (item: typeof NAV_ITEMS[number]) => item.page === 'public-lists' ? 'LISTAS P\u00DABLICAS' : item.label;
 const NAV_ICON_SOURCES = import.meta.glob('./assets/navigation/**/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
@@ -59,9 +61,9 @@ function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; 
     else onNavigate(item.page, navLabel(item));
   };
   return <details className="primary-nav__mobile">
-    <summary><NavigationIcon race={race} icon={current.icon} /><span>{navLabel(current)}</span></summary>
+    <summary>{current.icon ? <NavigationIcon race={race} icon={current.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{navLabel(current)}</span></summary>
     <div className="primary-nav__mobile-menu">
-      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}><NavigationIcon race={race} icon={item.icon} /><span>{navLabel(item)}</span></button>)}
+      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}>{item.icon ? <NavigationIcon race={race} icon={item.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{navLabel(item)}</span></button>)}
     </div>
   </details>;
 }
@@ -82,8 +84,24 @@ export function initialPageFor(mode: AccessMode, preserveGuestDraft: boolean, pu
 export function App() {
   return <Routes>
     <Route path="/crear-lista" element={<GuestBuilderRoute />} />
+    <Route path="/soporte" element={<SupportRoute />} />
     <Route path="*" element={<AccountRoute />} />
   </Routes>;
+}
+
+function SupportRoute() {
+  const status = useAuthStore((state) => state.status);
+  const user = useAuthStore((state) => state.user);
+  const restore = useAuthStore((state) => state.restore);
+  useEffect(() => {
+    if (status === 'checking') void restore();
+  }, [restore, status]);
+  if (status === 'checking') return <div className="support-standalone support-standalone--loading"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></div>;
+  return <div className="support-standalone">
+    <header className="support-standalone__header"><a href="/" aria-label="Volver a StarCraft TMG"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><a className="support-standalone__back" href="/">Volver a la aplicación</a></header>
+    <SupportPage user={status === 'authenticated' ? user : null} />
+    <footer className="auth-page__footer">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
+  </div>;
 }
 
 function GuestBuilderRoute() {
@@ -356,6 +374,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
               <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', 'Listas pÃºblicas')}>Listas pÃºblicas</button>
               <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />Nueva lista</button>
             </div>
+            <button className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', 'Soporte')}><span className="primary-nav__support-mark" aria-hidden="true">?</span>Soporte</button>
             <MobileNavigation page={page} race={list.race} onNavigate={navigateToPage} onCreate={() => createList()} />
             <select
               className="primary-nav__select"
@@ -364,13 +383,14 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
               onChange={(event) => {
                 const destination = event.target.value as PageId;
                 if (destination === 'builder') createList();
-                else navigateToPage(destination, destination === 'home' ? 'Inicio' : destination === 'lists' ? 'Mis listas' : 'Listas públicas');
+                else navigateToPage(destination, destination === 'home' ? 'Inicio' : destination === 'lists' ? 'Mis listas' : destination === 'public-lists' ? 'Listas públicas' : 'Soporte');
               }}
             >
               <option value="home">Inicio</option>
               <option value="lists">Mis listas</option>
               <option value="public-lists">Listas públicas</option>
               <option value="builder">Nueva lista</option>
+              <option value="support">Soporte</option>
             </select>
             </>
           )}
@@ -439,6 +459,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
                     }} />
                   </label>
                   <button onClick={() => downloadJson(list)}>Exportar</button>
+                  {mode === 'guest' && <button onClick={() => window.print()}>Imprimir / PDF</button>}
                 </>
               )}
             </div>
@@ -479,10 +500,11 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', 'Listas públicas')} />}
       {mode === 'account' && page === 'lists' && <SavedListsPage onCreate={() => createList()} onLoad={loadList} onViewPublic={(id) => { void openPublicList(id); }} />}
       {mode === 'account' && page === 'public-lists' && <PublicListsPage onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} />}
+      {mode === 'account' && page === 'support' && <SupportPage user={user} />}
       {mode === 'account' && page === 'profile' && <AccountPage />}
       {mode === 'account' && page === 'public-list' && publicList && <PublicListPage list={publicList} onBack={closePublicList} onClone={() => { void clonePublicList(publicList.id); }} />}
       {toast && <div className="toast no-print">{toast}</div>}
-      <footer className="auth-page__footer app__footer no-print">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
+      <footer className="auth-page__footer app__footer no-print">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/soporte">Soporte</a> · <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
     </div>
   );
 }

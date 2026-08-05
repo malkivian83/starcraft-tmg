@@ -26,12 +26,38 @@ export interface SmtpSettings { host: string; port: number; secure: boolean; use
 export interface EmailDeliveryLog {
   id: number;
   recipient: string;
-  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED';
+  messageType: 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED' | 'SUPPORT_CREATED' | 'SUPPORT_REPLY';
   subject: string;
   status: 'SENT' | 'FAILED';
   providerMessageId: string | null;
   errorMessage: string | null;
   createdAt: string;
+}
+
+export type SupportStatus = 'OPEN' | 'ANSWERED' | 'CLOSED';
+export interface SupportMessage {
+  id: string;
+  ticketId: string;
+  authorType: 'USER' | 'ADMIN';
+  authorUserId: string | null;
+  body: string;
+  deliveryStatus: 'PENDING' | 'SENT' | 'FAILED' | 'NOT_APPLICABLE';
+  providerMessageId: string | null;
+  deliveryError: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
+}
+export interface SupportTicket {
+  id: string;
+  userId: string | null;
+  contactEmail: string;
+  subject: string;
+  status: SupportStatus;
+  termsVersion: string;
+  termsAcceptedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  messages?: SupportMessage[];
 }
 
 export interface RegistrationResult {
@@ -172,4 +198,22 @@ export async function testSmtpSettings(recipient: string): Promise<SmtpTestResul
 }
 export async function getEmailDeliveryLogs(limit = 100): Promise<EmailDeliveryLog[]> {
   return (await request<{ logs: EmailDeliveryLog[] }>(`/admin/smtp/logs?limit=${limit}`)).logs;
+}
+
+export interface SupportCreationResult { ticketId: string; emailDeliveryWarning: string | null; }
+export async function createSupport(input: { subject: string; contactEmail: string; message: string; termsAccepted: boolean }): Promise<SupportCreationResult> {
+  return request<SupportCreationResult>('/support', { method: 'POST', body: JSON.stringify(input) });
+}
+export async function listSupportTickets(status?: SupportStatus): Promise<{ tickets: SupportTicket[]; openCount: number }> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : '';
+  return request<{ tickets: SupportTicket[]; openCount: number }>(`/admin/support${query}`);
+}
+export async function getSupportTicket(id: string): Promise<SupportTicket> {
+  return (await request<{ ticket: SupportTicket }>(`/admin/support/${encodeURIComponent(id)}`)).ticket;
+}
+export async function replyToSupport(id: string, body: string): Promise<{ message: SupportMessage | null; emailDeliveryWarning: string | null }> {
+  return request<{ message: SupportMessage | null; emailDeliveryWarning: string | null }>(`/admin/support/${encodeURIComponent(id)}/replies`, { method: 'POST', body: JSON.stringify({ body }) });
+}
+export async function setSupportStatus(id: string, status: SupportStatus): Promise<void> {
+  await request(`/admin/support/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
 }

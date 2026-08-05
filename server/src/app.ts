@@ -12,11 +12,14 @@ import { DevelopmentEmailGateway, SmtpEmailGateway, type EmailGateway } from './
 import { EmailDeliveryLogRepository } from './modules/email/email-delivery-log.repository.js';
 import { ListRepository } from './modules/lists/list.repository.js';
 import { createListRouter } from './modules/lists/list.routes.js';
+import { SupportRepository } from './modules/support/support.repository.js';
+import { createSupportRouter } from './modules/support/support.routes.js';
 
 export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverride?: EmailGateway) {
   const app = express();
   const authRepository = new AuthRepository(pool);
   const listRepository = new ListRepository(pool);
+  const supportRepository = new SupportRepository(pool);
   const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
   const emailLogs = new EmailDeliveryLogRepository(pool);
   const smtpEmail = new SmtpEmailGateway(smtpSettings, emailLogs, env);
@@ -40,6 +43,18 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
         ? smtpEmail.sendAccountVerifiedEmail(address)
         : developmentEmail.sendAccountVerifiedEmail(address);
     },
+    sendSupportCreatedEmail: async (input) => {
+      const configured = await smtpSettings.get();
+      return env.NODE_ENV === 'production' || configured
+        ? smtpEmail.sendSupportCreatedEmail!(input)
+        : developmentEmail.sendSupportCreatedEmail!(input);
+    },
+    sendSupportReplyEmail: async (input) => {
+      const configured = await smtpSettings.get();
+      return env.NODE_ENV === 'production' || configured
+        ? smtpEmail.sendSupportReplyEmail!(input)
+        : developmentEmail.sendSupportReplyEmail!(input);
+    },
   } satisfies EmailGateway;
 
   app.use((request, response, next) => {
@@ -60,7 +75,8 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
     response.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email }));
-  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, env));
+  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, env));
+  app.use('/api/support', createSupportRouter(supportRepository, authRepository, email, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));
   app.use(errorHandler);
 
