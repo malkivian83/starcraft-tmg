@@ -1,0 +1,1323 @@
+/*
+ * Capa visual del constructor.
+ *
+ * Se carga despues de los estilos existentes y se limita a la vista que
+ * contiene .builder-toolbar. No modifica el DOM, la logica ni la hoja de
+ * impresion; todas las reglas viven en @media screen por ese ultimo motivo.
+ */
+
+@media screen {
+  /* Paleta de producto del prototipo "Creador de listas". */
+  .app:has(> .builder-toolbar) {
+    --bg: #11131f;
+    --bg-panel: rgb(25 29 44 / 90%);
+    --bg-raised: rgb(31 36 52 / 92%);
+    --bg-hover: #242a3c;
+    --line: rgb(233 233 237 / 13%);
+    --line-strong: rgb(233 233 237 / 24%);
+    --text: #eceaf1;
+    --text-dim: rgb(236 234 241 / 62%);
+    --text-faint: rgb(236 234 241 / 44%);
+    --ok: oklch(0.8 0.11 165);
+    --warn: #f6cea0;
+    --error: oklch(0.7 0.15 22);
+
+    --builder-field: rgb(18 21 33 / 94%);
+    --builder-bar: rgb(20 24 38 / 92%);
+    --builder-table-head: #151928;
+    --builder-accent-text: color-mix(in srgb, var(--accent) 48%, #fff);
+    --builder-danger-bg: oklch(0.42 0.1 22 / 28%);
+    --builder-danger-line: oklch(0.5 0.12 22 / 75%);
+
+    position: relative;
+    isolation: isolate;
+    color: var(--text);
+    background: var(--bg);
+    font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+  }
+
+  .app:has(> .builder-toolbar)::before,
+  .app:has(> .builder-toolbar)::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .app:has(> .builder-toolbar)::before {
+    z-index: -2;
+    background: url("/auth-space-bg.png") center 38% / cover no-repeat;
+    filter: saturate(62%) hue-rotate(-14deg) brightness(0.58);
+    transform: scale(1.035);
+  }
+
+  .app:has(> .builder-toolbar)::after {
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgb(17 19 31 / 58%), rgb(17 19 31 / 84%)),
+      radial-gradient(110% 82% at 50% 8%, rgb(42 78 132 / 22%), rgb(17 19 31 / 80%) 72%);
+  }
+
+  /* La rampa conserva los tokens que ya consume toda la aplicacion. */
+  .app[data-race="ZERG"]:has(> .builder-toolbar) {
+    --accent: oklch(0.7 0.17 340);
+    --accent-dim: oklch(0.47 0.129 340);
+    --accent-deep: oklch(0.272 0.071 340);
+    --race-glow: oklch(0.7 0.17 340 / 16%);
+  }
+
+  .app[data-race="TERRAN"]:has(> .builder-toolbar) {
+    --accent: oklch(0.7 0.145 245);
+    --accent-dim: oklch(0.47 0.11 245);
+    --accent-deep: oklch(0.272 0.061 245);
+    --race-glow: oklch(0.7 0.145 245 / 16%);
+  }
+
+  .app[data-race="PROTOSS"]:has(> .builder-toolbar) {
+    --accent: oklch(0.7 0.15 88);
+    --accent-dim: oklch(0.47 0.114 88);
+    --accent-deep: oklch(0.272 0.063 88);
+    --race-glow: oklch(0.7 0.15 88 / 16%);
+  }
+
+  /* Controles del constructor: contorno y tinte, sin elevacion pesada. */
+  .app:has(> .builder-toolbar) > .builder-toolbar button,
+  .app:has(> .builder-toolbar) > .builder-toolbar .button-like,
+  .app:has(> .builder-toolbar) > .tabs button,
+  .app:has(> .builder-toolbar) > .content.no-print button,
+  .app:has(> .builder-toolbar) > .content--tool button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--bg-raised);
+    box-shadow: none;
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    transform: none;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      opacity 150ms ease;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar button:hover:not(:disabled),
+  .app:has(> .builder-toolbar) > .builder-toolbar .button-like:hover,
+  .app:has(> .builder-toolbar) > .tabs button:hover:not(:disabled),
+  .app:has(> .builder-toolbar) > .content.no-print button:hover:not(:disabled),
+  .app:has(> .builder-toolbar) > .content--tool button:hover:not(:disabled) {
+    border-color: var(--accent-dim);
+    background: #262c3e;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar button:active:not(:disabled),
+  .app:has(> .builder-toolbar) > .builder-toolbar .button-like:active,
+  .app:has(> .builder-toolbar) > .content.no-print button:active:not(:disabled),
+  .app:has(> .builder-toolbar) > .content--tool button:active:not(:disabled) {
+    background: color-mix(in srgb, var(--accent) 14%, var(--bg-raised));
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 28%);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar button:focus-visible,
+  .app:has(> .builder-toolbar) > .builder-toolbar .button-like:focus-visible,
+  .app:has(> .builder-toolbar) > .builder-toolbar input:focus-visible,
+  .app:has(> .builder-toolbar) > .builder-toolbar select:focus-visible,
+  .app:has(> .builder-toolbar) > .tabs button:focus-visible,
+  .app:has(> .builder-toolbar) > .content.no-print :is(button, input, select, textarea):focus-visible,
+  .app:has(> .builder-toolbar) > .content--tool :is(button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select),
+  .app:has(> .builder-toolbar) > .content.no-print :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea),
+  .app:has(> .builder-toolbar) > .content--tool :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) {
+    min-height: 42px;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--builder-field);
+  }
+
+  .app:has(> .builder-toolbar) > .content.no-print input[type="checkbox"],
+  .app:has(> .builder-toolbar) > .content--tool input[type="checkbox"] {
+    accent-color: var(--accent);
+  }
+
+  /* Aviso de invitado y toolbar de metadatos/acciones. */
+  .app:has(> .builder-toolbar) > .guest-notice {
+    padding: 11px 22px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent-dim) 55%, transparent);
+    background: color-mix(in srgb, var(--accent-deep) 70%, var(--bg));
+    color: var(--builder-accent-text);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar {
+    gap: 16px 26px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-panel);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .field {
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .field > label,
+  .app:has(> .builder-toolbar) > .builder-toolbar .list-visibility-control__label {
+    color: var(--text-dim);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar #list-name {
+    width: 190px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar #race {
+    width: 130px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar #scale {
+    width: 150px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar #minerals {
+    width: 110px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar:not(:has(.list-visibility-control--inline)) .builder-toolbar__actions {
+    margin-left: auto;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions > :first-child {
+    min-height: 44px;
+    padding-inline: 20px;
+    border-color: var(--accent);
+    color: var(--builder-accent-text);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions > :first-child:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions > :not(:first-child) {
+    min-height: 44px;
+    padding-inline: 16px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar > .list-visibility-control--inline {
+    margin-left: auto;
+    margin-right: -8px;
+  }
+
+  .app:has(> .builder-toolbar) .visibility-switch__track {
+    width: 42px;
+    height: 23px;
+    border-color: var(--line-strong);
+    background: var(--builder-field);
+  }
+
+  .app:has(> .builder-toolbar) .visibility-switch input:checked + .visibility-switch__track {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, var(--builder-field));
+  }
+
+  /* Barra de recursos: se conserva sticky en escritorio y fixed en movil. */
+  .app:has(> .builder-toolbar) > .resbar {
+    gap: 10px 26px;
+    padding: 12px 22px;
+    border-top: 2px solid var(--accent-dim);
+    border-bottom: 1px solid var(--line);
+    background: var(--builder-bar);
+    box-shadow: none;
+  }
+
+  .app:has(> .builder-toolbar) > .resbar--alert {
+    border-top-color: var(--error);
+    box-shadow: inset 0 2px 0 var(--error);
+  }
+
+  .app:has(> .builder-toolbar) .resbar__primary {
+    gap: 10px 20px;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__metric-label,
+  .app:has(> .builder-toolbar) .resbar__slot-label {
+    color: var(--text-faint);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__metric-value {
+    color: var(--ok);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__slots {
+    gap: 6px 18px;
+    padding-left: 20px;
+    border-left-color: var(--line);
+  }
+
+  .app:has(> .builder-toolbar) .resbar__slot-value {
+    color: var(--builder-accent-text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__hint {
+    color: var(--text-faint);
+    font-size: 12px;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__secondary {
+    margin-left: auto;
+    gap: 18px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* Navegacion de los cuatro pasos. */
+  .app:has(> .builder-toolbar) > .tabs {
+    gap: 4px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--builder-bar);
+    scrollbar-color: var(--accent-dim) transparent;
+  }
+
+  .app:has(> .builder-toolbar) > .tabs .tab {
+    min-height: 48px;
+    padding: 0 16px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--text-dim);
+    background: transparent;
+    box-shadow: none;
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .app:has(> .builder-toolbar) > .tabs .tab:hover:not(:disabled) {
+    border-color: transparent;
+    border-bottom-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    color: var(--text);
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > .tabs .tab--active,
+  .app:has(> .builder-toolbar) > .tabs .tab--active:hover:not(:disabled) {
+    border-bottom-color: var(--accent);
+    color: var(--builder-accent-text);
+    background: color-mix(in srgb, var(--accent) 9%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > .tabs .tab__badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 21px;
+    height: 21px;
+    margin-left: 2px;
+    padding: 0 6px;
+    border-radius: 999px;
+    color: #fdf4fa;
+    background: var(--error);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  /* Lienzo y columnas de los pasos 1 y 2. */
+  .app:has(> .builder-toolbar) > main.content.no-print {
+    padding: 18px 22px 34px;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool {
+    padding: 18px 22px 0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print > .split {
+    grid-template-columns: minmax(300px, 400px) minmax(420px, 1fr);
+    gap: 18px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print > .split:has(.comp) {
+    grid-template-columns: minmax(280px, 380px) minmax(460px, 1fr);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .stack {
+    gap: 10px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print > .split > .stack {
+    gap: 16px;
+  }
+
+  /* Paneles y rotulos tecnicos. */
+  .app:has(> .builder-toolbar) > :is(main.content.no-print, .content--tool) .panel {
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--text);
+    background: var(--bg-panel);
+    box-shadow: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print > .split > .panel {
+    padding: 18px;
+  }
+
+  .app:has(> .builder-toolbar) > :is(main.content.no-print, .content--tool) .panel__title {
+    position: relative;
+    min-height: 15px;
+    margin: 0 0 12px;
+    padding-left: 12px;
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .app:has(> .builder-toolbar) > :is(main.content.no-print, .content--tool) .panel__title::before {
+    top: 50%;
+    bottom: auto;
+    width: 3px;
+    height: 15px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: translateY(-50%);
+  }
+
+  .app:has(> .builder-toolbar) > :is(main.content.no-print, .content--tool) .empty {
+    margin: 0;
+    padding: 56px 22px;
+    color: var(--text-faint);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .muted {
+    color: var(--text-dim);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .small {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Tarjetas, seleccion, bloqueo y chips. */
+  .app:has(> .builder-toolbar) > main.content.no-print .card {
+    gap: 10px;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    background: var(--bg-raised);
+    box-shadow: none;
+    text-align: left;
+    transform: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print button.card:hover:not(:disabled) {
+    border-color: var(--accent-dim);
+    background: #242a3c;
+    box-shadow: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card--selected,
+  .app:has(> .builder-toolbar) > main.content.no-print button.card--selected:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 13%, var(--bg-raised));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent),
+      0 10px 26px -18px color-mix(in srgb, var(--accent) 80%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card--blocked {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card--blocked:hover {
+    border-color: var(--line);
+    background: var(--bg-raised);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card__head {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card__name,
+  .app:has(> .builder-toolbar) > main.content.no-print .card__head h3 {
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 16.5px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    color: var(--text-dim);
+    background: rgb(18 21 33 / 68%);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print button.chip {
+    min-height: 30px;
+    padding: 4px 10px;
+    box-shadow: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .chip--slot {
+    border-color: var(--accent-dim);
+    color: var(--builder-accent-text);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .chip--cost {
+    border-color: var(--line-strong);
+    color: var(--text);
+    background: rgb(18 21 33 / 72%);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .chip--unique {
+    border-color: rgb(232 160 74 / 65%);
+    color: var(--warn);
+    background: rgb(232 160 74 / 18%);
+    letter-spacing: 0.06em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .chip--role {
+    border-color: rgb(236 234 241 / 24%);
+    border-style: dashed;
+    color: var(--text-dim);
+    background: transparent;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card__reason {
+    color: var(--warn);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card__remedy {
+    color: var(--text-dim);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  /* Acciones compactas de cartas y roster. */
+  .app:has(> .builder-toolbar) > main.content.no-print .card-actions {
+    gap: 8px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-action {
+    min-height: 38px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--builder-field);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-action--preview {
+    border-color: var(--line-strong);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-action--add {
+    border-color: var(--accent);
+    color: var(--builder-accent-text);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-action--remove {
+    border-color: var(--builder-danger-line);
+    color: oklch(0.87 0.07 22);
+    background: var(--builder-danger-bg);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-action__icon {
+    min-width: 14px;
+    font-size: 15px;
+  }
+
+  /* Cartas de mando activas y detalle de habilidades. */
+  .app:has(> .builder-toolbar) > main.content.no-print .split > .panel > .stack > .panel,
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__box .panel {
+    gap: 9px;
+    padding: 14px 16px;
+    border-left-width: 3px;
+    border-radius: 10px;
+    background: var(--bg-raised);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .split > .panel > .stack > .panel .card__head h3,
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__box .panel .card__head h3 {
+    font-size: 21px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-detail__ability {
+    margin-block: 7px !important;
+    color: rgb(236 234 241 / 84%);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-detail__ability > .chip + .chip {
+    margin-left: 6px;
+  }
+
+  /* Fases: semantica estable, independiente del color de raza. */
+  .app:has(> .builder-toolbar) > main.content.no-print .phase-tag.phase-tag--MOVEMENT {
+    border-color: rgb(94 204 196 / 60%) !important;
+    color: #a9ece6 !important;
+    background: rgb(94 204 196 / 22%) !important;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .phase-tag.phase-tag--ASSAULT {
+    border-color: rgb(232 160 74 / 62%) !important;
+    color: #f6cea0 !important;
+    background: rgb(232 160 74 / 22%) !important;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .phase-tag.phase-tag--COMBAT {
+    border-color: rgb(228 112 152 / 65%) !important;
+    color: #f8c4d8 !important;
+    background: rgb(228 112 152 / 24%) !important;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .phase-tag.phase-tag--ANY {
+    border-color: rgb(236 234 241 / 20%) !important;
+    color: var(--text) !important;
+    background: rgb(236 234 241 / 9%) !important;
+  }
+
+  /* Catalogo y composiciones. */
+  .app:has(> .builder-toolbar) > main.content.no-print .comp {
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 112px;
+    min-height: 64px;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--text);
+    background: rgb(18 21 33 / 70%);
+    text-align: left;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, var(--builder-field));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp__models {
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp__supply {
+    color: var(--text-faint);
+    font-size: 11.5px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp__cost {
+    margin-top: 2px;
+    color: var(--builder-accent-text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Roster y perfiles de unidad. */
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard {
+    padding: 14px;
+    border-color: var(--accent-dim);
+    border-left-width: 3px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--accent) 7%, var(--bg-raised));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__top {
+    gap: 14px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__mini {
+    width: 104px;
+    height: 132px;
+    border-color: var(--line);
+    border-radius: 8px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard h3 {
+    min-width: 0;
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__actions {
+    gap: 6px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__actions .card-action {
+    width: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0;
+    border-radius: 7px;
+  }
+
+  /* StatBlock de pantalla; la instancia de PrintSheet queda fuera de .no-print. */
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock {
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 9px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock__cell {
+    gap: 1px;
+    min-width: 46px;
+    padding: 5px 8px;
+    border: 1px solid var(--accent-dim);
+    border-radius: 7px;
+    background: rgb(18 21 33 / 75%);
+    transform: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock__cell > * {
+    transform: none;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock__label {
+    color: var(--text-faint);
+    font-size: 8.5px;
+    font-weight: 700;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock__value {
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__profile {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top-color: var(--line);
+    overflow-x: auto;
+    scrollbar-color: var(--accent-dim) transparent;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .wtable {
+    min-width: 600px;
+    margin-bottom: 9px;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .wtable th {
+    padding: 7px 8px;
+    border-bottom-color: var(--line);
+    color: var(--text-faint);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .wtable td {
+    padding: 6px 8px;
+    border-bottom-color: var(--line);
+    color: var(--text-dim);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .wtable__name {
+    color: var(--text);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ability-group {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-left: 3px solid rgb(236 234 241 / 16%);
+    border-radius: 9px;
+    background: rgb(18 21 33 / 55%);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ability-group__title {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ability {
+    margin: 5px 0;
+    color: rgb(236 234 241 / 86%);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ability__name {
+    color: var(--builder-accent-text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ability__tag {
+    margin-left: 6px;
+    padding: 2px 7px;
+    border-color: var(--line-strong);
+    border-radius: 5px;
+    color: var(--text-dim);
+    background: transparent;
+    font-size: 10px;
+  }
+
+  /* Mejoras y detalles desplegables. */
+  .app:has(> .builder-toolbar) > main.content.no-print .upg__toggle {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+    border-color: var(--accent-dim);
+    border-radius: 7px;
+    color: var(--builder-accent-text);
+    background: rgb(18 21 33 / 70%);
+    font-size: 16px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .upg__toggle[aria-expanded="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .upg__detail {
+    margin: 4px 0 8px 40px;
+    padding: 11px 13px;
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    color: rgb(236 234 241 / 88%);
+    background: rgb(18 21 33 / 65%);
+    font-size: 13px;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+
+  /* Misiones y despliegues. */
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card {
+    align-items: stretch;
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card__name {
+    font-size: 17px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-diagram {
+    width: 100%;
+    max-height: none;
+    margin-top: 2px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--builder-field);
+    object-fit: contain;
+  }
+
+  /* Revision, libro mayor y mensajes. */
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout {
+    grid-template-columns: minmax(320px, 1fr) minmax(340px, 0.9fr);
+    gap: 18px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout__validation {
+    border-color: var(--accent-dim);
+    background: color-mix(in srgb, var(--accent) 6%, var(--bg-panel));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger {
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__block {
+    padding: 13px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg-raised);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__title {
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__table {
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__table td {
+    padding: 4px 0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__ok {
+    color: var(--ok);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__bad {
+    color: var(--error);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger__total td {
+    padding-top: 7px;
+    border-top-color: var(--line);
+    color: var(--text);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .issue {
+    padding: 11px 13px;
+    border-left-width: 3px;
+    border-radius: 9px;
+    color: var(--text);
+    background: rgb(18 21 33 / 60%);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .issue__rule {
+    color: var(--text-faint);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .issue__remedy {
+    color: var(--builder-accent-text);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout__main > .panel:last-child button {
+    min-height: 46px;
+    padding-inline: 22px;
+    border-color: var(--accent);
+    color: var(--builder-accent-text);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    font-size: 14.5px;
+  }
+
+  /* Seed: extension conservadora del mismo lenguaje visual. */
+  .app:has(> .builder-toolbar) > .content--tool .seed-panel {
+    padding: 18px;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool .seed-panel .eyebrow {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool .seed-panel h2 {
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool .seed-panel__grid {
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool .seed-box {
+    min-height: 104px;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-color: var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--builder-field);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  /* Modal de carta: misma elevacion superior que el dialogo Nocturne. */
+  .app:has(> .builder-toolbar) > main.content.no-print .modal {
+    padding: 18px;
+    background: rgb(10 11 18 / 76%);
+    backdrop-filter: blur(5px);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__box {
+    padding: 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    color: var(--text);
+    background: var(--bg-panel);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent),
+      0 24px 64px rgb(0 0 0 / 58%);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__header {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__header h2 {
+    color: var(--text);
+    font-family: "Chakra Petch", Inter, system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__close {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+  }
+
+  /* Toast global del constructor, sin competir con la barra fija movil. */
+  .app:has(> .builder-toolbar) > .toast {
+    padding: 11px 16px;
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--bg-raised);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
+      0 12px 32px rgb(0 0 0 / 48%);
+    font-size: 13.5px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .app:has(> .builder-toolbar) > main.content.no-print > .split,
+  .app:has(> .builder-toolbar) > main.content.no-print > .split:has(.comp),
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout__validation,
+  .app:has(> .builder-toolbar) > main.content.no-print .review-layout__main {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .app:has(> .builder-toolbar) > .resbar {
+    position: fixed !important;
+    inset: auto 0 0;
+    gap: 8px 16px;
+    width: auto;
+    max-width: none;
+    padding: 8px 12px;
+    border-top: 2px solid var(--accent-dim);
+    border-bottom: 0;
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 48%);
+  }
+
+  .app:has(> .builder-toolbar) > .resbar--alert {
+    border-top-color: var(--error);
+  }
+
+  .app:has(> .builder-toolbar) .resbar__slots {
+    width: 100%;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__secondary {
+    width: 100%;
+    margin-left: 0;
+    font-size: 11px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print {
+    padding: 16px 16px 156px;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool {
+    padding: 16px 16px 0;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions,
+  .app:has(> .builder-toolbar) > .builder-toolbar > .list-visibility-control--inline {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool .seed-panel__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app:has(> .builder-toolbar) > .toast {
+    bottom: 144px;
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .app:has(> .builder-toolbar) > .guest-notice {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar {
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .field {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .field:first-child {
+    flex-basis: 100%;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar :is(#list-name, #race, #scale, #minerals) {
+    width: 100%;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar > .list-visibility-control--inline {
+    width: 100%;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions {
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding-bottom: 3px;
+    overflow-x: auto;
+    scrollbar-color: var(--accent-dim) transparent;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions > * {
+    flex: 0 0 auto;
+    min-height: 42px;
+    white-space: nowrap;
+  }
+
+  .app:has(> .builder-toolbar) > .tabs {
+    padding-inline: 8px;
+  }
+
+  .app:has(> .builder-toolbar) > .tabs .tab {
+    min-height: 44px;
+    padding-inline: 12px;
+    font-size: 13px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print {
+    padding: 12px 12px 172px;
+  }
+
+  .app:has(> .builder-toolbar) > .content--tool {
+    padding: 12px 12px 0;
+  }
+
+  .app:has(> .builder-toolbar) > :is(main.content.no-print, .content--tool) .panel,
+  .app:has(> .builder-toolbar) > main.content.no-print > .split > .panel {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card {
+    padding: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card__head {
+    flex-wrap: wrap;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard {
+    padding: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__top {
+    gap: 10px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__mini {
+    width: 72px;
+    height: 94px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard h3 {
+    flex: 1 1 180px;
+    font-size: 17px;
+    overflow-wrap: anywhere;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__actions {
+    margin-left: 0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock {
+    gap: 5px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .statblock__cell {
+    min-width: 42px;
+    padding: 4px 6px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .wtable {
+    min-width: 560px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .upg__detail {
+    margin-left: 0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid,
+  .app:has(> .builder-toolbar) > main.content.no-print .ledger {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal {
+    padding: 12px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .modal__box {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 14px;
+  }
+
+  .app:has(> .builder-toolbar) > .toast {
+    bottom: 158px;
+    max-width: calc(100vw - 24px);
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .app:has(> .builder-toolbar) > .builder-toolbar .field {
+    flex-basis: 100%;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print {
+    padding-bottom: 190px;
+  }
+
+  .app:has(> .builder-toolbar) > .resbar {
+    gap: 6px 12px;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__primary {
+    gap: 7px 14px;
+  }
+
+  .app:has(> .builder-toolbar) .resbar__metric-value,
+  .app:has(> .builder-toolbar) .resbar__slot-value {
+    font-size: 15px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__top {
+    flex-wrap: wrap;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__mini {
+    width: 64px;
+    height: 86px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unitcard__main {
+    flex-basis: calc(100% - 76px);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-actions {
+    align-items: stretch;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-actions .card-action {
+    flex: 1 1 auto;
+  }
+
+  .app:has(> .builder-toolbar) > .toast {
+    bottom: 176px;
+  }
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .app:has(> .builder-toolbar) *,
+  .app:has(> .builder-toolbar) *::before,
+  .app:has(> .builder-toolbar) *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

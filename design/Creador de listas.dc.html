@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="stylesheet" href="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/styles.css">
+<script src="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap">
+<style>
+:root {
+  --pink: oklch(0.700 0.170 340);
+  --pink-200: oklch(0.923 0.045 340);
+  --pink-300: oklch(0.861 0.080 340);
+  --pink-400: oklch(0.782 0.140 340);
+  --pink-600: oklch(0.585 0.155 340);
+  --pink-700: oklch(0.470 0.130 340);
+  --pink-800: oklch(0.360 0.100 340);
+  --pink-900: oklch(0.272 0.072 340);
+  --app-bg: #11131f;
+  --app-surface: #191d2c;
+  --app-surface-2: #1f2434;
+  --app-line: rgba(233,233,237,0.13);
+  --app-text: #eceaf1;
+  --app-muted: rgba(236,234,241,0.62);
+  --app-faint: rgba(236,234,241,0.44);
+  --teal: oklch(0.800 0.100 175);
+}
+body { margin: 0; background: var(--app-bg); }
+a { color: var(--pink-300); text-decoration: none; }
+a:hover { color: var(--pink-200); text-decoration: underline; }
+input, select, button { font-family: 'Inter', var(--font-body); }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column; background: var(--app-bg); font-family: 'Inter', var(--font-body); color: var(--app-text); font-size: 15px; -webkit-font-smoothing: antialiased;">
+  <div style="{{ themeStyle }}">
+
+  <header style="display: flex; align-items: center; gap: 20px; padding: 12px 22px; background: linear-gradient(180deg, #1c2033, #171b29); border-bottom: 1px solid var(--app-line);">
+    <img src="assets/starcraft-logo.png" alt="StarCraft" style="height: 30px; width: auto; flex: none;">
+    <span style="width: 1px; height: 22px; background: var(--app-line);"></span>
+    <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 15px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-text);">Listas de ejército</span>
+    <button type="button" style="min-height: 38px; padding: 0 18px; cursor: pointer; border-radius: 8px; border: 1px solid var(--pink-600); background: color-mix(in srgb, var(--pink) 12%, transparent); color: var(--pink-200); font-size: 13.5px; font-weight: 600; letter-spacing: 0.04em;" style-hover="background: color-mix(in srgb, var(--pink) 22%, transparent); color: var(--pink-200);">Borrar lista</button>
+    <span style="flex: 1;"></span>
+    <span style="padding: 7px 14px; border-radius: 999px; border: 1px solid var(--pink-600); background: color-mix(in srgb, var(--pink) 10%, transparent); color: var(--pink-200); font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;">Modo invitado</span>
+  </header>
+
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 22px; background: color-mix(in srgb, var(--pink-900) 70%, var(--app-bg)); border-bottom: 1px solid color-mix(in srgb, var(--pink-700) 55%, transparent); font-size: 13.5px; line-height: 1.5; color: var(--pink-200); text-align: center;">
+    <span>Esta lista se perderá al cerrar o recargar. Puedes imprimirla, exportarla o iniciar sesión para guardarla en tu cuenta.</span>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 22px 26px; padding: 16px 22px; background: var(--app-surface); border-bottom: 1px solid var(--app-line);">
+    <label style="display: flex; flex-direction: column; gap: 6px; min-width: 190px;">
+      <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Nombre</span>
+      <input type="text" value="Nueva lista" style="min-height: 42px; padding: 0 12px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);">
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 6px; min-width: 130px;">
+      <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Raza</span>
+      <select value="{{ race }}" onChange="{{ setRace }}" style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Zerg</option><option>Terran</option><option>Protoss</option></select>
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 6px; min-width: 150px;">
+      <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Escala</span>
+      <select style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Estándar</option><option>Escaramuza</option></select>
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 6px; width: 110px;">
+      <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Minerales</span>
+      <input type="text" value="2000" style="min-height: 42px; padding: 0 12px; font-size: 15px; font-variant-numeric: tabular-nums; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);">
+    </label>
+
+    <span style="flex: 1; min-width: 12px;"></span>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+      <button type="button" style="min-height: 44px; padding: 0 20px; cursor: pointer; border-radius: 8px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 14%, transparent); color: var(--pink-200); font-size: 14px; font-weight: 600;" style-hover="background: color-mix(in srgb, var(--pink) 24%, transparent);">Inicia sesión para guardar</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 500;" style-hover="background: #262c3e; border-color: var(--pink-700);">Seed</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 500;" style-hover="background: #262c3e; border-color: var(--pink-700);">Importar</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 500;" style-hover="background: #262c3e; border-color: var(--pink-700);">Exportar</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 500;" style-hover="background: #262c3e; border-color: var(--pink-700);">Imprimir / PDF</button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; padding: 12px 22px; background: #141826; border-top: 2px solid var(--pink-600); border-bottom: 1px solid var(--app-line);">
+    <span style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">Minerales</span>
+      <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--teal);">0 / 2000</span>
+    </span>
+    <span style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">Gas vespeno</span>
+      <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--teal);">65 / 200</span>
+    </span>
+    <span style="width: 1px; align-self: stretch; background: var(--app-line);"></span>
+    <span style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">Core</span>
+      <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pink-300);">0/6</span>
+    </span>
+    <span style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">Élite</span>
+      <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pink-300);">0/2</span>
+    </span>
+    <span style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">Héroe</span>
+      <span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pink-300);">0/1</span>
+    </span>
+    <span style="flex: 1;"></span>
+    <span style="font-size: 13.5px; color: var(--app-muted);">{{ bmLabel }} <strong style="color: var(--app-text); font-weight: 600;">4</strong> por ronda</span>
+    <span style="font-size: 13.5px; color: var(--app-muted);">Suministro <strong style="color: var(--app-text); font-weight: 600;">0</strong></span>
+  </div>
+
+  <nav style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 18px; background: #141826; border-bottom: 1px solid var(--app-line);">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <button type="button" onClick="{{ t.go }}" style="{{ t.style }}">
+        <span>{{ t.label }}</span>
+        <sc-if value="{{ t.hasBadge }}" hint-placeholder-val="{{ false }}">
+          <span style="{{ t.badgeStyle }}">{{ t.badge }}</span>
+        </sc-if>
+      </button>
+    </sc-for>
+  </nav>
+
+  <sc-if value="{{ isTab1 }}" hint-placeholder-val="{{ true }}">
+  <main style="flex: 1; display: grid; grid-template-columns: minmax(300px, 400px) minmax(420px, 1fr); align-items: start; gap: 18px; padding: 18px 22px 34px;">
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+
+      <section style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+          <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">1 · Carta de facción (obligatoria)</h2>
+        </div>
+
+        <button type="button" style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; cursor: pointer; text-align: left; border-radius: 10px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text);" style-hover="border-color: var(--pink-600); background: #242a3c;">
+          <span style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 18px; font-weight: 600; letter-spacing: 0.02em;">Zerg Swarm</span>
+            <span style="padding: 3px 8px; border-radius: 5px; background: color-mix(in srgb, var(--pink) 16%, transparent); border: 1px solid var(--pink-700); font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--pink-200);">+1 BM</span>
+          </span>
+          <span style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">3× Core</span>
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">1× Élite</span>
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">1× Apoyo</span>
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">1× Aéreo</span>
+          </span>
+          <span style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="padding: 3px 8px; border-radius: 4px; border: 1px dashed rgba(236,234,241,0.22); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-muted);">Zerg</span>
+          </span>
+        </button>
+
+        <button type="button" style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; cursor: pointer; text-align: left; border-radius: 10px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 13%, var(--app-surface-2)); color: var(--app-text); box-shadow: 0 0 0 1px color-mix(in srgb, var(--pink) 30%, transparent), 0 10px 26px -18px color-mix(in srgb, var(--pink) 80%, transparent);">
+          <span style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 18px; font-weight: 600; letter-spacing: 0.02em;">Kerrigan's Swarm</span>
+            <span style="padding: 3px 8px; border-radius: 5px; background: color-mix(in srgb, var(--pink) 22%, transparent); border: 1px solid var(--pink-600); font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--pink-200);">+1 BM</span>
+            <span style="flex: 1;"></span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink-300);">Activa</span>
+          </span>
+          <span style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-600); background: color-mix(in srgb, var(--pink) 18%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">3× Core</span>
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-600); background: color-mix(in srgb, var(--pink) 18%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">2× Élite</span>
+            <span style="padding: 4px 9px; border-radius: 5px; border: 1px solid var(--pink-600); background: color-mix(in srgb, var(--pink) 18%, transparent); font-size: 12.5px; font-weight: 500; color: var(--pink-200);">1× Héroe</span>
+          </span>
+          <span style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="padding: 3px 8px; border-radius: 4px; border: 1px dashed rgba(236,234,241,0.26); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-muted);">Zerg</span>
+            <span style="padding: 3px 8px; border-radius: 4px; border: 1px dashed rgba(236,234,241,0.26); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-muted);">Kerrigan's Swarm</span>
+          </span>
+        </button>
+      </section>
+
+      <section style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+          <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">2 · Creep Card — obligatoria, exactamente una</h2>
+        </div>
+        <p style="margin: 0; padding: 11px 13px; border-radius: 8px; border-left: 3px solid var(--pink); background: color-mix(in srgb, var(--pink) 9%, transparent); font-size: 13.5px; line-height: 1.6; color: var(--pink-200); text-wrap: pretty;">Tu Carta de Facción exige incluir una Creep Card. Sin ella la lista no es legal.</p>
+
+        <button type="button" style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; cursor: pointer; text-align: left; border-radius: 10px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 13%, var(--app-surface-2)); color: var(--app-text); box-shadow: 0 0 0 1px color-mix(in srgb, var(--pink) 26%, transparent);">
+          <span style="flex: 1; font-family: 'Chakra Petch', var(--font-heading); font-size: 16.5px; font-weight: 600;">Accelerating Creep</span>
+          <span style="flex: none; padding: 4px 9px; border-radius: 5px; border: 1px solid rgba(236,234,241,0.2); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--app-muted);">0 gas</span>
+        </button>
+        <button type="button" style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; cursor: pointer; text-align: left; border-radius: 10px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text);" style-hover="border-color: var(--pink-600); background: #242a3c;">
+          <span style="flex: 1; font-family: 'Chakra Petch', var(--font-heading); font-size: 16.5px; font-weight: 600;">Malignant Creep</span>
+          <span style="flex: none; padding: 4px 9px; border-radius: 5px; border: 1px solid rgba(236,234,241,0.2); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--app-muted);">10 gas</span>
+        </button>
+      </section>
+
+      <section style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+          <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">3 · Cartas tácticas (cuestan gas)</h2>
+        </div>
+
+        <sc-for list="{{ tactical }}" as="card" hint-placeholder-count="2">
+          <div style="display: flex; flex-direction: column; gap: 11px; padding: 14px; border-radius: 10px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 8%, var(--app-surface-2));">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+              <span style="flex: 1; font-family: 'Chakra Petch', var(--font-heading); font-size: 16.5px; font-weight: 600; line-height: 1.25;">{{ card.name }}</span>
+              <span style="flex: none; padding: 4px 9px; border-radius: 5px; border: 1px solid rgba(236,234,241,0.2); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--app-muted);">{{ card.gas }}</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <sc-for list="{{ card.tags }}" as="tag" hint-placeholder-count="2">
+                <span style="{{ tag.style }}">{{ tag.label }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <button type="button" style="{{ card.viewStyle }}">Ver carta</button>
+              <button type="button" disabled="{{ card.addDisabled }}" style="{{ card.addStyle }}">+ Añadir</button>
+              <sc-if value="{{ card.showRemove }}" hint-placeholder-val="{{ true }}">
+                <button type="button" style="{{ card.removeStyle }}">− Quitar</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface); min-height: 340px;">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Cartas de mando activas</h2>
+      </div>
+
+      <sc-for list="{{ activeCards }}" as="card" hint-placeholder-count="4">
+        <article style="display: flex; flex-direction: column; gap: 9px; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--app-line); border-left: 3px solid var(--pink); background: var(--app-surface-2);">
+          <header style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;">
+            <h3 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 21px; font-weight: 600; letter-spacing: 0.01em;">{{ card.name }}</h3>
+            <span style="flex: 1;"></span>
+            <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-faint);">{{ card.type }}</span>
+          </header>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <sc-for list="{{ card.tags }}" as="tag" hint-placeholder-count="3">
+              <span style="{{ tag.style }}">{{ tag.label }}</span>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ card.abilities }}" as="ab" hint-placeholder-count="2">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 7px; padding: 7px 0; border-top: 1px solid rgba(236,234,241,0.08); font-size: 13.5px; line-height: 1.5;">
+                <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; color: var(--pink-300);">{{ ab.name }}</span>
+                <span style="{{ ab.phaseStyle }}">{{ ab.phase }}</span>
+                <span style="{{ ab.kindStyle }}">{{ ab.kind }}</span>
+                <span style="color: rgba(236,234,241,0.84); text-wrap: pretty;">— {{ ab.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </article>
+      </sc-for>
+    </section>
+  </main>
+  </sc-if>
+  <sc-if value="{{ isTab2 }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; display: grid; grid-template-columns: minmax(280px, 380px) minmax(460px, 1fr); align-items: start; gap: 18px; padding: 18px 22px 34px;">
+
+    <section style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Catálogo de unidades</h2>
+      </div>
+
+      <sc-for list="{{ catalog }}" as="u" hint-placeholder-count="5">
+        <div style="{{ u.cardStyle }}">
+          <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <span style="flex: 1; font-family: 'Chakra Petch', var(--font-heading); font-size: 16.5px; font-weight: 600; line-height: 1.25;">{{ u.name }}</span>
+            <span style="{{ u.roleStyle }}">{{ u.role }}</span>
+          </div>
+          <sc-if value="{{ u.unique }}" hint-placeholder-val="{{ false }}">
+            <div><span style="padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(232,160,74,0.65); background: rgba(232,160,74,0.18); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #f6cea0;">Unique</span></div>
+          </sc-if>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <sc-for list="{{ u.options }}" as="o" hint-placeholder-count="2">
+              <button type="button" style="{{ o.style }}">
+                <span style="font-size: 13.5px; font-weight: 600;">{{ o.models }}</span>
+                <span style="font-size: 11.5px; color: var(--app-faint);">{{ o.supply }}</span>
+                <span style="{{ o.priceStyle }}">{{ o.price }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Tu ejército (2)</h2>
+      </div>
+      <p style="margin: 0; font-size: 13px; color: var(--app-muted);">Usa ↑ y ↓ para ordenar las unidades como aparecerán en la impresión.</p>
+
+      <sc-for list="{{ army }}" as="u" hint-placeholder-count="2">
+        <article style="display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 11px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 7%, var(--app-surface-2));">
+
+          <div style="display: flex; align-items: flex-start; gap: 14px;">
+            <div style="flex: none; width: 104px; height: 132px; border-radius: 8px; overflow: hidden; border: 1px solid var(--app-line);">
+              <image-slot id="{{ u.slotId }}" shape="rect" placeholder=""></image-slot>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 9px; min-width: 0;">
+              <h3 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 20px; font-weight: 600;">{{ u.name }}</h3>
+              <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+                <sc-for list="{{ u.stats }}" as="st" hint-placeholder-count="5">
+                  <span style="display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 46px; padding: 5px 8px; border-radius: 7px; border: 1px solid var(--pink-700); background: rgba(18,21,33,0.75);">
+                    <span style="font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-faint);">{{ st.label }}</span>
+                    <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 17px; font-weight: 700; color: var(--app-text);">{{ st.value }}</span>
+                  </span>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; color: var(--app-muted);">Composición:</span>
+                <sc-for list="{{ u.comp }}" as="c" hint-placeholder-count="3">
+                  <span style="{{ c.style }}">{{ c.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex: none; display: flex; gap: 6px;">
+              <button type="button" style="width: 34px; height: 34px; cursor: pointer; border-radius: 7px; border: 1px solid var(--app-line); background: rgba(18,21,33,0.8); color: var(--app-text); font-size: 14px;" style-hover="border-color: var(--pink-600);">↑</button>
+              <button type="button" style="width: 34px; height: 34px; cursor: pointer; border-radius: 7px; border: 1px solid var(--app-line); background: rgba(18,21,33,0.8); color: var(--app-text); font-size: 14px;" style-hover="border-color: var(--pink-600);">↓</button>
+              <button type="button" style="width: 34px; height: 34px; cursor: pointer; border-radius: 7px; border: 1px solid oklch(0.5 0.12 22 / 0.7); background: oklch(0.42 0.1 22 / 0.25); color: oklch(0.87 0.07 22); font-size: 14px;" style-hover="background: oklch(0.42 0.1 22 / 0.4);">✕</button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.6fr) minmax(0, 0.95fr) minmax(0, 0.5fr) minmax(0, 0.55fr) minmax(0, 1fr) minmax(0, 0.6fr); gap: 8px; min-width: 0; padding: 7px 2px; border-bottom: 1px solid rgba(236,234,241,0.1); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--app-faint);">
+            <span>Arma</span><span>Alc.</span><span>Obj.</span><span>Rda</span><span>Imp.</span><span>Surge</span><span>Daño</span>
+          </div>
+          <sc-for list="{{ u.weapons }}" as="w" hint-placeholder-count="1">
+            <div style="display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.6fr) minmax(0, 0.95fr) minmax(0, 0.5fr) minmax(0, 0.55fr) minmax(0, 1fr) minmax(0, 0.6fr); gap: 8px; min-width: 0; padding: 3px 2px 9px; font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--app-text);">
+              <span>{{ w.name }}</span><span>{{ w.range }}</span><span>{{ w.target }}</span><span>{{ w.rda }}</span><span>{{ w.imp }}</span><span>{{ w.surge }}</span><span>{{ w.dmg }}</span>
+            </div>
+          </sc-for>
+
+          <sc-for list="{{ u.groups }}" as="g" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 5px; padding: 10px 12px; border-radius: 9px; border-left: 3px solid rgba(236,234,241,0.16); background: rgba(18,21,33,0.55);">
+              <span style="{{ g.phaseStyle }}">{{ g.phase }}</span>
+              <sc-for list="{{ g.abilities }}" as="ab" hint-placeholder-count="2">
+                <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 7px; font-size: 13.5px; line-height: 1.5;">
+                  <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; color: var(--pink-300);">{{ ab.name }}</span>
+                  <span style="{{ ab.kindStyle }}">{{ ab.kind }}</span>
+                  <span style="color: rgba(236,234,241,0.86); text-wrap: pretty;">{{ ab.text }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+
+          <div style="display: flex; align-items: center; gap: 9px; margin-top: 2px;">
+            <span style="width: 3px; height: 13px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+            <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Mejoras</span>
+          </div>
+
+          <sc-for list="{{ u.upgrades }}" as="up" hint-placeholder-count="3">
+            <div style="display: flex; gap: 10px;">
+              <button type="button" style="{{ up.toggleStyle }}">{{ up.toggleIcon }}</button>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+                <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px; cursor: pointer;">
+                  <input type="checkbox" checked="{{ up.checked }}" style="width: 17px; height: 17px; accent-color: var(--pink); cursor: pointer;">
+                  <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 15.5px; font-weight: 600;">{{ up.name }}</span>
+                  <span style="padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(236,234,241,0.22); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--app-text);">{{ up.cost }}</span>
+                  <span style="{{ up.phaseStyle }}">{{ up.phase }}</span>
+                  <sc-if value="{{ up.hasNote }}" hint-placeholder-val="{{ false }}">
+                    <span style="padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(236,234,241,0.18); font-size: 12px; color: var(--app-muted);">{{ up.note }}</span>
+                  </sc-if>
+                </label>
+                <sc-if value="{{ up.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: 4px; padding: 11px 13px; border-radius: 8px; border-left: 3px solid var(--pink); background: rgba(18,21,33,0.65);">
+                    <span style="font-size: 13.5px; line-height: 1.6; color: rgba(236,234,241,0.88); text-wrap: pretty;">{{ up.text }}</span>
+                    <span style="font-size: 12.5px; font-weight: 600; color: var(--app-muted);">{{ up.meta }}</span>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </article>
+      </sc-for>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isTab3 }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 18px 22px 34px;">
+
+    <p style="margin: 0; padding: 13px 16px; border-radius: 10px; border: 1px solid var(--app-line); background: var(--app-surface); font-size: 14px; line-height: 1.6; color: rgba(236,234,241,0.86); text-align: center; text-wrap: pretty;">Cada jugador lleva <strong style="font-weight: 600; color: var(--app-text);">2 cartas de misión</strong> y <strong style="font-weight: 600; color: var(--app-text);">2 de despliegue</strong>, sin repetir ninguna dentro de su propio conjunto. El reglamento sí permite que ambos jugadores lleven las mismas cartas.</p>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Misiones — 0 de 2</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; align-items: start;">
+        <sc-for list="{{ missions }}" as="m" hint-placeholder-count="6">
+          <button type="button" style="{{ m.cardStyle }}">
+            <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px;">
+              <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 17px; font-weight: 600; line-height: 1.2;">{{ m.name }}</span>
+              <span style="{{ m.scaleStyle }}">{{ m.scale }}</span>
+            </span>
+            <span style="display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--app-text);">
+              <span>Suministro <strong style="font-weight: 600;">{{ m.supply }}</strong></span>
+              <span style="color: var(--app-muted);">{{ m.rounds }}</span>
+            </span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--pink-300);">{{ m.victory }}</span>
+            <span style="font-size: 13px; line-height: 1.55; color: rgba(236,234,241,0.8); text-wrap: pretty;">{{ m.text }}</span>
+            <sc-if value="{{ m.mismatch }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 12.5px; font-weight: 600; line-height: 1.45; color: #f6cea0;">Diseñada para otra escala de enfrentamiento.</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Despliegues — 0 de 2</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; align-items: start;">
+        <sc-for list="{{ deployments }}" as="d" hint-placeholder-count="5">
+          <button type="button" style="{{ d.cardStyle }}">
+            <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px;">
+              <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 17px; font-weight: 600;">{{ d.name }}</span>
+              <span style="{{ d.sizeStyle }}">{{ d.size }}</span>
+            </span>
+            <span style="font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--app-muted);">{{ d.scale }}</span>
+            <span style="display: block; width: 100%; aspect-ratio: 3 / 2; border-radius: 8px; overflow: hidden; border: 1px solid var(--app-line);">
+              <image-slot id="{{ d.slotId }}" shape="rect" placeholder="Mapa"></image-slot>
+            </span>
+            <sc-if value="{{ d.mismatch }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 12.5px; font-weight: 600; line-height: 1.45; color: #f6cea0;">Diseñada para otra escala de enfrentamiento.</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isTab4 }}" hint-placeholder-val="{{ false }}">
+  <main style="flex: 1; display: flex; flex-direction: column; gap: 18px; padding: 18px 22px 34px;">
+
+    <div style="display: grid; grid-template-columns: minmax(320px, 1fr) minmax(340px, 0.9fr); align-items: start; gap: 18px;">
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+            <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Libro mayor de espacios — de dónde sale cada uno</h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start;">
+            <sc-for list="{{ ledger }}" as="col" hint-placeholder-count="3">
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 13px 14px; border-radius: 10px; border: 1px solid var(--app-line); background: var(--app-surface-2);">
+                <div style="display: flex; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(236,234,241,0.1);">
+                  <span style="flex: 1; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--app-text);">{{ col.name }}</span>
+                  <span style="font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pink-300);">{{ col.count }}</span>
+                </div>
+                <sc-for list="{{ col.lines }}" as="ln" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: baseline; gap: 10px; font-size: 13.5px;">
+                    <span style="{{ ln.labelStyle }}">{{ ln.label }}</span>
+                    <span style="{{ ln.valueStyle }}">{{ ln.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+            <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Hoja de lista</h2>
+          </div>
+          <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--app-muted);">Imprime la hoja de tu lista o guárdala como PDF desde el destino de impresión.</p>
+          <button type="button" style="align-self: flex-start; min-height: 46px; padding: 0 22px; cursor: pointer; border-radius: 9px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 14%, transparent); color: var(--pink-200); font-size: 14.5px; font-weight: 600;" style-hover="background: color-mix(in srgb, var(--pink) 24%, transparent);">Imprimir / PDF</button>
+        </section>
+      </div>
+
+      <section style="display: flex; flex-direction: column; gap: 11px; padding: 16px; border-radius: 12px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 6%, var(--app-surface));">
+        <div style="display: flex; align-items: center; gap: 9px;">
+          <span style="width: 3px; height: 15px; border-radius: 2px; background: var(--pink); flex: none;"></span>
+          <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--app-text);">Validación</h2>
+        </div>
+        <p style="margin: 0; font-size: 14.5px; font-weight: 600; color: oklch(0.75 0.14 22);">La lista todavía no es legal: 2 problema(s) por resolver.</p>
+
+        <sc-for list="{{ issues }}" as="it" hint-placeholder-count="5">
+          <div style="{{ it.cardStyle }}">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--app-faint);">{{ it.rule }}</span>
+            <span style="font-size: 13.5px; line-height: 1.55; color: var(--app-text); text-wrap: pretty;">{{ it.text }}</span>
+            <sc-if value="{{ it.hasFix }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 13px; font-weight: 600; color: var(--pink-300);">→ {{ it.fix }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 18px; padding: 34px 38px 40px; border-radius: 6px; background: #ffffff; color: #16181f; font-size: 13px;">
+      <header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;">
+        <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 17px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #16181f;">StarCraft</span>
+        <span style="padding: 6px 12px; border: 1.5px solid #16181f; border-radius: 4px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">Lista no válida</span>
+      </header>
+
+      <div style="display: flex; flex-direction: column; gap: 5px;">
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 30px; font-weight: 700; letter-spacing: -0.01em;">Nueva lista</h2>
+        <span style="font-size: 12.5px; color: #4c5163;">ZERG · Estándar · 500/2000 minerales · 65/200 gas · 4 BM/ronda · suministro 2</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h3 style="margin: 0; padding-bottom: 5px; border-bottom: 1.5px solid #16181f; font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;">Cartas de mando</h3>
+        <p style="margin: 0; line-height: 1.6;"><strong>Facción:</strong> Kerrigan's Swarm · <strong>Creep:</strong> Accelerating Creep (0 gas)</p>
+        <p style="margin: 0; line-height: 1.6;"><strong>Tácticas:</strong> Spawning Pool (25) · Spawning Pool (Six Pool) (40)</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h3 style="margin: 0; padding-bottom: 5px; border-bottom: 1.5px solid #16181f; font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;">Espacios de ejército</h3>
+        <p style="margin: 0;">Core 1/6 · Élite 1/2 · Héroe 0/1</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h3 style="margin: 0; padding-bottom: 5px; border-bottom: 1.5px solid #16181f; font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;">Unidades</h3>
+        <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 0.8fr) minmax(0, 0.55fr) minmax(0, 0.7fr) minmax(0, 0.9fr) minmax(0, 0.55fr); gap: 10px; min-width: 0; padding: 7px 0; border-bottom: 1px solid #c9ccd8; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #4c5163;">
+          <span>Unidad</span><span>Modelos</span><span>Sum.</span><span>Espacio</span><span>Mejoras</span><span>Min.</span>
+        </div>
+        <sc-for list="{{ sheetUnits }}" as="r" hint-placeholder-count="2">
+          <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 0.8fr) minmax(0, 0.55fr) minmax(0, 0.7fr) minmax(0, 0.9fr) minmax(0, 0.55fr); gap: 10px; min-width: 0; padding: 7px 0; border-bottom: 1px solid #e6e8ef; font-variant-numeric: tabular-nums;">
+            <span>{{ r.name }}</span><span>{{ r.models }}</span><span>{{ r.supply }}</span><span>{{ r.slot }}</span><span>{{ r.upgrades }}</span><span>{{ r.min }}</span>
+          </div>
+        </sc-for>
+        <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 0.8fr) minmax(0, 0.55fr) minmax(0, 0.7fr) minmax(0, 0.9fr) minmax(0, 0.55fr); gap: 10px; min-width: 0; padding: 8px 0; border-bottom: 1.5px solid #16181f; font-weight: 700; font-variant-numeric: tabular-nums;">
+          <span>Total</span><span></span><span></span><span></span><span></span><span>500</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h3 style="margin: 0; padding-bottom: 5px; border-bottom: 1.5px solid #16181f; font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;">Escenarios que llevo al draft</h3>
+        <p style="margin: 0;"><strong>Misiones:</strong> —</p>
+        <p style="margin: 0;"><strong>Despliegues:</strong> —</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <h3 style="margin: 0; padding-bottom: 5px; border-bottom: 1.5px solid #16181f; font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;">Fichas de unidad — perfiles, habilidades y mejoras</h3>
+
+        <sc-for list="{{ army }}" as="u" hint-placeholder-count="2">
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <div style="display: flex; align-items: center; gap: 13px;">
+              <span style="display: block; flex: none; width: 84px; height: 106px; border-radius: 5px; overflow: hidden; border: 1px solid #c9ccd8;">
+                <image-slot id="{{ u.printSlotId }}" shape="rect" placeholder=""></image-slot>
+              </span>
+              <div style="display: flex; flex-direction: column; gap: 7px;">
+                <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 17px; font-weight: 700;">{{ u.name }}</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                  <sc-for list="{{ u.stats }}" as="st" hint-placeholder-count="5">
+                    <span style="display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 40px; padding: 3px 7px; border-radius: 5px; background: #241f38; color: #f2f0f7;">
+                      <span style="font-size: 6.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7;">{{ st.label }}</span>
+                      <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 700;">{{ st.value }}</span>
+                    </span>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.55fr) minmax(0, 0.8fr) minmax(0, 0.45fr) minmax(0, 0.5fr) minmax(0, 0.5fr) minmax(0, 1fr); gap: 8px; min-width: 0; padding: 6px 0; border-bottom: 1px solid #c9ccd8; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #4c5163;">
+              <span>Arma</span><span>Alc.</span><span>Obj.</span><span>Rda</span><span>Imp.</span><span>Dañ.</span><span>Palabras clave</span>
+            </div>
+            <sc-for list="{{ u.weapons }}" as="w" hint-placeholder-count="1">
+              <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.55fr) minmax(0, 0.8fr) minmax(0, 0.45fr) minmax(0, 0.5fr) minmax(0, 0.5fr) minmax(0, 1fr); gap: 8px; min-width: 0; padding: 5px 0; border-bottom: 1px solid #e6e8ef; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+                <span>{{ w.name }}</span><span>{{ w.range }}</span><span>{{ w.target }}</span><span>{{ w.rda }}</span><span>{{ w.imp }}</span><span>{{ w.dmg }}</span><span>{{ w.keywords }}</span>
+              </div>
+            </sc-for>
+
+            <sc-for list="{{ u.groups }}" as="g" hint-placeholder-count="2">
+              <div style="display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; border-radius: 6px; background: #f1f2f6;">
+                <span style="{{ g.printPhaseStyle }}">{{ g.phase }}</span>
+                <sc-for list="{{ g.abilities }}" as="ab" hint-placeholder-count="2">
+                  <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 6px; font-size: 12.5px; line-height: 1.5;">
+                    <strong style="font-weight: 700;">{{ ab.name }}</strong>
+                    <span style="padding: 1px 6px; border-radius: 4px; border: 1px solid #b9bdcc; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4c5163;">{{ ab.kind }}</span>
+                    <span style="text-wrap: pretty;">{{ ab.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; padding: 20px 22px 26px; border-top: 1px solid var(--app-line); font-size: 12.5px; color: var(--app-faint); text-align: center;">
+    <span>Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</span>
+    <span style="display: flex; gap: 16px;">
+      <a href="#">Soporte</a>
+      <a href="#">Términos y condiciones</a>
+    </span>
+  </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;race&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Zerg&quot;,&quot;Terran&quot;,&quot;Protoss&quot;],&quot;default&quot;:&quot;Zerg&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Raza&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 1, race: null };
+
+  renderVals() {
+    const tab = this.state.tab;
+
+    // Un solo tono por raza: las rampas mantienen luminosidad y croma, solo gira el matiz
+    const races = {
+      Zerg:    { h: 340, c: 0.170, bm: 'BM' },
+      Terran:  { h: 245, c: 0.145, bm: 'CP' },
+      Protoss: { h: 88,  c: 0.150, bm: 'PE' }
+    };
+    const race = this.state.race ?? this.props.race ?? 'Zerg';
+    const rr = races[race] || races.Zerg;
+    const ok = (l, cMul, h) => 'oklch(' + l + ' ' + (rr.c * cMul).toFixed(3) + ' ' + h + ')';
+    const themeStyle = [
+      'display:contents',
+      '--pink:' + ok(0.700, 1, rr.h),
+      '--pink-200:' + ok(0.923, 0.26, rr.h),
+      '--pink-300:' + ok(0.861, 0.47, rr.h),
+      '--pink-400:' + ok(0.765, 0.85, rr.h),
+      '--pink-800:' + ok(0.360, 0.58, rr.h),
+      '--pink-600:' + ok(0.585, 0.91, rr.h),
+      '--pink-700:' + ok(0.470, 0.76, rr.h),
+      '--pink-900:' + ok(0.272, 0.42, rr.h)
+    ].join(';');
+    const base = 'padding:1px 7px;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap';
+    const chip = (kind) => base + ';' + ({
+      Active: 'background:color-mix(in srgb, var(--pink) 24%, transparent);border:1px solid var(--pink-600);color:var(--pink-200)',
+      Reaction: 'background:rgba(126,171,255,0.18);border:1px solid rgba(126,171,255,0.5);color:#c3d9ff'
+    }[kind] || 'background:rgba(236,234,241,0.07);border:1px solid rgba(236,234,241,0.16);color:rgba(236,234,241,0.66)');
+    // Fondo propio por fase: la fase se lee de un golpe al escanear la lista
+    const phase = (p) => 'padding:1px 8px;border-radius:5px;font-size:11.5px;font-weight:600;white-space:nowrap;' + ({
+      'Movimiento': 'background:rgba(94,204,196,0.22);border:1px solid rgba(94,204,196,0.6);color:#a9ece6',
+      'Asalto': 'background:rgba(232,160,74,0.22);border:1px solid rgba(232,160,74,0.62);color:#f6cea0',
+      'Combate': 'background:rgba(228,112,152,0.24);border:1px solid rgba(228,112,152,0.65);color:#f8c4d8',
+      'Disparo': 'background:rgba(226,110,110,0.2);border:1px solid rgba(226,110,110,0.55);color:#f4c0c0',
+      'Final': 'background:rgba(150,140,225,0.22);border:1px solid rgba(150,140,225,0.55);color:#d3cdf7'
+    }[p] || 'background:rgba(236,234,241,0.09);border:1px solid rgba(236,234,241,0.2);color:#eceaf1');
+
+    const cost = 'padding:4px 9px;border-radius:5px;border:1px solid rgba(236,234,241,0.2);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--app-muted);white-space:nowrap';
+    const slot = 'padding:4px 9px;border-radius:5px;border:1px solid var(--pink-700);background:color-mix(in srgb, var(--pink) 14%, transparent);font-size:12.5px;font-weight:500;color:var(--pink-200);white-space:nowrap';
+    const bm = 'padding:4px 9px;border-radius:5px;border:1px solid rgba(236,234,241,0.24);font-size:12.5px;font-weight:600;letter-spacing:0.03em;color:var(--app-text);white-space:nowrap';
+    const unique = 'padding:4px 9px;border-radius:5px;border:1px solid rgba(232,160,74,0.65);background:rgba(232,160,74,0.18);font-size:11.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#f6cea0;white-space:nowrap';
+    const tagStyle = (t) => t === 'unique' ? unique : t === 'bm' ? bm : t === 'cost' ? cost : slot;
+
+    const ability = (a) => ({
+      name: a[0], phase: a[1], phaseStyle: phase(a[1]), kind: a[2], kindStyle: chip(a[2]), text: a[3]
+    });
+
+    const btnStyle = (kind, disabled) => {
+      const b = 'min-height:38px;padding:0 14px;border-radius:8px;font-size:13.5px;font-weight:600;white-space:nowrap;cursor:' + (disabled ? 'not-allowed' : 'pointer') + ';opacity:' + (disabled ? '0.45' : '1') + ';';
+      if (kind === 'add') return b + 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 14%, transparent);color:var(--pink-200)';
+      if (kind === 'remove') return b + 'border:1px solid rgba(236,234,241,0.22);background:rgba(236,234,241,0.05);color:var(--app-text)';
+      return b + 'border:1px solid var(--app-line);background:#121521;color:var(--app-text)';
+    };
+    const tacticalSrc = [
+      { name: 'Spawning Pool', gas: '25 gas', tags: [['1× Core','slot'], ['+1 BM','bm']], added: true, canAdd: true },
+      { name: 'Spawning Pool (Six Pool)', gas: '40 gas', tags: [['2× Core','slot'], ['UNIQUE','unique'], ['+2 BM','bm']], added: true, canAdd: false }
+    ];
+
+    const activeSrc = [
+      { name: "Kerrigan's Swarm", type: 'Carta de Facción',
+        tags: [['3× Core','slot'], ['2× Élite','slot'], ['1× Héroe','slot'], ['+1 BM','bm']],
+        abilities: [
+          ['Wild Mutation', 'Cualquier fase', 'Active', 'Si la unidad activa está SOBRE CREEP, gana BUFF Velocidad (1) y su primera arma usada gana PRECISION (1).'],
+          ['Zerg Creep', 'Cualquier fase', 'Passive', 'Durante la Construcción del Ejército debes seleccionar exactamente una Creep Card y añadirla a tu Lista de Ejército, pagando su coste indicado (si lo tiene).'],
+          ['Omega Network', 'Movimiento', 'Active', 'Si no hay ningún Omega Worm amigo en el campo de batalla, coloca una unidad Omega Worm amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10" de cualquier modelo enemigo. Esta ronda, el Omega Worm no puede usar sus Habilidades Especiales (excepto Structure).']
+        ] },
+      { name: 'Accelerating Creep', type: 'Creep Card',
+        tags: [['0 gas','cost']],
+        abilities: [
+          ['Speed on Creep', 'Cualquier fase', 'Passive', 'Si la unidad Zerg amiga activa está SOBRE CREEP, aumenta su característica de Velocidad en 1.'],
+          ['Living Glob of Tissue', 'Cualquier fase', 'Passive', 'Las fichas de Creep Tumor tienen STAY IN PLAY y DISPLACEMENT.'],
+          ['Creep Removal', 'Cualquier fase', 'Passive', 'Si una unidad enemiga termina una acción de Movimiento, Despliegue, Carrera, Carga o Desenganche a menos de 1" de una ficha de Creep Tumor amiga, retira esa ficha del campo de batalla.']
+        ] },
+      { name: 'Spawning Pool', type: 'Carta Táctica',
+        tags: [['1× Core','slot'], ['25 gas','cost']],
+        abilities: [
+          ['Feral Rage', 'Combate', 'Active', 'La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).']
+        ] },
+      { name: 'Spawning Pool (Six Pool)', type: 'Carta Táctica',
+        tags: [['2× Core','slot'], ['40 gas','cost']],
+        abilities: [
+          ['Timing Push', 'Movimiento', 'Active', 'La unidad Zergling activa se despliega desde cualquier borde de mesa que no sea el Borde de Entrada de un jugador. Esta acción debe terminar a más de 10" de cualquier modelo enemigo.'],
+          ['Feral Rage', 'Combate', 'Active', 'La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).']
+        ] }
+    ];
+
+    const tabDefs = [
+      { n: 1, label: '1 · Cartas de mando', badge: '1', tone: 'accent' },
+      { n: 2, label: '2 · Reclutamiento' },
+      { n: 3, label: '3 · Misión y despliegue', badge: '2', tone: 'soft' },
+      { n: 4, label: '4 · Revisión e impresión' }
+    ];
+    const tabs = tabDefs.map(t => ({
+      label: t.label,
+      hasBadge: !!t.badge,
+      badge: t.badge || '',
+      badgeStyle: 'display:grid;place-items:center;min-width:21px;height:21px;padding:0 6px;border-radius:999px;' +
+        "font-family:'Inter', var(--font-body);font-size:12px;font-weight:600;" +
+        (t.tone === 'accent' ? 'background:var(--pink-600);color:#fdf4fa'
+          : 'background:color-mix(in srgb, var(--pink) 20%, transparent);color:var(--pink-200)'),
+      style: 'display:flex;align-items:center;gap:9px;min-height:48px;padding:0 16px;cursor:pointer;border:none;' +
+        "font-family:'Chakra Petch', var(--font-heading);font-size:15px;font-weight:600;letter-spacing:0.03em;" +
+        (tab === t.n
+          ? 'background:color-mix(in srgb, var(--pink) 9%, transparent);border-bottom:2px solid var(--pink);color:var(--pink-200)'
+          : 'background:transparent;border-bottom:2px solid transparent;color:var(--app-muted)'),
+      go: () => this.setState({ tab: t.n })
+    }));
+
+    const roleStyle = (r) => 'padding:3px 9px;border-radius:5px;font-size:11.5px;font-weight:600;white-space:nowrap;' +
+      (r === 'Élite'
+        ? 'background:rgba(150,140,225,0.22);border:1px solid rgba(150,140,225,0.6);color:#d3cdf7'
+        : 'background:rgba(236,234,241,0.08);border:1px solid rgba(236,234,241,0.22);color:var(--app-text)');
+
+    const optStyle = (state) => 'display:flex;flex-direction:column;gap:2px;min-width:112px;min-height:64px;padding:9px 11px;text-align:left;border-radius:9px;' +
+      (state === 'on' ? 'cursor:pointer;border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 14%, transparent);color:var(--app-text)'
+       : state === 'off' ? 'cursor:not-allowed;opacity:0.42;border:1px solid var(--app-line);background:rgba(18,21,33,0.6);color:var(--app-text)'
+       : 'cursor:pointer;border:1px solid var(--app-line);background:rgba(18,21,33,0.7);color:var(--app-text)');
+
+    const catalogSrc = [
+      { name: 'Zergling', role: 'Core', sel: false, opts: [['12 modelos','suministro 1','180 min.','idle'], ['18 modelos','suministro 2','220 min.','idle']] },
+      { name: 'Raptor (Zergling)', role: 'Élite', sel: true, opts: [['12 modelos','suministro 1','240 min.','on'], ['18 modelos','suministro 2','300 min.','off']] },
+      { name: 'Kerrigan Swarm Raptor (Zergling)', role: 'Élite', unique: true, sel: false, opts: [['6 modelos','suministro 1','250 min.','idle']] },
+      { name: 'Swarmling (Zergling)', role: 'Core', sel: true, opts: [['18 modelos','suministro 1','260 min.','on']] },
+      { name: 'Roach', role: 'Core', sel: false, opts: [['3 modelos','suministro 1','170 min.','idle']] },
+      { name: 'Vile (Roach)', role: 'Core', sel: false, opts: [['3 modelos','suministro 1','210 min.','idle']] }
+    ];
+
+    const catalog = catalogSrc.map(u => ({
+      name: u.name,
+      role: u.role,
+      roleStyle: roleStyle(u.role),
+      unique: !!u.unique,
+      cardStyle: 'display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:10px;' +
+        (u.sel ? 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 9%, var(--app-surface-2))'
+                : 'border:1px solid var(--app-line);background:var(--app-surface-2)'),
+      options: u.opts.map(([models, supply, price, st]) => ({
+        models, supply, price,
+        style: optStyle(st),
+        priceStyle: 'font-family:\'Chakra Petch\', var(--font-heading);font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:' +
+          (st === 'on' ? 'var(--pink-200)' : 'var(--pink-300)')
+      }))
+    }));
+
+    const stats = (v) => ['Size','Hit points','Evade','Armour','Speed'].map((label, i) => ({ label, value: v[i] }));
+    const compChip = (on) => 'padding:4px 10px;border-radius:5px;font-size:12.5px;font-weight:500;white-space:nowrap;' +
+      (on ? 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 18%, transparent);color:var(--pink-200)'
+          : 'border:1px solid rgba(236,234,241,0.2);background:rgba(18,21,33,0.6);color:var(--app-muted)');
+    const printPhase = (p) => 'align-self:flex-start;padding:2px 8px;border-radius:4px;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;background:' +
+      ({ 'Asalto': '#c9761f', 'Movimiento': '#2f7fbf', 'Combate': '#c0447a' }[p] || '#5a5f72');
+
+    const armySrc = [
+      { name: 'Raptor (Zergling)', slotId: 'unit-raptor', printSlotId: 'print-raptor',
+        stats: ['1','1','4+','6+','5/9'],
+        comp: [['12 modelos · 240', true], ['18 modelos · 300', false], ['1× Élite', false]],
+        weapons: [{ name: 'Claws', range: 'E', target: 'Ground', rda: '2', imp: '4+', surge: 'Light D3', dmg: '1', keywords: '—' }],
+        groups: [
+          ['Asalto', [
+            ['Metabolic Boost', 'Active 1 BM', 'Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.'],
+            ['Adrenal Overload', 'Active 1 BM', 'Esta unidad gana un modificador de +1 a todas las Tiradas de Impacto IMPACT.'],
+            ['Devastating Charge', 'Passive', 'Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (2) 5+.']
+          ]],
+          ['Cualquier fase', [
+            ['Squadron', 'Passive', 'La Coherencia Horizontal de esta unidad es de 4".'],
+            ['Raptor Strain', 'Passive', 'Esta unidad puede atravesar TERRENO INFRANQUEABLE de Tamaño 4 o menor y cambiar de elevación sin usar PUNTOS DE ACCESO.']
+          ]]
+        ],
+        upgrades: [
+          { name: 'Adrenal Glands', cost: '+20 min.', phase: 'Combate', open: true, checked: false,
+            text: 'Las armas Claws y Shredding Claws de esta unidad ganan PRECISION (2).', meta: 'Adrenal Glands · Combate · PASSIVE' },
+          { name: 'Burrow Ambush', cost: '+20 min.', phase: 'Movimiento', open: false, checked: false },
+          { name: 'Shredding Claws', cost: '+10 min.', phase: 'Combate', open: false, checked: false, note: 'sustituye Claws' }
+        ] },
+      { name: 'Swarmling (Zergling)', slotId: 'unit-swarmling', printSlotId: 'print-swarmling',
+        stats: ['1','1','5+','6+','4/8'],
+        comp: [['18 modelos · 260', true], ['1× Core', false]],
+        weapons: [{ name: 'Claws', range: 'E', target: 'Ground', rda: '2', imp: '5+', surge: 'Light D3', dmg: '1', keywords: '—' }],
+        groups: [
+          ['Movimiento', [
+            ['Zergling Reconstitution', 'Active 1 BM', 'Resuelve el efecto RESPAWN (2), o RESPAWN (3) si esta unidad está SOBRE CREEP.']
+          ]],
+          ['Asalto', [
+            ['Metabolic Boost', 'Active 1 BM', 'Al determinar la Distancia de Carga de esta unidad, tira 2D6 en lugar de D6 y usa el resultado más alto para sumarlo a su característica de Velocidad.'],
+            ['Devastating Charge', 'Passive', 'Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (1) 5+.']
+          ]],
+          ['Cualquier fase', [
+            ['Squadron', 'Passive', 'La Coherencia Horizontal de esta unidad es de 4".']
+          ]]
+        ],
+        upgrades: [
+          { name: 'Adrenal Glands', cost: '+20 min.', phase: 'Combate', open: false, checked: false },
+          { name: 'Metabolic Boost', cost: '+15 min.', phase: 'Movimiento', open: false, checked: false }
+        ] }
+    ];
+
+    const army = armySrc.map(u => ({
+      name: u.name,
+      slotId: u.slotId,
+      printSlotId: u.printSlotId,
+      stats: stats(u.stats),
+      comp: u.comp.map(([label, on]) => ({ label, style: compChip(on) })),
+      weapons: u.weapons,
+      groups: u.groups.map(([p, abs]) => ({
+        phase: p,
+        phaseStyle: 'align-self:flex-start;' + phase(p),
+        printPhaseStyle: printPhase(p),
+        abilities: abs.map(([name, kind, text]) => ({
+          name, text,
+          kind: kind.toUpperCase(),
+          kindStyle: chip(kind.indexOf('Active') === 0 ? 'Active' : kind)
+        }))
+      })),
+      upgrades: u.upgrades.map(up => ({
+        name: up.name, cost: up.cost, phase: up.phase, phaseStyle: phase(up.phase),
+        open: up.open, checked: up.checked,
+        hasNote: !!up.note, note: up.note || '',
+        text: up.text || '', meta: up.meta || '',
+        toggleIcon: up.open ? '−' : '+',
+        toggleStyle: 'flex:none;width:30px;height:30px;margin-top:2px;cursor:pointer;border-radius:7px;font-size:16px;line-height:1;' +
+          (up.open ? 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 16%, transparent);color:var(--pink-200)'
+                   : 'border:1px solid var(--app-line);background:rgba(18,21,33,0.7);color:var(--app-text)')
+      }))
+    }));
+
+    const scaleChip = (mismatch) => 'padding:3px 9px;border-radius:5px;font-size:11.5px;font-weight:600;white-space:nowrap;' +
+      (mismatch ? 'background:rgba(232,160,74,0.16);border:1px solid rgba(232,160,74,0.5);color:#f6cea0'
+                : 'background:rgba(236,234,241,0.08);border:1px solid rgba(236,234,241,0.24);color:var(--app-text)');
+    const pickCard = (mismatch) => 'display:flex;flex-direction:column;gap:8px;padding:14px;cursor:pointer;text-align:left;border-radius:10px;color:var(--app-text);' +
+      (mismatch ? 'border:1px solid rgba(232,160,74,0.32);background:rgba(232,160,74,0.05)'
+                : 'border:1px solid var(--app-line);background:var(--app-surface-2)');
+
+    const holdText = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.';
+    const frontText = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.';
+    const gatherText = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.';
+    const divideText = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.';
+    const supplyText1 = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retiralo.';
+    const supplyText2 = 'Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retiralo.';
+
+    const missions = [
+      ['Hold Position', 'Estándar', '6 (+2/ronda)', '5 rondas', 'Victoria a +10 PV', holdText, false],
+      ['Hold Position', 'Escaramuza', '3 (+1/ronda)', '5 rondas', 'Victoria a +8 PV', holdText, true],
+      ['Frontlines', 'Estándar', '6 (+2/ronda)', '5 rondas', 'Victoria a +10 PV', frontText, false],
+      ['Frontlines', 'Escaramuza', '3 (+1/ronda)', '5 rondas', 'Victoria a +8 PV', frontText, true],
+      ['Gather the Resources', 'Estándar', '6 (+2/ronda)', '5 rondas', 'Victoria a +10 PV', gatherText, false],
+      ['Gather the Resources', 'Escaramuza', '3 (+1/ronda)', '5 rondas', 'Victoria a +8 PV', gatherText, true],
+      ['Divide and Conquer', 'Estándar', '8 (+2/ronda)', '4 rondas', 'Victoria a +10 PV', divideText, false],
+      ['Divide and Conquer', 'Escaramuza', '4 (+1/ronda)', '4 rondas', 'Victoria a +8 PV', divideText, true],
+      ['Supply Drop', 'Estándar', '6 (+2/ronda)', '5 rondas', 'Victoria a +12 PV', supplyText1, false],
+      ['Supply Drop', 'Escaramuza', '3 (+1/ronda)', '5 rondas', 'Victoria a +8 PV', supplyText2, true]
+    ].map(([name, scale, supply, rounds, victory, text, mismatch]) => ({
+      name, scale, supply, rounds, victory, text, mismatch,
+      scaleStyle: scaleChip(mismatch), cardStyle: pickCard(mismatch)
+    }));
+
+    const deployments = [
+      ['Abandoned Camp', '36×36"', 'Escaramuza', true],
+      ['Agria Valley', '36×36"', 'Escaramuza', true],
+      ['Dirt Side', '36×36"', 'Escaramuza', true],
+      ['Frontier', '36×36"', 'Escaramuza', true],
+      ['Char Plains', '36×36"', 'Escaramuza', true],
+      ['Gauntlet', '54×36"', 'Estándar', false],
+      ['Typhoon', '54×36"', 'Estándar', false],
+      ['Acropolis', '54×36"', 'Estándar', false],
+      ['Proving Grounds', '54×36"', 'Estándar', false],
+      ['Breach', '54×36"', 'Estándar', false]
+    ].map(([name, size, scale, mismatch]) => ({
+      name, size, scale, mismatch,
+      slotId: 'map-' + name.toLowerCase().replace(/[^a-z]+/g, '-'),
+      sizeStyle: scaleChip(mismatch), cardStyle: pickCard(mismatch)
+    }));
+
+    const ledgerLine = (label, value) => {
+      const spent = String(value).indexOf('−') === 0;
+      const free = label === 'Libres';
+      return {
+        label, value,
+        labelStyle: 'flex:1;' + (spent ? 'color:var(--app-faint)' : free ? 'font-weight:600;color:var(--app-text)' : 'color:var(--app-text)'),
+        valueStyle: 'font-variant-numeric:tabular-nums;font-weight:600;color:' + (spent ? 'var(--app-faint)' : free ? 'var(--pink-300)' : 'var(--teal)')
+      };
+    };
+
+    const ledger = [
+      { name: 'Core', count: '1/6', lines: [["Kerrigan's Swarm", '+3'], ['Spawning Pool', '+1'], ['Spawning Pool (Six Pool)', '+2'], ['Swarmling (Zergling)', '−1'], ['Libres', '5']] },
+      { name: 'Élite', count: '1/2', lines: [["Kerrigan's Swarm", '+2'], ['Raptor (Zergling)', '−1'], ['Libres', '1']] },
+      { name: 'Héroe', count: '0/1', lines: [["Kerrigan's Swarm", '+1'], ['Libres', '1']] }
+    ].map(c => ({ name: c.name, count: c.count, lines: c.lines.map(([l, v]) => ledgerLine(l, v)) }));
+
+    const issueCard = (blocking) => 'display:flex;flex-direction:column;gap:4px;padding:11px 13px;border-radius:9px;border-left:3px solid ' +
+      (blocking ? 'oklch(0.6 0.15 22)' : 'rgba(236,234,241,0.2)') + ';background:rgba(18,21,33,0.6)';
+
+    const issues = [
+      ['R12 · §9.2', 'Debes llevar exactamente 2 cartas de misión al draft, y llevas 0.', 'Selecciona 2 carta(s) más de misión.', true],
+      ['R12 · §9.2', 'Debes llevar exactamente 2 cartas de despliegue al draft, y llevas 0.', 'Selecciona 2 carta(s) más de despliegue.', true],
+      ['A1 · §9.1.3', 'Te sobran 1500 minerales. Los minerales no gastados se pierden.', '', false],
+      ['A2 · §9.1.4', 'Te sobran 135 de Gas Vespeno. El gas no gastado se pierde y no se convierte en minerales.', '', false],
+      ['A3 · §9.1.5', 'Te sobran 5 espacios de Core. Los espacios no usados se pierden.', '', false],
+      ['A3 · §9.1.5', 'Te sobra 1 espacio de Élite. Los espacios no usados se pierden.', '', false],
+      ['A3 · §9.1.5', 'Te sobra 1 espacio de Héroe. Los espacios no usados se pierden.', '', false]
+    ].map(([rule, text, fix, blocking]) => ({ rule, text, fix, hasFix: !!fix, cardStyle: issueCard(blocking) }));
+
+    const sheetUnits = [
+      { name: 'Raptor (Zergling)', models: '12', supply: '1', slot: 'Élite', upgrades: '—', min: '240' },
+      { name: 'Swarmling (Zergling)', models: '18', supply: '1', slot: 'Core', upgrades: '—', min: '260' }
+    ];
+
+    return {
+      themeStyle, race, bmLabel: rr.bm,
+      setRace: (e) => this.setState({ race: e.target.value }),
+      isTab1: tab === 1, isTab2: tab === 2, isTab3: tab === 3, isTab4: tab === 4,
+      tabs, catalog, army, missions, deployments, ledger, issues, sheetUnits,
+      tactical: tacticalSrc.map(c => ({
+        name: c.name,
+        gas: c.gas,
+        tags: c.tags.map(([label, kind]) => ({ label, style: tagStyle(kind) })),
+        viewStyle: btnStyle('view', false),
+        addStyle: btnStyle('add', !c.canAdd),
+        addDisabled: !c.canAdd,
+        removeStyle: btnStyle('remove', false),
+        showRemove: c.added
+      })),
+      activeCards: activeSrc.map(c => ({
+        name: c.name,
+        type: c.type,
+        tags: c.tags.map(([label, kind]) => ({ label, style: tagStyle(kind) })),
+        abilities: c.abilities.map(ability)
+      })),
+      abilities: [
+        { name: 'Wild Mutation', phase: 'Cualquier fase', phaseStyle: phase('Cualquier fase'), kind: 'Active', kindStyle: chip('Active'),
+          text: 'Si la unidad activa está SOBRE CREEP, gana BUFF Velocidad (1) y su primera arma usada gana PRECISION (1).' },
+        { name: 'Zerg Creep', phase: 'Cualquier fase', phaseStyle: phase('Cualquier fase'), kind: 'Passive', kindStyle: chip('Passive'),
+          text: 'Durante la Construcción del Ejército debes seleccionar exactamente una Creep Card y añadirla a tu Lista de Ejército, pagando su coste indicado (si lo tiene).' },
+        { name: 'Omega Network', phase: 'Movimiento', phaseStyle: phase('Movimiento'), kind: 'Active', kindStyle: chip('Active'),
+          text: 'Si no hay ningún Omega Worm amigo en el campo de batalla, coloca una unidad Omega Worm amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10" de cualquier modelo enemigo. Esta ronda, el Omega Worm no puede usar sus Habilidades Especiales (excepto Structure).' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -14,8 +14,8 @@ export default defineConfig({
         short_name: 'SC:TMG Listas',
         description:
           'Constructor de listas de ejército para StarCraft: The Miniatures Game',
-        theme_color: '#0b1220',
-        background_color: '#0b1220',
+        theme_color: '#11131f',
+        background_color: '#11131f',
         display: 'standalone',
         orientation: 'any',
         start_url: '/',

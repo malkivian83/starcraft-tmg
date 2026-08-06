@@ -277,12 +277,11 @@ a {
 }
 
 .primary-nav__buttons .primary-nav__item:nth-child(3) {
-  font-size: 0;
+  font-size: inherit;
 }
 
 .primary-nav__buttons .primary-nav__item:nth-child(3)::after {
-  content: 'LISTAS P\00DA BLICAS';
-  font-size: 13px;
+  content: none;
 }
 
 /* Soporte es una entrada secundaria: queda fuera del grupo principal del menú. */
