@@ -5,6 +5,7 @@ import type { ServerEnvironment } from './config/env.js';
 import { errorHandler } from './lib/errors.js';
 import { requireUser } from './middleware/require-user.js';
 import { AuthRepository } from './modules/auth/auth.repository.js';
+import { AvatarStorage } from './modules/auth/avatar-storage.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
 import { createAdminRouter } from './modules/admin/admin.routes.js';
 import { SmtpSettingsRepository } from './modules/email/smtp-settings.repository.js';
@@ -18,6 +19,7 @@ import { createSupportRouter } from './modules/support/support.routes.js';
 export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverride?: EmailGateway) {
   const app = express();
   const authRepository = new AuthRepository(pool);
+  const avatarStorage = new AvatarStorage();
   const listRepository = new ListRepository(pool);
   const supportRepository = new SupportRepository(pool);
   const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
@@ -74,7 +76,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
     await pool.query('SELECT 1');
     response.json({ status: 'ok' });
   });
-  app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email }));
+  app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email, avatarStorage }));
   app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, env));
   app.use('/api/support', createSupportRouter(supportRepository, authRepository, email, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));

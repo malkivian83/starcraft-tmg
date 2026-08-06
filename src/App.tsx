@@ -74,6 +74,30 @@ const publicListPath = () => {
   return match?.[1] ? decodeURIComponent(match[1]) : null;
 };
 
+const PAGE_PATHS: Record<Exclude<PageId, 'public-list'>, string> = {
+  home: '/',
+  builder: '/nueva-lista',
+  lists: '/mis-listas',
+  'public-lists': '/listas-publicas',
+  profile: '/perfil',
+  support: '/soporte',
+};
+
+function pathForPage(page: PageId, publicListId?: string | null): string {
+  if (page === 'public-list' && publicListId) return `/public-lists/${encodeURIComponent(publicListId)}`;
+  return PAGE_PATHS[page === 'public-list' ? 'home' : page];
+}
+
+export function pageForPathname(pathname: string, publicListId: string | null = null): PageId {
+  if (publicListId) return 'public-list';
+  if (pathname === PAGE_PATHS.builder) return 'builder';
+  if (pathname === PAGE_PATHS.lists) return 'lists';
+  if (pathname === PAGE_PATHS['public-lists']) return 'public-lists';
+  if (pathname === PAGE_PATHS.profile) return 'profile';
+  if (pathname === PAGE_PATHS.support) return 'support';
+  return 'home';
+}
+
 interface DraftNavigationState {
   preserveGuestDraft?: boolean;
 }
@@ -93,15 +117,15 @@ export function App() {
 
 function SupportRoute() {
   const status = useAuthStore((state) => state.status);
-  const user = useAuthStore((state) => state.user);
   const restore = useAuthStore((state) => state.restore);
   useEffect(() => {
     if (status === 'checking') void restore();
   }, [restore, status]);
+  if (status === 'authenticated') return <AccountRoute />;
   if (status === 'checking') return <div className="support-standalone support-standalone--loading"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></div>;
   return <div className="support-standalone">
     <header className="support-standalone__header"><a href="/" aria-label="Volver a StarCraft TMG"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><a className="support-standalone__back" href="/">Volver a la aplicación</a></header>
-    <SupportPage user={status === 'authenticated' ? user : null} />
+    <SupportPage user={null} />
     <footer className="auth-page__footer">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
   </div>;
 }
@@ -155,7 +179,10 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
 }) {
   const [step, setStep] = useState<StepId>('cards');
   const initialPublicListId = mode === 'account' ? publicListPath() : null;
-  const [page, setPage] = useState<PageId>(initialPageFor(mode, preserveDraftOnMount, initialPublicListId));
+  const initialPage = mode === 'account' && !preserveDraftOnMount
+    ? pageForPathname(window.location.pathname, initialPublicListId)
+    : initialPageFor(mode, preserveDraftOnMount, initialPublicListId);
+  const [page, setPage] = useState<PageId>(initialPage);
   const [publicList, setPublicList] = useState<RemoteList | null>(null);
   const [publicListId, setPublicListId] = useState<string | null>(initialPublicListId);
   const [listIsPublic, setListIsPublic] = useState(false);
@@ -191,7 +218,10 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     const draft = loadDraft(draftScope);
     if (draft) {
       setList(draft.list);
-      setPage('builder');
+      if (window.location.pathname === PAGE_PATHS.home) {
+        window.history.replaceState({}, '', PAGE_PATHS.builder);
+        setPage('builder');
+      }
       setListIsPublic(draft.isPublic);
       setListVisibilityDirty(false);
       setRemoteRevision(draft.remoteRevision);
@@ -238,7 +268,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     const onPopState = () => {
       const id = publicListPath();
       setPublicListId(id);
-      setPage(id ? 'public-list' : 'home');
+      setPage(pageForPathname(window.location.pathname, id));
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -253,7 +283,8 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const navigateToPage = (nextPage: PageId, destination: string) => {
     if (page === nextPage) return;
     if (page === 'builder' && !confirmDiscard(`Ir a la sección «${destination}»`)) return;
-    if (publicListId) window.history.pushState({}, '', '/');
+    const nextPath = pathForPage(nextPage);
+    if (window.location.pathname !== nextPath) window.history.pushState({}, '', nextPath);
     setPublicListId(null);
     setPublicList(null);
     setPage(nextPage);
@@ -270,7 +301,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     setSeedVisible(false);
     setPage('builder');
   };
-  const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard('Crear una lista nueva')) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== '/') window.history.pushState({}, '', '/'); setPage('builder'); };
+  const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard('Crear una lista nueva')) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== PAGE_PATHS.builder) window.history.pushState({}, '', PAGE_PATHS.builder); setPage('builder'); };
   const onImportFile = async (file: File) => {
     if (!confirmDiscard('Importar una lista')) return;
     const result = importListFromJson(await file.text());
@@ -281,7 +312,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setSeedVisible(false);
       setPublicListId(null);
       setPublicList(null);
-      if (mode === 'account' && window.location.pathname !== '/') window.history.pushState({}, '', '/');
+      if (mode === 'account' && window.location.pathname !== PAGE_PATHS.builder) window.history.pushState({}, '', PAGE_PATHS.builder);
       setPage('builder');
       setToast('Lista importada.');
     } else setToast(result.error ?? 'No se pudo importar el fichero.');
@@ -301,7 +332,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setToast('Lista guardada en tu cuenta.');
     } catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); }
   };
-  const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard('Cargar otra lista')) return; setList(loaded); setListIsPublic(Boolean((loaded as Partial<RemoteList>).isPublic)); setListVisibilityDirty(false); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== '/') window.history.pushState({}, '', '/'); setPage('builder'); setToast('Lista cargada.'); };
+  const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard('Cargar otra lista')) return; setList(loaded); setListIsPublic(Boolean((loaded as Partial<RemoteList>).isPublic)); setListVisibilityDirty(false); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== PAGE_PATHS.builder) window.history.pushState({}, '', PAGE_PATHS.builder); setPage('builder'); setToast('Lista cargada.'); };
   const openPublicList = async (id: string) => {
     if (!confirmDiscard('Abrir una lista pública')) return;
     try {
@@ -325,7 +356,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       markSaved();
       setPublicListId(null);
       setPublicList(null);
-      if (window.location.pathname !== '/') window.history.pushState({}, '', '/');
+      if (window.location.pathname !== PAGE_PATHS.builder) window.history.pushState({}, '', PAGE_PATHS.builder);
       setPage('builder');
       setToast('Lista clonada. Ya puedes editarla.');
     } catch (error) {
@@ -333,7 +364,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     }
   };
   const closePublicList = () => {
-    window.history.pushState({}, '', '/');
+    window.history.pushState({}, '', PAGE_PATHS.home);
     setPublicListId(null);
     setPublicList(null);
     setPage('home');

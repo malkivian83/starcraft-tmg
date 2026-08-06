@@ -68,6 +68,16 @@ export interface RegistrationResult {
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
 
+const avatarDataUrlPattern = /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
+const avatarPathPattern = /^\/auth\/avatars\/[0-9a-f-]{36}\.(?:png|jpe?g|webp)$/i;
+
+export function avatarUrl(value: string | null): string | null {
+  if (!value) return null;
+  if (avatarDataUrlPattern.test(value)) return value;
+  if (avatarPathPattern.test(value)) return `${apiBaseUrl.replace(/\/$/, '')}${value}`;
+  return null;
+}
+
 export class ApiError extends Error {
   constructor(public readonly status: number, message: string) {
     super(message);

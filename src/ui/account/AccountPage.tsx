@@ -1,10 +1,59 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import * as auth from '@/auth/authService';
 import { availableRaces } from '@/catalog/loader';
 import { useAuthStore } from '@/store/authStore';
 import { GoogleSignInButton } from '../auth/GoogleSignInButton';
-import { AVATAR_OPTIONS, ProfileAvatar, profileName } from './ProfileAvatar';
+import { AVATAR_OPTIONS, isEmojiAvatar, isUploadedAvatar, ProfileAvatar, profileName } from './ProfileAvatar';
 import { AUTH_PROVIDER_LABEL, SuperAdminPanel } from './SuperAdminPanel';
+
+const AVATAR_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
+const AVATAR_MAX_FILE_BYTES = 8 * 1024 * 1024;
+const AVATAR_MAX_DATA_URL_LENGTH = 220_000;
+type ProfileFeedback = { kind: 'success' | 'error'; text: string };
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => typeof reader.result === 'string'
+      ? resolve(reader.result)
+      : reject(new Error('No se pudo leer la imagen.'));
+    reader.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function prepareUploadedAvatar(file: File): Promise<string> {
+  if (!AVATAR_IMAGE_TYPES.has(file.type)) throw new Error('Elige una imagen PNG, JPG o WebP.');
+  if (file.size > AVATAR_MAX_FILE_BYTES) throw new Error('La imagen original no puede superar 8 MB.');
+
+  const source = await readFileAsDataUrl(file);
+  const image = new Image();
+  const dimensions = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+    image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = () => reject(new Error('La imagen no se puede procesar.'));
+    image.src = source;
+  });
+  if (!dimensions.width || !dimensions.height) throw new Error('La imagen no tiene unas dimensiones válidas.');
+
+  const maxDimension = 256;
+  const scale = Math.min(1, maxDimension / Math.max(dimensions.width, dimensions.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(dimensions.width * scale));
+  canvas.height = Math.max(1, Math.round(dimensions.height * scale));
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('El navegador no permite preparar la imagen.');
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  for (const quality of [0.84, 0.72, 0.6, 0.5]) {
+    for (const type of ['image/webp', 'image/jpeg'] as const) {
+      const candidate = canvas.toDataURL(type, quality);
+      if (candidate.startsWith(`data:${type};`) && candidate.length <= AVATAR_MAX_DATA_URL_LENGTH) return candidate;
+    }
+  }
+  const png = canvas.toDataURL('image/png');
+  if (png.length <= AVATAR_MAX_DATA_URL_LENGTH) return png;
+  throw new Error('No se ha podido comprimir la imagen por debajo de 150 KB.');
+}
 
 export function AccountPage() {
   const user = useAuthStore((state) => state.user)!;
@@ -12,20 +61,43 @@ export function AccountPage() {
   const logout = useAuthStore((state) => state.logout);
   const [message, setMessage] = useState<string | null>(null);
   const [nickname, setNickname] = useState(user.nickname ?? '');
-  const [avatar, setAvatar] = useState(user.avatar);
+  const [avatar, setAvatar] = useState(() => user.avatar && (isUploadedAvatar(user.avatar) || isEmojiAvatar(user.avatar)) ? user.avatar : null);
   const [defaultRace, setDefaultRace] = useState(user.defaultRace);
+  const [profilePending, setProfilePending] = useState(false);
+  const [profileFeedback, setProfileFeedback] = useState<ProfileFeedback | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [googleAction, setGoogleAction] = useState<'set-password' | 'delete' | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
   const hasPassword = user.authProvider !== 'GOOGLE';
   const hasGoogle = user.authProvider !== 'PASSWORD';
 
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
+    setProfilePending(true);
+    setProfileFeedback(null);
+    setMessage(null);
     try {
       setUser(await auth.updateProfile({ defaultRace, nickname: nickname.trim() || null, avatar }));
-      setMessage('Perfil actualizado.');
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo actualizar el perfil.'); }
+      setProfileFeedback({ kind: 'success', text: 'Perfil guardado correctamente.' });
+    } catch (error) {
+      setProfileFeedback({ kind: 'error', text: error instanceof Error ? error.message : 'No se pudo guardar el perfil.' });
+    } finally {
+      setProfilePending(false);
+    }
+  };
+  const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = '';
+    if (!file) return;
+    setAvatarError(null);
+    setProfileFeedback(null);
+    try {
+      setAvatar(await prepareUploadedAvatar(file));
+      setMessage('Avatar preparado. Guarda el perfil para aplicarlo.');
+    } catch (error) {
+      setAvatarError(error instanceof Error ? error.message : 'No se pudo preparar el avatar.');
+    }
   };
   const changePassword = async (event: FormEvent) => {
     event.preventDefault();
@@ -62,15 +134,16 @@ export function AccountPage() {
     } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo confirmar con Google.'); }
   };
 
-  return <main className="content page-content no-print">
+  return <main className="content page-content profile-page no-print">
     <section className="page-heading"><div><p className="eyebrow">Cuenta</p><h1>Perfil</h1><p className="muted">Personaliza cómo apareces en la aplicación y ajusta tus preferencias.</p></div><div className="profile-preview"><ProfileAvatar user={{ ...user, nickname, avatar }} /><div><strong>{nickname.trim() || profileName(user)}</strong><span>{user.email}</span></div></div></section>
     <div className="settings-grid">
       <form className="panel stack" onSubmit={saveProfile}>
         <h2>Identidad y preferencias</h2>
         <label className="field">Apodo<input value={nickname} onChange={(event) => setNickname(event.target.value)} placeholder="Tu apodo" maxLength={32} /></label>
-        <fieldset className="avatar-picker"><legend>Avatar</legend><div>{AVATAR_OPTIONS.map((option) => <button className={`avatar-choice${avatar === option ? ' avatar-choice--selected' : ''}`} type="button" key={option} onClick={() => setAvatar(option)} aria-label={`Elegir avatar ${option}`}>{option}</button>)}</div></fieldset>
+        <fieldset className="avatar-picker"><legend>Avatar</legend><div>{AVATAR_OPTIONS.map((option) => <button className={`avatar-choice${avatar === option ? ' avatar-choice--selected' : ''}`} type="button" key={option} onClick={() => { setAvatar(option); setAvatarError(null); setProfileFeedback(null); }} aria-label={`Elegir avatar ${option}`}>{option}</button>)}</div><label className="avatar-picker__upload">Subir imagen<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { void handleAvatarUpload(event); }} /></label><div className="avatar-picker__actions">{isUploadedAvatar(avatar) && <button type="button" className="button-link button-link--compact" onClick={() => { setAvatar(null); setProfileFeedback(null); }}>Quitar imagen</button>}<span className="muted small">PNG, JPG o WebP · se optimiza a 256 px</span></div>{avatarError && <p className="issue issue--error">{avatarError}</p>}</fieldset>
         <label className="field">Facción predeterminada<select value={defaultRace} onChange={(event) => setDefaultRace(event.target.value as auth.Race)}>{availableRaces().map((race) => <option key={race} value={race}>{race === 'ZERG' ? 'Zerg' : race === 'TERRAN' ? 'Terran' : 'Protoss'}</option>)}</select></label>
-        <button type="submit">Guardar perfil</button>
+        {profileFeedback && <p className={`page-message page-message--${profileFeedback.kind}`} role={profileFeedback.kind === 'error' ? 'alert' : 'status'} aria-live="polite">{profileFeedback.text}</p>}
+        <button type="submit" disabled={profilePending}>{profilePending ? 'Guardando…' : 'Guardar perfil'}</button>
       </form>
       <div className="stack">
         <form className="panel stack" onSubmit={hasPassword ? changePassword : startSetPassword}>

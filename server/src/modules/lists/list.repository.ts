@@ -5,6 +5,7 @@ export interface SavedListRecord {
   id: string;
   ownerId: string;
   ownerNickname: string | null;
+  ownerAvatar: string | null;
   isPublic: boolean;
   publishedAt: string | null;
   revision: number;
@@ -19,6 +20,7 @@ interface SavedListRow extends RowDataPacket {
   id: string;
   owner_id: string;
   owner_nickname: string | null;
+  owner_avatar: string | null;
   is_public: number | boolean;
   published_at: string | null;
   revision: number;
@@ -34,7 +36,7 @@ interface LikeSummaryRow extends RowDataPacket {
 }
 
 const recordColumns = `
-  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, l.is_public, l.published_at,
+  SELECT l.id, l.owner_id, p.nickname AS owner_nickname, p.avatar AS owner_avatar, l.is_public, l.published_at,
          l.revision, l.created_at, l.updated_at, l.payload
     FROM saved_lists l
     JOIN profiles p ON p.user_id = l.owner_id
@@ -45,6 +47,7 @@ function map(row: SavedListRow): SavedListRecord {
     id: row.id,
     ownerId: row.owner_id,
     ownerNickname: row.owner_nickname,
+    ownerAvatar: row.owner_avatar,
     isPublic: Boolean(row.is_public),
     publishedAt: row.published_at,
     revision: row.revision,

@@ -111,7 +111,7 @@ export function SavedListsPage({
   };
 
   return (
-    <main className="content page-content no-print">
+    <main className="content page-content lists-page no-print">
       <section className="page-heading">
         <div>
           <p className="eyebrow">Biblioteca</p>

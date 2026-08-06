@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import argon2 from 'argon2';
 import { Router } from 'express';
 import { z } from 'zod';
@@ -8,6 +9,7 @@ import { rateLimit } from '../../middleware/rate-limit.js';
 import { requireUser } from '../../middleware/require-user.js';
 import { type EmailGateway } from '../email/email.gateway.js';
 import { AuthRepository, authProviderOf, type UserRecord } from './auth.repository.js';
+import { AVATAR_DATA_URL_PATTERN, AVATAR_STORED_PATH_PATTERN, AvatarStorage, decodeAvatarDataUrl } from './avatar-storage.js';
 import { createGoogleVerifier, type GoogleIdentity } from './google.js';
 import { clearSession, issueSession } from './session.js';
 
@@ -18,6 +20,32 @@ const credentialsSchema = z.object({
 });
 const tokenSchema = z.object({ token: z.string().min(32).max(512) });
 const googleCredentialSchema = z.object({ credential: z.string().min(64).max(4096) });
+const avatarSchema = z.string().trim().nullable().superRefine((value, context) => {
+  if (value === null) return;
+  if (value.length === 0) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'El avatar no puede estar vacío.' });
+    return;
+  }
+
+  // Se mantienen los avatares de emoji existentes. Las imágenes se aceptan
+  // únicamente como data URL rasterizada para no permitir SVG ni HTML.
+  if (AVATAR_STORED_PATH_PATTERN.test(value)) return;
+  if (!value.startsWith('data:')) {
+    if ([...value].length > 16) context.addIssue({ code: z.ZodIssueCode.custom, message: 'El avatar no es válido.' });
+    return;
+  }
+
+  if (value.length > 220_000 || !AVATAR_DATA_URL_PATTERN.test(value) || !decodeAvatarDataUrl(value)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'La imagen del avatar no es válida.' });
+    return;
+  }
+
+  const encoded = value.slice(value.indexOf(',') + 1);
+  const bytes = Buffer.from(encoded, 'base64');
+  if (bytes.length > 150 * 1024) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'La imagen del avatar no puede superar 150 KB.' });
+  }
+});
 
 function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase('en-US');
@@ -62,9 +90,10 @@ export interface AuthRouteDependencies {
   repository: AuthRepository;
   env: ServerEnvironment;
   email: EmailGateway;
+  avatarStorage: AvatarStorage;
 }
 
-export function createAuthRouter({ repository, env, email }: AuthRouteDependencies): Router {
+export function createAuthRouter({ repository, env, email, avatarStorage }: AuthRouteDependencies): Router {
   const router = Router();
   const authenticated = requireUser(repository, env);
   const googleVerifier = createGoogleVerifier(env);
@@ -99,6 +128,22 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
   const loginByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 12, key: credentialRateKey });
   const emailByIp = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
   const emailByIdentity = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, key: credentialRateKey });
+
+  router.get('/avatars/:filename', async (request, response) => {
+    const file = avatarStorage.resolvePublicFile(request.params.filename);
+    if (!file) {
+      response.sendStatus(404);
+      return;
+    }
+    try {
+      const contents = await readFile(file.path);
+      response.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      response.type(file.mime).send(contents);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') response.sendStatus(404);
+      else throw error;
+    }
+  });
 
   router.post('/register', registrationByIp, registrationByIdentity, async (request, response) => {
     const { email: inputEmail, password } = body(credentialsSchema, request.body);
@@ -220,9 +265,33 @@ export function createAuthRouter({ repository, env, email }: AuthRouteDependenci
     const profile = body(z.object({
       defaultRace: z.enum(['ZERG', 'TERRAN', 'PROTOSS']),
       nickname: z.string().trim().min(2).max(32).nullable(),
-      avatar: z.string().trim().min(1).max(16).nullable(),
+      avatar: avatarSchema,
     }), request.body);
-    const updated = await repository.updateProfile(request.authenticatedUser!.id, profile);
+    const user = request.authenticatedUser!;
+    let avatar = profile.avatar;
+    if (avatar && AVATAR_DATA_URL_PATTERN.test(avatar)) {
+      const data = decodeAvatarDataUrl(avatar);
+      if (!data) throw new HttpError(400, 'INVALID_AVATAR', 'La imagen del avatar no es válida.');
+      avatar = await avatarStorage.save(user.id, data);
+    } else if (avatar === null || !AVATAR_STORED_PATH_PATTERN.test(avatar)) {
+      await avatarStorage.remove(user.id);
+    } else if (avatar !== user.avatar) {
+      throw new HttpError(400, 'INVALID_AVATAR', 'La ruta del avatar no es válida.');
+    }
+    let updated: UserRecord;
+    try {
+      updated = await repository.updateProfile(user.id, { ...profile, avatar });
+    } catch (error) {
+      if (avatar && AVATAR_STORED_PATH_PATTERN.test(avatar) && (error as { code?: string }).code === 'ER_DATA_TOO_LONG') {
+        await avatarStorage.remove(user.id);
+        throw new HttpError(500, 'AVATAR_MIGRATION_REQUIRED', 'La base de datos necesita la migración de avatares. Ejecuta «npm run db:migrate» y vuelve a intentarlo.');
+      }
+      throw error;
+    }
+    if (avatar && AVATAR_STORED_PATH_PATTERN.test(avatar) && updated.avatar !== avatar) {
+      await avatarStorage.remove(user.id);
+      throw new HttpError(500, 'AVATAR_MIGRATION_REQUIRED', 'La base de datos necesita la migración de avatares. Ejecuta «npm run db:migrate» y vuelve a intentarlo.');
+    }
     response.json({ user: publicUser(updated) });
   });
 

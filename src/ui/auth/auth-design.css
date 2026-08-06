@@ -19,7 +19,7 @@
   isolation: isolate;
   min-height: 100vh;
   min-height: 100svh;
-  overflow-x: hidden;
+  overflow: clip;
   background: var(--auth-bg);
   color: var(--auth-text);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;

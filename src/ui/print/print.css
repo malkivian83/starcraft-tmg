@@ -12,6 +12,20 @@
   line-height: 1.35;
 }
 
+/*
+ * Los estilos globales definen los encabezados con el color claro de la
+ * interfaz. La hoja se renderiza sobre papel blanco, así que sus títulos
+ * deben conservar un color de impresión opaco y oscuro.
+ */
+.sheet h1,
+.sheet h2,
+.sheet h3,
+.sheet h4,
+.sheet h5,
+.sheet h6 {
+  color: #111;
+}
+
 .print-sheet-host {
   display: none;
 }

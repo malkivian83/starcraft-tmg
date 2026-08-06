@@ -6,6 +6,7 @@ import type { RemoteList } from '@/auth/listService';
 import type { Race, ScaleId } from '@/engine/types';
 import { SLOT_TYPES } from '@/engine/types';
 import { validateList } from '@/engine/validate';
+import { ProfileAvatar } from '../account/ProfileAvatar';
 import { slotLabel } from '../common/Chips';
 
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
@@ -66,7 +67,7 @@ export function ListTable({
                   </div>
                 </div>
               </td>
-              {showCreator && <td>{row.list.ownerNickname ?? 'Usuario'}</td>}
+              {showCreator && <td><div className="saved-list-table__owner"><ProfileAvatar user={{ email: 'usuario@local', nickname: row.list.ownerNickname, avatar: row.list.ownerAvatar ?? null }} /><span>{row.list.ownerNickname ?? 'Usuario'}</span></div></td>}
               <td><span className="chip">{RACE_LABEL[row.list.race]}</span></td>
               <td>{row.scaleName}</td>
               <td className="saved-list-table__validity"><span className={`list-status ${row.legal ? 'list-status--valid' : 'list-status--invalid'}`} title={row.legal ? 'Lista válida' : `${row.errorCount} problemas por resolver`} aria-label={row.legal ? 'Lista válida' : `Lista no válida: ${row.errorCount} problemas`}>{row.legal ? '✓' : `× ${row.errorCount}`}</span></td>

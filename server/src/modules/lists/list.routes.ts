@@ -14,6 +14,7 @@ function payload(record: SavedListRecord) {
     isPublic: record.isPublic,
     publishedAt: record.publishedAt,
     ownerNickname: record.ownerNickname,
+    ownerAvatar: record.ownerAvatar,
     likeCount: record.likeCount,
     likedByCurrentUser: record.likedByCurrentUser,
   };

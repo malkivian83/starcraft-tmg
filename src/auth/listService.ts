@@ -9,6 +9,7 @@ export interface RemoteList extends ArmyList {
   isPublic: boolean;
   publishedAt: string | null;
   ownerNickname: string | null;
+  ownerAvatar: string | null;
   likeCount: number;
   likedByCurrentUser: boolean;
 }

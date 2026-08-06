@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { App, initialPageFor } from '@/App';
+import { App, initialPageFor, pageForPathname } from '@/App';
 import { useAuthStore } from '@/store/authStore';
 import { useListStore } from '@/store/listStore';
 
@@ -48,5 +48,15 @@ describe('ruta pública del constructor', () => {
     expect(initialPageFor('account', true, null)).toBe('builder');
     expect(initialPageFor('account', false, null)).toBe('home');
     expect(initialPageFor('account', false, 'public-list-id')).toBe('public-list');
+  });
+
+  it('restaura la sección según la ruta al recargar', () => {
+    expect(pageForPathname('/')).toBe('home');
+    expect(pageForPathname('/mis-listas')).toBe('lists');
+    expect(pageForPathname('/listas-publicas')).toBe('public-lists');
+    expect(pageForPathname('/nueva-lista')).toBe('builder');
+    expect(pageForPathname('/perfil')).toBe('profile');
+    expect(pageForPathname('/soporte')).toBe('support');
+    expect(pageForPathname('/public-lists/id', 'id')).toBe('public-list');
   });
 });

@@ -3,6 +3,7 @@ dist/
 dist-ssr/
 *.local
 .env
+/uploads/
 .DS_Store
 .vite/
 tsconfig.tsbuildinfo
