@@ -8,6 +8,7 @@ import { AuthRepository } from '../auth/auth.repository.js';
 import { EmailDeliveryLogRepository } from '../email/email-delivery-log.repository.js';
 import { describeSmtpError, type EmailGateway, SmtpEmailGateway } from '../email/email.gateway.js';
 import { SmtpSettingsRepository } from '../email/smtp-settings.repository.js';
+import { SupportRepository, type SupportStatus } from '../support/support.repository.js';
 
 const SUPER_ADMIN_EMAIL = 'malkivian@gmail.com';
 
@@ -25,6 +26,7 @@ export function createAdminRouter(
   emailLogs: EmailDeliveryLogRepository,
   smtpEmail: SmtpEmailGateway,
   email: EmailGateway,
+  support: SupportRepository,
   env: ServerEnvironment,
 ): Router {
   const router = Router();
@@ -75,6 +77,39 @@ export function createAdminRouter(
   router.get('/smtp/logs', async (request, response) => {
     const { limit } = z.object({ limit: z.coerce.number().int().min(1).max(250).default(100) }).parse(request.query);
     response.json({ logs: await emailLogs.list(limit) });
+  });
+  router.get('/support', async (request, response) => {
+    const value = z.object({ status: z.enum(['OPEN', 'ANSWERED', 'CLOSED']).optional() }).parse(request.query);
+    response.json({ tickets: await support.listTickets(value.status as SupportStatus | undefined), openCount: await support.countOpenTickets() });
+  });
+  router.get('/support/:id', async (request, response) => {
+    const ticket = await support.findTicket(request.params.id);
+    if (!ticket) throw new HttpError(404, 'NOT_FOUND', 'La solicitud de soporte no existe.');
+    response.json({ ticket });
+  });
+  router.post('/support/:id/replies', async (request, response) => {
+    const { body } = z.object({ body: z.string().trim().min(1).max(10000) }).parse(request.body);
+    const ticket = await support.findTicket(request.params.id);
+    if (!ticket) throw new HttpError(404, 'NOT_FOUND', 'La solicitud de soporte no existe.');
+    const message = await support.addAdminReply(ticket.id, request.authenticatedUser!.id, body);
+    if (!message) throw new HttpError(404, 'NOT_FOUND', 'La solicitud de soporte no existe.');
+
+    let emailDeliveryWarning: string | null = null;
+    try {
+      if (!email.sendSupportReplyEmail) throw new Error('El correo de soporte no está disponible en este entorno.');
+      await email.sendSupportReplyEmail({ ticketId: ticket.id, contactEmail: ticket.contactEmail, subject: ticket.subject, body });
+      await support.markMessageDelivery(message.id, 'SENT', null, null);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : 'error desconocido';
+      emailDeliveryWarning = `La respuesta se ha guardado, pero no se pudo enviar por correo: ${detail}`;
+      await support.markMessageDelivery(message.id, 'FAILED', null, detail);
+    }
+    response.status(201).json({ message: await support.findMessage(message.id), emailDeliveryWarning });
+  });
+  router.put('/support/:id/status', async (request, response) => {
+    const { status } = z.object({ status: z.enum(['OPEN', 'ANSWERED', 'CLOSED']) }).parse(request.body);
+    if (!await support.setStatus(request.params.id, status)) throw new HttpError(404, 'NOT_FOUND', 'La solicitud de soporte no existe.');
+    response.status(204).end();
   });
   return router;
 }

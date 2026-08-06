@@ -52,7 +52,7 @@ function AuthLoading() {
 }
 
 function AuthFooter() {
-  return <footer className="auth-page__footer">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>;
+  return <footer className="auth-page__footer">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/soporte">Soporte</a> · <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>;
 }
 
 function AuthForm() {
