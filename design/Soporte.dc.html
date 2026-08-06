@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="stylesheet" href="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/styles.css">
+<script src="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap">
+<style>
+:root {
+  --pink: oklch(0.700 0.170 340);
+  --pink-200: oklch(0.923 0.045 340);
+  --pink-300: oklch(0.861 0.080 340);
+  --pink-600: oklch(0.585 0.155 340);
+  --pink-700: oklch(0.470 0.130 340);
+  --app-bg: #11131f;
+  --app-surface: #191d2c;
+  --app-surface-2: #1f2434;
+  --app-line: rgba(233,233,237,0.13);
+  --app-text: #eceaf1;
+  --app-muted: rgba(236,234,241,0.62);
+  --app-faint: rgba(236,234,241,0.44);
+}
+body { margin: 0; background: var(--app-bg); }
+a { color: var(--pink-300); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--pink-200); }
+input, textarea, button { font-family: 'Inter', var(--font-body); }
+::placeholder { color: rgba(236,234,241,0.38); }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column; background: var(--app-bg); font-family: 'Inter', var(--font-body); color: var(--app-text); font-size: 15px; -webkit-font-smoothing: antialiased;">
+
+  <header style="display: flex; align-items: center; gap: 18px; padding: 11px 22px; background: linear-gradient(180deg, #1c2033, #171b29); border-bottom: 1px solid var(--app-line);">
+    <img src="assets/starcraft-logo.png" alt="StarCraft" style="height: 28px; width: auto; flex: none;">
+    <span style="width: 1px; height: 20px; background: var(--app-line);"></span>
+    <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Listas de ejército</span>
+
+    <nav style="display: flex; align-items: center; gap: 6px; margin-left: 6px;">
+      <a href="#" style="display: flex; align-items: center; min-height: 40px; padding: 0 15px; border-radius: 8px; border: 1px solid transparent; background: rgba(236,234,241,0.05); color: var(--app-muted); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;" style-hover="color: var(--app-text); background: rgba(236,234,241,0.1);">Inicio</a>
+      <a href="Biblioteca.dc.html" style="display: flex; align-items: center; min-height: 40px; padding: 0 15px; border-radius: 8px; border: 1px solid transparent; background: rgba(236,234,241,0.05); color: var(--app-muted); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;" style-hover="color: var(--app-text); background: rgba(236,234,241,0.1);">Mis listas</a>
+      <a href="Biblioteca.dc.html" style="display: flex; align-items: center; min-height: 40px; padding: 0 15px; border-radius: 8px; border: 1px solid transparent; background: rgba(236,234,241,0.05); color: var(--app-muted); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;" style-hover="color: var(--app-text); background: rgba(236,234,241,0.1);">Listas públicas</a>
+      <a href="Creador de listas.dc.html" style="display: flex; align-items: center; min-height: 40px; padding: 0 15px; border-radius: 8px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); color: var(--pink-200); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;" style-hover="background: color-mix(in srgb, var(--pink) 22%, transparent);">Nueva lista</a>
+      <span style="display: flex; align-items: center; min-height: 40px; padding: 0 15px; border-radius: 8px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 20%, transparent); color: var(--pink-200); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">Soporte</span>
+    </nav>
+
+    <span style="flex: 1;"></span>
+
+    <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 6px; border-radius: 999px; border: 1px solid var(--app-line); background: var(--app-surface-2);">
+      <span style="display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--pink) 26%, #202538); border: 1px solid var(--pink-700); font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 700; color: var(--pink-200);">M</span>
+      <span style="font-size: 14.5px; font-weight: 600;">malkivian</span>
+    </span>
+    <button type="button" style="min-height: 40px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 600;" style-hover="border-color: var(--pink-600); background: #262c3e;">Salir</button>
+  </header>
+
+  <main style="flex: 1; display: flex; justify-content: center; padding: 40px 22px 56px;">
+    <div style="width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 24px;">
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px 24px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 260px;">
+          <span style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pink-300);">Ayuda</span>
+          <h1 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 38px; font-weight: 600; line-height: 1.05;">Soporte</h1>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--app-muted); text-wrap: pretty;">Cuéntanos qué ha ocurrido y revisaremos tu solicitud lo antes posible.</p>
+        </div>
+        <span style="padding: 7px 13px; border-radius: 999px; border: 1px solid var(--app-line); background: var(--app-surface); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Respuesta por correo electrónico</span>
+      </div>
+
+      <form style="display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Asunto</span>
+            <input type="text" placeholder="Resumen en una línea" style="min-height: 44px; padding: 0 13px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 7px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Correo de contacto</span>
+            <input type="email" value="malkivian@gmail.com" style="min-height: 44px; padding: 0 13px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);">
+          </label>
+        </div>
+
+        <label style="display: flex; flex-direction: column; gap: 7px;">
+          <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Mensaje</span>
+            <span style="font-size: 12px; color: var(--app-faint);">{{ counter }}</span>
+          </span>
+          <textarea rows="9" onChange="{{ onMessage }}" placeholder="Describe tu consulta con el mayor detalle posible." style="padding: 13px; font-size: 15px; line-height: 1.6; resize: vertical; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"></textarea>
+        </label>
+
+        <label style="display: flex; align-items: flex-start; gap: 11px; cursor: pointer;">
+          <input type="checkbox" checked="{{ accepted }}" onChange="{{ onAccept }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: var(--pink); cursor: pointer;">
+          <span style="font-size: 14px; line-height: 1.55; color: rgba(236,234,241,0.86);">Acepto los <a href="#">términos y condiciones de uso</a>.</span>
+        </label>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; border-top: 1px solid var(--app-line);">
+          <span style="font-size: 13px; color: var(--app-faint);">{{ hint }}</span>
+          <button type="submit" style="{{ submitStyle }}">Enviar solicitud</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; padding: 20px 22px 26px; border-top: 1px solid var(--app-line); font-size: 12.5px; color: var(--app-faint); text-align: center;">
+    <span>Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</span>
+    <span style="display: flex; gap: 16px;">
+      <a href="Soporte.dc.html">Soporte</a>
+      <a href="#">Términos y condiciones</a>
+    </span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = { accepted: false, message: '' };
+
+  renderVals() {
+    const { accepted, message } = this.state;
+    const ready = accepted && message.trim().length > 0;
+    return {
+      accepted,
+      counter: message.length + ' / 2000',
+      hint: ready ? 'Te responderemos al correo indicado.' : 'Escribe tu mensaje y acepta los términos para enviar.',
+      submitStyle: 'min-height:46px;padding:0 22px;border-radius:9px;font-size:14.5px;font-weight:600;' +
+        (ready
+          ? 'cursor:pointer;border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 20%, transparent);color:var(--pink-200)'
+          : 'cursor:not-allowed;opacity:0.5;border:1px solid var(--app-line);background:var(--app-surface-2);color:var(--app-text)'),
+      onAccept: (e) => this.setState({ accepted: e.target.checked }),
+      onMessage: (e) => this.setState({ message: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>
