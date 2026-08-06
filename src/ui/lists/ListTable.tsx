@@ -46,7 +46,7 @@ export function ListTable({
             {showCreator && <th scope="col">Creada por</th>}
             <th scope="col">Raza</th>
             <th scope="col">Escala</th>
-            <th scope="col">Validez</th>
+            <th className="saved-list-table__validity" scope="col">Validez</th>
             {showVisibility && <th scope="col">Visibilidad</th>}
             <th scope="col">Coste</th>
             <th scope="col">Actualizada</th>
@@ -69,7 +69,7 @@ export function ListTable({
               {showCreator && <td>{row.list.ownerNickname ?? 'Usuario'}</td>}
               <td><span className="chip">{RACE_LABEL[row.list.race]}</span></td>
               <td>{row.scaleName}</td>
-              <td><span className={`list-status ${row.legal ? 'list-status--valid' : 'list-status--invalid'}`} title={row.legal ? 'Lista válida' : `${row.errorCount} problemas por resolver`} aria-label={row.legal ? 'Lista válida' : `Lista no válida: ${row.errorCount} problemas`}>{row.legal ? '✓' : `× ${row.errorCount}`}</span></td>
+              <td className="saved-list-table__validity"><span className={`list-status ${row.legal ? 'list-status--valid' : 'list-status--invalid'}`} title={row.legal ? 'Lista válida' : `${row.errorCount} problemas por resolver`} aria-label={row.legal ? 'Lista válida' : `Lista no válida: ${row.errorCount} problemas`}>{row.legal ? '✓' : `× ${row.errorCount}`}</span></td>
               {showVisibility && <td><span className={`list-visibility ${row.list.isPublic ? 'list-visibility--public' : ''}`}>{row.list.isPublic ? 'Pública' : 'Privada'}</span></td>}
               <td>
                 <span className="saved-list-table__cost">{row.summary.mineralsSpent}/{row.summary.mineralLimit} min.</span>

@@ -10,8 +10,8 @@
   /* Paleta de producto del prototipo "Creador de listas". */
   .app:has(> .builder-toolbar) {
     --bg: #11131f;
-    --bg-panel: #191d2c;
-    --bg-raised: #1f2434;
+    --bg-panel: rgb(25 29 44 / 90%);
+    --bg-raised: rgb(31 36 52 / 92%);
     --bg-hover: #242a3c;
     --line: rgb(233 233 237 / 13%);
     --line-strong: rgb(233 233 237 / 24%);
@@ -22,17 +22,41 @@
     --warn: #f6cea0;
     --error: oklch(0.7 0.15 22);
 
-    --builder-field: #121521;
-    --builder-bar: #141826;
+    --builder-field: rgb(18 21 33 / 94%);
+    --builder-bar: rgb(20 24 38 / 92%);
     --builder-table-head: #151928;
     --builder-accent-text: color-mix(in srgb, var(--accent) 48%, #fff);
     --builder-danger-bg: oklch(0.42 0.1 22 / 28%);
     --builder-danger-line: oklch(0.5 0.12 22 / 75%);
 
+    position: relative;
+    isolation: isolate;
     color: var(--text);
     background: var(--bg);
     font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
     font-size: 15px;
+  }
+
+  .app:has(> .builder-toolbar)::before,
+  .app:has(> .builder-toolbar)::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .app:has(> .builder-toolbar)::before {
+    z-index: -2;
+    background: url("/auth-space-bg.png") center 38% / cover no-repeat;
+    filter: saturate(62%) hue-rotate(-14deg) brightness(0.58);
+    transform: scale(1.035);
+  }
+
+  .app:has(> .builder-toolbar)::after {
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgb(17 19 31 / 58%), rgb(17 19 31 / 84%)),
+      radial-gradient(110% 82% at 50% 8%, rgb(42 78 132 / 22%), rgb(17 19 31 / 80%) 72%);
   }
 
   /* La rampa conserva los tokens que ya consume toda la aplicacion. */
@@ -586,6 +610,10 @@
     color: rgb(236 234 241 / 84%);
     font-size: 13.5px;
     line-height: 1.5;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-detail__ability > .chip + .chip {
+    margin-left: 6px;
   }
 
   /* Fases: semantica estable, independiente del color de raza. */

@@ -1,5 +1,24 @@
-import type { DeploymentCard, MissionCard } from '@/engine/types';
+import type {
+  Catalog,
+  DeploymentCard,
+  MissionCard,
+  ScaleId,
+} from '@/engine/types';
 import { useListStore } from '@/store/listStore';
+
+export function playableScenarioCards(
+  catalog: Pick<Catalog, 'missionCards' | 'deploymentCards'>,
+  scaleId: ScaleId,
+) {
+  return {
+    missions: catalog.missionCards.filter(
+      (mission) => mission.scale === scaleId,
+    ),
+    deployments: catalog.deploymentCards.filter(
+      (deployment) => deployment.scale === scaleId,
+    ),
+  };
+}
 
 /**
  * Paso 3 — Misión y despliegue.
@@ -13,8 +32,10 @@ export function StepScenario() {
   const toggleMission = useListStore((s) => s.toggleMission);
   const toggleDeployment = useListStore((s) => s.toggleDeployment);
 
-  const missions = index.catalog.missionCards;
-  const deployments = index.catalog.deploymentCards;
+  const { missions, deployments } = playableScenarioCards(
+    index.catalog,
+    list.scaleId,
+  );
 
   return (
     <div className="stack">
@@ -37,7 +58,6 @@ export function StepScenario() {
               key={mission.id}
               mission={mission}
               selected={list.missionCardIds.includes(mission.id)}
-              offScale={mission.scale !== list.scaleId}
               disabled={
                 !list.missionCardIds.includes(mission.id) &&
                 list.missionCardIds.length >= 2
@@ -58,7 +78,6 @@ export function StepScenario() {
               key={deployment.id}
               deployment={deployment}
               selected={list.deploymentCardIds.includes(deployment.id)}
-              offScale={deployment.scale !== list.scaleId}
               disabled={
                 !list.deploymentCardIds.includes(deployment.id) &&
                 list.deploymentCardIds.length >= 2
@@ -81,13 +100,11 @@ const SCALE_LABEL: Record<string, string> = {
 function MissionCardView({
   mission,
   selected,
-  offScale,
   disabled,
   onToggle,
 }: {
   mission: MissionCard;
   selected: boolean;
-  offScale: boolean;
   disabled: boolean;
   onToggle: () => void;
 }) {
@@ -118,12 +135,6 @@ function MissionCardView({
           {mission.scoringConditions.es}
         </p>
       )}
-      {/* R13 es aviso, no error: no está prohibido, pero descuadra la partida. */}
-      {offScale && (
-        <span className="card__reason">
-          Diseñada para otra escala de enfrentamiento.
-        </span>
-      )}
     </button>
   );
 }
@@ -131,13 +142,11 @@ function MissionCardView({
 function DeploymentCardView({
   deployment,
   selected,
-  offScale,
   disabled,
   onToggle,
 }: {
   deployment: DeploymentCard;
   selected: boolean;
-  offScale: boolean;
   disabled: boolean;
   onToggle: () => void;
 }) {
@@ -166,11 +175,6 @@ function DeploymentCardView({
           e.currentTarget.style.display = 'none';
         }}
       />
-      {offScale && (
-        <span className="card__reason">
-          Diseñada para otra escala de enfrentamiento.
-        </span>
-      )}
     </button>
   );
 }
