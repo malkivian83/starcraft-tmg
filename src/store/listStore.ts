@@ -136,9 +136,19 @@ export const useListStore = create<ListState>((set, get) => {
     },
 
     setScale: (scaleId) => {
-      const scale = get().index.catalog.scales.find((s) => s.id === scaleId);
-      const limit = scale?.mineralLimit ?? get().list.mineralLimit;
-      apply({ scaleId, mineralLimit: limit });
+      const { index, list } = get();
+      const scale = index.catalog.scales.find((s) => s.id === scaleId);
+      const limit = scale?.mineralLimit ?? list.mineralLimit;
+      apply({
+        scaleId,
+        mineralLimit: limit,
+        missionCardIds: list.missionCardIds.filter(
+          (id) => index.missionCards.get(id)?.scale === scaleId,
+        ),
+        deploymentCardIds: list.deploymentCardIds.filter(
+          (id) => index.deploymentCards.get(id)?.scale === scaleId,
+        ),
+      });
     },
 
     setMineralLimit: (mineralLimit) =>

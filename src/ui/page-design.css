@@ -374,6 +374,10 @@
   white-space: nowrap;
 }
 
+.page-content .saved-list-table__validity {
+  text-align: center;
+}
+
 .page-content .saved-list-table tbody tr {
   background: transparent;
   transition: background-color 150ms ease;
@@ -472,10 +476,19 @@
 
 .page-content .saved-list-table--directory .list-status--valid,
 .page-content .saved-list-table--directory .list-status--invalid {
-  width: 30px;
-  padding-inline: 0;
+  width: 32px;
+  min-height: 32px;
+  margin-inline: auto;
+  padding: 0;
   justify-content: center;
   font-size: 0;
+  line-height: 1;
+}
+
+.page-content .saved-list-table--directory .list-status--valid::before,
+.page-content .saved-list-table--directory .list-status--invalid::before {
+  display: block;
+  line-height: 1;
 }
 
 .page-content .list-status--valid {

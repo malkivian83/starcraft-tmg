@@ -33,14 +33,16 @@ const STEPS: Array<{ id: StepId; label: string }> = [
 ];
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
 const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'industrial', PROTOSS: 'cristal' };
+const PUBLIC_LISTS_NAV_LABEL = `LISTAS P${String.fromCharCode(218)}BLICAS`;
+const PUBLIC_LISTS_PAGE_LABEL = `Listas p${String.fromCharCode(250)}blicas`;
 const NAV_ITEMS = [
   { page: 'home' as const, label: 'INICIO', icon: 'inicio' },
   { page: 'lists' as const, label: 'MIS LISTAS', icon: 'mis-listas' },
-  { page: 'public-lists' as const, label: 'LISTAS PÚBLICAS', icon: 'listas-publicas' },
+  { page: 'public-lists' as const, label: PUBLIC_LISTS_NAV_LABEL, icon: 'listas-publicas' },
   { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
   { page: 'support' as const, label: 'SOPORTE', icon: null },
 ];
-const navLabel = (item: typeof NAV_ITEMS[number]) => item.page === 'public-lists' ? 'LISTAS P\u00DABLICAS' : item.label;
+const navLabel = (item: typeof NAV_ITEMS[number]) => item.label;
 const NAV_ICON_SOURCES = import.meta.glob('./assets/navigation/**/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 
 function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
@@ -371,7 +373,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             <div className="primary-nav__buttons">
               <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', 'Inicio')}><NavigationIcon race={list.race} icon="inicio" />Inicio</button>
               <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', 'Mis listas')}><NavigationIcon race={list.race} icon="mis-listas" />Mis listas</button>
-              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', 'Listas pÃºblicas')}>Listas pÃºblicas</button>
+              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', PUBLIC_LISTS_PAGE_LABEL)}>{PUBLIC_LISTS_PAGE_LABEL}</button>
               <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />Nueva lista</button>
             </div>
             <button className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', 'Soporte')}><span className="primary-nav__support-mark" aria-hidden="true">?</span>Soporte</button>
