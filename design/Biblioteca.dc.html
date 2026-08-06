@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="stylesheet" href="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/styles.css">
+<script src="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap">
+<style>
+:root {
+  --pink: oklch(0.700 0.170 340);
+  --pink-200: oklch(0.923 0.045 340);
+  --pink-300: oklch(0.861 0.080 340);
+  --pink-600: oklch(0.585 0.155 340);
+  --pink-700: oklch(0.470 0.130 340);
+  --pink-900: oklch(0.272 0.072 340);
+  --app-bg: #11131f;
+  --app-surface: #191d2c;
+  --app-surface-2: #1f2434;
+  --app-line: rgba(233,233,237,0.13);
+  --app-text: #eceaf1;
+  --app-muted: rgba(236,234,241,0.62);
+  --app-faint: rgba(236,234,241,0.44);
+  --ok: oklch(0.800 0.110 165);
+  --bad: oklch(0.700 0.150 22);
+}
+body { margin: 0; background: var(--app-bg); }
+a { color: var(--pink-300); text-decoration: none; }
+a:hover { color: var(--pink-200); text-decoration: underline; }
+input, select, button { font-family: 'Inter', var(--font-body); }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column; background: var(--app-bg); font-family: 'Inter', var(--font-body); color: var(--app-text); font-size: 15px; -webkit-font-smoothing: antialiased;">
+
+  <header style="display: flex; align-items: center; gap: 18px; padding: 11px 22px; background: linear-gradient(180deg, #1c2033, #171b29); border-bottom: 1px solid var(--app-line);">
+    <img src="assets/starcraft-logo.png" alt="StarCraft" style="height: 28px; width: auto; flex: none;">
+    <span style="width: 1px; height: 20px; background: var(--app-line);"></span>
+    <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Listas de ejército</span>
+
+    <nav style="display: flex; align-items: center; gap: 6px; margin-left: 6px;">
+      <button type="button" style="min-height: 40px; padding: 0 15px; cursor: pointer; border-radius: 8px; border: 1px solid transparent; background: rgba(236,234,241,0.05); color: var(--app-muted); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;" style-hover="color: var(--app-text); background: rgba(236,234,241,0.1);">Inicio</button>
+      <button type="button" onClick="{{ showMine }}" style="{{ navMineStyle }}">Mis listas</button>
+      <button type="button" onClick="{{ showPublic }}" style="{{ navPublicStyle }}">Listas públicas</button>
+      <button type="button" style="min-height: 40px; padding: 0 15px; cursor: pointer; border-radius: 8px; border: 1px solid var(--pink-700); background: color-mix(in srgb, var(--pink) 12%, transparent); color: var(--pink-200); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;" style-hover="background: color-mix(in srgb, var(--pink) 22%, transparent);">Nueva lista</button>
+      <button type="button" style="min-height: 40px; padding: 0 14px; cursor: pointer; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--app-faint); font-family: 'Chakra Petch', var(--font-heading); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;" style-hover="color: var(--app-text); background: rgba(236,234,241,0.06);">Soporte</button>
+    </nav>
+
+    <span style="flex: 1;"></span>
+
+    <span style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 6px; border-radius: 999px; border: 1px solid var(--app-line); background: var(--app-surface-2);">
+      <span style="display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--pink) 26%, #202538); border: 1px solid var(--pink-700); font-family: 'Chakra Petch', var(--font-heading); font-size: 13px; font-weight: 700; color: var(--pink-200);">M</span>
+      <span style="font-size: 14.5px; font-weight: 600;">Malkivian</span>
+    </span>
+    <button type="button" style="min-height: 40px; padding: 0 16px; cursor: pointer; border-radius: 8px; border: 1px solid var(--app-line); background: var(--app-surface-2); color: var(--app-text); font-size: 14px; font-weight: 600;" style-hover="border-color: var(--pink-600); background: #262c3e;">Salir</button>
+  </header>
+
+  <main style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 34px 22px 44px;">
+    <div style="width: 100%; max-width: 1180px; display: flex; flex-direction: column; gap: 22px;">
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 260px;">
+          <span style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pink-300);">Biblioteca</span>
+          <h1 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 38px; font-weight: 600; line-height: 1.05; letter-spacing: 0.01em;">{{ title }}</h1>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--app-muted); text-wrap: pretty;">{{ subtitle }}</p>
+        </div>
+        <button type="button" style="min-height: 46px; padding: 0 22px; cursor: pointer; border-radius: 9px; border: 1px solid var(--pink); background: color-mix(in srgb, var(--pink) 14%, transparent); color: var(--pink-200); font-size: 14.5px; font-weight: 600;" style-hover="background: color-mix(in srgb, var(--pink) 24%, transparent);">Crear lista</button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 18px; padding: 16px 18px; border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface);">
+        <sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}">
+          <label style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 220px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Buscar</span>
+            <input type="search" placeholder="Nombre o creador" style="min-height: 42px; padding: 0 12px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);">
+          </label>
+        </sc-if>
+        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 150px;">
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Raza</span>
+          <select style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Todas</option><option>Zerg</option><option>Terran</option><option>Protoss</option></select>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 150px;">
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Escala</span>
+          <select style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Todas</option><option>Estándar</option><option>Escaramuza</option></select>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 140px;">
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Validez</span>
+          <select style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Todas</option><option>Válidas</option><option>No válidas</option></select>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 170px;">
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-muted);">Ordenar por</span>
+          <select style="min-height: 42px; padding: 0 10px; font-size: 15px; border-radius: 8px; border: 1px solid var(--app-line); background: #121521; color: var(--app-text);"><option>Más recientes</option><option>Nombre</option><option>Coste</option></select>
+        </label>
+        <span style="align-self: flex-end; padding-bottom: 12px; font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--app-faint);">{{ count }}</span>
+      </div>
+
+      <div style="border-radius: 12px; border: 1px solid var(--app-line); background: var(--app-surface); overflow-x: auto;">
+        <div style="display: grid; grid-template-columns: {{ gridCols }}; gap: 14px; align-items: center; padding: 12px 18px; min-width: 0; background: #151928; border-bottom: 1px solid var(--app-line); font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-faint);">
+          <span>Lista</span>
+          <sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}"><span>Creada por</span></sc-if>
+          <span>Raza</span>
+          <span>Escala</span>
+          <span>Validez</span>
+          <sc-if value="{{ isMine }}" hint-placeholder-val="{{ true }}"><span>Visibilidad</span></sc-if>
+          <span>Coste</span>
+          <span>Actualizada</span>
+          <span></span>
+        </div>
+
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="4">
+          <div style="{{ row.rowStyle }}">
+            <div style="display: flex; align-items: center; gap: 13px; min-width: 0;">
+              <span style="{{ row.markStyle }}">{{ row.mark }}</span>
+              <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                <span style="font-family: 'Chakra Petch', var(--font-heading); font-size: 16.5px; font-weight: 600; letter-spacing: 0.01em;">{{ row.name }}</span>
+                <span style="font-size: 13px; color: var(--app-muted);">{{ row.faction }}</span>
+                <span style="font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--app-faint);">{{ row.slots }}</span>
+              </span>
+            </div>
+
+            <sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}">
+              <span style="font-size: 14px; color: var(--app-text);">{{ row.author }}</span>
+            </sc-if>
+
+            <span><span style="{{ row.raceStyle }}">{{ row.race }}</span></span>
+            <span style="font-size: 14px; color: var(--app-text);">{{ row.scale }}</span>
+
+            <span style="display: flex; align-items: center; gap: 7px;">
+              <span style="{{ row.validDotStyle }}">{{ row.validMark }}</span>
+              <span style="{{ row.validTextStyle }}">{{ row.validText }}</span>
+            </span>
+
+            <sc-if value="{{ isMine }}" hint-placeholder-val="{{ true }}">
+              <span><span style="{{ row.visStyle }}">{{ row.visibility }}</span></span>
+            </sc-if>
+
+            <span style="display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--app-text);">
+              <span>{{ row.min }}</span>
+              <span style="color: var(--app-muted);">{{ row.gas }}</span>
+            </span>
+
+            <span style="display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; font-variant-numeric: tabular-nums;">
+              <span>{{ row.date }}</span>
+              <span style="color: var(--app-faint);">{{ row.time }}</span>
+            </span>
+
+            <span style="display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-end;">
+              <sc-for list="{{ row.actions }}" as="act" hint-placeholder-count="3">
+                <button type="button" style="{{ act.style }}">{{ act.label }}</button>
+              </sc-for>
+              <sc-if value="{{ row.hasLikes }}" hint-placeholder-val="{{ false }}">
+                <button type="button" style="{{ row.likeStyle }}">{{ row.likeLabel }}</button>
+              </sc-if>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+
+  <footer style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; padding: 20px 22px 26px; border-top: 1px solid var(--app-line); font-size: 12.5px; color: var(--app-faint); text-align: center;">
+    <span>Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</span>
+    <span style="display: flex; gap: 16px;">
+      <a href="#">Soporte</a>
+      <a href="#">Términos y condiciones</a>
+    </span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'mine' };
+
+  renderVals() {
+    const mine = this.state.view === 'mine';
+
+    const nav = (active) => [
+      'min-height:40px', 'padding:0 15px', 'cursor:pointer', 'border-radius:8px',
+      "font-family:'Chakra Petch', var(--font-heading)", 'font-size:14px', 'font-weight:600',
+      'letter-spacing:0.1em', 'text-transform:uppercase',
+      active
+        ? 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 20%, transparent);color:var(--pink-200)'
+        : 'border:1px solid transparent;background:rgba(236,234,241,0.05);color:var(--app-muted)'
+    ].join(';');
+
+    const race = (r) => {
+      const tint = { Zerg: '340', Protoss: '270', Terran: '215' }[r] || '340';
+      return 'padding:4px 10px;border-radius:5px;font-size:12.5px;font-weight:600;white-space:nowrap;' +
+        'background:oklch(0.45 0.09 ' + tint + ' / 0.4);border:1px solid oklch(0.66 0.13 ' + tint + ' / 0.7);' +
+        'color:oklch(0.9 0.05 ' + tint + ')';
+    };
+
+    const btn = (kind) => {
+      const b = 'min-height:36px;padding:0 13px;cursor:pointer;border-radius:7px;font-size:13px;font-weight:600;white-space:nowrap;';
+      if (kind === 'primary') return b + 'border:1px solid var(--pink);background:color-mix(in srgb, var(--pink) 16%, transparent);color:var(--pink-200)';
+      if (kind === 'danger') return b + 'border:1px solid oklch(0.5 0.12 22 / 0.75);background:oklch(0.42 0.1 22 / 0.28);color:oklch(0.87 0.07 22)';
+      return b + 'border:1px solid var(--app-line);background:var(--app-surface-2);color:var(--app-text)';
+    };
+
+    const mark = (r) => {
+      const tint = { Zerg: '340', Protoss: '270', Terran: '215' }[r] || '340';
+      return 'display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:9px;' +
+        'background:oklch(0.34 0.07 ' + tint + ' / 0.6);border:1px solid oklch(0.6 0.11 ' + tint + ' / 0.5);' +
+        "font-family:'Chakra Petch', var(--font-heading);font-size:16px;font-weight:700;color:oklch(0.9 0.05 " + tint + ')';
+    };
+
+    const cols = mine
+      ? 'minmax(170px,1.5fr) minmax(72px,0.6fr) minmax(84px,0.7fr) minmax(96px,0.8fr) minmax(80px,0.7fr) minmax(96px,0.8fr) minmax(92px,0.8fr) minmax(190px,max-content)'
+      : 'minmax(170px,1.5fr) minmax(88px,0.8fr) minmax(72px,0.6fr) minmax(84px,0.7fr) minmax(96px,0.8fr) minmax(96px,0.8fr) minmax(92px,0.8fr) minmax(160px,max-content)';
+    const row = (i, n) => 'display:grid;grid-template-columns:' + cols +
+      ';gap:14px;align-items:center;padding:14px 18px;min-width:0;' +
+      (i < n - 1 ? 'border-bottom:1px solid rgba(236,234,241,0.07);' : '');
+
+    const valid = (ok) => ({
+      validMark: ok ? '✓' : '✕',
+      validText: ok ? 'Válida' : 'No válida',
+      validDotStyle: 'display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700;' +
+        (ok ? 'background:oklch(0.5 0.1 165 / 0.3);border:1px solid var(--ok);color:var(--ok)'
+            : 'background:oklch(0.45 0.11 22 / 0.3);border:1px solid var(--bad);color:var(--bad)'),
+      validTextStyle: 'font-size:13px;font-weight:600;color:' + (ok ? 'var(--ok)' : 'var(--bad)')
+    });
+
+    const vis = (v) => 'padding:4px 10px;border-radius:5px;font-size:12.5px;font-weight:600;white-space:nowrap;' +
+      (v === 'Pública'
+        ? 'background:color-mix(in srgb, var(--pink) 16%, transparent);border:1px solid var(--pink-700);color:var(--pink-200)'
+        : 'background:rgba(236,234,241,0.07);border:1px solid rgba(236,234,241,0.18);color:var(--app-muted)');
+
+    const like = (n) => ({
+      hasLikes: true,
+      likeLabel: (n > 0 ? '♥ ' : '♡ ') + n,
+      likeStyle: 'min-height:36px;padding:0 13px;cursor:pointer;border-radius:7px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;' +
+        (n > 0
+          ? 'border:1px solid var(--pink-600);background:color-mix(in srgb, var(--pink) 18%, transparent);color:var(--pink-200)'
+          : 'border:1px solid var(--app-line);background:var(--app-surface-2);color:var(--app-muted)')
+    });
+
+    const mineRows = [
+      { name: 'Zergs Demo 2000', faction: "Kerrigan's Swarm", slots: 'Core 5/8 · Élite 4/4 · Apoyo 0/2 · Héroe 1/2', race: 'Zerg', scale: 'Estándar', ok: true, visibility: 'Pública', min: '2000/2000 min.', gas: '200/200 gas', date: '5/8/2026', time: '10:54:32', acts: [['Abrir','primary'],['Ver lista',''],['Hacer privada',''],['Borrar','danger']] },
+      { name: 'Nueva lista', faction: 'Sin seleccionar', slots: 'Sin espacios asignados', race: 'Zerg', scale: 'Estándar', ok: false, visibility: 'Privada', min: '0/2000 min.', gas: '0/200 gas', date: '4/8/2026', time: '11:23:49', acts: [['Abrir','primary'],['Hacer pública',''],['Borrar','danger']] },
+      { name: 'Zerg Escaramuza', faction: "Kerrigan's Swarm", slots: 'Core 3/5 · Élite 1/3 · Apoyo 0/1 · Héroe 1/1', race: 'Zerg', scale: 'Escaramuza', ok: true, visibility: 'Pública', min: '1000/1000 min.', gas: '100/100 gas', date: '3/8/2026', time: '18:11:04', acts: [['Abrir','primary'],['Ver lista',''],['Hacer privada',''],['Borrar','danger']] },
+      { name: 'Nueva lista', faction: 'Sin seleccionar', slots: 'Sin espacios asignados', race: 'Zerg', scale: 'Estándar', ok: false, visibility: 'Privada', min: '0/2000 min.', gas: '0/200 gas', date: '3/8/2026', time: '10:59:04', acts: [['Abrir','primary'],['Hacer pública',''],['Borrar','danger']] }
+    ];
+
+    const publicRows = [
+      { name: 'Zergs Demo 2000', faction: "Kerrigan's Swarm", slots: 'Core 5/8 · Élite 4/4 · Apoyo 0/2 · Héroe 1/2', author: 'Malkivian', race: 'Zerg', scale: 'Estándar', ok: true, min: '2000/2000 min.', gas: '200/200 gas', date: '5/8/2026', time: '10:54:32', likes: 0, acts: [['Ver lista','primary'],['Clonar','']] },
+      { name: 'Protos 2000', faction: 'Khalai', slots: 'Core 6/6 · Élite 4/6 · Apoyo 2/2 · Héroe 1/2', author: 'Josema', race: 'Protoss', scale: 'Estándar', ok: true, min: '2000/2000 min.', gas: '200/200 gas', date: '4/8/2026', time: '13:38:13', likes: 1, acts: [['Ver lista','primary'],['Clonar','']] },
+      { name: 'Zerg Escaramuza', faction: "Kerrigan's Swarm", slots: 'Core 3/5 · Élite 1/3 · Apoyo 0/1 · Héroe 1/1', author: 'Malkivian', race: 'Zerg', scale: 'Escaramuza', ok: true, min: '1000/1000 min.', gas: '100/100 gas', date: '3/8/2026', time: '18:11:04', likes: 1, acts: [['Ver lista','primary'],['Clonar','']] }
+    ];
+
+    const src = mine ? mineRows : publicRows;
+    const rows = src.map((r, i) => Object.assign({}, r, {
+      rowStyle: row(i, src.length),
+      raceStyle: race(r.race),
+      markStyle: mark(r.race),
+      mark: r.race.charAt(0),
+      visStyle: r.visibility ? vis(r.visibility) : '',
+      actions: r.acts.map(([label, kind]) => ({ label, style: btn(kind) })),
+      hasLikes: !mine,
+      likeLabel: mine ? '' : like(r.likes).likeLabel,
+      likeStyle: mine ? '' : like(r.likes).likeStyle
+    }, valid(r.ok)));
+
+    return {
+      isMine: mine,
+      isPublic: !mine,
+      title: mine ? 'Mis listas' : 'Listas públicas',
+      subtitle: mine
+        ? 'Todas tus listas guardadas se sincronizan con tu cuenta.'
+        : 'Explora, consulta y clona listas compartidas por la comunidad.',
+      count: mine ? '4 de 4 listas' : '3 de 3 listas',
+      gridCols: cols,
+      navMineStyle: nav(mine),
+      navPublicStyle: nav(!mine),
+      showMine: () => this.setState({ view: 'mine' }),
+      showPublic: () => this.setState({ view: 'public' }),
+      rows
+    };
+  }
+}
+</script>
+</body>
+</html>

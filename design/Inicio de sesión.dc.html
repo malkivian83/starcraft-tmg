@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="stylesheet" href="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/styles.css">
+<script src="_ds/nocturne-bbc79b80-c703-47a8-8895-d06cdf9a4fe9/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap">
+<style>
+/* Paleta azul: mismos pasos de luminosidad/croma de la rampa Nocturne, tono 255 */
+:root {
+  --color-accent: oklch(0.660 0.125 255);
+  --color-accent-2: oklch(0.734 0.083 255);
+  --color-accent-100: oklch(0.968 0.012 255);
+  --color-accent-200: oklch(0.923 0.028 255);
+  --color-accent-300: oklch(0.861 0.055 255);
+  --color-accent-400: oklch(0.765 0.105 255);
+  --color-accent-500: oklch(0.660 0.125 255);
+  --color-accent-600: oklch(0.560 0.120 255);
+  --color-accent-700: oklch(0.455 0.105 255);
+  --color-accent-800: oklch(0.355 0.085 255);
+  --color-accent-900: oklch(0.265 0.060 255);
+  --color-bg: #131826;
+  --color-surface: #1e2433;
+}
+body { margin: 0; background: var(--color-bg); }
+a { color: var(--color-accent-300); text-decoration: none; }
+a:hover { color: var(--color-accent); text-decoration: underline; }
+@keyframes noct-drift { from { transform: scale(1.14) translate3d(-1.2%, -0.8%, 0); } to { transform: scale(1.14) translate3d(1.2%, 0.8%, 0); } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg); font-family: var(--font-body); color: var(--color-text);">
+
+  <div aria-hidden="true" style="position: absolute; inset: -6%; z-index: 0; overflow: hidden;">
+    <div style="{{ bgLayerStyle }}"></div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 1; background: radial-gradient(120% 90% at 50% 0%, rgba(22,24,38,0.35) 0%, rgba(22,24,38,0.82) 55%, rgba(22,24,38,0.96) 100%);"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(40,86,150,0.34), rgba(28,56,110,0.36)); mix-blend-mode: color;"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(22,24,38,0.55) 0%, rgba(22,24,38,0.1) 30%, rgba(22,24,38,0.7) 78%, #161826 100%);"></div>
+
+  <main style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; padding: 72px 24px 56px;">
+
+    <header style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+      <img src="assets/starcraft-logo.png" alt="StarCraft — Tabletop Miniatures Game" style="width: 330px; max-width: 78vw; height: auto; filter: drop-shadow(0 0 30px rgba(96,150,224,0.4));">
+      <span style="width: 180px; max-width: 60vw; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-accent) 70%, transparent), transparent);"></span>
+    </header>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 20px; width: 100%; max-width: 880px; align-items: stretch;">
+
+      <section style="display: flex; flex-direction: column; gap: 18px; padding: 34px 32px 32px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent); background: linear-gradient(180deg, rgba(35,37,50,0.86), rgba(22,24,38,0.82)); backdrop-filter: blur(18px) saturate(120%); box-shadow: 0 24px 60px -28px rgba(0,0,0,0.8), inset 0 1px 0 rgba(233,233,237,0.06);">
+        <h1 style="margin: 0 0 4px; font-family: 'Chakra Petch', var(--font-heading); font-size: 28px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;">Iniciar sesión</h1>
+
+        <label style="display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Correo</span>
+          <input class="input" type="email" autocomplete="email" placeholder="tu@correo.com" style="min-height: 42px; padding: 10px 12px; border-radius: 8px; background: rgba(15,16,26,0.7);">
+        </label>
+
+        <label style="display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);">Contraseña</span>
+          <span style="display: flex; gap: 8px;">
+            <input class="input" type="{{ passType }}" autocomplete="current-password" placeholder="••••••••" style="min-height: 42px; padding: 10px 12px; border-radius: 8px; background: rgba(15,16,26,0.7);">
+            <button class="btn btn-secondary" type="button" onClick="{{ togglePass }}" style="min-height: 42px; padding: 0 14px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 78%, transparent);">{{ passLabel }}</button>
+          </span>
+        </label>
+
+        <button class="btn btn-primary" type="submit" style="min-height: 46px; margin-top: 4px; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; border-width: 1px; background: color-mix(in srgb, var(--color-accent) 10%, transparent); box-shadow: 0 0 0 1px rgba(96,150,224,0.16), 0 12px 30px -18px rgba(96,150,224,0.85);" style-hover="background: color-mix(in srgb, var(--color-accent) 20%, transparent);">Entrar</button>
+
+        <div style="display: flex; align-items: center; gap: 12px; margin: 6px 0 2px;">
+          <span style="flex: 1; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-text) 16%, transparent));"></span>
+          <span style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 42%, transparent);">o</span>
+          <span style="flex: 1; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--color-text) 16%, transparent), transparent);"></span>
+        </div>
+
+        <button type="button" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 12px; cursor: pointer; text-align: left; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent); background: rgba(15,16,26,0.6); color: var(--color-text); font-family: var(--font-body);" style-hover="background: rgba(35,37,50,0.9);">
+          <span style="width: 26px; height: 26px; flex: none; border-radius: 50%; background: linear-gradient(140deg, #5a5f7a, #2c2f42);"></span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+            <span style="font-size: 13px; font-weight: 500;">Inicia sesión como Fede</span>
+            <span style="font-size: 11px; color: color-mix(in srgb, var(--color-text) 55%, transparent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">fede.soler@ninsoft.es</span>
+          </span>
+          <span style="flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 6px; background: #ffffff; font-family: var(--font-heading); font-weight: 500; font-size: 15px; color: #4285f4;">G</span>
+        </button>
+
+        <p style="margin: 0; font-size: 11.5px; line-height: 1.6; color: color-mix(in srgb, var(--color-text) 50%, transparent); text-wrap: pretty;">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);">
+          <a href="#" style="font-size: 12.5px;">He olvidado mi contraseña</a>
+          <button class="btn btn-secondary" type="button" style="min-height: 40px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;">Crear una cuenta</button>
+        </div>
+      </section>
+
+      <section style="display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 34px 32px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent); background: linear-gradient(180deg, rgba(28,30,44,0.72), rgba(22,24,38,0.68)); backdrop-filter: blur(18px) saturate(120%); box-shadow: 0 24px 60px -30px rgba(0,0,0,0.75), inset 0 1px 0 rgba(233,233,237,0.05);">
+        <span style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent);">Sin cuenta</span>
+        <h2 style="margin: 0; font-family: 'Chakra Petch', var(--font-heading); font-size: 28px; font-weight: 600; line-height: 1.2; letter-spacing: 0.01em; text-wrap: pretty;">Crear una lista como invitado</h2>
+        <p style="margin: 0; font-size: 14px; line-height: 1.65; color: color-mix(in srgb, var(--color-text) 68%, transparent); text-wrap: pretty;">Prueba el creador de listas sin registrarte. Puedes imprimir o exportar tu lista cuando termines.</p>
+        <button class="btn btn-primary" type="button" style="flex-direction: column; align-items: flex-start; gap: 3px; margin-top: 8px; padding: 14px 18px; text-align: left;" style-hover="background: color-mix(in srgb, var(--color-accent) 16%, transparent);">
+          <span style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;">Abrir creador de listas</span>
+          <span style="font-size: 11.5px; letter-spacing: 0; text-transform: none; color: color-mix(in srgb, var(--color-text) 55%, transparent);">Inicia sesión más tarde para guardarla</span>
+        </button>
+      </section>
+
+    </div>
+  </main>
+
+  <footer style="position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 18px; padding: 20px 24px 26px; border-top: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size: 11.5px; color: color-mix(in srgb, var(--color-text) 42%, transparent); text-align: center;">
+    <span>Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</span>
+    <span style="display: flex; gap: 16px;">
+      <a href="#" style="font-size: 11.5px;">Soporte</a>
+      <a href="#" style="font-size: 11.5px;">Términos y condiciones</a>
+    </span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;backgroundBlur&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:40,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Fondo&quot;},&quot;backgroundBrightness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.72,&quot;min&quot;:0.2,&quot;max&quot;:1.2,&quot;step&quot;:0.02,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Fondo&quot;},&quot;slowDrift&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Fondo&quot;}}">
+class Component extends DCLogic {
+  state = { showPass: false };
+  renderVals() {
+    const blur = this.props.backgroundBlur ?? 14;
+    const bright = this.props.backgroundBrightness ?? 0.72;
+    const motion = this.props.slowDrift ?? true;
+    return {
+      bgLayerStyle: [
+        'position:absolute', 'inset:0',
+        'background-image:url("uploads/pasted-1786001554183-0.png")',
+        'background-size:cover', 'background-position:center 38%',
+        'filter:blur(' + blur + 'px) saturate(62%) hue-rotate(-14deg) brightness(' + bright + ')',
+        'transform:scale(1.14)',
+        motion ? 'animation:noct-drift 42s ease-in-out infinite alternate' : ''
+      ].filter(Boolean).join(';'),
+      passType: this.state.showPass ? 'text' : 'password',
+      passLabel: this.state.showPass ? 'Ocultar' : 'Ver',
+      togglePass: () => this.setState(s => ({ showPass: !s.showPass }))
+    };
+  }
+}
+</script>
+</body>
+</html>
