@@ -14,7 +14,7 @@ el catálogo y la interfaz claramente separados y verificables.
 ## Puesta en marcha
 
 ```bash
-npm install
+npm install  
 ```
 
 Copia `.env.example` a `.env`, crea la base de datos y arranca, en terminales

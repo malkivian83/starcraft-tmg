@@ -143,18 +143,35 @@ function Roster() {
   return (
     <section className="panel">
       <h2 className="panel__title">Tu ejército ({list.entries.length})</h2>
+      <p className="small muted roster__hint">
+        Usa ↑ y ↓ para ordenar las unidades como aparecerán en la impresión.
+      </p>
       <div className="stack">
-        {list.entries.map((entry) => (
-          <RosterEntry key={entry.instanceId} listEntry={entry} />
+        {list.entries.map((entry, position) => (
+          <RosterEntry
+            key={entry.instanceId}
+            listEntry={entry}
+            position={position}
+            total={list.entries.length}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-function RosterEntry({ listEntry }: { listEntry: ListEntry }) {
+function RosterEntry({
+  listEntry,
+  position,
+  total,
+}: {
+  listEntry: ListEntry;
+  position: number;
+  total: number;
+}) {
   const { index, validation } = useListStore();
   const removeUnit = useListStore((s) => s.removeUnit);
+  const moveUnit = useListStore((s) => s.moveUnit);
   const changeComposition = useListStore((s) => s.changeComposition);
 
   const unit = index.unitEntries.get(listEntry.unitEntryId);
@@ -198,13 +215,34 @@ function RosterEntry({ listEntry }: { listEntry: ListEntry }) {
               {unit.name}{' '}
               {listEntry.reference && <span className="chip">Referencia</span>}
             </h3>
-            <button
-              onClick={() => removeUnit(listEntry.instanceId)}
-              aria-label={`Quitar ${unit.name}`}
-              title="Quitar de la lista"
-            >
-              ✕
-            </button>
+            <div className="unitcard__actions">
+              <button
+                className="card-action"
+                onClick={() => moveUnit(listEntry.instanceId, 'up')}
+                disabled={position === 0}
+                aria-label={`Subir ${unit.name}`}
+                title="Subir unidad"
+              >
+                ↑
+              </button>
+              <button
+                className="card-action"
+                onClick={() => moveUnit(listEntry.instanceId, 'down')}
+                disabled={position === total - 1}
+                aria-label={`Bajar ${unit.name}`}
+                title="Bajar unidad"
+              >
+                ↓
+              </button>
+              <button
+                className="card-action card-action--remove"
+                onClick={() => removeUnit(listEntry.instanceId)}
+                aria-label={`Quitar ${unit.name}`}
+                title="Quitar de la lista"
+              >
+                ×
+              </button>
+            </div>
           </div>
 
           {card && <StatBlock profile={card.profile} />}

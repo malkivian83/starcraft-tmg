@@ -1,6 +1,6 @@
 import type { Pool, RowDataPacket } from 'mysql2/promise';
 
-export type EmailMessageType = 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED';
+export type EmailMessageType = 'VERIFY_EMAIL' | 'RESET_PASSWORD' | 'SMTP_TEST' | 'ACCOUNT_VERIFIED' | 'SUPPORT_CREATED' | 'SUPPORT_REPLY';
 export type EmailDeliveryStatus = 'SENT' | 'FAILED';
 
 export interface EmailDeliveryLog {

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-const lastUpdated = '3 de agosto de 2026';
+const lastUpdated = '5 de agosto de 2026';
 const siteDomain = 'starcraft-builder.com';
 
 function TermsSection({ title, children }: { title: string; children: ReactNode }) {
@@ -84,8 +84,9 @@ export function TermsPage() {
 
             <TermsSection title="6. Contacto">
               <p>
-                Para cualquier consulta relacionada con estos términos, utiliza los canales de contacto disponibles
-                en <strong>{siteDomain}</strong>.
+                Para cualquier consulta relacionada con estos términos, utiliza el formulario de <a href="/soporte">soporte</a>
+                disponible en <strong>{siteDomain}</strong>. Las solicitudes se conservarán mientras sean necesarias para
+                gestionar la consulta y mantener un historial de atención.
               </p>
             </TermsSection>
           </div>

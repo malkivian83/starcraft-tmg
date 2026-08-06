@@ -15,7 +15,7 @@ import type {
 } from './types';
 
 const SLOT_LABEL: Record<SlotType, string> = {
-  CORE: 'Núcleo',
+  CORE: 'Core',
   ELITE: 'Élite',
   SUPPORT: 'Apoyo',
   AIR: 'Aéreo',

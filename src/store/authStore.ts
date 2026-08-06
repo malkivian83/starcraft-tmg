@@ -12,6 +12,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
+  refreshSession: () => Promise<void>;
   setUser: (user: auth.AuthenticatedUser) => void;
   logout: () => Promise<void>;
 }
@@ -38,6 +39,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const result = await auth.register(email, password);
     set({ status: 'unverified', user: result.user, developmentVerificationUrl: result.developmentVerificationUrl, emailDeliveryWarning: result.emailDeliveryWarning });
   },
+  refreshSession: async () => { await auth.refreshSession(); },
   setUser: (user) => set({ ...stateFor(user), developmentVerificationUrl: null, emailDeliveryWarning: null }),
   logout: async () => {
     try { await auth.logout(); } finally { set({ status: 'anonymous', user: null, developmentVerificationUrl: null, emailDeliveryWarning: null }); }
