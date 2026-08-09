@@ -519,7 +519,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
               {capabilities.usePortableFormats && (
                 <>
                   <button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? tBuilderUi('closeSeed') : tBuilderUi('seed')}</button>
-                  <label className="button-like">
+                  <label className="button-like builder-toolbar__portable-action">
                     {tBuilderUi('import')}
                     <input type="file" accept="application/json" hidden onChange={(event) => {
                       const file = event.target.files?.[0];
@@ -527,7 +527,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
                       event.target.value = '';
                     }} />
                   </label>
-                  <button onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
+                  <button className="builder-toolbar__portable-action" onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
                   {mode === 'guest' && <button onClick={() => window.print()}>{tBuilderUi('printPdf')}</button>}
                 </>
               )}

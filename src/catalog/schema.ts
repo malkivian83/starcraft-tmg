@@ -36,6 +36,7 @@ const ability = z.object({
   phase,
   type: z.enum(['ACTIVE', 'PASSIVE', 'REACTION']),
   cost: z.union([z.number().int().nonnegative(), z.literal('X')]).nullable(),
+  resource: resourceType.optional(),
   text: localized,
   fromUpgrade: z.boolean(),
 });
@@ -138,6 +139,8 @@ export const upgradeOptionSchema = z.object({
   grantsWeapons: z.array(weapon),
   grantsAbilities: z.array(ability),
   text: localized.optional(),
+  /** Recurso de la habilidad otorgada cuando difiere del glosario compartido. */
+  resource: resourceType.optional(),
   /**
    * Fase de la mejora cuando difiere de la del glosario.
    *
@@ -213,6 +216,7 @@ export const upgradeGlossaryEntrySchema = z.object({
   phase,
   type: z.enum(['ACTIVE', 'PASSIVE', 'REACTION']),
   cost: z.number().int().nonnegative().nullable(),
+  resource: resourceType.optional(),
   text: localized,
   /** Arma que otorga la mejora, si sustituye o añade uno. */
   weapon: weapon.optional(),

@@ -1017,8 +1017,8 @@
           "cost": 2,
           "fromUpgrade": false,
           "text": {
-            "es": "Una vez por partida. Resuelve el efecto SUMMON para poner en juego una unidad de Roachlings.",
-            "en": "Once Per Game. Resolve the SUMMON effect to bring a Roachling Unit into play."
+            "es": "Una vez por partida. Resuelve el efecto SUMMON (Roachling).",
+            "en": "Once Per Game. Resolve the SUMMON (Roachling) effect."
           }
         },
         { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
@@ -1465,6 +1465,7 @@
           "id": "glial_reconstitution",
           "seedId": 5132,
           "name": "Glial Reconstitution",
+          "resource": "CP",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },
@@ -1580,6 +1581,7 @@
           "id": "glial_reconstitution",
           "seedId": 5152,
           "name": "Glial Reconstitution",
+          "resource": "CP",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },

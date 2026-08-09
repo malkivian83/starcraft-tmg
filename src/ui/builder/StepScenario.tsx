@@ -129,9 +129,22 @@ function MissionCardView({
           <span>{t('victory', { points: mission.instantWinLead })}</span>
         )}
       </div>
+      {localizedText(mission.missionParameters, locale) && (
+        <p className="small muted" style={{ margin: 0 }}>
+          <strong>{locale === 'en' ? 'Mission parameters' : 'Parámetros de misión'}:</strong>{' '}
+          {localizedText(mission.missionParameters, locale)}
+        </p>
+      )}
       {localizedText(mission.scoringConditions, locale) && (
         <p className="small muted" style={{ margin: 0 }}>
+          <strong>{locale === 'en' ? 'Scoring conditions' : 'Condiciones de puntuación'}:</strong>{' '}
           {localizedText(mission.scoringConditions, locale)}
+        </p>
+      )}
+      {localizedText(mission.additionalConditions, locale) && (
+        <p className="small muted" style={{ margin: 0 }}>
+          <strong>{locale === 'en' ? 'Additional conditions' : 'Condiciones adicionales'}:</strong>{' '}
+          {localizedText(mission.additionalConditions, locale)}
         </p>
       )}
     </button>

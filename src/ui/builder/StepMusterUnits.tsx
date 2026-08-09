@@ -330,20 +330,23 @@ function UnitProfileDetails({ card }: { card: UnitCard }) {
             {phaseLabel(phase, t)}
           </div>
           <WeaponTable weapons={weapons} t={t} locale={locale} />
-          {abilities.map((ability) => (
+          {abilities.map((ability) => {
+            const resource = ability.resource ?? resourceLabel(card.race);
+            return (
             <p key={ability.name} className="ability">
               <strong className="ability__name">{ability.name}</strong>
               <span className={`ability__tag ability__type ability__type--${ability.type.toLowerCase()}`}>
                 {ability.type}
               </span>
               {ability.cost !== null && (
-                <span className={`ability__tag ability__resource-cost ability__resource-cost--${resourceLabel(card.race)}`}>
-                  {ability.cost} {resourceLabel(card.race)}
+                <span className={`ability__tag ability__resource-cost ability__resource-cost--${resource}`}>
+                  {ability.cost} {resource}
                 </span>
               )}{' '}
               <KeywordText text={localizedText(ability.text, locale)} locale={locale} />
             </p>
-          ))}
+            );
+          })}
         </section>
       ))}
 
@@ -516,11 +519,14 @@ function Upgrades({
           const detailId = `${listEntry.instanceId}-${upgrade.id}-detalle`;
           const open = expanded.has(upgrade.id);
           const upgradeTypes = Array.from(new Set(upgrade.grantsAbilities.map((ability) => ability.type)));
-          const upgradeAbilityCosts = Array.from(new Set(
+          const upgradeAbilityCosts = Array.from(new Map(
             upgrade.grantsAbilities
-              .map((ability) => ability.cost)
-              .filter((abilityCost): abilityCost is number => abilityCost !== null),
-          ));
+              .filter((ability) => ability.cost !== null)
+              .map((ability) => {
+                const resource = ability.resource ?? resourceLabel(unit.race);
+                return [`${ability.cost}|${resource}`, { cost: ability.cost, resource }] as const;
+              }),
+          ).values());
 
                 return (
                   <div key={upgrade.id}>
@@ -554,9 +560,9 @@ function Upgrades({
                       {type}
                     </span>
                   ))}
-                  {upgradeAbilityCosts.map((abilityCost) => (
-                    <span key={`ability-cost-${abilityCost}`} className={`chip small ability__resource-cost ability__resource-cost--${resourceLabel(unit.race)}`}>
-                      {abilityCost} {resourceLabel(unit.race)}
+                  {upgradeAbilityCosts.map(({ cost: abilityCost, resource }) => (
+                    <span key={`ability-cost-${abilityCost}-${resource}`} className={`chip small ability__resource-cost ability__resource-cost--${resource}`}>
+                      {abilityCost} {resource}
                     </span>
                   ))}
                   {upgrade.specialist && (
@@ -636,8 +642,8 @@ function Upgrades({
                     <p key={ability.name} className="upg__weapon">
                       <strong>{ability.name}</strong> · {phaseLabel(ability.phase, t)} · {ability.type}
                       {ability.cost !== null && (
-                        <span className={`ability__tag ability__resource-cost ability__resource-cost--${resourceLabel(unit.race)}`}>
-                          {ability.cost} {resourceLabel(unit.race)}
+                        <span className={`ability__tag ability__resource-cost ability__resource-cost--${ability.resource ?? resourceLabel(unit.race)}`}>
+                          {ability.cost} {ability.resource ?? resourceLabel(unit.race)}
                         </span>
                       )}
                     </p>

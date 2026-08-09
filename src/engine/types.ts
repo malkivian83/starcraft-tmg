@@ -78,6 +78,8 @@ export interface Ability {
   type: AbilityType;
   /** Coste en CP/BM/PE. `X` representa un coste variable. */
   cost: number | 'X' | null;
+  /** Recurso explícito cuando una habilidad no usa el recurso de su raza. */
+  resource?: ResourceType;
   text: Localized;
   fromUpgrade: boolean;
 }
@@ -202,6 +204,8 @@ export interface UpgradeOption {
   grantsWeapons: Weapon[];
   grantsAbilities: Ability[];
   text?: Localized;
+  /** Recurso de la habilidad otorgada cuando difiere del glosario de la raza. */
+  resource?: ResourceType;
   /** Fase de la mejora cuando la carta de esta unidad la imprime en otra distinta a la del glosario. */
   phase?: Phase;
 }

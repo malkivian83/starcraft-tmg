@@ -1389,9 +1389,25 @@
     margin-top: 1px;
   }
 
-  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid,
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .app:has(> .builder-toolbar) > main.content.no-print .ledger {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card {
+    min-width: 0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card__name,
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid p {
+    overflow-wrap: anywhere;
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__portable-action {
+    display: none;
   }
 
   .app:has(> .builder-toolbar) > main.content.no-print .modal {
@@ -1414,6 +1430,10 @@
 
 @media screen and (max-width: 420px) {
   .app:has(> .builder-toolbar) > .builder-toolbar .field {
+    flex-basis: calc(50% - 6px);
+  }
+
+  .app:has(> .builder-toolbar) > .builder-toolbar .field:first-child {
     flex-basis: 100%;
   }
 

@@ -369,7 +369,7 @@ function CardDetail({
   kind: string;
   badge: string;
   slots?: Parameters<typeof SlotChips>[0]['slots'];
-  abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; text: Localized }>;
+  abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; resource?: 'CP' | 'BM' | 'PE'; text: Localized }>;
 }) {
   const { i18n } = useTranslation();
   const { t } = useTranslation('builderUi');
@@ -392,7 +392,7 @@ function CardDetail({
           {/* Nombre en inglés, explicación en español (regla de idioma). */}
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
           <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase, t)}</span>
-          <span className="chip small">{ability.type}{ability.cost ? ` ${ability.cost}` : ''}</span>
+          <span className="chip small">{ability.type}{ability.cost !== null ? ` ${ability.cost}${ability.resource ? ` ${ability.resource}` : ''}` : ''}</span>
           {ability.text && localizedText(ability.text, locale) && <> — {localizedText(ability.text, locale)}</>}
         </p>
       ))}

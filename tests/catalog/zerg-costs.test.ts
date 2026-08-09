@@ -47,4 +47,26 @@ describe('Costes Zerg del reglamento', () => {
 
     expect(mutatingCarapace?.phase).toBe('MOVEMENT');
   });
+
+  it('conserva el recurso explícito de Glial Reconstitution', () => {
+    for (const entryId of [
+      'zerg.entry.roach',
+      'zerg.entry.corpser',
+    ]) {
+      const upgrade = catalog.unitEntries
+        .find((entry) => entry.id === entryId)
+        ?.upgrades.find((item) => item.id === 'glial_reconstitution');
+
+      expect(upgrade?.grantsAbilities[0]).toMatchObject({
+        cost: 1,
+        resource: 'CP',
+      });
+    }
+
+    const vileUpgrade = catalog.unitEntries
+      .find((entry) => entry.id === 'zerg.entry.vile')
+      ?.upgrades.find((item) => item.id === 'glial_reconstitution');
+    expect(vileUpgrade?.grantsAbilities[0]?.cost).toBe(1);
+    expect(vileUpgrade?.grantsAbilities[0]?.resource).toBeUndefined();
+  });
 });

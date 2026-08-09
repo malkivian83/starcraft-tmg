@@ -388,8 +388,8 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                       {ability.type}
                     </span>
                     {ability.cost !== null && (
-                      <span className={`unitref__tag unitref__resource-cost unitref__resource-cost--${resourceLabel(unit.race)}`}>
-                        {ability.cost} {resourceLabel(unit.race)}
+                      <span className={`unitref__tag unitref__resource-cost unitref__resource-cost--${ability.resource ?? resourceLabel(unit.race)}`}>
+                        {ability.cost} {ability.resource ?? resourceLabel(unit.race)}
                       </span>
                     )}{' '}
                     {localizedText(ability.text, locale)}
@@ -429,7 +429,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                     <strong>{ability.name}</strong>
                     <span className="unitref__tag">
                       {ability.type}
-                      {ability.cost ? ` ${ability.cost} ${resourceLabel(unit.race)}` : ''}
+                      {ability.cost ? ` ${ability.cost} ${ability.resource ?? resourceLabel(unit.race)}` : ''}
                     </span>{' '}
                     {localizedText(ability.text, locale)}
                   </p>
@@ -453,8 +453,8 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                               {ability.type}
                             </span>
                             {ability.cost !== null && (
-                              <span className={`unitref__tag unitref__resource-cost unitref__resource-cost--${resourceLabel(card?.race ?? unit.race)}`}>
-                                {ability.cost} {resourceLabel(card?.race ?? unit.race)}
+                              <span className={`unitref__tag unitref__resource-cost unitref__resource-cost--${ability.resource ?? resourceLabel(card?.race ?? unit.race)}`}>
+                                {ability.cost} {ability.resource ?? resourceLabel(card?.race ?? unit.race)}
                               </span>
                             )}
                           </span>
@@ -506,7 +506,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                     <span className="unitref__tag">+{upgradeCostFor(upgrade, listEntry.compositionId) ?? 0} min.</span>
                     {upgrade.grantsAbilities.map((ability) => (
                       <span key={ability.name} className="unitref__tag">
-                        {ability.type}{ability.cost ? ` ${ability.cost} ${resourceLabel(card?.race ?? unit.race)}` : ''}
+                        {ability.type}{ability.cost ? ` ${ability.cost} ${ability.resource ?? resourceLabel(card?.race ?? unit.race)}` : ''}
                       </span>
                     ))}
                     {upgrade.specialist && (
