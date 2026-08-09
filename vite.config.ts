@@ -2,8 +2,17 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
+import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig({
+  /*
+   * La versión se inyecta en compilación en lugar de importar package.json
+   * desde la app: así no acaba el manifiesto entero dentro del bundle y el
+   * número que se ve en el pie es exactamente el del artefacto desplegado.
+   */
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [
     react(),
     VitePWA({

@@ -4,6 +4,7 @@ import type { Pool, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql
 export type SupportStatus = 'OPEN' | 'ANSWERED' | 'CLOSED';
 export type SupportAuthorType = 'USER' | 'ADMIN';
 export type SupportDeliveryStatus = 'PENDING' | 'SENT' | 'FAILED' | 'NOT_APPLICABLE';
+export type SupportedLocale = 'es' | 'en';
 
 export interface SupportMessage {
   id: string;
@@ -23,6 +24,7 @@ export interface SupportTicket {
   userId: string | null;
   contactEmail: string;
   subject: string;
+  locale: SupportedLocale;
   status: SupportStatus;
   termsVersion: string;
   termsAcceptedAt: string;
@@ -36,6 +38,7 @@ interface TicketRow extends RowDataPacket {
   user_id: string | null;
   contact_email: string;
   subject: string;
+  locale: SupportedLocale;
   status: SupportStatus;
   terms_version: string;
   terms_accepted_at: string;
@@ -61,7 +64,8 @@ function mapTicket(row: TicketRow): SupportTicket {
     id: row.id,
     userId: row.user_id,
     contactEmail: row.contact_email,
-    subject: row.subject,
+  subject: row.subject,
+    locale: row.locale,
     status: row.status,
     termsVersion: row.terms_version,
     termsAcceptedAt: row.terms_accepted_at,
@@ -86,22 +90,22 @@ function mapMessage(row: MessageRow): SupportMessage {
 }
 
 const ticketColumns = `SELECT id, user_id, contact_email, subject, status,
-  terms_version, terms_accepted_at, created_at, updated_at FROM support_tickets`;
+  locale, terms_version, terms_accepted_at, created_at, updated_at FROM support_tickets`;
 const messageColumns = `SELECT id, ticket_id, author_type, author_user_id, body,
   delivery_status, provider_message_id, delivery_error, delivered_at, created_at FROM support_messages`;
 
 export class SupportRepository {
   constructor(private readonly pool: Pool) {}
 
-  async createTicket(input: { userId: string | null; contactEmail: string; subject: string; body: string; termsVersion: string }): Promise<{ ticket: SupportTicket; message: SupportMessage }> {
+  async createTicket(input: { userId: string | null; contactEmail: string; subject: string; body: string; termsVersion: string; locale: SupportedLocale }): Promise<{ ticket: SupportTicket; message: SupportMessage }> {
     const ticketId = randomUUID();
     const messageId = randomUUID();
     return this.transaction(async (connection) => {
       await connection.execute(
         `INSERT INTO support_tickets
-          (id, user_id, contact_email, subject, terms_version, terms_accepted_at)
-         VALUES (?, ?, ?, ?, ?, NOW())`,
-        [ticketId, input.userId, input.contactEmail, input.subject, input.termsVersion],
+          (id, user_id, contact_email, subject, locale, terms_version, terms_accepted_at)
+         VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+        [ticketId, input.userId, input.contactEmail, input.subject, input.locale, input.termsVersion],
       );
       await connection.execute(
         `INSERT INTO support_messages

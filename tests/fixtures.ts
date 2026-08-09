@@ -29,7 +29,7 @@ export function emptyList(overrides: Partial<ArmyList> = {}): ArmyList {
     name: 'Lista de prueba',
     createdAt: '2026-08-01T00:00:00.000Z',
     updatedAt: '2026-08-01T00:00:00.000Z',
-    catalogContentVersion: '2026.05.1.0',
+    catalogContentVersion: '2026.05.1.1',
     schemaVersion: '1.0.0',
     race: 'ZERG',
     scaleId: 'standard',

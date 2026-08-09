@@ -49,7 +49,7 @@ export function createAdminRouter(
     // y el superadministrador recibe la advertencia en lugar de un error.
     let emailDeliveryWarning: string | null = null;
     if (isVerified && !wasVerified) {
-      try { await email.sendAccountVerifiedEmail(user.email); }
+      try { await email.sendAccountVerifiedEmail(user.email, user.locale); }
       catch (error) { emailDeliveryWarning = `La cuenta quedó verificada, pero no se pudo avisar por correo: ${error instanceof Error ? error.message : 'error desconocido'}`; }
     }
     response.json({ emailDeliveryWarning });
@@ -97,7 +97,7 @@ export function createAdminRouter(
     let emailDeliveryWarning: string | null = null;
     try {
       if (!email.sendSupportReplyEmail) throw new Error('El correo de soporte no está disponible en este entorno.');
-      await email.sendSupportReplyEmail({ ticketId: ticket.id, contactEmail: ticket.contactEmail, subject: ticket.subject, body });
+      await email.sendSupportReplyEmail({ ticketId: ticket.id, contactEmail: ticket.contactEmail, subject: ticket.subject, body, locale: ticket.locale });
       await support.markMessageDelivery(message.id, 'SENT', null, null);
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'error desconocido';

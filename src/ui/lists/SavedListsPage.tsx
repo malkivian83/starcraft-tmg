@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { deleteRemoteList, loadRemoteLists, setListPublic, type RemoteList } from '@/auth/listService';
 import { loadCatalog } from '@/catalog/loader';
 import { buildCatalogIndex } from '@/engine/catalogIndex';
@@ -7,6 +8,7 @@ import type { ArmyList, Race, ScaleId } from '@/engine/types';
 import { SLOT_TYPES } from '@/engine/types';
 import { validateList } from '@/engine/validate';
 import { slotLabel } from '../common/Chips';
+import { normalizeLocale, type SupportedLocale } from '@/i18n/types';
 
 type RaceFilter = 'ALL' | Race;
 type ValidityFilter = 'ALL' | 'VALID' | 'INVALID';
@@ -23,12 +25,6 @@ const RACE_LABEL: Record<Race, string> = {
   ZERG: 'Zerg',
   TERRAN: 'Terran',
   PROTOSS: 'Protoss',
-};
-
-const SCALE_LABEL: Record<ScaleId, string> = {
-  skirmish: 'Escaramuza',
-  standard: 'Estándar',
-  grand_offensive: 'Gran Ofensiva',
 };
 
 interface SavedListRow {
@@ -50,8 +46,15 @@ export function SavedListsPage({
   onLoad: (list: ArmyList, revision: number) => void;
   onViewPublic: (id: string) => void;
 }) {
+  const { t, i18n } = useTranslation('lists');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
+  const scaleLabels: Record<ScaleId, string> = {
+    skirmish: t('scaleSkirmish'),
+    standard: t('scaleStandard'),
+    grand_offensive: t('scaleGrandOffensive'),
+  };
   const [lists, setLists] = useState<RemoteList[]>([]);
-  const [message, setMessage] = useState('Cargando listas…');
+  const [message, setMessage] = useState(t('loading'));
   const [raceFilter, setRaceFilter] = useState<RaceFilter>('ALL');
   const [scaleFilter, setScaleFilter] = useState<ScaleId | 'ALL'>('ALL');
   const [validityFilter, setValidityFilter] = useState<ValidityFilter>('ALL');
@@ -61,9 +64,9 @@ export function SavedListsPage({
     try {
       const loaded = await loadRemoteLists();
       setLists(loaded);
-      setMessage(loaded.length ? '' : 'Todavía no has guardado ninguna lista.');
+      setMessage(loaded.length ? '' : t('noSaved'));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'No se pudieron cargar las listas.');
+      setMessage(error instanceof Error ? error.message : t('loadError'));
     }
   };
 
@@ -71,7 +74,7 @@ export function SavedListsPage({
     void refresh();
   }, []);
 
-  const rows = useMemo(() => lists.map(toSavedListRow), [lists]);
+  const rows = useMemo(() => lists.map((list) => toSavedListRow(list, scaleLabels, locale, t('noFaction'))), [lists, locale, scaleLabels, t]);
   const visibleRows = useMemo(() => {
     const filtered = rows.filter((row) => {
       if (raceFilter !== 'ALL' && row.list.race !== raceFilter) return false;
@@ -85,12 +88,12 @@ export function SavedListsPage({
   }, [raceFilter, rows, scaleFilter, sortBy, validityFilter]);
 
   const remove = async (list: RemoteList) => {
-    if (!window.confirm(`¿Borrar “${list.name}”? Esta acción no se puede deshacer.`)) return;
+    if (!window.confirm(t('deleteConfirm', { name: list.name }))) return;
     try {
       await deleteRemoteList(list.id);
       await refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'No se pudo borrar la lista.');
+      setMessage(error instanceof Error ? error.message : t('loadError'));
     }
   };
 
@@ -99,7 +102,7 @@ export function SavedListsPage({
       const updated = await setListPublic(list.id, !list.isPublic);
       setLists((current) => current.map((item) => item.id === updated.id ? updated : item));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'No se pudo cambiar la visibilidad.');
+      setMessage(error instanceof Error ? error.message : t('loadError'));
     }
   };
 
@@ -114,66 +117,66 @@ export function SavedListsPage({
     <main className="content page-content lists-page no-print">
       <section className="page-heading">
         <div>
-          <p className="eyebrow">Biblioteca</p>
-          <h1>Mis listas</h1>
-          <p className="muted">Todas tus listas guardadas se sincronizan con tu cuenta.</p>
+          <p className="eyebrow">{t('library')}</p>
+          <h1>{t('myTitle')}</h1>
+          <p className="muted">{t('myDescription')}</p>
         </div>
-        <button onClick={onCreate}>Crear lista</button>
+        <button onClick={onCreate}>{t('create')}</button>
       </section>
 
       {message && <section className="panel empty">{message}</section>}
 
       {lists.length > 0 && (
-        <section className="panel saved-list-filters" aria-label="Filtros y ordenación de listas">
+        <section className="panel saved-list-filters" aria-label={t('filterAria')}>
           <label className="field">
-            Raza
+            {t('race')}
             <select value={raceFilter} onChange={(event) => setRaceFilter(event.target.value as RaceFilter)}>
-              <option value="ALL">Todas</option>
+              <option value="ALL">{t('all')}</option>
               <option value="ZERG">Zerg</option>
               <option value="TERRAN">Terran</option>
               <option value="PROTOSS">Protoss</option>
             </select>
           </label>
           <label className="field">
-            Escala
+            {t('scale')}
             <select value={scaleFilter} onChange={(event) => setScaleFilter(event.target.value as ScaleId | 'ALL')}>
-              <option value="ALL">Todas</option>
-              <option value="skirmish">Escaramuza</option>
-              <option value="standard">Estándar</option>
-              <option value="grand_offensive">Gran Ofensiva</option>
+              <option value="ALL">{t('all')}</option>
+              <option value="skirmish">{t('scaleSkirmish')}</option>
+              <option value="standard">{t('scaleStandard')}</option>
+              <option value="grand_offensive">{t('scaleGrandOffensive')}</option>
             </select>
           </label>
           <label className="field">
-            Validez
+            {t('validity')}
             <select value={validityFilter} onChange={(event) => setValidityFilter(event.target.value as ValidityFilter)}>
-              <option value="ALL">Todas</option>
-              <option value="VALID">Válidas</option>
-              <option value="INVALID">No válidas</option>
+              <option value="ALL">{t('all')}</option>
+              <option value="VALID">{t('valid')}</option>
+              <option value="INVALID">{t('invalid')}</option>
             </select>
           </label>
           <label className="field">
-            Ordenar por
+            {t('sort', { defaultValue: locale === 'en' ? 'Sort by' : 'Ordenar por' })}
             <select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}>
-              <option value="updated-desc">Más recientes</option>
-              <option value="updated-asc">Más antiguas</option>
-              <option value="name-asc">Nombre A-Z</option>
-              <option value="name-desc">Nombre Z-A</option>
-              <option value="race-asc">Raza</option>
-              <option value="scale-asc">Escala</option>
-              <option value="validity">Validez</option>
+              <option value="updated-desc">{t('recent')}</option>
+              <option value="updated-asc">{t('oldest')}</option>
+              <option value="name-asc">{t('nameAsc')}</option>
+              <option value="name-desc">{t('nameDesc')}</option>
+              <option value="race-asc">{t('raceSort')}</option>
+              <option value="scale-asc">{t('scaleSort')}</option>
+              <option value="validity">{t('validSort')}</option>
             </select>
           </label>
           <div className="saved-list-filters__summary">
-            <span className="muted small">{visibleRows.length} de {rows.length} listas</span>
+            <span className="muted small">{t('listCount', { visible: visibleRows.length, total: rows.length })}</span>
             {(raceFilter !== 'ALL' || scaleFilter !== 'ALL' || validityFilter !== 'ALL' || sortBy !== 'updated-desc') && (
-              <button type="button" className="button-link button-link--compact" onClick={clearFilters}>Limpiar filtros</button>
+              <button type="button" className="button-link button-link--compact" onClick={clearFilters}>{t('clear')}</button>
             )}
           </div>
         </section>
       )}
 
       {lists.length > 0 && visibleRows.length === 0 && (
-        <section className="panel empty">No hay listas que coincidan con los filtros seleccionados.</section>
+        <section className="panel empty">{t('noMatches')}</section>
       )}
 
       {visibleRows.length > 0 && (
@@ -181,14 +184,14 @@ export function SavedListsPage({
           <table className="saved-list-table saved-list-table--owner">
             <thead>
               <tr>
-                <th scope="col">Lista</th>
-                <th scope="col">Raza</th>
-                <th scope="col">Escala</th>
-                <th scope="col">Validez</th>
-                <th scope="col">Visibilidad</th>
-                <th scope="col">Coste</th>
-                <th scope="col">Actualizada</th>
-                <th scope="col"><span className="sr-only">Acciones</span></th>
+                <th scope="col">{t('list')}</th>
+                <th scope="col">{t('race')}</th>
+                <th scope="col">{t('scale')}</th>
+                <th scope="col">{t('validity')}</th>
+                <th scope="col">{t('visibility')}</th>
+                <th scope="col">{t('cost')}</th>
+                <th scope="col">{t('updated')}</th>
+                <th scope="col"><span className="sr-only">{t('actions')}</span></th>
               </tr>
             </thead>
             <tbody>
@@ -199,12 +202,12 @@ export function SavedListsPage({
                       <img
                         className="saved-list-table__logo"
                         src={`/factions/${row.list.race.toLowerCase()}.png`}
-                        alt={`Emblema ${RACE_LABEL[row.list.race]}`}
+                        alt={`${RACE_LABEL[row.list.race]} ${t('faction').toLocaleLowerCase(locale)}`}
                       />
                       <div>
                         <strong>{row.list.name}</strong>
                         <span>{row.factionName}</span>
-                        <small>{row.assignedSlots || 'Sin espacios asignados'}</small>
+                        <small>{row.assignedSlots || t('noSlots')}</small>
                       </div>
                     </div>
                   </td>
@@ -212,25 +215,25 @@ export function SavedListsPage({
                   <td>{row.scaleName}</td>
                   <td>
                     <span className={`list-status ${row.legal ? 'list-status--valid' : 'list-status--invalid'}`}>
-                      {row.legal ? 'Válida' : `No válida · ${row.errorCount}`}
+                      {row.legal ? t('validityShort') : t('invalidShort', { count: row.errorCount })}
                     </span>
                   </td>
                   <td>
                     <span className={`list-visibility ${row.list.isPublic ? 'list-visibility--public' : ''}`}>
-                      {row.list.isPublic ? 'Pública' : 'Privada'}
+                      {row.list.isPublic ? t('public') : t('private')}
                     </span>
                   </td>
                   <td>
-                    <span className="saved-list-table__cost">{row.summary.mineralsSpent}/{row.summary.mineralLimit} min.</span>
-                    <span className="saved-list-table__cost">{row.summary.vespeneSpent}/{row.summary.vespeneLimit} gas</span>
+                    <span className="saved-list-table__cost">{row.summary.mineralsSpent}/{row.summary.mineralLimit} {t('minerals')}</span>
+                    <span className="saved-list-table__cost">{row.summary.vespeneSpent}/{row.summary.vespeneLimit} {t('gas')}</span>
                   </td>
-                  <td><time dateTime={row.list.remoteUpdatedAt}>{new Date(row.list.remoteUpdatedAt).toLocaleString()}</time></td>
+                  <td><time dateTime={row.list.remoteUpdatedAt}>{new Date(row.list.remoteUpdatedAt).toLocaleString(locale)}</time></td>
                   <td>
                     <div className="row saved-list-table__actions">
-                      <button type="button" onClick={() => onLoad(row.list, row.list.revision)}>Abrir</button>
-                      {row.list.isPublic && <button type="button" onClick={() => onViewPublic(row.list.id)}>Ver lista</button>}
-                      <button type="button" onClick={() => { void togglePublic(row.list); }}>{row.list.isPublic ? 'Hacer privada' : 'Hacer pública'}</button>
-                      <button type="button" onClick={() => { void remove(row.list); }}>Borrar</button>
+                      <button type="button" onClick={() => onLoad(row.list, row.list.revision)}>{t('open')}</button>
+                      {row.list.isPublic && <button type="button" onClick={() => onViewPublic(row.list.id)}>{t('view')}</button>}
+                      <button type="button" onClick={() => { void togglePublic(row.list); }}>{row.list.isPublic ? t('makePrivate') : t('makePublic')}</button>
+                      <button type="button" onClick={() => { void remove(row.list); }}>{t('delete')}</button>
                     </div>
                   </td>
                 </tr>
@@ -243,20 +246,20 @@ export function SavedListsPage({
   );
 }
 
-function toSavedListRow(list: RemoteList): SavedListRow {
+function toSavedListRow(list: RemoteList, scaleLabels: Record<ScaleId, string>, locale: SupportedLocale, noFaction: string): SavedListRow {
   const index = buildCatalogIndex(loadCatalog(list.race).catalog);
   const summary = computeCosts(list, index);
   const validation = validateList(list, index);
   const faction = list.factionCardId ? index.factionCards.get(list.factionCardId) : undefined;
   const assignedSlots = SLOT_TYPES
     .filter((type) => summary.slots[type].total > 0 || summary.slots[type].used > 0)
-    .map((type) => `${slotLabel(type)} ${summary.slots[type].used}/${summary.slots[type].total}`)
+    .map((type) => `${slotLabel(type, locale)} ${summary.slots[type].used}/${summary.slots[type].total}`)
     .join(' · ');
 
   return {
     list,
-    factionName: faction?.name ?? 'Sin seleccionar',
-    scaleName: SCALE_LABEL[list.scaleId],
+    factionName: faction?.name ?? noFaction,
+    scaleName: scaleLabels[list.scaleId],
     legal: validation.legal,
     errorCount: validation.errors.length,
     assignedSlots,

@@ -1,5 +1,6 @@
 import type { ArmyList } from '@/engine/types';
-import { ApiError } from './authService';
+import { ApiError, localizedApiErrorMessage } from './authService';
+import i18n from '@/i18n/config';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
 
@@ -28,11 +29,12 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       headers: { 'Content-Type': 'application/json', ...init.headers },
     });
   } catch {
-    throw new ApiError(0, 'No se puede conectar con el servidor de la aplicación.');
+    throw new ApiError(0, i18n.language.startsWith('en') ? 'The application server could not be reached.' : 'No se puede conectar con el servidor de la aplicación.');
   }
   if (!response.ok) {
-    const payload = await response.json().catch(() => null) as { error?: { message?: string } } | null;
-    throw new ApiError(response.status, payload?.error?.message ?? 'No se pudo completar la solicitud.');
+    const payload = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null;
+    const code = payload?.error?.code ?? null;
+    throw new ApiError(response.status, localizedApiErrorMessage(code, payload?.error?.message ?? (i18n.language.startsWith('en') ? 'The request could not be completed.' : 'No se pudo completar la solicitud.')), code);
   }
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;

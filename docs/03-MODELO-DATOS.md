@@ -84,7 +84,9 @@ type ProperName = string;       // nombres propios: SIEMPRE en inglés, sin trad
 Se distinguen dos tipos de cadena, y la distinción es estructural, no cosmética:
 
 - **`ProperName`** — nombres de unidades, armas, habilidades, cartas y palabras clave. Se guardan en inglés y **no se traducen nunca**. Un solo valor, sin objeto de idiomas.
-- **`Localized`** — textos que explican algo: efectos de habilidades, descripciones, mensajes. Se guardan en español (`es`) conservando el original (`en`) por si hay dudas de traducción.
+- **`Localized`** — textos que explican algo: efectos de habilidades,
+  descripciones y mensajes. Se conservan siempre las dos variantes (`es` y
+  `en`); la interfaz selecciona la variante activa y usa la otra como respaldo.
 
 Que el tipo lo imponga evita el error más probable de la fase de transcripción: traducir un nombre por inercia al ir traduciendo su texto. Si alguien intenta poner un objeto `{es, en}` donde va un `ProperName`, no compila.
 
@@ -177,6 +179,7 @@ interface UnitCard {
   race: Race;
   name: Localized;
   baseSize: number;              // tamaño de peana en mm
+  combatTags: string[];          // ["ARMOURED", "BIOLOGICAL", "GROUND"]
   profile: {
     size: number;
     hitPoints: string;           // "4/7" — se guarda tal cual está impreso
@@ -304,6 +307,7 @@ interface UpgradeOption {
   grantsWeapons: Weapon[];
   grantsAbilities: Ability[];
   text?: Localized;
+  phase?: Phase;                 // solo si la carta la imprime en otra sección
 }
 ```
 

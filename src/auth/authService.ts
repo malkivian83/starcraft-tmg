@@ -1,3 +1,6 @@
+import type { SupportedLocale } from '@/i18n/types';
+import i18n from '@/i18n/config';
+
 export type Race = 'ZERG' | 'TERRAN' | 'PROTOSS';
 
 export type AuthProvider = 'PASSWORD' | 'GOOGLE' | 'BOTH';
@@ -7,6 +10,7 @@ export interface AuthenticatedUser {
   email: string;
   emailVerified: boolean;
   authProvider: AuthProvider;
+  locale: SupportedLocale;
   defaultRace: Race;
   nickname: string | null;
   avatar: string | null;
@@ -19,6 +23,7 @@ export interface AdminUser {
   isActive: boolean;
   emailVerifiedAt: string | null;
   authProvider: AuthProvider;
+  locale: SupportedLocale;
   lastLoginAt: string | null;
   savedLists: number;
 }
@@ -31,6 +36,7 @@ export interface EmailDeliveryLog {
   status: 'SENT' | 'FAILED';
   providerMessageId: string | null;
   errorMessage: string | null;
+  locale: SupportedLocale;
   createdAt: string;
 }
 
@@ -52,6 +58,7 @@ export interface SupportTicket {
   userId: string | null;
   contactEmail: string;
   subject: string;
+  locale: SupportedLocale;
   status: SupportStatus;
   termsVersion: string;
   termsAcceptedAt: string;
@@ -79,7 +86,7 @@ export function avatarUrl(value: string | null): string | null {
 }
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) {
+  constructor(public readonly status: number, message: string, public readonly code: string | null = null) {
     super(message);
   }
 }
@@ -97,15 +104,18 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 20_0
     });
   } catch {
     if (controller.signal.aborted) {
-      throw new ApiError(0, `El servidor no respondió en ${Math.round(timeoutMs / 1000)} segundos. Revisa los registros del servidor y la conectividad SMTP.`);
+      throw new ApiError(0, i18n.language.startsWith('en')
+        ? `The server did not respond within ${Math.round(timeoutMs / 1000)} seconds. Check the server logs and SMTP connectivity.`
+        : `El servidor no respondió en ${Math.round(timeoutMs / 1000)} segundos. Revisa los registros del servidor y la conectividad SMTP.`);
     }
-    throw new ApiError(0, 'No se puede conectar con el servidor de la aplicación.');
+    throw new ApiError(0, i18n.language.startsWith('en') ? 'The application server could not be reached.' : 'No se puede conectar con el servidor de la aplicación.');
   } finally {
     globalThis.clearTimeout(timeout);
   }
   if (!response.ok) {
-    const payload = await response.json().catch(() => null) as { error?: { message?: string } } | null;
-    throw new ApiError(response.status, payload?.error?.message ?? 'No se pudo completar la solicitud.');
+    const payload = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null;
+    const code = payload?.error?.code ?? null;
+    throw new ApiError(response.status, localizedApiErrorMessage(code, payload?.error?.message ?? (i18n.language.startsWith('en') ? 'The request could not be completed.' : 'No se pudo completar la solicitud.')), code);
   }
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
@@ -121,16 +131,49 @@ export async function login(email: string, password: string): Promise<Authentica
   })).user;
 }
 
-export async function register(email: string, password: string): Promise<RegistrationResult> {
+export async function register(email: string, password: string, locale: SupportedLocale = 'es'): Promise<RegistrationResult> {
   return request<RegistrationResult>('/auth/register', {
-    method: 'POST', body: JSON.stringify({ email, password }),
+    method: 'POST', body: JSON.stringify({ email, password, locale, termsAccepted: true }),
   });
 }
 
-export async function loginWithGoogle(credential: string): Promise<AuthenticatedUser> {
+export async function loginWithGoogle(credential: string, locale: SupportedLocale = 'es', termsAccepted = false): Promise<AuthenticatedUser> {
   return (await request<{ user: AuthenticatedUser }>('/auth/google', {
-    method: 'POST', body: JSON.stringify({ credential }),
+    method: 'POST', body: JSON.stringify({ credential, locale, termsAccepted }),
   })).user;
+}
+
+const API_ERROR_MESSAGES: Record<string, { es: string; en: string }> = {
+  UNAUTHENTICATED: { es: 'Inicia sesión para continuar.', en: 'Sign in to continue.' },
+  EMAIL_NOT_VERIFIED: { es: 'Verifica tu correo para acceder a la aplicación.', en: 'Verify your email to access the application.' },
+  FORBIDDEN: { es: 'No tienes permiso para realizar esta acción.', en: 'You do not have permission to perform this action.' },
+  INVALID_INPUT: { es: 'Los datos enviados no son válidos.', en: 'The submitted data is not valid.' },
+  INVALID_CREDENTIALS: { es: 'El correo o la contraseña no son correctos.', en: 'The email or password is incorrect.' },
+  EMAIL_UNAVAILABLE: { es: 'No se pudo crear la cuenta con ese correo.', en: 'The account could not be created with that email.' },
+  TERMS_REQUIRED: { es: 'Debes aceptar los términos y condiciones para crear una cuenta.', en: 'You must accept the terms and conditions to create an account.' },
+  GOOGLE_DISABLED: { es: 'El acceso con Google no está configurado en este servidor.', en: 'Google sign-in is not configured on this server.' },
+  GOOGLE_ALREADY_LINKED: { es: 'Ese correo ya está vinculado a otra cuenta de Google.', en: 'That email is already linked to another Google account.' },
+  ACCOUNT_UNAVAILABLE: { es: 'Esa cuenta no está disponible. Contacta con el administrador.', en: 'That account is unavailable. Contact the administrator.' },
+  INVALID_TOKEN: { es: 'El enlace no es válido o ha caducado.', en: 'The link is invalid or has expired.' },
+  INVALID_AVATAR: { es: 'La imagen del avatar no es válida.', en: 'The avatar image is not valid.' },
+  AVATAR_MIGRATION_REQUIRED: { es: 'La base de datos necesita la migración de avatares. Ejecuta «npm run db:migrate» y vuelve a intentarlo.', en: 'The database needs the avatar migration. Run “npm run db:migrate” and try again.' },
+  PASSWORD_NOT_SET: { es: 'Esta cuenta todavía no tiene contraseña. Usa «Establecer contraseña».', en: 'This account does not have a password yet. Use “Set password”.' },
+  PASSWORD_ALREADY_SET: { es: 'Esta cuenta ya tiene contraseña. Usa «Cambiar contraseña».', en: 'This account already has a password. Use “Change password”.' },
+  REAUTHENTICATION_REQUIRED: { es: 'Confirma tu identidad para borrar la cuenta.', en: 'Confirm your identity to delete the account.' },
+  PUBLIC_LIST_NOT_FOUND: { es: 'No existe esa lista pública.', en: 'That public list does not exist.' },
+  LIST_NOT_FOUND: { es: 'No existe esa lista.', en: 'That list does not exist.' },
+  INVALID_LIST: { es: 'La lista no tiene un formato válido.', en: 'The list format is not valid.' },
+  LIST_EXISTS: { es: 'Ya existe una lista con ese identificador.', en: 'A list with that identifier already exists.' },
+  LIST_CONFLICT: { es: 'La lista fue modificada o eliminada desde otra sesión.', en: 'The list was changed or deleted in another session.' },
+  INVALID_VISIBILITY: { es: 'La visibilidad indicada no es válida.', en: 'The selected visibility is not valid.' },
+  REVISION_REQUIRED: { es: 'Incluye la revisión actual de la lista.', en: 'Include the current list revision.' },
+  RATE_LIMITED: { es: 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.', en: 'Too many attempts. Wait a few minutes before trying again.' },
+  NOT_FOUND: { es: 'No se ha encontrado el recurso solicitado.', en: 'The requested resource was not found.' },
+};
+
+export function localizedApiErrorMessage(code: string | null | undefined, fallback: string): string {
+  const messages = code ? API_ERROR_MESSAGES[code] : undefined;
+  return messages ? messages[i18n.language.startsWith('en') ? 'en' : 'es'] : fallback;
 }
 
 export async function logout(): Promise<void> {
@@ -145,12 +188,12 @@ export async function verifyEmail(token: string): Promise<void> {
   await request('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token }) });
 }
 
-export async function requestVerification(email: string): Promise<void> {
-  await request('/auth/request-verification', { method: 'POST', body: JSON.stringify({ email }) });
+export async function requestVerification(email: string, locale: SupportedLocale = 'es'): Promise<void> {
+  await request('/auth/request-verification', { method: 'POST', body: JSON.stringify({ email, locale }) });
 }
 
-export async function requestPasswordReset(email: string): Promise<void> {
-  await request('/auth/request-password-reset', { method: 'POST', body: JSON.stringify({ email }) });
+export async function requestPasswordReset(email: string, locale: SupportedLocale = 'es'): Promise<void> {
+  await request('/auth/request-password-reset', { method: 'POST', body: JSON.stringify({ email, locale }) });
 }
 
 export async function resetPassword(token: string, password: string): Promise<void> {
@@ -210,8 +253,14 @@ export async function getEmailDeliveryLogs(limit = 100): Promise<EmailDeliveryLo
   return (await request<{ logs: EmailDeliveryLog[] }>(`/admin/smtp/logs?limit=${limit}`)).logs;
 }
 
+export async function updateLocale(locale: SupportedLocale): Promise<AuthenticatedUser> {
+  return (await request<{ user: AuthenticatedUser }>('/auth/profile/locale', {
+    method: 'PUT', body: JSON.stringify({ locale }),
+  })).user;
+}
+
 export interface SupportCreationResult { ticketId: string; emailDeliveryWarning: string | null; }
-export async function createSupport(input: { subject: string; contactEmail: string; message: string; termsAccepted: boolean }): Promise<SupportCreationResult> {
+export async function createSupport(input: { subject: string; contactEmail: string; message: string; termsAccepted: boolean; locale?: SupportedLocale }): Promise<SupportCreationResult> {
   return request<SupportCreationResult>('/support', { method: 'POST', body: JSON.stringify(input) });
 }
 export async function listSupportTickets(status?: SupportStatus): Promise<{ tickets: SupportTicket[]; openCount: number }> {

@@ -167,6 +167,8 @@ export interface UnitCard {
   race: Race;
   name: ProperName;
   baseSize: string;
+  /** Etiquetas de combate del pie de la carta (BIOLOGICAL, LIGHT, GROUND…). */
+  combatTags: string[];
   profile: UnitProfile;
   weapons: Weapon[];
   abilities: Ability[];
@@ -200,6 +202,8 @@ export interface UpgradeOption {
   grantsWeapons: Weapon[];
   grantsAbilities: Ability[];
   text?: Localized;
+  /** Fase de la mejora cuando la carta de esta unidad la imprime en otra distinta a la del glosario. */
+  phase?: Phase;
 }
 
 /**

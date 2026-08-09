@@ -5,6 +5,9 @@ import type {
   ScaleId,
 } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
+import { useTranslation } from 'react-i18next';
+import { localizedText } from '@/i18n/localized-content';
+import { normalizeLocale } from '@/i18n/types';
 
 export function playableScenarioCards(
   catalog: Pick<Catalog, 'missionCards' | 'deploymentCards'>,
@@ -28,6 +31,7 @@ export function playableScenarioCards(
  * oponente delante, así que no es parte de la construcción de la lista.
  */
 export function StepScenario() {
+  const { t } = useTranslation('builderUi');
   const { list, index } = useListStore();
   const toggleMission = useListStore((s) => s.toggleMission);
   const toggleDeployment = useListStore((s) => s.toggleDeployment);
@@ -41,16 +45,13 @@ export function StepScenario() {
     <div className="stack">
       <div className="panel">
         <p className="small muted" style={{ margin: 0 }}>
-          Cada jugador lleva <strong>2 cartas de misión</strong> y{' '}
-          <strong>2 de despliegue</strong>, sin repetir ninguna dentro de su
-          propio conjunto. El reglamento sí permite que ambos jugadores lleven
-          las mismas cartas.
+          {t('scenarioHint')}
         </p>
       </div>
 
       <section className="panel">
         <h2 className="panel__title">
-          Misiones — {list.missionCardIds.length} de 2
+          {t('missions', { count: list.missionCardIds.length })}
         </h2>
         <div className="scenario-grid">
           {missions.map((mission) => (
@@ -70,7 +71,7 @@ export function StepScenario() {
 
       <section className="panel">
         <h2 className="panel__title">
-          Despliegues — {list.deploymentCardIds.length} de 2
+          {t('deployments', { count: list.deploymentCardIds.length })}
         </h2>
         <div className="scenario-grid">
           {deployments.map((deployment) => (
@@ -91,12 +92,6 @@ export function StepScenario() {
   );
 }
 
-const SCALE_LABEL: Record<string, string> = {
-  skirmish: 'Escaramuza',
-  standard: 'Estándar',
-  grand_offensive: 'Gran Ofensiva',
-};
-
 function MissionCardView({
   mission,
   selected,
@@ -108,31 +103,35 @@ function MissionCardView({
   disabled: boolean;
   onToggle: () => void;
 }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const { t: tBuilder } = useTranslation('builder');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   return (
     <button
       className={`card${selected ? ' card--selected' : ''}`}
       disabled={disabled}
       aria-pressed={selected}
-      aria-label={`Misión ${mission.name}, escala ${SCALE_LABEL[mission.scale]}`}
+      aria-label={`${t('missions', { count: 0 })} ${mission.name}, ${t('scale')} ${scaleLabel(mission.scale, t)}`}
       onClick={onToggle}
     >
       <div className="card__head">
         <span className="card__name">{mission.name}</span>
-        <span className="chip">{SCALE_LABEL[mission.scale]}</span>
+        <span className="chip">{scaleLabel(mission.scale, t)}</span>
       </div>
       <div className="row small muted" style={{ gap: 10 }}>
         <span>
-          Suministro <strong>{mission.startingSupply}</strong> (+
-          {mission.supplyEscalation}/ronda)
+          {t('supply')} <strong>{mission.startingSupply}</strong> (+
+          {mission.supplyEscalation}/{tBuilder('perRound')})
         </span>
-        <span>{mission.gameLength} rondas</span>
+        <span>{mission.gameLength} {t('rounds')}</span>
         {mission.instantWinLead && (
-          <span>Victoria a +{mission.instantWinLead} PV</span>
+          <span>{t('victory', { points: mission.instantWinLead })}</span>
         )}
       </div>
-      {mission.scoringConditions.es && (
+      {localizedText(mission.scoringConditions, locale) && (
         <p className="small muted" style={{ margin: 0 }}>
-          {mission.scoringConditions.es}
+          {localizedText(mission.scoringConditions, locale)}
         </p>
       )}
     </button>
@@ -150,12 +149,13 @@ function DeploymentCardView({
   disabled: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation('builderUi');
   return (
     <button
       className={`card${selected ? ' card--selected' : ''}`}
       disabled={disabled}
       aria-pressed={selected}
-      aria-label={`Despliegue ${deployment.name}, mesa ${deployment.battlefield.width}×${deployment.battlefield.height} pulgadas`}
+      aria-label={`${t('deployments', { count: 0 })} ${deployment.name}`}
       onClick={onToggle}
     >
       <div className="card__head">
@@ -164,12 +164,12 @@ function DeploymentCardView({
           {deployment.battlefield.width}×{deployment.battlefield.height}″
         </span>
       </div>
-      <span className="small muted">{SCALE_LABEL[deployment.scale]}</span>
+      <span className="small muted">{scaleLabel(deployment.scale, t)}</span>
       {/* El diagrama de marcadores ES la carta: se muestra la imagen original. */}
       <img
         className="scenario-diagram"
         src={`/${deployment.imageRef}`}
-        alt={`Diagrama de despliegue ${deployment.name}`}
+        alt={t('deploymentDiagram', { name: deployment.name })}
         loading="lazy"
         onError={(e) => {
           e.currentTarget.style.display = 'none';
@@ -177,4 +177,8 @@ function DeploymentCardView({
       />
     </button>
   );
+}
+
+function scaleLabel(scale: ScaleId, t: (key: string, options?: Record<string, unknown>) => string): string {
+  return scale === 'skirmish' ? t('scaleSkirmish') : scale === 'standard' ? t('scaleStandard') : t('scaleGrandOffensive');
 }

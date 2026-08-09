@@ -1,4 +1,5 @@
 import type { UnitProfile } from '@/engine/types';
+import { useTranslation } from 'react-i18next';
 import './StatBlock.css';
 
 /**
@@ -15,16 +16,17 @@ export function StatBlock({
   profile: UnitProfile;
   size?: 'normal' | 'small';
 }) {
+  const { t } = useTranslation('builder');
   const stats: Array<{ label: string; value: string }> = [
-    { label: 'Size', value: profile.size },
-    { label: 'Hit Points', value: profile.hitPoints },
-    { label: 'Evade', value: profile.evade },
-    { label: 'Armour', value: profile.armour },
-    { label: 'Speed', value: profile.speed },
+    { label: t('stats.size'), value: profile.size },
+    { label: t('stats.hitPoints'), value: profile.hitPoints },
+    { label: t('stats.evade'), value: profile.evade },
+    { label: t('stats.armour'), value: profile.armour },
+    { label: t('stats.speed'), value: profile.speed },
   ];
 
   if (profile.shield) {
-    stats.unshift({ label: 'Shield', value: profile.shield });
+    stats.unshift({ label: t('stats.shield'), value: profile.shield });
   }
 
   return (

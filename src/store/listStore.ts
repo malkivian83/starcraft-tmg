@@ -25,7 +25,7 @@ export function createEmptyList(race: Race = 'ZERG'): ArmyList {
     name: 'Nueva lista',
     createdAt: now,
     updatedAt: now,
-    catalogContentVersion: '2026.05.1.0',
+    catalogContentVersion: '2026.05.1.1',
     schemaVersion: SCHEMA_VERSION,
     race,
     scaleId: 'standard',

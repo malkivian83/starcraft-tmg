@@ -47,6 +47,18 @@
   color: var(--text);
 }
 
+/* El suministro usa la inversión de la tira de atributos para localizarlo
+   rápidamente durante la partida: fondo claro/acento y texto oscuro. */
+.supplybands .statblock__cell {
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--accent-muted) 100%);
+  border-color: var(--accent-dim);
+}
+
+.supplybands .statblock__label,
+.supplybands .statblock__value {
+  color: var(--accent-deep);
+}
+
 .statblock--small .statblock__cell {
   min-width: 38px;
   padding: 2px 6px;
@@ -58,6 +70,29 @@
 
 .statblock--small .statblock__value {
   font-size: 13px;
+}
+
+/*
+ * Tabla de modelos/suministro. Reutiliza las casillas del statblock, pero con
+ * su propio rótulo encima: sin él, «1-1 → 0» junto a las características se
+ * leería como una característica más.
+ */
+.supplybands {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.supplybands__caption {
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.supplybands--small .supplybands__caption {
+  font-size: 6px;
 }
 
 @media (max-width: 620px) {
@@ -84,5 +119,19 @@
 
   .statblock__value {
     color: #000;
+  }
+
+  .supplybands .statblock__cell {
+    background: #f0e2f2;
+    border-color: #7b4a82;
+  }
+
+  .supplybands .statblock__label,
+  .supplybands .statblock__value {
+    color: #321633;
+  }
+
+  .supplybands__caption {
+    color: #555;
   }
 }

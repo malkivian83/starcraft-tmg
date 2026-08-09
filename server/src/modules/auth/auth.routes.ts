@@ -8,7 +8,7 @@ import { HttpError } from '../../lib/errors.js';
 import { rateLimit } from '../../middleware/rate-limit.js';
 import { requireUser } from '../../middleware/require-user.js';
 import { type EmailGateway } from '../email/email.gateway.js';
-import { AuthRepository, authProviderOf, type UserRecord } from './auth.repository.js';
+import { AuthRepository, authProviderOf, type SupportedLocale, type UserRecord } from './auth.repository.js';
 import { AVATAR_DATA_URL_PATTERN, AVATAR_STORED_PATH_PATTERN, AvatarStorage, decodeAvatarDataUrl } from './avatar-storage.js';
 import { createGoogleVerifier, type GoogleIdentity } from './google.js';
 import { clearSession, issueSession } from './session.js';
@@ -46,6 +46,8 @@ const avatarSchema = z.string().trim().nullable().superRefine((value, context) =
     context.addIssue({ code: z.ZodIssueCode.custom, message: 'La imagen del avatar no puede superar 150 KB.' });
   }
 });
+const localeSchema = z.enum(['es', 'en']);
+const TERMS_VERSION = '2026-08-05';
 
 function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase('en-US');
@@ -71,6 +73,7 @@ function publicUser(user: UserRecord) {
     emailVerified: Boolean(user.emailVerifiedAt),
     authProvider: authProviderOf(user),
     defaultRace: user.defaultRace,
+    locale: user.locale,
     nickname: user.nickname,
     avatar: user.avatar,
   };
@@ -108,10 +111,10 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
    * vincula el acceso con Google a un registro previo— y sólo crea una cuenta
    * nueva si no existe ninguna.
    */
-  const resolveGoogleUser = async (identity: GoogleIdentity): Promise<UserRecord> => {
+  const resolveGoogleUser = async (identity: GoogleIdentity, locale: SupportedLocale): Promise<UserRecord> => {
     const linked = await repository.findByGoogleSub(identity.sub);
     const user = linked ?? await repository.findByEmail(identity.emailNormalized);
-    if (!user) return repository.createGoogleUser(identity.email, identity.emailNormalized, identity.sub, identity.nickname);
+    if (!user) return repository.createGoogleUser(identity.email, identity.emailNormalized, identity.sub, identity.nickname, locale);
     if (user.deletedAt || !user.isActive) throw new HttpError(403, 'ACCOUNT_UNAVAILABLE', 'Esa cuenta no está disponible. Contacta con el administrador.');
     if (user.googleSub && user.googleSub !== identity.sub) throw new HttpError(409, 'GOOGLE_ALREADY_LINKED', 'Ese correo ya está vinculado a otra cuenta de Google.');
     return user.googleSub ? user : repository.linkGoogleAccount(user.id, identity.sub);
@@ -146,17 +149,18 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
   });
 
   router.post('/register', registrationByIp, registrationByIdentity, async (request, response) => {
-    const { email: inputEmail, password } = body(credentialsSchema, request.body);
+    const { email: inputEmail, password, locale = 'es' } = body(credentialsSchema.extend({ locale: localeSchema.default('es'), termsAccepted: z.literal(true) }), request.body);
     const emailNormalized = normalizeEmail(inputEmail);
     const existing = await repository.findByEmail(emailNormalized);
     if (existing) throw new HttpError(409, 'EMAIL_UNAVAILABLE', 'No se pudo crear la cuenta con ese correo.');
 
-    const user = await repository.createUser(inputEmail.trim(), emailNormalized, await hashPassword(password));
+    const user = await repository.createUser(inputEmail.trim(), emailNormalized, await hashPassword(password), locale);
+    await repository.recordTermsAcceptance(user.id, TERMS_VERSION, locale, 'PASSWORD_REGISTRATION');
     const token = createToken();
     await repository.createToken(user.id, token.hash, 'VERIFY_EMAIL');
     let emailDeliveryWarning: string | null = null;
     try {
-      await email.sendVerificationEmail(user.email, token.raw);
+      await email.sendVerificationEmail(user.email, token.raw, user.locale);
     } catch (error) {
       console.error('No se pudo enviar el correo de verificación inicial.', error);
       emailDeliveryWarning = 'La cuenta se creó, pero el correo no pudo enviarse todavía. Usa «Reenviar correo» dentro de unos minutos.';
@@ -166,7 +170,7 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
       verificationRequired: true,
       emailDeliveryWarning,
       developmentVerificationUrl: env.NODE_ENV === 'development'
-        ? `${env.APP_BASE_URL}/verify-email?token=${token.raw}`
+        ? `${env.APP_BASE_URL}/${locale}/${locale === 'en' ? 'verify-email' : 'verificar-correo'}?token=${token.raw}`
         : null,
     });
   });
@@ -184,9 +188,12 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
   });
 
   router.post('/google', loginByIp, async (request, response) => {
-    const { credential } = body(googleCredentialSchema, request.body);
+    const { credential, locale = 'es', termsAccepted = false } = body(googleCredentialSchema.extend({ locale: localeSchema.default('es'), termsAccepted: z.boolean().default(false) }), request.body);
     const identity = await verifyGoogleCredential(credential);
-    const user = await resolveGoogleUser(identity);
+    const existing = await repository.findByGoogleSub(identity.sub) ?? await repository.findByEmail(identity.emailNormalized);
+    if (!existing && !termsAccepted) throw new HttpError(428, 'TERMS_REQUIRED', 'Debes aceptar los términos y condiciones para crear una cuenta.');
+    const user = await resolveGoogleUser(identity, locale);
+    if (!existing) await repository.recordTermsAcceptance(user.id, TERMS_VERSION, locale, 'GOOGLE_REGISTRATION');
     issueSession(response, user.id, user.sessionVersion, env);
     await repository.recordLogin(user.id);
     response.json({ user: publicUser(user) });
@@ -212,13 +219,13 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
   });
 
   router.post('/request-verification', emailByIp, emailByIdentity, async (request, response) => {
-    const { email: inputEmail } = body(z.object({ email: z.string().email().max(254) }), request.body);
+    const { email: inputEmail, locale } = body(z.object({ email: z.string().email().max(254), locale: localeSchema.default('es') }), request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
     if (user && !user.deletedAt && user.isActive && !user.emailVerifiedAt) {
       const token = createToken();
       await repository.createToken(user.id, token.hash, 'VERIFY_EMAIL');
       try {
-        await email.sendVerificationEmail(user.email, token.raw);
+        await email.sendVerificationEmail(user.email, token.raw, user.locale ?? locale);
       } catch (error) {
         console.error('No se pudo reenviar el correo de verificación.', error);
       }
@@ -227,13 +234,13 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
   });
 
   router.post('/request-password-reset', emailByIp, emailByIdentity, async (request, response) => {
-    const { email: inputEmail } = body(z.object({ email: z.string().email().max(254) }), request.body);
+    const { email: inputEmail, locale } = body(z.object({ email: z.string().email().max(254), locale: localeSchema.default('es') }), request.body);
     const user = await repository.findByEmail(normalizeEmail(inputEmail));
     if (user && !user.deletedAt && user.isActive) {
       const token = createToken();
       await repository.createToken(user.id, token.hash, 'RESET_PASSWORD');
       try {
-        await email.sendPasswordResetEmail(user.email, token.raw);
+        await email.sendPasswordResetEmail(user.email, token.raw, user.locale ?? locale);
       } catch (error) {
         // La respuesta se mantiene indistinguible para no revelar cuentas
         // existentes ni el estado del proveedor de correo.
@@ -292,6 +299,12 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
       await avatarStorage.remove(user.id);
       throw new HttpError(500, 'AVATAR_MIGRATION_REQUIRED', 'La base de datos necesita la migración de avatares. Ejecuta «npm run db:migrate» y vuelve a intentarlo.');
     }
+    response.json({ user: publicUser(updated) });
+  });
+
+  router.put('/profile/locale', authenticated, async (request, response) => {
+    const { locale } = body(z.object({ locale: localeSchema }), request.body);
+    const updated = await repository.updateLocale(request.authenticatedUser!.id, locale);
     response.json({ user: publicUser(updated) });
   });
 

@@ -16,6 +16,7 @@ const supportSchema = z.object({
   contactEmail: z.string().trim().email().max(254),
   message: z.string().trim().min(10).max(10000),
   termsAccepted: z.literal(true),
+  locale: z.enum(['es', 'en']).default('es'),
 });
 
 function parseBody(input: unknown): z.infer<typeof supportSchema> {
@@ -45,12 +46,13 @@ export function createSupportRouter(repository: SupportRepository, authRepositor
       subject: input.subject,
       body: input.message,
       termsVersion: SUPPORT_TERMS_VERSION,
+      locale: input.locale,
     });
 
     let emailDeliveryWarning: string | null = null;
     try {
       if (!email.sendSupportCreatedEmail) throw new Error('El correo de soporte no está disponible en este entorno.');
-      await email.sendSupportCreatedEmail({ ticketId: created.ticket.id, contactEmail: created.ticket.contactEmail, subject: created.ticket.subject, body: input.message });
+      await email.sendSupportCreatedEmail({ ticketId: created.ticket.id, contactEmail: created.ticket.contactEmail, subject: created.ticket.subject, body: input.message, locale: input.locale });
       await repository.markMessageDelivery(created.message.id, 'SENT', null, null);
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'error desconocido';

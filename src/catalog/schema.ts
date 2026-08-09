@@ -103,6 +103,16 @@ export const unitCardSchema = z.object({
   race,
   name: properName,
   baseSize: z.string(),
+  /**
+   * Etiquetas de combate impresas al pie de la carta: BIOLOGICAL, LIGHT,
+   * ARMOURED, MECHANICAL, PSIONIC, GROUND, FLYING.
+   *
+   * No son las etiquetas de facción de `unitEntry.tags` —esas deciden qué
+   * puedes reclutar—, sino a qué te expone la unidad en mesa: contra qué Surge
+   * Type es vulnerable, si un arma «Target: Ground» puede dispararle y qué
+   * habilidades ajenas la alcanzan («Friendly Biological Unit»).
+   */
+  combatTags: z.array(z.string()).min(1),
   profile: unitProfile,
   weapons: z.array(weapon),
   abilities: z.array(ability),
@@ -128,6 +138,14 @@ export const upgradeOptionSchema = z.object({
   grantsWeapons: z.array(weapon),
   grantsAbilities: z.array(ability),
   text: localized.optional(),
+  /**
+   * Fase de la mejora cuando difiere de la del glosario.
+   *
+   * `Tunneling Claws` está impresa bajo ANY PHASE en Roach y Corpser pero bajo
+   * MOVEMENT PHASE en Vile: mismo efecto, distinta sección de la carta. El texto
+   * sigue compartido y solo se anota aquí lo que cambia de una unidad a otra.
+   */
+  phase: phase.optional(),
 });
 
 export const unitEntrySchema = z.object({

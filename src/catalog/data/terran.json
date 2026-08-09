@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "contentVersion": "2026.05.1.0",
+  "contentVersion": "2026.05.1.1",
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 + StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf",
   "race": "TERRAN",
 
@@ -120,20 +120,20 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Sustituye el Commando Rifle por un C-14 Rifle estándar, sin coste.",
-        "en": "Replaces the Commando Rifle with a standard C-14 Rifle, at no cost."
+        "es": "Sustituye el Commando Rifle por un C-14 Rifle, sin coste.",
+        "en": "Replaces the Commando Rifle with a C-14 Rifle, at no cost."
       },
       "weapon": {
         "name": "C-14 Rifle",
         "phase": "ASSAULT",
         "range": "12",
         "target": "All",
-        "rateOfAttack": "2",
+        "rateOfAttack": "6",
         "hit": "3+",
         "surgeType": "Light",
-        "surgeDice": "D3",
+        "surgeDice": "D3+1",
         "damage": "1",
-        "keywords": []
+        "keywords": ["BURST FIRE 8\" (3)"]
       }
     }
   },
@@ -250,7 +250,7 @@
       "slotsGranted": { "CORE": 1, "ELITE": 1 },
       "unique": true,
       "resource": "CP",
-      "resourcePerRound": 1,
+      "resourcePerRound": 2,
       "abilities": [{ "name": "Let's Have a Blast!", "phase": "ASSAULT", "type": "ACTIVE", "cost": 2, "fromUpgrade": false, "text": { "es": "La primera arma a distancia de la unidad biológica activa gana ANTI-EVADE (1).", "en": "The active Biological Unit's first Ranged Weapon used gains ANTI-EVADE (1)." } }, { "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 2, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
       "imageRef": "cards/terran/tactical-barracks-tech-lab.png"
     },
@@ -362,6 +362,7 @@
       "race": "TERRAN",
       "name": "Marine",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -415,6 +416,7 @@
       "race": "TERRAN",
       "name": "Raynor's Raider (Marine)",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
       "weapons": [{ "name": "C-14 Rifle", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "2", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": [] }, { "name": "Bayonet", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad sufre DAÑO NO LETAL (2), gana BUFF Speed (3) y sus armas ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2), gains BUFF Speed (3), and its weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver Stimpack con 1 CP menos.", "en": "When deploying from Reserves, it may resolve Stimpack with its CP cost reduced by 1." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Al desplegar desde Reservas puede resolver PLACE (10) desde otra unidad amiga; no puede colocarse a 8\" de enemigos.", "en": "When deploying from Reserves, it may resolve PLACE (10) from another Friendly Unit, no closer than 8\" to an Enemy." } }, { "name": "Slugthrower", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", esa arma gana ANTI-EVADE (1).", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon gains ANTI-EVADE (1)." } }, { "name": "Grenades - Frag", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", el Dado de Oleada de esa arma se sustituye por D6.", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon's S Dice is replaced by D6." } }],
@@ -427,6 +429,7 @@
       "race": "TERRAN",
       "name": "Marauder",
       "baseSize": "Ø 50MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "GROUND"],
       "profile": { "size": "2", "hitPoints": "5", "evade": "6+", "armour": "4+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -491,6 +494,7 @@
       "race": "TERRAN",
       "name": "Medic",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -564,6 +568,7 @@
       "race": "TERRAN",
       "name": "Goliath",
       "baseSize": "Ø 80MM",
+      "combatTags": ["ARMOURED", "MECHANICAL", "GROUND"],
       "profile": { "size": "3", "hitPoints": "10", "evade": "—", "armour": "4+", "speed": "7", "shield": null },
       "weapons": [{ "name": "Autocannon", "phase": "ASSAULT", "range": "12", "target": "Ground", "rateOfAttack": "9", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": ["LONG RANGE (18\")"] }, { "name": "Underbelly Machine Gun", "phase": "ASSAULT", "range": "8", "target": "Ground", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["PINPOINT", "SIDEARM"] }, { "name": "Hellfire Missiles", "phase": "ASSAULT", "range": "16", "target": "Flying", "rateOfAttack": "6", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": ["ANTI-EVADE (1)", "SIDEARM"] }, { "name": "Stomp", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "4", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [{ "name": "Target Lock", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Un Goliath amigo gana contra el objetivo elegido dados de oleada Light y Armoured D3+1 con Autocannon.", "en": "Friendly Goliaths targeting the selected enemy with Autocannon gain Light and Armoured surge D3+1." } }, { "name": "Indomitable", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Mientras está trabada puede atacar y ser atacada por unidades enemigas no trabadas.", "en": "While Engaged, this Unit may target and be targeted by Unengaged Enemy Units." } }, { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Tras una carga exitosa resuelve IMPACT (4) 3+.", "en": "After a successful Charge, resolve IMPACT (4) 3+." } }],
@@ -576,6 +581,7 @@
       "race": "TERRAN",
       "name": "Jim Raynor",
       "baseSize": "Ø 40MM",
+      "combatTags": ["BIOLOGICAL", "GROUND"],
       "profile": { "size": "2", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": null },
       "weapons": [
         {
@@ -629,6 +635,7 @@
       "race": "TERRAN",
       "name": "Point Defense Drone",
       "baseSize": "Ø 32MM",
+      "combatTags": ["ARMOURED", "FLYING", "MECHANICAL"],
       "profile": { "size": "—", "hitPoints": "3", "evade": "6+", "armour": "6+", "speed": "—", "shield": null },
       "weapons": [],
       "abilities": [
@@ -891,7 +898,7 @@
           "grantsAbilities": [
             {
               "name": "Laser Targeting Systems",
-              "phase": "ANY",
+              "phase": "ASSAULT",
               "type": "PASSIVE",
               "cost": null,
               "fromUpgrade": true,
@@ -1053,9 +1060,9 @@
       "cardId": "terran.card.point_defense_drone",
       "race": "TERRAN",
       "name": "Point Defense Drone",
-      "tags": ["TERRAN"],
+      "tags": ["TERRAN", "RAYNOR'S RAIDERS"],
       "slotType": "CORE",
-      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "combatRole": { "es": "Salvavidas", "en": "Lifesaver" },
       "unique": false,
       "summoned": true,
       "compositions": [

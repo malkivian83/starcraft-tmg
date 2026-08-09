@@ -1,10 +1,14 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ApiError, requestPasswordReset, requestVerification, resetPassword, verifyEmail } from '@/auth/authService';
 import { googleSignInEnabled } from '@/auth/googleIdentity';
 import { useAuthStore } from '@/store/authStore';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import { TermsPage } from './TermsPage';
+import { localizedPath, pageFromPath, routeLocale } from '@/i18n/routing';
+import { LanguageSelector } from '../common/LanguageSelector';
+import { AppVersion } from '../common/AppVersion';
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const { status, restore, user, developmentVerificationUrl, emailDeliveryWarning } = useAuthStore();
@@ -30,10 +34,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [refreshSession, restore, status]);
-  if (window.location.pathname === '/terminos-y-condiciones') return <TermsPage />;
+  if (pageFromPath(window.location.pathname) === 'terms') return <TermsPage />;
   if (status === 'checking') return <AuthLoading />;
-  if (window.location.pathname === '/verify-email') return <VerifyEmail />;
-  if (window.location.pathname === '/reset-password') return <ResetPassword />;
+  if (pageFromPath(window.location.pathname) === 'verify-email') return <VerifyEmail />;
+  if (pageFromPath(window.location.pathname) === 'reset-password') return <ResetPassword />;
   if (status === 'authenticated') return <>{children}</>;
   if (status === 'unverified') return <UnverifiedEmail email={user?.email ?? ''} warning={emailDeliveryWarning} developmentVerificationUrl={developmentVerificationUrl} />;
   return <AuthForm />;
@@ -44,7 +48,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
 }
 
 function AuthShell({ children, mainClassName = '' }: { children: ReactNode; mainClassName?: string }) {
-  return <div className="auth-page"><main className={`auth-page__main ${mainClassName}`.trim()}><AuthBrand />{children}</main><AuthFooter /></div>;
+  return <div className="auth-page"><main className={`auth-page__main ${mainClassName}`.trim()}><div className="auth-page__locale"><LanguageSelector /></div><AuthBrand />{children}</main><AuthFooter /></div>;
 }
 
 function AuthBrand() {
@@ -52,14 +56,20 @@ function AuthBrand() {
 }
 
 function AuthLoading() {
-  return <AuthShell mainClassName="auth-page__main--loading"><span className="sr-only" role="status">Cargando…</span></AuthShell>;
+  const { t } = useTranslation('common');
+  return <AuthShell mainClassName="auth-page__main--loading"><span className="sr-only" role="status">{t('loading')}</span></AuthShell>;
 }
 
 function AuthFooter() {
-  return <footer className="auth-page__footer"><span>Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</span><span className="auth-page__footer-links"><a href="/soporte">Soporte</a><span aria-hidden="true">·</span><a href="/terminos-y-condiciones">Términos y condiciones</a></span></footer>;
+  const { t: tLegal } = useTranslation('legal');
+  const { t: tNavigation } = useTranslation('navigation');
+  const locale = routeLocale(window.location.pathname);
+  return <footer className="auth-page__footer"><span>{tLegal('footer')}</span><span className="auth-page__footer-links"><a href={localizedPath('support', locale)}>{tNavigation('support')}</a><span aria-hidden="true">·</span><a href={localizedPath('terms', locale)}>{tLegal('terms')}</a><span aria-hidden="true">·</span><AppVersion /></span></footer>;
 }
 
 function AuthForm() {
+  const { t } = useTranslation('auth');
+  const locale = routeLocale(window.location.pathname);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -74,7 +84,7 @@ function AuthForm() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (mode === 'register' && !termsAccepted) {
-      setError('Debes aceptar los términos y condiciones para registrarte.');
+      setError(t('termsRequired'));
       return;
     }
     setError(null);
@@ -83,7 +93,7 @@ function AuthForm() {
       if (mode === 'login') await login(email, password);
       else await register(email, password);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'No se pudo completar la solicitud.');
+      setError(reason instanceof Error ? reason.message : t('genericError'));
     } finally {
       setPending(false);
     }
@@ -91,15 +101,15 @@ function AuthForm() {
 
   const enterWithGoogle = async (credential: string) => {
     if (mode === 'register' && !termsAccepted) {
-      setError('Debes aceptar los términos y condiciones para registrarte.');
+      setError(t('termsRequired'));
       return;
     }
     setError(null);
     setPending(true);
     try {
-      await loginWithGoogle(credential);
+      await loginWithGoogle(credential, mode === 'register');
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'No se pudo entrar con Google.');
+      setError(reason instanceof Error ? reason.message : t('googleError'));
     } finally {
       setPending(false);
     }
@@ -109,42 +119,42 @@ function AuthForm() {
     <AuthShell mainClassName="auth-page__main--split">
       <div className="auth-page__panels">
         <section className="panel stack auth-page__panel auth-page__panel--account">
-          <h1>{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h1>
+          <h1>{mode === 'login' ? t('login') : t('register')}</h1>
           <form className="stack auth-form" onSubmit={submit}>
             <label className="field">
-              Correo
+              {t('email')}
               <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
             </label>
             <label className="field">
-              Contraseña
+              {t('password')}
               <span className="password-field">
                 <input type={passwordVisible ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} required minLength={12} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
-                <button type="button" className="password-field__toggle" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? 'Ocultar contraseña' : 'Ver contraseña'} aria-pressed={passwordVisible}>{passwordVisible ? 'Ocultar' : 'Ver'}</button>
+                <button type="button" className="password-field__toggle" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? t('hidePassword') : t('showPassword')} aria-pressed={passwordVisible}>{passwordVisible ? t('hidePassword') : t('showPassword')}</button>
               </span>
             </label>
             {mode === 'register' && (
               <label className="terms-check">
                 <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required />
-                <span>Acepto los <a href="/terminos-y-condiciones" target="_blank" rel="noreferrer">términos y condiciones de uso</a>.</span>
+                <span>{t('acceptTermsPrefix')} <a href={localizedPath('terms', locale)}>{t('acceptTermsLink')}</a>.</span>
               </label>
             )}
             {error && <p className="issue issue--error">{error}</p>}
-            <button className="auth-action auth-action--primary" type="submit" disabled={pending}>{pending ? 'Procesando...' : mode === 'login' ? 'Entrar' : 'Registrarme'}</button>
+            <button className="auth-action auth-action--primary" type="submit" disabled={pending}>{pending ? t('processing') : mode === 'login' ? t('enter') : t('registerAction')}</button>
           </form>
-          {googleSignInEnabled && <><p className="auth-separator">o</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} /><p className="muted small">Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.</p></>}
+          {googleSignInEnabled && <><p className="auth-separator">{t('or')}</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} locale={locale} /><p className="muted small">{t('googleNote')}</p></>}
           <div className="auth-page__account-links">
-            {mode === 'login' && <a href="/reset-password">He olvidado mi contraseña</a>}
-            <button className="auth-action auth-action--secondary" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? 'Crear una cuenta' : 'Ya tengo una cuenta'}</button>
+            {mode === 'login' && <a href={localizedPath('reset-password', locale)}> {t('forgotPassword')}</a>}
+            <button className="auth-action auth-action--secondary" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? t('createAccount') : t('existingAccount')}</button>
           </div>
         </section>
 
         <section className="panel stack auth-page__panel auth-page__panel--guest" aria-labelledby="guest-panel-title">
-          <p className="auth-panel__eyebrow">Sin cuenta</p>
-          <h2 id="guest-panel-title">Crear una lista como invitado</h2>
-          <p className="muted">Prueba el creador de listas sin registrarte. Puedes imprimir o exportar tu lista cuando termines.</p>
-          <Link className="auth-guest-button" to="/crear-lista">
-            <span className="auth-guest-button__label">Abrir creador de listas</span>
-            <span className="auth-guest-button__hint">Inicia sesión más tarde para guardarla</span>
+          <p className="auth-panel__eyebrow">{t('noAccount')}</p>
+          <h2 id="guest-panel-title">{t('guestTitle')}</h2>
+          <p className="muted">{t('guestDescription')}</p>
+          <Link className="auth-guest-button" to={localizedPath('guest-builder', locale)}>
+            <span className="auth-guest-button__label">{t('openBuilder')}</span>
+            <span className="auth-guest-button__hint">{t('loginLater')}</span>
           </Link>
         </section>
       </div>
@@ -153,20 +163,26 @@ function AuthForm() {
 }
 
 function UnverifiedEmail({ email, warning, developmentVerificationUrl }: { email: string; warning: string | null; developmentVerificationUrl: string | null }) {
+  const { t } = useTranslation('auth');
+  const locale = routeLocale(window.location.pathname);
   const [message, setMessage] = useState<string | null>(warning); const [pending, setPending] = useState(false);
-  const resend = async () => { setPending(true); setMessage(null); try { await requestVerification(email); setMessage('Si la cuenta sigue pendiente, te hemos enviado un nuevo enlace de verificacion.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo solicitar el correo.'); } finally { setPending(false); } };
-  return <AuthLayout><h1>Verifica tu correo</h1><p>Abre el enlace de verificacion antes de acceder a la aplicacion.</p>{message && <p className="issue issue--error">{message}</p>}<button className="auth-action auth-action--primary" onClick={() => { void resend(); }} disabled={pending || !email}>{pending ? 'Solicitando...' : 'Reenviar correo'}</button>{developmentVerificationUrl && <a href={developmentVerificationUrl}>Verificar esta cuenta (desarrollo local)</a>}</AuthLayout>;
+  const resend = async () => { setPending(true); setMessage(null); try { await requestVerification(email, locale); setMessage(t('resendConfirmation')); } catch (error) { setMessage(error instanceof Error ? error.message : t('genericError')); } finally { setPending(false); } };
+  return <AuthLayout><h1>{t('verifyTitle')}</h1><p>{t('verifyMessage')}</p>{message && <p className="issue issue--error">{message}</p>}<button className="auth-action auth-action--primary" onClick={() => { void resend(); }} disabled={pending || !email}>{pending ? t('requesting') : t('resend')}</button>{developmentVerificationUrl && <a href={developmentVerificationUrl}>{t('verifyLocal')}</a>}</AuthLayout>;
 }
 
 function ResetPassword() {
+  const { t } = useTranslation('auth');
+  const locale = routeLocale(window.location.pathname);
   const token = new URLSearchParams(window.location.search).get('token'); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [message, setMessage] = useState<string | null>(null); const [pending, setPending] = useState(false);
-  const submitRequest = async (event: FormEvent) => { event.preventDefault(); setPending(true); setMessage(null); try { await requestPasswordReset(email); setMessage('Si existe una cuenta activa con ese correo, recibiras un enlace para restablecer la contrasena.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo solicitar el enlace.'); } finally { setPending(false); } };
-  const submitReset = async (event: FormEvent) => { event.preventDefault(); setPending(true); setMessage(null); try { await resetPassword(token!, password); setMessage('Contrasena actualizada. Ya puedes iniciar sesion.'); } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo restablecer la contrasena.'); } finally { setPending(false); } };
-  return <AuthLayout><h1>{token ? 'Restablecer contrasena' : 'Recuperar contrasena'}</h1><form className="stack auth-form" onSubmit={token ? submitReset : submitRequest}>{token ? <label className="field">Nueva contrasena<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={12} autoComplete="new-password" required /></label> : <label className="field">Correo<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>}{message && <p className="issue">{message}</p>}<button className="auth-action auth-action--primary" type="submit" disabled={pending}>{pending ? 'Procesando...' : token ? 'Guardar contrasena' : 'Enviar enlace'}</button></form><a href="/">Volver al acceso</a></AuthLayout>;
+  const submitRequest = async (event: FormEvent) => { event.preventDefault(); setPending(true); setMessage(null); try { await requestPasswordReset(email, locale); setMessage(t('resetRequestConfirmation')); } catch (error) { setMessage(error instanceof Error ? error.message : t('genericError')); } finally { setPending(false); } };
+  const submitReset = async (event: FormEvent) => { event.preventDefault(); setPending(true); setMessage(null); try { await resetPassword(token!, password); setMessage(t('passwordUpdated')); } catch (error) { setMessage(error instanceof Error ? error.message : t('genericError')); } finally { setPending(false); } };
+  return <AuthLayout><h1>{token ? t('resetTitle') : t('recoverTitle')}</h1><form className="stack auth-form" onSubmit={token ? submitReset : submitRequest}>{token ? <label className="field">{t('newPassword')}<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={12} autoComplete="new-password" required /></label> : <label className="field">{t('email')}<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>}{message && <p className="issue">{message}</p>}<button className="auth-action auth-action--primary" type="submit" disabled={pending}>{pending ? t('processing') : token ? t('savePassword') : t('sendLink')}</button></form><a href={localizedPath('home', locale)}>{t('backToAccess')}</a></AuthLayout>;
 }
 
 function VerifyEmail() {
-  const [message, setMessage] = useState('Verificando correo...');
-  useEffect(() => { const token = new URLSearchParams(window.location.search).get('token'); if (!token) { setMessage('El enlace de verificacion no es valido.'); return; } void verifyEmail(token).then(() => setMessage('Correo verificado. Ya puedes iniciar sesion.')).catch((error: Error) => setMessage(error.message)); }, []);
-  return <AuthLayout><p>{message}</p><a href="/">Volver al acceso</a></AuthLayout>;
+  const { t } = useTranslation('auth');
+  const locale = routeLocale(window.location.pathname);
+  const [message, setMessage] = useState(t('verifying'));
+  useEffect(() => { const token = new URLSearchParams(window.location.search).get('token'); if (!token) { setMessage(t('invalidVerification')); return; } void verifyEmail(token).then(() => setMessage(t('emailVerified'))).catch((error: Error) => setMessage(error.message)); }, [t]);
+  return <AuthLayout><p>{message}</p><a href={localizedPath('home', locale)}>{t('backToAccess')}</a></AuthLayout>;
 }

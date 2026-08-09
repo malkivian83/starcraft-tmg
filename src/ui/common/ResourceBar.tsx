@@ -1,19 +1,8 @@
-import { SLOT_TYPES, type CostSummary, type SlotType } from '@/engine/types';
+import { SLOT_TYPES, type CostSummary } from '@/engine/types';
+import { useTranslation } from 'react-i18next';
+import { slotLabel } from './Chips';
+import { normalizeLocale } from '@/i18n/types';
 import './ResourceBar.css';
-
-const SLOT_LABEL: Record<SlotType, string> = {
-  CORE: 'Core',
-  ELITE: 'Élite',
-  SUPPORT: 'Apoyo',
-  AIR: 'Aéreo',
-  HERO: 'Héroe',
-};
-
-const RESOURCE_LABEL: Record<string, string> = {
-  CP: 'Puntos de Mando',
-  BM: 'Biomasa',
-  PE: 'Energía Psiónica',
-};
 
 interface Props {
   summary: CostSummary;
@@ -28,6 +17,9 @@ interface Props {
  * siempre visibles.
  */
 export function ResourceBar({ summary, hasErrors }: Props) {
+  const { t } = useTranslation('builder');
+  const { i18n } = useTranslation();
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const {
     mineralsSpent,
     mineralLimit,
@@ -57,19 +49,19 @@ export function ResourceBar({ summary, hasErrors }: Props) {
     >
       <div className="resbar__primary">
         <Metric
-          label="Minerales"
+          label={t('minerals')}
           value={`${mineralsSpent} / ${mineralLimit}`}
           state={mineralsOver ? 'over' : 'ok'}
         />
         <Metric
-          label="Gas Vespeno"
+          label={t('vespene')}
           value={`${vespeneSpent} / ${vespeneLimit}`}
           state={vespeneOver ? 'over' : 'ok'}
         />
 
         <div className="resbar__slots">
           {visibleSlots.length === 0 ? (
-            <span className="resbar__hint">Sin espacios desbloqueados</span>
+            <span className="resbar__hint">{t('noSlots')}</span>
           ) : (
             visibleSlots.map((type) => {
               const { used, total } = slots[type];
@@ -78,9 +70,9 @@ export function ResourceBar({ summary, hasErrors }: Props) {
                 <span
                   key={type}
                   className={`resbar__slot${over ? ' resbar__slot--over' : ''}`}
-                  title={`${SLOT_LABEL[type]}: ${used} usados de ${total}`}
+                  title={`${slotLabel(type, locale)}: ${used} ${t('usedOf')} ${total}`}
                 >
-                  <span className="resbar__slot-label">{SLOT_LABEL[type]}</span>
+                  <span className="resbar__slot-label">{slotLabel(type, locale)}</span>
                   <span className="resbar__slot-value">
                     {used}/{total}
                   </span>
@@ -93,12 +85,12 @@ export function ResourceBar({ summary, hasErrors }: Props) {
 
       <div className="resbar__secondary">
         {resourceType && (
-          <span title={RESOURCE_LABEL[resourceType]}>
-            {resourceType} <strong>{resourcePerRound}</strong> por ronda
+          <span title={t(`resource.${resourceType}`)}>
+            {resourceType} <strong>{resourcePerRound}</strong> {t('perRound')}
           </span>
         )}
         <span>
-          Suministro <strong>{totalSupply}</strong>
+          {t('supply')} <strong>{totalSupply}</strong>
         </span>
       </div>
     </div>

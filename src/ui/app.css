@@ -78,6 +78,29 @@
   box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
 }
 
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  margin-inline: 8px;
+}
+
+.language-selector select {
+  min-height: 36px;
+  padding: 6px 28px 6px 10px;
+  color: var(--text, #eef3f8);
+  background: var(--bg-raised, #182033);
+  border: 1px solid var(--line-strong, #3b4862);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.auth-page__locale {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 2;
+}
+
 @media (max-width: 900px) {
   .toast {
     bottom: 128px;

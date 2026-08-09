@@ -38,4 +38,13 @@ describe('Costes Zerg del reglamento', () => {
     const cards = [...catalog.tacticalCards, ...catalog.creepCards];
     expect(Object.fromEntries(cards.map((item) => [item.id, item.vespeneCost]))).toEqual(GAS_COSTS);
   });
+
+  it('sitúa Mutating Carapace de Kerrigan en la fase de movimiento', () => {
+    const kerrigan = catalog.unitCards.find((card) => card.id === 'zerg.card.kerrigan');
+    const mutatingCarapace = kerrigan?.abilities.find(
+      (ability) => ability.name === 'Mutating Carapace',
+    );
+
+    expect(mutatingCarapace?.phase).toBe('MOVEMENT');
+  });
 });

@@ -27,23 +27,23 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   const smtpEmail = new SmtpEmailGateway(smtpSettings, emailLogs, env);
   const developmentEmail = new DevelopmentEmailGateway(env);
   const email = emailOverride ?? {
-    sendVerificationEmail: async (address: string, token: string) => {
+    sendVerificationEmail: async (address: string, token: string, locale = 'es') => {
       const configured = await smtpSettings.get();
       return env.NODE_ENV === 'production' || configured
-        ? smtpEmail.sendVerificationEmail(address, token)
-        : developmentEmail.sendVerificationEmail(address, token);
+        ? smtpEmail.sendVerificationEmail(address, token, locale)
+        : developmentEmail.sendVerificationEmail(address, token, locale);
     },
-    sendPasswordResetEmail: async (address: string, token: string) => {
+    sendPasswordResetEmail: async (address: string, token: string, locale = 'es') => {
       const configured = await smtpSettings.get();
       return env.NODE_ENV === 'production' || configured
-        ? smtpEmail.sendPasswordResetEmail(address, token)
-        : developmentEmail.sendPasswordResetEmail(address, token);
+        ? smtpEmail.sendPasswordResetEmail(address, token, locale)
+        : developmentEmail.sendPasswordResetEmail(address, token, locale);
     },
-    sendAccountVerifiedEmail: async (address: string) => {
+    sendAccountVerifiedEmail: async (address: string, locale = 'es') => {
       const configured = await smtpSettings.get();
       return env.NODE_ENV === 'production' || configured
-        ? smtpEmail.sendAccountVerifiedEmail(address)
-        : developmentEmail.sendAccountVerifiedEmail(address);
+        ? smtpEmail.sendAccountVerifiedEmail(address, locale)
+        : developmentEmail.sendAccountVerifiedEmail(address, locale);
     },
     sendSupportCreatedEmail: async (input) => {
       const configured = await smtpSettings.get();

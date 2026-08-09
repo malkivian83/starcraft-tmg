@@ -376,7 +376,17 @@ Requisito explícito. La barra de la cabecera **nunca se oculta ni se desplaza f
 
 ### 6.8 Regla de idioma en la interfaz
 
-Los nombres propios (`ProperName` en el modelo) se muestran **siempre en inglés**; el resto, en español. Un chip de mejora se lee `+ Adrenal Glands (+20)`, y su descripción, en español. Palabras clave como `SPECIALIST` o `LONG RANGE (18")` se mantienen en inglés porque son términos de regla impresos en las cartas.
+La interfaz admite español e inglés. El idioma se resuelve, por este orden,
+desde la ruta (`/es` o `/en`), la preferencia guardada del perfil, el selector
+local del navegador y español como último respaldo. Las rutas antiguas sin
+prefijo se redirigen a la variante española equivalente.
+
+Los nombres propios (`ProperName` en el modelo) se muestran **siempre en
+inglés**; se traducen la interfaz, los textos explicativos, errores, soporte,
+administración y términos estructurales. Un chip de mejora se lee `+ Adrenal
+Glands (+20)` en ambos idiomas, mientras que su descripción usa el campo
+`Localized` activo. Palabras clave como `SPECIALIST` o `LONG RANGE (18")` se
+mantienen en inglés porque son términos de regla impresos en las cartas.
 
 ### 6.9 Modo invitado y capacidades
 
@@ -562,7 +572,8 @@ Las hojas de cartas son A4 con disposición regular y marcas `fold here`, así q
 
 Consecuencia técnica: **no hace falta `@react-pdf/renderer`**. Basta `@media print` sobre HTML y `window.print()`, que en cualquier navegador moderno permite «Guardar como PDF». Menos dependencias, menos peso y salida idéntica a lo que se ve en pantalla.
 
-La hoja resumen A4 se genera en español; las imágenes de las cartas quedan en su inglés original.
+La hoja resumen A4 se genera en el idioma activo; las imágenes de las cartas y
+los PDF fuente quedan en su inglés original.
 
 Las imágenes de cartas se cargan de forma diferida y se cachean bajo demanda.
 El logo y los emblemas de facción no están incluidos expresamente en esa regla
@@ -580,9 +591,10 @@ El API devuelve el contador y el estado del usuario (`likeCount` y
 compuesta `(list_id, user_id)` para impedir duplicados. La página pública aplica
 los filtros en cliente y ofrece el orden «Más valoradas» por ese contador.
 
-La ruta `/terminos-y-condiciones` se sirve desde `AuthGate` antes de exigir
-sesión. El footer y el registro enlazan con ella; la casilla de aceptación es
-obligatoria y el titular se identifica como `starcraft-builder.com`.
+Las rutas localizadas `/es/terminos-y-condiciones` y
+`/en/terms-and-conditions` se sirven desde `AuthGate` antes de exigir sesión.
+El footer y el registro enlazan con ellas; la casilla de aceptación es
+obligatoria y se registra junto con la versión, idioma y origen de aceptación.
 
 ## 10. PWA y despliegue
 
@@ -592,8 +604,10 @@ no se garantiza funcionamiento íntegro sin conexión. La restauración de sesi�
 el perfil y el acceso a listas remotas requieren la API, y el borrador invitado
 en RAM no sobrevive a una recarga.
 
-El alojamiento debe aplicar fallback de SPA para `/crear-lista`, excluyendo
-`/api` y los recursos estáticos reales.
+El alojamiento debe aplicar fallback de SPA para las rutas localizadas de la
+SPA (incluido `/es/crear-lista` y `/en/create-list`), excluyendo `/api` y los
+recursos estáticos reales. Las rutas antiguas se mantienen como redirecciones
+de compatibilidad.
 
 El despliegue vigente usa Plesk: Vite produce `dist/`, TypeScript produce
 `server/dist/`, `app.js` carga la API y MariaDB conserva los datos. Consulta

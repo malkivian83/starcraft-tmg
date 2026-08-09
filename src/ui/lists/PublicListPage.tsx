@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { setPublicListLike, type RemoteList } from '@/auth/listService';
 import { loadCatalog } from '@/catalog/loader';
 import { buildCatalogIndex } from '@/engine/catalogIndex';
@@ -15,6 +16,7 @@ export function PublicListPage({
   onBack: () => void;
   onClone: () => void;
 }) {
+  const { t } = useTranslation('lists');
   const [liked, setLiked] = useState(list.likedByCurrentUser);
   const [likeCount, setLikeCount] = useState(list.likeCount);
   const [likePending, setLikePending] = useState(false);
@@ -37,7 +39,7 @@ export function PublicListPage({
       setLiked(updated.likedByCurrentUser);
       setLikeCount(updated.likeCount);
     } catch (error) {
-      setLikeError(error instanceof Error ? error.message : 'No se pudo actualizar el me gusta.');
+      setLikeError(error instanceof Error ? error.message : t('likeError'));
     } finally {
       setLikePending(false);
     }
@@ -46,16 +48,16 @@ export function PublicListPage({
   return (
     <main className="public-list-page">
       <div className="public-list-toolbar no-print">
-        <button type="button" onClick={onBack}>← Volver</button>
+        <button type="button" onClick={onBack}>← {t('back')}</button>
         <div>
-          <p className="eyebrow">Lista pública</p>
+          <p className="eyebrow">{t('publicLabel')}</p>
           <h1>{list.name}</h1>
-          <p className="muted">Compartida por {list.ownerNickname ?? 'Usuario'} · solo lectura</p>
+          <p className="muted">{t('sharedBy', { owner: list.ownerNickname ?? (t('user')) })}</p>
         </div>
         <div className="public-list-toolbar__actions">
-          <button type="button" className={liked ? 'like-button like-button--active' : 'like-button'} aria-label={liked ? 'Quitar me gusta' : 'Marcar con me gusta'} aria-pressed={liked} onClick={() => { void toggleLike(); }} disabled={likePending}><span className="like-button__icon" aria-hidden="true">{liked ? '♥' : '♡'}</span><span>{likeCount}</span></button>
-          <button type="button" onClick={() => window.print()}>Imprimir</button>
-          <button type="button" onClick={onClone}>Clonar lista</button>
+          <button type="button" className={liked ? 'like-button like-button--active' : 'like-button'} aria-label={liked ? t('unlike') : t('like')} aria-pressed={liked} onClick={() => { void toggleLike(); }} disabled={likePending}><span className="like-button__icon" aria-hidden="true">{liked ? '♥' : '♡'}</span><span>{likeCount}</span></button>
+          <button type="button" onClick={() => window.print()}>{t('print')}</button>
+          <button type="button" onClick={onClone}>{t('clone')}</button>
         </div>
       </div>
       {likeError && <p className="issue issue--error public-list-like-error no-print">{likeError}</p>}

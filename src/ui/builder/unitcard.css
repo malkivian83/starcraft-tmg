@@ -24,6 +24,18 @@
   align-items: flex-start;
 }
 
+/* Características y modelos/suministro en la misma tira, como en la carta. */
+.unitcard__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.unitcard__combat-tags {
+  margin-top: 6px;
+}
+
 /*
  * Retrato recortado de la hoja de cartas. Proporción vertical como en la
  * ficha original; `object-position: top` para que al recortar se conserve la
@@ -31,8 +43,8 @@
  */
 .unitcard__mini {
   flex: 0 0 auto;
-  width: 76px;
-  height: 104px;
+  width: 99px;
+  height: 135px;
   object-fit: cover;
   object-position: center top;
   border: 1px solid var(--line-strong);
@@ -76,6 +88,19 @@
   border-collapse: collapse;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+  margin-bottom: 6px;
+}
+
+.wtable-scroll {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-color: var(--accent-dim) transparent;
+}
+
+.wtable-scroll .wtable {
   margin-bottom: 6px;
 }
 
@@ -143,6 +168,20 @@
   vertical-align: 1px;
 }
 
+.ability__type,
+.ability__resource-cost {
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.ability__type--active { background: #0787bd; }
+.ability__type--passive { background: #c73555; }
+.ability__type--reaction { background: #7651a2; }
+.ability__resource-cost--BM { background: #3f9455; }
+.ability__resource-cost--CP { background: #3d6fa8; }
+.ability__resource-cost--PE { background: #7851a3; }
+
 .ability-group {
   margin-top: 9px;
   padding: 5px 8px;
@@ -172,7 +211,7 @@
 
 @media (max-width: 620px) {
   .unitcard__mini {
-    width: 58px;
-    height: 80px;
+    width: 75px;
+    height: 104px;
   }
 }

@@ -40,11 +40,19 @@ El valor central no es «una hoja de cálculo bonita»: es **garantizar que la l
 - Importación y exportación de listas.
 - Impresión: hoja resumen A4, cartas de las unidades incluidas, exportación a PDF.
 - PWA instalable; el funcionamiento autenticado requiere conexión con la API.
-- Interfaz en español, con nombres propios en inglés.
+- Interfaz multiidioma en español e inglés, con selector persistente y rutas
+  localizadas (`/es/...` y `/en/...`). El español sigue siendo el idioma base
+  y las rutas antiguas sin prefijo redirigen a español.
 
 ### Regla de idioma
 
-Se traduce lo que explica, no lo que nombra. Nombres de unidades, armas, habilidades, cartas y palabras clave de regla permanecen en **inglés**, igual que en las cartas físicas. Textos de efecto, interfaz, errores y términos estructurales (Minerales, Suministro, Núcleo…) van en **español**.
+Se traduce lo que explica, no lo que nombra. Nombres de unidades, armas,
+habilidades, cartas y palabras clave de regla permanecen en **inglés**, igual
+que en las cartas físicas. Los textos de efecto y de catálogo mantienen los
+campos `es` y `en`; la interfaz, los errores, los términos estructurales, el
+soporte, el panel administrativo, los correos y el PDF se muestran en el
+idioma activo. Los PDF originales y los recortes de cartas siguen siendo la
+fuente canónica en inglés.
 
 ### Excluido explícitamente
 - Funcionamiento íntegro sin conexión y sincronización diferida.

@@ -1315,6 +1315,52 @@ a {
   border-style: dashed;
 }
 
+/* Palabras clave con ayuda contextual. El subrayado punteado comunica que
+   el término se puede consultar y el foco permite usarlo sin ratón. */
+.keyword-term {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted currentColor;
+  cursor: help;
+  outline: none;
+}
+
+.keyword-term::after {
+  position: absolute;
+  z-index: 30;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 24px));
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  color: var(--text);
+  background: var(--bg-raised);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 35%);
+  content: attr(data-tooltip);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.keyword-term:hover::after,
+.keyword-term:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.keyword-term:focus-visible {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
 /* --- Tarjetas seleccionables --------------------------------------------- */
 
 .card {
@@ -1336,8 +1382,18 @@ a {
 }
 
 .card--blocked {
-  opacity: 0.55;
+  /* Atenuamos el contenido, no el contenedor: Quitar debe seguir siendo visible. */
+  opacity: 1;
   cursor: not-allowed;
+}
+
+.card--blocked > :not(.card-actions),
+.card--blocked > .card-actions > :not(.card-action--remove) {
+  opacity: 0.55;
+}
+
+.card--blocked > .card-actions .card-action--remove {
+  opacity: 1;
 }
 
 .card--blocked:hover {
@@ -1520,6 +1576,7 @@ a {
   .saved-list-filters__summary { width: 100%; margin-left: 0; justify-content: space-between; }
 }
 /* Fases de regla: se reutilizan en fichas, mejoras y cartas de mando. */
+.phase-tag { text-transform: uppercase; }
 .phase-tag.phase-tag--MOVEMENT { background: #167aaf !important; color: #fff; border-color: transparent; }
 .phase-tag.phase-tag--ASSAULT { background: #b05c15 !important; color: #fff; border-color: transparent; }
 .phase-tag.phase-tag--COMBAT { background: #943d70 !important; color: #fff; border-color: transparent; }

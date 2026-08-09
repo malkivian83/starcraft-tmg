@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "contentVersion": "2026.05.1.0",
+  "contentVersion": "2026.05.1.1",
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Protoss-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
   "race": "PROTOSS",
 
@@ -15,7 +15,7 @@
       }
     },
     "my_life_for_aiur": {
-      "phase": "COMBAT",
+      "phase": "ANY",
       "type": "PASSIVE",
       "cost": null,
       "text": {
@@ -33,7 +33,7 @@
       }
     },
     "zealous_round": {
-      "phase": "ANY",
+      "phase": "ASSAULT",
       "type": "REACTION",
       "cost": 0,
       "text": {
@@ -342,6 +342,7 @@
       "race": "PROTOSS",
       "name": "Zealot",
       "baseSize": "Ø 40MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": "3" },
       "weapons": [
         {
@@ -370,6 +371,7 @@
       "race": "PROTOSS",
       "name": "Praetor Guard (Zealot)",
       "baseSize": "Ø 40MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": "3" },
       "weapons": [
         {
@@ -465,6 +467,7 @@
       "race": "PROTOSS",
       "name": "Adept",
       "baseSize": "Ø 40MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "3", "evade": "5+", "armour": "5+", "speed": "5/8", "shield": "2" },
       "weapons": [
         {
@@ -505,6 +508,7 @@
       "race": "PROTOSS",
       "name": "Sentry",
       "baseSize": "Ø 50MM",
+      "combatTags": ["LIGHT", "MECHANICAL", "PSIONIC", "GROUND"],
       "profile": { "size": "1", "hitPoints": "4", "evade": "6+", "armour": "5+", "speed": "4/7", "shield": "2" },
       "weapons": [
         {
@@ -545,6 +549,7 @@
       "race": "PROTOSS",
       "name": "Stalker",
       "baseSize": "Ø 80MM",
+      "combatTags": ["ARMOURED", "MECHANICAL", "GROUND"],
       "profile": { "size": "3", "hitPoints": "6", "evade": "6+", "armour": "4+", "speed": "4/8", "shield": "3" },
       "weapons": [{ "name": "Particle Disruptors", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "4", "hit": "3+", "surgeType": "Armoured", "surgeDice": "D3", "damage": "2", "keywords": [] }, { "name": "Stomp", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [
@@ -583,6 +588,7 @@
       "race": "PROTOSS",
       "name": "Artanis",
       "baseSize": "Ø 50MM",
+      "combatTags": ["BIOLOGICAL", "PSIONIC", "GROUND"],
       "profile": { "size": "2", "hitPoints": "8", "evade": "5+", "armour": "4+", "speed": "7", "shield": "4" },
       "weapons": [
         { "name": "Twilight Blades Strike", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "2+", "surgeType": "Armoured", "surgeDice": "D3", "damage": "3", "keywords": [] },
@@ -654,6 +660,7 @@
       "race": "PROTOSS",
       "name": "Pylon",
       "baseSize": "Ø 50MM",
+      "combatTags": ["ARMOURED", "GROUND"],
       "profile": { "size": "3", "hitPoints": "8", "evade": "—", "armour": "5+", "speed": "—", "shield": "2" },
       "weapons": [],
       "abilities": [
@@ -915,9 +922,9 @@
       "cardId": "protoss.card.pylon",
       "race": "PROTOSS",
       "name": "Pylon",
-      "tags": ["PROTOSS"],
+      "tags": ["PROTOSS", "KHALAI"],
       "slotType": "CORE",
-      "combatRole": { "es": "Invocada", "en": "Summoned" },
+      "combatRole": { "es": "Táctico", "en": "Tactician" },
       "unique": false,
       "summoned": true,
       "compositions": [

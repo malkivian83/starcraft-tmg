@@ -87,7 +87,7 @@ Lo que haremos distinto, y por qué:
 | D5 | Aprovechar el panel derecho desde el paso 1 | Vista previa de la lista y resumen en curso en lugar de un placeholder |
 | D6 | Jerarquía visual en tres niveles | Crítico (excesos y errores), primario (recursos y espacios), secundario (recurso por ronda, suministro) |
 | D7 | Móvil como diseño de primera clase | Pestañas inferiores, hojas deslizantes, sin pérdida de funcionalidad |
-| D8 | Nombres en inglés, explicaciones en español | Localizable en las cartas físicas y comprensible a la vez |
+| D8 | Nombres en inglés, explicaciones en el idioma activo | Localizable en las cartas físicas y comprensible en español e inglés |
 | D9 | Creep Card como paso propio para Zerg | Es obligatorio exactamente uno; enterrarlo entre las tácticas provoca listas ilegales |
 | D10 | Cumplir §9.1.9 con las invocadas | Consultables e imprimibles, pero fuera del cómputo (sujeto a Q14) |
 
@@ -120,5 +120,5 @@ Lo que haremos distinto, y por qué:
 - El almacenamiento exclusivamente local fue sustituido por cuentas y listas
   remotas en MariaDB.
 - Se mantiene la decisión de no copiar una estética íntegramente en inglés: los
-  nombres de juego permanecen en inglés y la interfaz explicativa está en
-  español.
+  nombres de juego permanecen en inglés y la interfaz explicativa admite
+  español e inglés, con español como base.
