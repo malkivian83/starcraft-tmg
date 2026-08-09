@@ -20,7 +20,7 @@ describe('ruta pública del constructor', () => {
 
     expect(html).toContain('Modo invitado');
     expect(html).toContain('Inicia sesión para guardar');
-    expect(html).toContain('Esta lista se perderá al cerrar o recargar');
+    expect(html).toContain('El borrador se guarda en este dispositivo');
     expect(html).toContain('Seed');
     expect(html).toContain('Importar');
     expect(html).toContain('Exportar');

@@ -3,7 +3,7 @@ import type { ArmyList } from '@/engine/types';
 
 const STORAGE_PREFIX = 'sctmg-builder-draft:';
 
-export type DraftScope = `account:${string}`;
+export type DraftScope = `account:${string}` | 'guest';
 
 export interface StoredDraft {
   list: ArmyList;

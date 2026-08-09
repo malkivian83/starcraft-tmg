@@ -20,30 +20,30 @@ export default defineConfig({
       // El cliente se registra desde `src/main.tsx` para poder solicitar una
       // comprobación al reanudar la PWA en móvil.
       injectRegister: null,
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'Constructor de listas · StarCraft TMG',
         short_name: 'SC:TMG Listas',
         description:
           'Constructor de listas de ejército para StarCraft: The Miniatures Game',
+        id: '/',
+        lang: 'es',
         theme_color: '#11131f',
         background_color: '#11131f',
         display: 'standalone',
         orientation: 'any',
         start_url: '/',
-        // Iconos SVG: escalan a cualquier tamaño y evitan mantener un juego
-        // de PNG. Chrome, Edge y Firefox los aceptan para instalar la PWA.
         icons: [
           {
-            src: 'icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
             purpose: 'any',
           },
           {
-            src: 'icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'maskable',
           },
         ],
@@ -59,6 +59,14 @@ export default defineConfig({
             options: {
               cacheName: 'card-images',
               expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 90 },
+            },
+          },
+          {
+            urlPattern: /\/(?:logo\.png|auth-space-bg\.png|(?:home|lists|profile)-bg\.jpg|factions\/.*\.png)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'app-images',
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
         ],

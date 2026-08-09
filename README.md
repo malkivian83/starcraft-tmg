@@ -31,16 +31,25 @@ importar un seed e imprimir o guardar como PDF. También podrá imprimir una lis
 inválida, pero la salida conservará un aviso visible de que no es válida.
 
 El invitado no podrá guardar en la cuenta, abrir «Mis listas» ni acceder al
-perfil. Su borrador vivirá únicamente en la memoria de la pestaña: recargar la
-página, cerrarla o abandonar el flujo lo descartará. JSON y seed son salidas
-portables iniciadas expresamente por el usuario y no convierten el borrador en
-persistencia automática.
+perfil. Su borrador se guarda únicamente en el almacenamiento local de ese
+dispositivo; no se envía a la API ni se sincroniza entre dispositivos. JSON y
+seed son salidas portables iniciadas expresamente por el usuario.
 
 Si el invitado inicia el flujo de acceso o registro sin recargar la aplicación,
-el borrador se conservará en memoria. Tras completar la autenticación y la
-verificación exigida, podrá guardarlo como una lista remota. Este traspaso no
+el borrador se conservará en memoria y seguirá disponible localmente. Tras
+completar la autenticación y la verificación exigida, podrá guardarlo como una
+lista remota. Este traspaso no
 abre ningún endpoint público: toda operación de guardado, biblioteca o perfil
 seguirá protegida por la sesión en la API.
+
+## Instalar la PWA
+
+La interfaz se puede instalar desde un navegador compatible sin pasar por una
+tienda. En Android/Chrome aparece el botón «Instalar» dentro de la aplicación;
+en iPhone abre la página en Safari y usa **Compartir → Añadir a pantalla de
+inicio**. La instalación incluye el shell de la interfaz y algunas imágenes en
+caché, pero las cuentas y las listas guardadas siguen necesitando conexión con
+la API y MariaDB online.
 
 ## Puesta en marcha
 
@@ -123,10 +132,11 @@ El motor de reglas no importa nada de la interfaz. Es lo único que decide si
 una lista es legal y es lo que está cubierto por pruebas: si esa separación se
 rompe, la corrección del producto deja de ser verificable.
 
-Las listas guardadas se persisten en MariaDB. El borrador de invitado sólo vive
-en Zustand mientras la pestaña permanece cargada. JSON y seed siguen siendo
-formatos portables de importación y exportación, no el almacén principal de la
-cuenta ni un guardado automático del invitado.
+Las listas guardadas se persisten en MariaDB. El borrador de invitado se guarda
+localmente en el dispositivo mientras no se elimine el almacenamiento del
+navegador; no es el almacén principal de la cuenta ni un dato compartido entre
+dispositivos. JSON y seed siguen siendo formatos portables de importación y
+exportación.
 
 ## Estado del contenido
 
@@ -148,7 +158,7 @@ de carta siguen siendo opcionales: la interfaz las oculta si no existen.
 
 ## Verificación
 
-Actualmente hay **141 pruebas**. La más importante es
+Actualmente hay **181 pruebas**. La más importante es
 `tests/engine/regression-manual.test.ts`: reproduce
 la lista de ejemplo del reglamento §9.1 y comprueba las cifras **publicadas por
 el fabricante** — 1670 minerales, 185 de gas, 8/8 Núcleo, 2/2 Élite, 2/3 Apoyo,

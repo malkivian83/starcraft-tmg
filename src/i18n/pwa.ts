@@ -1,0 +1,28 @@
+export const pwaResources = {
+  es: {
+    installTitle: 'Instala la aplicación en tu móvil',
+    installDescription: 'Ábrela a pantalla completa y ten tus listas siempre a mano.',
+    iosDescription: 'Añádela a la pantalla de inicio para abrirla como una aplicación.',
+    installButton: 'Instalar',
+    iosInstructions: 'Cómo instalar en iPhone',
+    iosStepOne: 'Abre esta página en Safari.',
+    iosStepTwo: 'Pulsa Compartir y elige «Añadir a pantalla de inicio».',
+    iosStepThree: 'Activa «Abrir como app web» y pulsa Añadir.',
+    dismissInstall: 'No mostrar la instalación',
+    offlineMessage: 'Sin conexión. Las cuentas y listas guardadas necesitan volver a conectarse.',
+    guestDraftMessage: 'El borrador se guarda en este dispositivo. Para sincronizarlo entre dispositivos, inicia sesión y guárdalo en tu cuenta.',
+  },
+  en: {
+    installTitle: 'Install the app on your phone',
+    installDescription: 'Open it full-screen and keep your lists close at hand.',
+    iosDescription: 'Add it to your Home Screen to open it like an app.',
+    installButton: 'Install',
+    iosInstructions: 'How to install on iPhone',
+    iosStepOne: 'Open this page in Safari.',
+    iosStepTwo: 'Tap Share and choose “Add to Home Screen”.',
+    iosStepThree: 'Enable “Open as Web App” and tap Add.',
+    dismissInstall: 'Hide installation prompt',
+    offlineMessage: 'You are offline. Accounts and saved lists need a connection to sync.',
+    guestDraftMessage: 'Your draft is saved on this device. To sync it across devices, sign in and save it to your account.',
+  },
+} as const;

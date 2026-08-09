@@ -26,6 +26,7 @@ import { PrintSheet } from './ui/print/PrintSheet';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
 import { AppVersion } from './ui/common/AppVersion';
+import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
 import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
 
@@ -117,15 +118,19 @@ export function initialPageFor(mode: AccessMode, preserveGuestDraft: boolean, pu
 }
 
 export function App() {
-  return <Routes>
-    <Route path="/crear-lista" element={<GuestBuilderRoute />} />
-    <Route path="/:locale/crear-lista" element={<GuestBuilderRoute />} />
-    <Route path="/:locale/create-list" element={<GuestBuilderRoute />} />
-    <Route path="/soporte" element={<SupportRoute />} />
-    <Route path="/:locale/soporte" element={<SupportRoute />} />
-    <Route path="/:locale/support" element={<SupportRoute />} />
-    <Route path="*" element={<AccountRoute />} />
-  </Routes>;
+  return <>
+    <PwaPrompt />
+    <PwaNetworkStatus />
+    <Routes>
+      <Route path="/crear-lista" element={<GuestBuilderRoute />} />
+      <Route path="/:locale/crear-lista" element={<GuestBuilderRoute />} />
+      <Route path="/:locale/create-list" element={<GuestBuilderRoute />} />
+      <Route path="/soporte" element={<SupportRoute />} />
+      <Route path="/:locale/soporte" element={<SupportRoute />} />
+      <Route path="/:locale/support" element={<SupportRoute />} />
+      <Route path="*" element={<AccountRoute />} />
+    </Routes>
+  </>;
 }
 
 function SupportRoute() {
@@ -199,6 +204,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const { t: tNavigation } = useTranslation('navigation');
   const { t: tCommon } = useTranslation('common');
   const { t: tLegal } = useTranslation('legal');
+  const { t: tPwa } = useTranslation('pwa');
   const locale = routeLocale(typeof window === 'undefined' ? '/' : window.location.pathname);
   const [step, setStep] = useState<StepId>('cards');
   const initialPublicListId = mode === 'account' ? publicListPath() : null;
@@ -224,7 +230,11 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const capabilities = capabilitiesFor(mode);
-  const draftScope: DraftScope | null = mode === 'account' && user ? `account:${user.id}` : null;
+  const draftScope: DraftScope | null = mode === 'account' && user
+    ? `account:${user.id}`
+    : mode === 'guest'
+      ? 'guest'
+      : null;
   const hydratedDraftScope = useRef<DraftScope | null>(null);
 
   useEffect(() => {
@@ -232,8 +242,10 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     hydratedDraftScope.current = draftScope;
 
     // Al pasar del constructor invitado al login se conserva el estado vivo
-    // del store; solo se crea el borrador persistente cuando ya hay cuenta.
+    // del store; el borrador de invitado se conserva localmente y el de cuenta
+    // se mantiene separado por usuario para no mezclar dispositivos/cuentas.
     if (mode === 'account' && preserveDraftOnMount) {
+      clearDraft('guest');
       onDraftClaimed?.();
       return;
     }
@@ -465,7 +477,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
 
       {mode === 'guest' && (
         <aside className="guest-notice no-print" role="status">
-          {tBuilder('guestWarning')}
+          {tPwa('guestDraftMessage')}
         </aside>
       )}
 

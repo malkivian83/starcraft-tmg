@@ -32,6 +32,15 @@ describe('borrador local de listas de cuenta', () => {
     expect(loadDraft('account:user-2')).toBeNull();
   });
 
+  it('guarda y recupera el borrador de invitado en el dispositivo', () => {
+    const list = createEmptyList('ZERG');
+    list.name = 'Borrador invitado';
+
+    saveDraft('guest', { list, remoteRevision: null, isPublic: false });
+
+    expect(loadDraft('guest')).toEqual({ list, remoteRevision: null, isPublic: false });
+  });
+
   it('permite borrar el borrador después de guardar la lista', () => {
     saveDraft('account:user-1', { list: createEmptyList(), remoteRevision: null, isPublic: false });
     clearDraft('account:user-1');

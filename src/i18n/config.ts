@@ -1,18 +1,22 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { resources } from './locales';
+import { pwaResources } from './pwa';
 import type { SupportedLocale } from './types';
 
 export const defaultLocale: SupportedLocale = 'es';
 
 if (!i18n.isInitialized) {
   void i18n.use(initReactI18next).init({
-    resources,
+    resources: {
+      es: { ...resources.es, pwa: pwaResources.es },
+      en: { ...resources.en, pwa: pwaResources.en },
+    },
     lng: defaultLocale,
     fallbackLng: defaultLocale,
     supportedLngs: ['es', 'en'],
     defaultNS: 'common',
-    ns: ['common', 'navigation', 'home', 'lists', 'builder', 'builderUi', 'print', 'auth', 'support', 'account', 'admin', 'legal', 'errors'],
+    ns: ['common', 'navigation', 'home', 'lists', 'builder', 'builderUi', 'print', 'auth', 'support', 'account', 'admin', 'legal', 'errors', 'pwa'],
     interpolation: { escapeValue: false },
     returnNull: false,
     react: { useSuspense: false },
