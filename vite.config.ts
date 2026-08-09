@@ -17,6 +17,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // El cliente se registra desde `src/main.tsx` para poder solicitar una
+      // comprobación al reanudar la PWA en móvil.
+      injectRegister: null,
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Constructor de listas · StarCraft TMG',

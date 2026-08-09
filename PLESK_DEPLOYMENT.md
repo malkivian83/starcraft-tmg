@@ -81,6 +81,21 @@ Después de esta configuración, cada `push` a `main` hará que Plesk descargue 
 cambio, instale exactamente las dependencias del lockfile, compile frontend y
 backend, aplique migraciones pendientes y reinicie la aplicación.
 
+## Dominio canónico y PWA
+
+El origen de una PWA forma parte de su instalación. Debe elegirse un único
+dominio canónico (`starcraft-builder.com` o `www.starcraft-builder.com`) antes
+de distribuirla y mantenerse estable en `APP_ORIGIN`, `APP_BASE_URL`, Google y
+la configuración de Nginx/Plesk.
+
+No se debe redirigir `/sw.js` de un origen que ya tuvo instalaciones al otro
+origen. El navegador exige que la actualización del service worker proceda del
+mismo origen; una redirección deja esas instalaciones usando su caché anterior.
+Para cambiar de dominio, el virtual host antiguo debe servir temporalmente en
+`/sw.js` un worker de migración que vacíe sus cachés y se desregistre, y
+redirigir después la navegación al dominio nuevo. Mantener esa excepción al
+menos mientras existan instalaciones de la PWA antigua.
+
 El script `deploy:plesk` arranca el orquestador con la instalación seleccionada
 de Plesk (`/opt/plesk/node/22/bin/node`). El orquestador reutiliza ese mismo
 ejecutable para cada herramienta. Esto evita depender de `node` o `npm` en el

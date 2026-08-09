@@ -1,9 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
 import './i18n/config';
 import { LocaleBootstrap } from './i18n/LocaleBootstrap';
+import { watchForServiceWorkerUpdates } from './pwa/serviceWorkerUpdates';
 import './styles/global.css';
 import './styles/design-system.css';
 import './ui/page-design.css';
@@ -22,15 +24,12 @@ createRoot(root).render(
   </StrictMode>,
 );
 
-// El SW se registra con skipWaiting + clientsClaim: cuando hay versión nueva
-// toma el control de inmediato, pero la página ya cargada seguiría mostrando la
-// anterior. Recargar al cambiar de controlador aplica la actualización en la
-// misma visita en vez de en la siguiente.
-if ('serviceWorker' in navigator) {
-  let recargando = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (recargando) return;
-    recargando = true;
-    window.location.reload();
-  });
-}
+// `autoUpdate` activa la nueva versión y recarga la página. El registro
+// explícito permite, además, volver a comprobarla cuando una PWA móvil sale del
+// segundo plano sin que el navegador dispare un nuevo evento `load`.
+registerSW({
+  immediate: true,
+  onRegisteredSW: (_serviceWorkerUrl, registration) => {
+    if (registration) watchForServiceWorkerUpdates(registration);
+  },
+});
