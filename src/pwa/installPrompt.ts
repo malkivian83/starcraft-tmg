@@ -28,6 +28,10 @@ export function isIosUserAgent(userAgent: string, platform = ''): boolean {
   return /iphone|ipad|ipod/i.test(userAgent) || (platform === 'MacIntel' && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
 }
 
+export function isMobileInstallDevice(userAgent: string, platform = ''): boolean {
+  return isIosUserAgent(userAgent, platform) || /android/i.test(userAgent);
+}
+
 function wasDismissed(): boolean {
   try {
     return typeof window !== 'undefined' && window.localStorage.getItem(DISMISSED_STORAGE_KEY) === '1';
@@ -49,11 +53,13 @@ export function usePwaInstallPrompt(): PwaInstallState {
   const [installed, setInstalled] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [isIos, setIsIos] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setInstalled(isStandaloneDisplayMode());
     setDismissed(wasDismissed());
     setIsIos(isIosUserAgent(navigator.userAgent, navigator.platform));
+    setIsMobile(isMobileInstallDevice(navigator.userAgent, navigator.platform));
 
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
@@ -86,7 +92,7 @@ export function usePwaInstallPrompt(): PwaInstallState {
   }, [deferredPrompt]);
 
   return {
-    canInstall: !installed && !dismissed && (Boolean(deferredPrompt) || isIos),
+    canInstall: isMobile && !installed && !dismissed && (Boolean(deferredPrompt) || isIos),
     isIos,
     install,
     dismiss,
