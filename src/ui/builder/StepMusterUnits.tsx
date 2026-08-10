@@ -357,7 +357,7 @@ function UnitProfileDetails({ card }: { card: UnitCard }) {
               <th>{t('weapons')}</th>
               <th>{t('range')}</th>
               <th>{t('target')}</th>
-              <th>{t('attacks')}</th>
+              <th>RoA</th>
               <th>{t('hit')}</th>
               <th>{t('surge')}</th>
               <th>{t('damage')}</th>
@@ -430,7 +430,7 @@ function WeaponTable({
             <th>{t('weapons')}</th>
             <th>{t('range')}</th>
             <th>{t('target')}</th>
-            <th>{t('attacks')}</th>
+            <th>RoA</th>
             <th>{t('hit')}</th>
             <th>{t('surge')}</th>
             <th>{t('damage')}</th>
@@ -608,7 +608,7 @@ function Upgrades({
                       <table className="wtable wtable--upgrade">
                         <thead>
                           <tr>
-                            <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>{t('attacks')}</th>
+                            <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th>
                             <th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th>
                           </tr>
                         </thead>

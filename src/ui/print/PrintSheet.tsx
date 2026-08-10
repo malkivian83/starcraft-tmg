@@ -231,6 +231,26 @@ function listKeywordTexts(
 ): string[] {
   const texts: string[] = [];
 
+  const faction = list.factionCardId
+    ? index.factionCards.get(list.factionCardId)
+    : undefined;
+  if (faction) {
+    for (const ability of faction.abilities) texts.push(localizedText(ability.text, locale));
+  }
+
+  const creep = list.creepCardId
+    ? index.creepCards.get(list.creepCardId)
+    : undefined;
+  if (creep) {
+    for (const ability of creep.abilities) texts.push(localizedText(ability.text, locale));
+  }
+
+  for (const tacticalCardId of list.tacticalCardIds) {
+    const card = index.tacticalCards.get(tacticalCardId);
+    if (!card) continue;
+    for (const ability of card.abilities) texts.push(localizedText(ability.text, locale));
+  }
+
   for (const listEntry of list.entries) {
     const unit = index.unitEntries.get(listEntry.unitEntryId);
     if (!unit) continue;
@@ -362,7 +382,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                   <table className="unitref__weapons">
                     <thead>
                       <tr>
-                        <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>{t('attacks')}</th><th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
+                        <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th><th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -402,7 +422,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
               <table className="unitref__weapons">
                 <thead>
                   <tr>
-                    <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>{t('attacks')}</th><th>{t('hit')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
+                    <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th><th>{t('hit')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -477,7 +497,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                       <table className="unitref__weapons">
                         <thead>
                           <tr>
-                            <th>{t('upgradeWeapon', { defaultValue: locale === 'en' ? 'Upgrade weapon' : 'Arma de mejora' })}</th><th>{t('range')}</th><th>{t('target')}</th><th>{t('attacks')}</th><th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
+                            <th>{t('upgradeWeapon', { defaultValue: locale === 'en' ? 'Upgrade weapon' : 'Arma de mejora' })}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th><th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -527,7 +547,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                   <table className="unitref__weapons">
                     <thead>
                       <tr>
-                        <th>{t('upgradeWeapon', { defaultValue: locale === 'en' ? 'Upgrade weapon' : 'Arma de mejora' })}</th><th>{t('range')}</th><th>{t('target')}</th><th>{t('attacks')}</th><th>{t('hit')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
+                        <th>{t('upgradeWeapon', { defaultValue: locale === 'en' ? 'Upgrade weapon' : 'Arma de mejora' })}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th><th>{t('hit')}</th><th>{t('damage')}</th><th>{t('keyword')}</th>
                       </tr>
                     </thead>
                     <tbody>

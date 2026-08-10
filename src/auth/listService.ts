@@ -1,4 +1,4 @@
-import type { ArmyList } from '@/engine/types';
+import type { ArmyList, Race } from '@/engine/types';
 import { ApiError, localizedApiErrorMessage } from './authService';
 import i18n from '@/i18n/config';
 
@@ -13,6 +13,35 @@ export interface RemoteList extends ArmyList {
   ownerAvatar: string | null;
   likeCount: number;
   likedByCurrentUser: boolean;
+}
+
+export type MatchResult = 'WIN' | 'LOSS' | 'DRAW';
+
+export interface MatchRecord {
+  id: string;
+  listId: string;
+  result: MatchResult;
+  playedOn: string | null;
+  opponentRace: Race | null;
+  opponentFactionCardId: string | null;
+  opponentName: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MatchSummary {
+  played: number;
+  wins: number;
+  losses: number;
+  draws: number;
+}
+
+export interface MatchRecordInput {
+  result: MatchResult;
+  playedOn: string | null;
+  opponentRace: Race | null;
+  opponentFactionCardId: string | null;
+  opponentName: string | null;
 }
 
 export interface HomeData {
@@ -86,4 +115,28 @@ export async function setListPublic(id: string, isPublic: boolean): Promise<Remo
 
 export async function deleteRemoteList(id: string): Promise<void> {
   await request(`/lists/${id}`, { method: 'DELETE' });
+}
+
+export async function loadListMatches(listId: string): Promise<{ matches: MatchRecord[]; summary: MatchSummary }> {
+  return request(`/lists/${encodeURIComponent(listId)}/matches`);
+}
+
+export async function createListMatch(listId: string, input: MatchRecordInput): Promise<{ match: MatchRecord; summary: MatchSummary }> {
+  return request(`/lists/${encodeURIComponent(listId)}/matches`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateListMatch(listId: string, matchId: string, input: MatchRecordInput): Promise<{ match: MatchRecord; summary: MatchSummary }> {
+  return request(`/lists/${encodeURIComponent(listId)}/matches/${encodeURIComponent(matchId)}`, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteListMatch(listId: string, matchId: string): Promise<{ summary: MatchSummary }> {
+  return request(`/lists/${encodeURIComponent(listId)}/matches/${encodeURIComponent(matchId)}`, {
+    method: 'DELETE',
+  });
 }

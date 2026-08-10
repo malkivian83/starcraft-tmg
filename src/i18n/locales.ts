@@ -130,4 +130,27 @@ export const resources = {
   },
 } as const;
 
+Object.assign(resources.es.builder, { statistics: 'Estadísticas' });
+Object.assign(resources.en.builder, { statistics: 'Statistics' });
+Object.assign(resources.es.builderUi, {
+  statsTitle: 'Estadísticas de esta lista',
+  statsHint: 'Registra las partidas que juegues con esta lista. Solo las ves tú.',
+  statsBalance: 'Balance', statsPlayed: 'Jugadas', statsWins: 'Victorias', statsLosses: 'Derrotas', statsDraws: 'Empates',
+  statsWinRate: '% de victorias', statsAdd: 'Añadir partida', statsResult: 'Resultado', statsWin: 'Victoria', statsLoss: 'Derrota', statsDraw: 'Empate',
+  statsDate: 'Fecha', statsOpponentRace: 'Raza del rival', statsOpponentFaction: 'Facción del rival', statsOpponentName: 'Contra quién', statsOpponentNameHint: 'Opcional',
+  statsChooseRaceFirst: 'Elige primero la raza del rival', statsHistory: 'Historial', statsEmpty: 'Todavía no has registrado ninguna partida con esta lista.',
+  statsEdit: 'Editar', statsDelete: 'Borrar', statsDeleteConfirm: '¿Borrar esta partida del historial?', statsSaveChanges: 'Guardar cambios', statsCancel: 'Cancelar',
+  statsRetry: 'Reintentar', statsLoadError: 'No se pudieron cargar las estadísticas.', statsSaveError: 'No se pudo guardar la partida.', statsActions: 'Acciones', noValue: '—',
+});
+Object.assign(resources.en.builderUi, {
+  statsTitle: 'Statistics for this list',
+  statsHint: 'Record the games you play with this list. Only you can see them.',
+  statsBalance: 'Record', statsPlayed: 'Played', statsWins: 'Wins', statsLosses: 'Losses', statsDraws: 'Draws',
+  statsWinRate: 'Win rate', statsAdd: 'Add match', statsResult: 'Result', statsWin: 'Win', statsLoss: 'Loss', statsDraw: 'Draw',
+  statsDate: 'Date', statsOpponentRace: 'Opponent race', statsOpponentFaction: 'Opponent faction', statsOpponentName: 'Opponent', statsOpponentNameHint: 'Optional',
+  statsChooseRaceFirst: 'Choose the opponent race first', statsHistory: 'History', statsEmpty: 'You have not recorded any games with this list yet.',
+  statsEdit: 'Edit', statsDelete: 'Delete', statsDeleteConfirm: 'Delete this match from the history?', statsSaveChanges: 'Save changes', statsCancel: 'Cancel',
+  statsRetry: 'Retry', statsLoadError: 'Statistics could not be loaded.', statsSaveError: 'The match could not be saved.', statsActions: 'Actions', noValue: '—',
+});
+
 export type TranslationResources = typeof resources;

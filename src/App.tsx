@@ -22,6 +22,7 @@ import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
+import { StepStatistics } from './ui/builder/StepStatistics';
 import { PrintSheet } from './ui/print/PrintSheet';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
@@ -30,12 +31,17 @@ import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
 import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
 
-type StepId = 'cards' | 'units' | 'scenario' | 'review';
+type StepId = 'cards' | 'units' | 'scenario' | 'review' | 'stats';
 type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list' | 'support';
 const STEPS: Array<{ id: StepId; label: string }> = [
   { id: 'cards', label: 'commandCards' }, { id: 'units', label: 'recruitment' },
   { id: 'scenario', label: 'mission' }, { id: 'review', label: 'review' },
 ];
+const STATS_STEP = { id: 'stats' as const, label: 'statistics' };
+
+export function statisticsAvailable(mode: AccessMode, remoteRevision: number | null): boolean {
+  return capabilitiesFor(mode).saveRemoteLists && remoteRevision !== null;
+}
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
 const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'industrial', PROTOSS: 'cristal' };
 const NAV_ITEMS = [
@@ -230,6 +236,8 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const capabilities = capabilitiesFor(mode);
+  const statsAvailable = statisticsAvailable(mode, remoteRevision);
+  const steps = statsAvailable ? [...STEPS, STATS_STEP] : STEPS;
   const draftScope: DraftScope | null = mode === 'account' && user
     ? `account:${user.id}`
     : mode === 'guest'
@@ -308,10 +316,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [mode]);
+  useEffect(() => {
+    if (!statsAvailable && step === 'stats') setStep('cards');
+  }, [statsAvailable, step]);
   const errorsByStep: Record<StepId, number> = {
     cards: validation.errors.filter((error) => ['R0', 'R2', 'R7', 'R11'].includes(error.rule)).length,
     units: validation.errors.filter((error) => ['R1', 'R3', 'R4', 'R6', 'R8', 'R9', 'R10'].includes(error.rule)).length,
-    scenario: validation.errors.filter((error) => error.rule === 'R12').length, review: 0,
+    scenario: validation.errors.filter((error) => error.rule === 'R12').length, review: 0, stats: 0,
   };
   const confirmDiscard = (action: string) => (!isDirty && !listVisibilityDirty) || window.confirm(tBuilderUi('discardConfirm', { action }));
   const changeListVisibility = (isPublic: boolean) => { setListIsPublic(isPublic); setListVisibilityDirty(true); };
@@ -535,7 +546,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
           </section>
           <ResourceBar summary={summary} hasErrors={!validation.legal} />
           <nav className="tabs no-print">
-            {STEPS.map((item) => (
+            {steps.map((item) => (
               <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
                 {tBuilder(item.label)}
                 {errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}
@@ -559,6 +570,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             {step === 'units' && <StepMusterUnits />}
             {step === 'scenario' && <StepScenario />}
             {step === 'review' && <StepReview />}
+            {step === 'stats' && statsAvailable && <StepStatistics listId={list.id} />}
           </main>
           <div className={`content print-sheet-host${step === 'review' ? ' print-sheet-host--preview' : ''}`}>
             <PrintSheet />

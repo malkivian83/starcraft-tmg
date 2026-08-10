@@ -5,6 +5,8 @@ import { HttpError } from '../../lib/errors.js';
 import { requireVerifiedUser } from '../../middleware/require-user.js';
 import { ListRepository, type SavedListRecord } from './list.repository.js';
 import { armyListPayloadSchema } from './list.schema.js';
+import { createMatchRouter } from './match.routes.js';
+import { MatchRepository } from './match.repository.js';
 
 function payload(record: SavedListRecord) {
   return {
@@ -26,9 +28,11 @@ function expectedRevision(input: string | undefined): number {
   return parsed.data;
 }
 
-export function createListRouter(repository: ListRepository): Router {
+export function createListRouter(repository: ListRepository, matches: MatchRepository): Router {
   const router = Router();
   router.use(requireVerifiedUser);
+
+  router.use('/:id/matches', createMatchRouter(repository, matches));
 
   router.get('/', async (request, response) => {
     const lists = await repository.listForOwner(request.authenticatedUser!.id);

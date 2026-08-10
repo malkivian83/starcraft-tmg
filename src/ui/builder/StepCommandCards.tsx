@@ -7,6 +7,7 @@ import {
 import { useListStore } from '@/store/listStore';
 import type { Localized, TacticalCard } from '@/engine/types';
 import { SlotChips, UniqueChip } from '../common/Chips';
+import { KeywordText } from '../common/KeywordText';
 import { localizedText } from '@/i18n/localized-content';
 import { normalizeLocale } from '@/i18n/types';
 
@@ -393,7 +394,9 @@ function CardDetail({
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
           <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase, t)}</span>
           <span className="chip small">{ability.type}{ability.cost !== null ? ` ${ability.cost}${ability.resource ? ` ${ability.resource}` : ''}` : ''}</span>
-          {ability.text && localizedText(ability.text, locale) && <> — {localizedText(ability.text, locale)}</>}
+          {ability.text && localizedText(ability.text, locale) && (
+            <> — <KeywordText text={localizedText(ability.text, locale)} locale={locale} /></>
+          )}
         </p>
       ))}
     </article>

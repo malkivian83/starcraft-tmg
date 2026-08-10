@@ -3,3 +3,387 @@
 > tsx watch server/src/index.ts
 
 API disponible en http://localhost:3001/api
+11:25:00 [tsx] change in ./server\src\modules\lists\list.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+11:25:02 [tsx] change in ./server\src\app.ts Restarting...
+API disponible en http://localhost:3001/api
+11:30:27 [tsx] change in ./server\src\modules\lists\match.routes.ts Restarting...
+API disponible en http://localhost:3001/api
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}
+Error: Table 'starcraft_tmg.list_match_records' doesn't exist
+    at MatchRepository.listForList (D:\Programación\starcraft-tmg\server\src\modules\lists\match.repository.ts:70:36)
+    at <anonymous> (D:\Programación\starcraft-tmg\server\src\modules\lists\match.routes.ts:43:15)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\Programación\starcraft-tmg\node_modules\router\lib\route.js:117:3)
+    at handle (D:\Programación\starcraft-tmg\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\Programación\starcraft-tmg\node_modules\router\lib\layer.js:152:17)
+    at D:\Programación\starcraft-tmg\node_modules\router\index.js:295:15
+    at processParams (D:\Programación\starcraft-tmg\node_modules\router\index.js:582:12)
+    at next (D:\Programación\starcraft-tmg\node_modules\router\index.js:291:5) {
+  code: 'ER_NO_SUCH_TABLE',
+  errno: 1146,
+  sqlState: '42S02',
+  sqlMessage: "Table 'starcraft_tmg.list_match_records' doesn't exist",
+  sql: 'SELECT id, list_id, result, played_on, opponent_race, opponent_faction_card_id,\n' +
+    '              opponent_name, created_at, updated_at\n' +
+    '         FROM list_match_records\n' +
+    '        WHERE list_id = ? AND owner_id = ?\n' +
+    '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
+}

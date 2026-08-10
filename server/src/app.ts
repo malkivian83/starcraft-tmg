@@ -13,6 +13,7 @@ import { DevelopmentEmailGateway, SmtpEmailGateway, type EmailGateway } from './
 import { EmailDeliveryLogRepository } from './modules/email/email-delivery-log.repository.js';
 import { ListRepository } from './modules/lists/list.repository.js';
 import { createListRouter } from './modules/lists/list.routes.js';
+import { MatchRepository } from './modules/lists/match.repository.js';
 import { SupportRepository } from './modules/support/support.repository.js';
 import { createSupportRouter } from './modules/support/support.routes.js';
 
@@ -21,6 +22,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   const authRepository = new AuthRepository(pool);
   const avatarStorage = new AvatarStorage();
   const listRepository = new ListRepository(pool);
+  const matchRepository = new MatchRepository(pool);
   const supportRepository = new SupportRepository(pool);
   const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
   const emailLogs = new EmailDeliveryLogRepository(pool);
@@ -79,7 +81,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email, avatarStorage }));
   app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, env));
   app.use('/api/support', createSupportRouter(supportRepository, authRepository, email, env));
-  app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository));
+  app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository, matchRepository));
   app.use(errorHandler);
 
   return app;

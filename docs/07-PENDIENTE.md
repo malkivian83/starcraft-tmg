@@ -27,6 +27,8 @@ Estos puntos ya no deben tratarse como pendientes:
 - Previsualización de cartas tácticas en modal y ajuste responsive para móvil.
 - Confirmación de cambios sin guardar al cambiar de sección del constructor y
   botón de impresión en la sección de revisión.
+- Estadísticas privadas de partidas por lista guardada, con historial, balance y
+  edición/borrado de registros.
 
 ---
 
