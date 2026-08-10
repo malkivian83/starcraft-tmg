@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "icons": "node tools/generate-icons.mjs",
     "dev:server": "tsx watch server/src/index.ts",
     "db:migrate": "tsx server/src/db/migrate.ts",
     "build": "tsc -b && vite build",
@@ -16,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --noEmit && tsc -p tsconfig.server.json --noEmit",
-    "verify:catalog": "vitest run tests/catalog"
+    "verify:catalog": "vitest run tests/catalog",
+    "icons": "node tools/generate-icons.mjs"
   },
   "dependencies": {
     "@types/nodemailer": "^8.0.1",
