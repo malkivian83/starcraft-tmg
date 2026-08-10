@@ -29,6 +29,9 @@
   --ok: oklch(0.8 0.11 165);
   --warn: oklch(0.78 0.14 75);
   --error: oklch(0.7 0.15 22);
+  --stat-win: var(--ok);
+  --stat-loss: var(--error);
+  --stat-draw: oklch(0.55 0.05 260);
   --danger: var(--error);
   --teal: oklch(0.8 0.1 175);
 

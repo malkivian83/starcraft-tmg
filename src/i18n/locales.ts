@@ -153,4 +153,17 @@ Object.assign(resources.en.builderUi, {
   statsRetry: 'Retry', statsLoadError: 'Statistics could not be loaded.', statsSaveError: 'The match could not be saved.', statsActions: 'Actions', noValue: '—',
 });
 
+Object.assign(resources.es.builderUi, {
+  statsByFaction: 'Por facción rival',
+  statsVs: 'vs {{faction}}',
+  statsUnknownFaction: 'Sin registrar',
+  statsDonutAria: '{{faction}}: {{wins}} victorias, {{losses}} derrotas y {{draws}} empates de {{played}} partidas.',
+});
+Object.assign(resources.en.builderUi, {
+  statsByFaction: 'By opponent faction',
+  statsVs: 'vs {{faction}}',
+  statsUnknownFaction: 'Not recorded',
+  statsDonutAria: '{{faction}}: {{wins}} wins, {{losses}} losses and {{draws}} draws out of {{played}} games.',
+});
+
 export type TranslationResources = typeof resources;

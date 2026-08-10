@@ -5,7 +5,8 @@ import { buildCatalogIndex } from '@/engine/catalogIndex';
 import type { Race } from '@/engine/types';
 import { normalizeLocale, type SupportedLocale } from '@/i18n/types';
 import type { MatchRecord, MatchResult, MatchRecordInput } from '@/auth/listService';
-import { winRatePercent } from '@/store/matchSummary';
+import { groupByOpponentRace, winRatePercent } from './matchStats';
+import { MatchDonut } from './MatchDonut';
 import { useMatchRecords } from './useMatchRecords';
 
 const RACES: Race[] = ['ZERG', 'TERRAN', 'PROTOSS'];
@@ -84,6 +85,7 @@ export function StepStatistics({ listId }: { listId: string }) {
     }
     return names;
   }, []);
+  const factionGroups = useMemo(() => groupByOpponentRace(matches), [matches]);
 
   if (status === 'loading') return <section className="panel empty no-print">{tCommon('loading')}</section>;
   if (status === 'error') return (
@@ -130,6 +132,30 @@ export function StepStatistics({ listId }: { listId: string }) {
           <div className="stats-summary__draw"><dt>{t('statsDraws')}</dt><dd>{summary.draws}</dd></div>
           <div><dt>{t('statsWinRate')}</dt><dd>{winRate === null ? t('noValue') : `${winRate} %`}</dd></div>
         </dl>
+        {factionGroups.length > 0 && (
+          <div className="stats-chart-section">
+            <h3 className="stats-section-title">{t('statsByFaction')}</h3>
+            <div className="stats-chart-legend">
+              <span><i className="stats-chart-legend__swatch stats-chart-legend__swatch--win" aria-hidden="true" />{t('statsWins')}</span>
+              <span><i className="stats-chart-legend__swatch stats-chart-legend__swatch--loss" aria-hidden="true" />{t('statsLosses')}</span>
+              <span><i className="stats-chart-legend__swatch stats-chart-legend__swatch--draw" aria-hidden="true" />{t('statsDraws')}</span>
+            </div>
+            <div className="stats-donuts">
+              {factionGroups.map((group) => {
+                const faction = group.id === 'UNKNOWN' ? t('statsUnknownFaction') : RACE_LABEL[group.id];
+                return (
+                  <MatchDonut
+                    key={group.id}
+                    group={group}
+                    factionLabel={t('statsVs', { faction })}
+                    playedLabel={t('statsPlayed').toLowerCase()}
+                    ariaLabel={t('statsDonutAria', { faction, wins: group.wins, losses: group.losses, draws: group.draws, played: group.played })}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="panel no-print">

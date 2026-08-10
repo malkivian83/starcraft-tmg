@@ -34,6 +34,9 @@ facción del rival y contra quién jugó, y consulte el balance acumulado.
 - D4 implica que **ningún endpoint público** (`/api/lists/public/*`) devuelve
   estadísticas y que clonar una lista pública **no copia** su historial (§11).
 
+Las decisiones sobre la representación gráfica (D5–D8) están en §9-bis, junto a
+la especificación del gráfico.
+
 ---
 
 ## 2. Alcance
@@ -43,6 +46,7 @@ facción del rival y contra quién jugó, y consulte el balance acumulado.
 - Alta, edición y borrado de registros de partida asociados a una lista guardada.
 - Consulta del historial y del balance acumulado (jugadas, victorias, derrotas,
   empates).
+- Gráficas circulares del reparto de resultados por facción rival (§9-bis).
 - Campos por partida: resultado (obligatorio), fecha (opcional), raza del rival
   (opcional), carta de facción del rival (opcional), nombre del rival (opcional).
 - Traducciones es/en.
@@ -645,6 +649,169 @@ prefijo `stats-`. No modificar clases existentes. Respetar
 
 ---
 
+## 9-bis. Gráficas circulares por facción rival
+
+### Decisiones cerradas con el propietario del producto
+
+| # | Decisión | Valor acordado |
+|---|---|---|
+| D5 | Forma | **Un donut por facción rival**, no un donut único de dos anillos. Un círculo solo codifica una dimensión; la facción la identifica el encabezado y el color queda libre para el resultado. |
+| D6 | Empates | **Tercer sector**. El círculo reparte el 100 % de las partidas jugadas y el porcentaje de victorias se calcula sobre el total. |
+| D7 | Partidas sin facción anotada | **Cuarto grupo «Sin registrar»**, con su propio donut. Los donuts suman siempre el total de partidas. |
+| D8 | Qué codifica el color | **El resultado** (victoria / derrota / empate). Nunca la raza. |
+
+### 9-bis.1 Sin cambios en la API
+
+El agregado se hace en el cliente: `GET /api/lists/:id/matches` ya devuelve
+todas las partidas y el tope de 500 (E4) acota el coste. **No añadir endpoints
+ni columnas agregadas para esto.**
+
+### 9-bis.2 Agrupación — funciones puras
+
+Fichero nuevo `src/ui/builder/matchStats.ts`, sin React ni DOM, para poder
+probarlo aislado:
+
+```ts
+export type MatchGroupId = Race | 'UNKNOWN';
+
+export interface MatchGroup {
+  id: MatchGroupId;
+  played: number;
+  wins: number;
+  losses: number;
+  draws: number;
+}
+
+/** Orden fijo: ZERG, TERRAN, PROTOSS, UNKNOWN. Nunca por tamaño. */
+export function groupByOpponentRace(matches: MatchRecord[]): MatchGroup[];
+
+/** `null` con 0 partidas: no es lo mismo no haber jugado que no haber ganado. */
+export function winRatePercent(group: { played: number; wins: number }): number | null;
+```
+
+Reglas:
+
+- **El orden de los grupos es fijo**, definido en código, no derivado de los
+  datos. Si los donuts se reordenaran al registrar partidas, el usuario
+  perdería la referencia visual entre una visita y la siguiente.
+- Los grupos con `played === 0` **no se renderizan**: nada de donuts vacíos.
+- `opponentRace === null` cae en `UNKNOWN`, se etiqueta «Sin registrar» y va
+  siempre el último.
+- Sin partidas registradas, la sección de gráficas no se renderiza en absoluto;
+  ya lo cubre el mensaje vacío de §9.4.
+
+### 9-bis.3 Paleta — validada, no estimada
+
+El color codifica el **resultado**, así que es constante en las tres razas: los
+bloques `[data-race]` de `design-system.css` solo redefinen `--accent*` y
+`--race-glow`, nunca `--ok` ni `--error`. Un mismo verde significa lo mismo en
+una lista Zerg y en una Protoss.
+
+Añadir a `:root` en `src/styles/design-system.css`:
+
+```css
+--stat-win: var(--ok);                    /* oklch(0.8 0.11 165)  → #73d4ac */
+--stat-loss: var(--error);                /* oklch(0.7 0.15 22)   → #ed7473 */
+--stat-draw: oklch(0.55 0.05 260);        /*                      → #61728f */
+```
+
+`--stat-draw` es nuevo. **No usar `--text-dim` como color de empate**: es un
+color con alfa pensado para texto y sobre el panel queda a ΔE 5,8 del rojo bajo
+protanopia, es decir, indistinguible para el daltonismo más frecuente. El
+pizarra elegido lo sube a ΔE 23,5.
+
+Verificación ejecutada sobre la superficie real del panel (`--bg-panel`,
+`#191d2c`):
+
+```bash
+node scripts/validate_palette.js "#73d4ac,#ed7473,#61728f" --mode dark --surface "#191d2c" --pairs all
+```
+
+| Comprobación | Resultado |
+|---|---|
+| Separación CVD (protan/deutan, todos los pares) | **PASS** — peor par `#ed7473`↔`#73d4ac`, ΔE 10,0 |
+| Suelo de visión normal | **PASS** — peor par ΔE 23,5 |
+| Contraste contra la superficie | **PASS** — los tres ≥ 3:1 |
+| Banda de luminosidad | FAIL asumido — `--ok` (L 0,799) y `--error` (L 0,70) quedan por encima de la banda de referencia [0,48–0,67]. **Son los colores semánticos que la aplicación ya usa** para listas válidas e inválidas; cambiarlos solo aquí rompería la coherencia del producto. |
+| Suelo de croma | FAIL asumido — `--stat-draw` tiene croma 0,05 y «lee como gris». Es exactamente lo que se busca para un empate: un estado neutro. Las comprobaciones que sí afectan a la legibilidad (CVD y contraste) pasan. |
+
+Si alguien cambia cualquiera de los tres colores, **debe volver a ejecutar el
+validador** antes de integrar.
+
+### 9-bis.4 Construcción del SVG
+
+Sin librerías. Un donut es un `<circle>` con `stroke-dasharray`, y cada sector
+es otro círculo superpuesto con su propio `stroke-dashoffset`:
+
+```ts
+export const DONUT_RADIUS = 40;
+export const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;  // 251.327
+export const DONUT_GAP = 2;   // hueco de superficie entre sectores
+
+export interface DonutSegment {
+  key: 'wins' | 'losses' | 'draws';
+  length: number;    // longitud del trazo, ya descontado el hueco
+  offset: number;    // stroke-dashoffset (negativo, acumulado)
+}
+
+export function donutSegments(group: MatchGroup): DonutSegment[];
+```
+
+Reglas de geometría:
+
+1. **Orden de sectores fijo**: victorias → derrotas → empates. Nunca por tamaño.
+2. Un sector con valor 0 **no se emite**. Emitirlo dejaría un hueco de 2 px sin
+   trazo, que se ve como una muesca sin causa.
+3. **Caso límite obligatorio:** si el grupo tiene un único tipo de resultado
+   (por ejemplo `3-0-0`), el sector cubre la circunferencia completa y el hueco
+   de 2 px produciría una muesca en un anillo que debería ser continuo. Con un
+   solo sector, `length = DONUT_CIRCUMFERENCE` sin descontar hueco.
+4. El grupo se dibuja con `transform="rotate(-90 55 55)"` para que arranque a
+   las 12 en punto.
+5. `fill="none"`, `stroke-width={13}`, sin `stroke-linecap="round"`: los
+   extremos redondeados se comen el hueco y falsean las proporciones.
+
+Centro del donut: el porcentaje de victorias (`Math.round`, sin decimales) y
+debajo el marcador `3-2-0`. Bajo el SVG, el nombre del grupo y el total de
+partidas.
+
+### 9-bis.5 Muestras pequeñas
+
+Con pocas partidas un porcentaje engaña: `50 %` sobre 2 partidas es una
+victoria y una derrota, no una tendencia. Por eso **el recuento absoluto es
+obligatorio**, no decorativo:
+
+- Marcador `V-D-E` siempre visible en el centro, bajo el porcentaje.
+- Total de partidas del grupo siempre visible en el pie del donut.
+- Con `played === 0` el grupo no se dibuja, así que no existe el caso `—`.
+
+### 9-bis.6 Accesibilidad
+
+- Cada `<svg>` lleva `role="img"` y un `aria-label` con la frase completa,
+  construida con la clave `statsDonutAria`. Sin eso el gráfico no existe para
+  un lector de pantalla.
+- **Nunca solo color**: el porcentaje y el marcador van escritos dentro del
+  donut, y la leyenda combina cuadrado de color + texto.
+- **Una sola leyenda** para todo el conjunto, colocada encima de la rejilla de
+  donuts, no una por donut.
+- Sin animación de entrada de los arcos: no aporta información y obligaría a
+  gestionar `prefers-reduced-motion`.
+- Los textos usan `var(--text)` y `var(--text-dim)`, nunca el color del sector.
+
+### 9-bis.7 Maquetación
+
+Va dentro del panel de resumen (§9.5), debajo de las cuatro cifras:
+
+```css
+.stats-donuts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+```
+
+`auto-fit` reparte cuatro donuts en una fila en escritorio y en dos columnas en
+móvil sin consultas de medios. El SVG usa `viewBox="0 0 110 110"` y
+`width="100%"` con `max-width: 110px`: escala sin recalcular nada.
+
+---
+
 ## 10. Traducciones
 
 `tests/i18n/resources.test.ts` exige **paridad exacta de claves entre `es` y
@@ -686,6 +853,10 @@ Claves mínimas en `builderUi` (es / en):
 | `statsSaveChanges` | Guardar cambios | Save changes |
 | `statsCancel` | Cancelar | Cancel |
 | `statsRetry` | Reintentar | Retry |
+| `statsByFaction` | Por facción rival | By opponent faction |
+| `statsVs` | vs {{faction}} | vs {{faction}} |
+| `statsUnknownFaction` | Sin registrar | Not recorded |
+| `statsDonutAria` | {{faction}}: {{wins}} victorias, {{losses}} derrotas y {{draws}} empates de {{played}} partidas. | {{faction}}: {{wins}} wins, {{losses}} losses and {{draws}} draws out of {{played}} games. |
 | `statsLoadError` | No se pudieron cargar las estadísticas. | Statistics could not be loaded. |
 | `statsSaveError` | No se pudo guardar la partida. | The match could not be saved. |
 | `statsUnsavedHint` | Guarda la lista para poder registrar partidas. | Save the list to start recording games. |
@@ -769,11 +940,34 @@ Sobre `matchRecordInputSchema`, sin base de datos:
 - Convierte `opponentName: ''` en `null` y recorta espacios.
 - Rechaza `opponentName` de más de 80 caracteres.
 
-### 12.3 `tests/store/matchSummary.test.ts` (nuevo)
+### 12.3 `tests/store/matchStats.test.ts` (nuevo)
 
-Si el cálculo del porcentaje se extrae a una función pura (recomendado,
-`winRatePercent(summary)`), probar: `played === 0` → `null`; 1 de 3 → 33;
-3 de 3 → 100.
+Sobre las funciones puras de `src/ui/builder/matchStats.ts`. Es la prueba más
+valiosa del lote: aquí es donde una gráfica puede mentir.
+
+`winRatePercent`:
+
+- `played === 0` → `null`.
+- 1 de 3 → `33`; 3 de 3 → `100`; 0 de 4 → `0`.
+
+`groupByOpponentRace`:
+
+- Mantiene el orden fijo ZERG, TERRAN, PROTOSS, UNKNOWN **aunque el grupo más
+  numeroso sea otro**. Es la regresión que protege contra reordenar por tamaño.
+- Omite los grupos sin partidas.
+- Las partidas con `opponentRace === null` caen en `UNKNOWN`.
+- La suma de `played` de todos los grupos es igual al número de partidas
+  recibidas: ninguna se pierde ni se cuenta dos veces.
+
+`donutSegments`:
+
+- Con tres resultados: se emiten tres sectores y
+  `Σ(length) + 3 × DONUT_GAP === DONUT_CIRCUMFERENCE` (con tolerancia de
+  coma flotante).
+- Con un único tipo de resultado: **un solo sector**, `length` igual a la
+  circunferencia completa y sin descontar hueco (§9-bis.4, regla 3).
+- Un resultado con valor 0 no genera sector.
+- Los `offset` son acumulativos y negativos.
 
 ### 12.4 `tests/ui/statistics-step.test.tsx` (nuevo)
 
@@ -814,11 +1008,19 @@ Orden recomendado; cada paso deja el repositorio compilando.
 | 7 | Mensajes de error traducidos | `src/auth/authService.ts` |
 | 8 | Traducciones | `src/i18n/locales.ts` |
 | 9 | Hook de estado | `src/ui/builder/useMatchRecords.ts` |
-| 10 | Componente | `src/ui/builder/StepStatistics.tsx` |
-| 11 | Pestaña y enrutado del paso | `src/App.tsx` |
-| 12 | Estilos | `src/ui/builder/builder-design.css` |
-| 13 | Pruebas de interfaz y agregación | `tests/ui/statistics-step.test.tsx`, `tests/store/matchSummary.test.ts` |
-| 14 | Documentación | `docs/07-PENDIENTE.md` (cerrar el punto), versión en `package.json` |
+| 10 | Agregación y geometría (funciones puras) | `src/ui/builder/matchStats.ts` |
+| 11 | Pruebas de agregación | `tests/store/matchStats.test.ts` |
+| 12 | Variable de color del empate | `src/styles/design-system.css` |
+| 13 | Componente de donut | `src/ui/builder/MatchDonut.tsx` |
+| 14 | Componente del paso | `src/ui/builder/StepStatistics.tsx` |
+| 15 | Pestaña y enrutado del paso | `src/App.tsx` |
+| 16 | Estilos | `src/ui/builder/builder-design.css` |
+| 17 | Pruebas de interfaz | `tests/ui/statistics-step.test.tsx` |
+| 18 | Documentación | `docs/07-PENDIENTE.md` (cerrar el punto), versión en `package.json` |
+
+Los pasos 10 y 11 van antes que el componente a propósito: la agregación se
+prueba aislada y el componente se limita a pintar lo que devuelven esas
+funciones.
 
 Aplicar la migración en desarrollo con:
 
@@ -849,7 +1051,18 @@ npm run db:migrate
 10. Clonar una lista pública produce una lista con el historial vacío.
 11. La hoja de impresión no incluye la sección.
 12. La interfaz funciona completa en español e inglés.
-13. `npm run typecheck`, `npm test` y `npm run build` pasan.
+13. Con partidas contra dos facciones se dibujan **dos** donuts, no cuatro: las
+    facciones sin partidas no aparecen.
+14. Registrar una partida sin anotar la facción del rival la hace aparecer en el
+    donut «Sin registrar», y la suma de partidas de todos los donuts coincide
+    con el total del balance.
+15. Un grupo con un único tipo de resultado (por ejemplo `3-0-0`) dibuja un
+    anillo continuo, sin muesca.
+16. Cada donut muestra el porcentaje **y** el marcador `V-D-E`, y su
+    `aria-label` describe el reparto completo.
+17. Los colores de los sectores son los mismos en una lista Zerg, Terran y
+    Protoss.
+18. `npm run typecheck`, `npm test` y `npm run build` pasan.
 
 ---
 
@@ -863,8 +1076,8 @@ El modelo admite estas ampliaciones sin migrar de nuevo la estructura básica;
   `matchSummary` por lista con un `LEFT JOIN` agregado; hoy no se hace para no
   encarecer la consulta del listado.
 - **Escenario jugado**: `mission_card_id` / `deployment_card_id`.
-- **Balance por facción rival**: se deriva con `GROUP BY opponent_race` sin
-  cambiar el esquema.
+- **Evolución temporal**: una serie de victorias acumuladas por fecha. Ya hay
+  `played_on`; sería un gráfico de líneas, no circular.
 
 ---
 
@@ -879,3 +1092,9 @@ El modelo admite estas ampliaciones sin migrar de nuevo la estructura básica;
 | Fechas desplazadas un día | No usar `new Date('YYYY-MM-DD')` para mostrar; §9.4. |
 | Agregados `SUM()` como cadena o `NULL` | Normalizar con `Number(x ?? 0)` en el repositorio. |
 | Claves de traducción desparejadas | `tests/i18n/resources.test.ts` falla; añadir siempre es + en. |
+| Usar `--text-dim` como color de empate | Queda a ΔE 5,8 del rojo bajo protanopia: indistinguible. Usar `--stat-draw` (§9-bis.3). |
+| Cambiar un color del gráfico «a ojo» | Volver a ejecutar el validador de paleta con la superficie `#191d2c` antes de integrar. |
+| Ordenar los donuts por número de partidas | El orden es fijo por código. Reordenarlos al registrar partidas hace perder la referencia visual entre visitas. |
+| Porcentaje sin recuento absoluto | Con 2 partidas, un 50 % no es una tendencia. El marcador `V-D-E` es obligatorio (§9-bis.5). |
+| `stroke-linecap="round"` en los sectores | Los extremos redondeados se comen el hueco de 2 px y falsean las proporciones. |
+| Añadir una librería de gráficos | No hace falta: el donut son dos atributos SVG. Es una PWA y el bundle importa. |
