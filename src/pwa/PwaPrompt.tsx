@@ -4,7 +4,7 @@ import { usePwaInstallPrompt } from './installPrompt';
 
 export function PwaPrompt() {
   const { t } = useTranslation('pwa');
-  const { canInstall, isIos, install, dismiss } = usePwaInstallPrompt();
+  const { canInstall, isIos, hasNativePrompt, install, dismiss } = usePwaInstallPrompt();
 
   if (!canInstall) return null;
 
@@ -23,8 +23,18 @@ export function PwaPrompt() {
             </ol>
           </details>
         )}
+        {!isIos && !hasNativePrompt && (
+          <details className="pwa-prompt__guide">
+            <summary>{t('androidInstructions')}</summary>
+            <ol>
+              <li>{t('androidStepOne')}</li>
+              <li>{t('androidStepTwo')}</li>
+              <li>{t('androidStepThree')}</li>
+            </ol>
+          </details>
+        )}
       </div>
-      {!isIos && <button type="button" className="pwa-prompt__install" onClick={() => { void install(); }}>{t('installButton')}</button>}
+      {!isIos && hasNativePrompt && <button type="button" className="pwa-prompt__install" onClick={() => { void install(); }}>{t('installButton')}</button>}
       <button type="button" className="pwa-prompt__dismiss" onClick={dismiss} aria-label={t('dismissInstall')}>×</button>
     </aside>
   );

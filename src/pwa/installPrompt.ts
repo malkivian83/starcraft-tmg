@@ -10,6 +10,7 @@ export interface BeforeInstallPromptEvent extends Event {
 export interface PwaInstallState {
   canInstall: boolean;
   isIos: boolean;
+  hasNativePrompt: boolean;
   install: () => Promise<void>;
   dismiss: () => void;
 }
@@ -92,8 +93,9 @@ export function usePwaInstallPrompt(): PwaInstallState {
   }, [deferredPrompt]);
 
   return {
-    canInstall: isMobile && !installed && !dismissed && (Boolean(deferredPrompt) || isIos),
+    canInstall: isMobile && !installed && !dismissed,
     isIos,
+    hasNativePrompt: Boolean(deferredPrompt),
     install,
     dismiss,
   };
