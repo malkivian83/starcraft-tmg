@@ -71,6 +71,18 @@ las dependencias de desarrollo y opcionales necesarias para compilar.
 Si Plesk indica que `npm` no existe, usa la ruta de la versión configurada:
 `/opt/plesk/node/22/bin/npm run deploy:plesk`.
 
+Si necesitas aplicar una migración manualmente desde Plesk, no uses
+`npm run db:migrate` dentro del `nodeenv`: ese entorno puede no exponer
+`node` en el `PATH`. Usa el script específico que invoca el ejecutable de Node
+por su ruta absoluta:
+
+```sh
+/opt/plesk/node/22/bin/npm run db:migrate:plesk
+```
+
+Desde la raíz `httpdocs`, el resultado esperado para esta versión es
+`Migración aplicada: 012_list_match_records.sql`.
+
 ## Webhook de GitHub
 
 Plesk muestra una URL de webhook en la configuración del repositorio. Añadirla

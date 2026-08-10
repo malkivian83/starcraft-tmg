@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:server": "tsx watch server/src/index.ts",
     "db:migrate": "tsx server/src/db/migrate.ts",
+    "db:migrate:plesk": "/opt/plesk/node/22/bin/node node_modules/tsx/dist/cli.mjs server/src/db/migrate.ts",
     "build": "tsc -b && vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "deploy:plesk": "/opt/plesk/node/22/bin/node tools/deploy-plesk.mjs",
