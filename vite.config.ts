@@ -22,8 +22,8 @@ export default defineConfig({
       injectRegister: null,
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Constructor de listas · StarCraft TMG',
-        short_name: 'SC:TMG Listas',
+        name: 'StarCraft Builder',
+        short_name: 'StarCraft Builder',
         description:
           'Constructor de listas de ejército para StarCraft: The Miniatures Game',
         id: '/',

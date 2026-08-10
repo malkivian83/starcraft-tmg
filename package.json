@@ -1,10 +1,11 @@
 {
   "name": "starcraft-tmg-army-builder",
   "private": true,
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "icons": "node tools/generate-icons.mjs",
     "dev:server": "tsx watch server/src/index.ts",
     "db:migrate": "tsx server/src/db/migrate.ts",
     "build": "tsc -b && vite build",
