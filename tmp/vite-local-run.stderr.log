@@ -1,0 +1,23 @@
+node:internal/fs/watchers:321
+    const error = new UVException({
+                  ^
+
+Error: EBUSY: resource busy or locked, watch 'D:\Programación\starcraft-tmg\public\public-lists-bg.jpeg'
+    at FSWatcher.<computed> (node:internal/fs/watchers:321:19)
+    at Object.watch (node:fs:2548:36)
+    at createFsWatchInstance (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22195:17)
+    at setFsWatchListener (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22242:15)
+    at NodeFsHandler._watchWithNodeFs (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22397:14)
+    at NodeFsHandler._handleFile (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22461:23)
+    at NodeFsHandler._addToNodeFs (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22703:21)
+Emitted 'error' event on FSWatcher instance at:
+    at FSWatcher._handleError (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:23896:10)
+    at NodeFsHandler._addToNodeFs (file:///D:/Programaci%C3%B3n/starcraft-tmg/node_modules/vite/dist/node/chunks/dep-Dm0c1Wj2.js:22711:18) {
+  errno: -4082,
+  syscall: 'watch',
+  code: 'EBUSY',
+  path: 'D:\\Programación\\starcraft-tmg\\public\\public-lists-bg.jpeg',
+  filename: 'D:\\Programación\\starcraft-tmg\\public\\public-lists-bg.jpeg'
+}
+
+Node.js v24.18.1

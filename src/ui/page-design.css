@@ -324,6 +324,30 @@
   position: relative;
 }
 
+.public-lists-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.public-lists-page::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 10 20 / 78%) 0%, rgb(17 19 31 / 86%) 52%, rgb(17 19 31 / 97%) 100%),
+    url('/public-lists-bg.jpeg') center top / cover no-repeat;
+}
+
+.public-lists-page > * {
+  position: relative;
+}
+
 .saved-list-filters {
   align-items: flex-end;
   gap: 14px 18px;

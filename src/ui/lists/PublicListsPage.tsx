@@ -78,7 +78,7 @@ export function PublicListsPage({
   };
 
   return (
-    <main className="content page-content no-print">
+    <main className="content page-content public-lists-page no-print">
       <section className="page-heading">
         <div>
           <p className="eyebrow">{t('library')}</p>
