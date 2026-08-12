@@ -54,6 +54,8 @@ export function SavedListsPage({
     grand_offensive: t('scaleGrandOffensive'),
   };
   const [lists, setLists] = useState<RemoteList[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [message, setMessage] = useState(t('loading'));
   const [raceFilter, setRaceFilter] = useState<RaceFilter>('ALL');
   const [scaleFilter, setScaleFilter] = useState<ScaleId | 'ALL'>('ALL');
@@ -62,11 +64,26 @@ export function SavedListsPage({
 
   const refresh = async () => {
     try {
-      const loaded = await loadRemoteLists();
-      setLists(loaded);
-      setMessage(loaded.length ? '' : t('noSaved'));
+      const page = await loadRemoteLists({ limit: 25 });
+      setLists(page.lists);
+      setNextCursor(page.nextCursor);
+      setMessage(page.lists.length ? '' : t('noSaved'));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : t('loadError'));
+    }
+  };
+
+  const loadMore = async () => {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const page = await loadRemoteLists({ limit: 25, cursor: nextCursor });
+      setLists((current) => [...current, ...page.lists]);
+      setNextCursor(page.nextCursor);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : t('loadError'));
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -91,7 +108,7 @@ export function SavedListsPage({
     if (!window.confirm(t('deleteConfirm', { name: list.name }))) return;
     try {
       await deleteRemoteList(list.id);
-      await refresh();
+      setLists((current) => current.filter((item) => item.id !== list.id));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : t('loadError'));
     }
@@ -180,6 +197,7 @@ export function SavedListsPage({
       )}
 
       {visibleRows.length > 0 && (
+        <>
         <section className="panel saved-list-table-wrap">
           <table className="saved-list-table saved-list-table--owner">
             <thead>
@@ -241,6 +259,14 @@ export function SavedListsPage({
             </tbody>
           </table>
         </section>
+        {nextCursor && (
+          <div className="row" style={{ justifyContent: 'center', marginTop: '1rem' }}>
+            <button type="button" onClick={() => { void loadMore(); }} disabled={loadingMore}>
+              {loadingMore ? t('loading') : t('loadMore', { defaultValue: locale === 'en' ? 'Load more lists' : 'Cargar más listas' })}
+            </button>
+          </div>
+        )}
+        </>
       )}
     </main>
   );

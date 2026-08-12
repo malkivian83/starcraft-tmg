@@ -49,16 +49,31 @@ export interface HomeData {
   publicLists: RemoteList[];
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export interface RemoteListPage {
+  lists: RemoteList[];
+  nextCursor: string | null;
+}
+
+async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 20_000): Promise<T> {
   let response: Response;
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(() => controller.abort(), timeoutMs);
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {
       ...init,
       credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...init.headers },
+      signal: controller.signal,
     });
   } catch {
+    if (controller.signal.aborted) {
+      throw new ApiError(0, i18n.language.startsWith('en')
+        ? `The server did not respond within ${Math.round(timeoutMs / 1000)} seconds.`
+        : `El servidor no respondiÃ³ en ${Math.round(timeoutMs / 1000)} segundos.`);
+    }
     throw new ApiError(0, i18n.language.startsWith('en') ? 'The application server could not be reached.' : 'No se puede conectar con el servidor de la aplicación.');
+  } finally {
+    globalThis.clearTimeout(timeout);
   }
   if (!response.ok) {
     const payload = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null;
@@ -78,8 +93,12 @@ export async function saveRemoteList(list: ArmyList, revision: number | null): P
   })).list;
 }
 
-export async function loadRemoteLists(): Promise<RemoteList[]> {
-  return (await request<{ lists: RemoteList[] }>('/lists')).lists;
+export async function loadRemoteLists(options: { cursor?: string | null; limit?: number } = {}): Promise<RemoteListPage> {
+  const params = new URLSearchParams();
+  if (options.limit) params.set('limit', String(options.limit));
+  if (options.cursor) params.set('cursor', options.cursor);
+  const query = params.toString();
+  return request<RemoteListPage>(`/lists${query ? `?${query}` : ''}`);
 }
 
 export async function loadPublicLists(): Promise<RemoteList[]> {

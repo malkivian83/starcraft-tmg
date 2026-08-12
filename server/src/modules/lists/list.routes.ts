@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { HttpError } from '../../lib/errors.js';
 import { requireVerifiedUser } from '../../middleware/require-user.js';
-import { ListRepository, type SavedListRecord } from './list.repository.js';
+import { decodeCursor, ListRepository, type SavedListRecord } from './list.repository.js';
 import { armyListPayloadSchema } from './list.schema.js';
 import { createMatchRouter } from './match.routes.js';
 import { MatchRepository } from './match.repository.js';
@@ -35,8 +35,13 @@ export function createListRouter(repository: ListRepository, matches: MatchRepos
   router.use('/:id/matches', createMatchRouter(repository, matches));
 
   router.get('/', async (request, response) => {
-    const lists = await repository.listForOwner(request.authenticatedUser!.id);
-    response.json({ lists: lists.map(payload) });
+    const rawLimit = Number(request.query.limit ?? 25);
+    const limit = Number.isFinite(rawLimit) ? Math.max(1, Math.min(100, Math.trunc(rawLimit))) : 25;
+    const cursorValue = typeof request.query.cursor === 'string' ? request.query.cursor : undefined;
+    const cursor = decodeCursor(cursorValue);
+    if (cursorValue && !cursor) throw new HttpError(400, 'INVALID_CURSOR', 'El cursor de paginación no es válido.');
+    const page = await repository.listForOwnerPage(request.authenticatedUser!.id, cursor, limit);
+    response.json({ lists: page.lists.map(payload), nextCursor: page.nextCursor });
   });
 
   router.get('/home', async (request, response) => {

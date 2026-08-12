@@ -172,6 +172,7 @@ const API_ERROR_MESSAGES: Record<string, { es: string; en: string }> = {
   REVISION_REQUIRED: { es: 'Incluye la revisión actual de la lista.', en: 'Include the current list revision.' },
   RATE_LIMITED: { es: 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.', en: 'Too many attempts. Wait a few minutes before trying again.' },
   NOT_FOUND: { es: 'No se ha encontrado el recurso solicitado.', en: 'The requested resource was not found.' },
+  INVALID_CURSOR: { es: 'El cursor de paginación no es válido.', en: 'The pagination cursor is not valid.' },
 };
 
 export function localizedApiErrorMessage(code: string | null | undefined, fallback: string): string {

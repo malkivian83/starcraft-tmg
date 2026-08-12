@@ -16,6 +16,11 @@ export interface SavedListRecord {
   likedByCurrentUser: boolean;
 }
 
+export interface ListPage {
+  lists: SavedListRecord[];
+  nextCursor: string | null;
+}
+
 interface SavedListRow extends RowDataPacket {
   id: string;
   owner_id: string;
@@ -69,6 +74,26 @@ export class ListRepository {
   async listForOwner(ownerId: string): Promise<SavedListRecord[]> {
     const [rows] = await this.pool.execute<SavedListRow[]>(`${recordColumns} WHERE l.owner_id = ? ORDER BY l.updated_at DESC`, [ownerId]);
     return this.withLikeMetadata(rows.map(map), ownerId);
+  }
+
+  async listForOwnerPage(ownerId: string, cursor: { updatedAt: string; id: string } | null, limit = 25): Promise<ListPage> {
+    const pageSize = limitValue(limit);
+    const cursorClause = cursor
+      ? ' AND (l.updated_at < ? OR (l.updated_at = ? AND l.id < ?))'
+      : '';
+    const params = cursor ? [ownerId, cursor.updatedAt, cursor.updatedAt, cursor.id] : [ownerId];
+    const [rows] = await this.pool.execute<SavedListRow[]>(
+      `${recordColumns} WHERE l.owner_id = ?${cursorClause} ORDER BY l.updated_at DESC, l.id DESC LIMIT ${pageSize + 1}`,
+      params,
+    );
+    const hasNextPage = rows.length > pageSize;
+    // La biblioteca propia no muestra likes; evita una segunda consulta agregada.
+    const records = rows.slice(0, pageSize).map(map);
+    const last = records[records.length - 1];
+    return {
+      lists: records,
+      nextCursor: hasNextPage && last ? encodeCursor({ updatedAt: last.updatedAt, id: last.id }) : null,
+    };
   }
 
   async listLatestForOwner(ownerId: string, limit = 5): Promise<SavedListRecord[]> {
@@ -167,5 +192,20 @@ export class ListRepository {
       likedByCurrentUser: Number(row.liked_by_current_user) > 0,
     }]));
     return records.map((record) => ({ ...record, ...(metadata.get(record.id) ?? { likeCount: 0, likedByCurrentUser: false }) }));
+  }
+}
+
+export function encodeCursor(cursor: { updatedAt: string; id: string }): string {
+  return Buffer.from(JSON.stringify(cursor), 'utf8').toString('base64url');
+}
+
+export function decodeCursor(value: string | undefined): { updatedAt: string; id: string } | null {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8')) as { updatedAt?: unknown; id?: unknown };
+    if (typeof parsed.updatedAt !== 'string' || typeof parsed.id !== 'string' || parsed.id.length === 0) return null;
+    return { updatedAt: parsed.updatedAt, id: parsed.id };
+  } catch {
+    return null;
   }
 }
