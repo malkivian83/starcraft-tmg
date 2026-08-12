@@ -1,8 +1,34 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath, URL } from 'node:url';
 import pkg from './package.json' with { type: 'json' };
+
+/*
+ * Identificador de la compilación. `package.json` sólo cambia cuando se sube la
+ * versión a mano, así que no sirve para saber si un cliente está al día: dos
+ * despliegues seguidos comparten número. La marca de tiempo del build sí cambia
+ * siempre, y es lo que compara `deploymentVersion` contra `/version.json`.
+ */
+const buildId = Date.now().toString(36);
+
+/**
+ * Publica `version.json` junto al bundle. No entra en el precacheo del service
+ * worker —`globPatterns` no incluye `.json`—, de modo que la app siempre lo lee
+ * de la red y puede detectar un despliegue aunque su service worker esté roto.
+ */
+function publishBuildManifest(): Plugin {
+  return {
+    name: 'starcraft-tmg:build-manifest',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({ version: pkg.version, buildId }),
+      });
+    },
+  };
+}
 
 export default defineConfig({
   /*
@@ -12,9 +38,11 @@ export default defineConfig({
    */
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    __APP_BUILD_ID__: JSON.stringify(buildId),
   },
   plugins: [
     react(),
+    publishBuildManifest(),
     VitePWA({
       registerType: 'autoUpdate',
       // El cliente se registra desde `src/main.tsx` para poder solicitar una

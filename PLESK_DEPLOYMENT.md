@@ -19,12 +19,15 @@ TypeScript genera el servidor en `server/dist/`.
 En `httpdocs/.env`, crear la configuración de producción. El archivo no se
 guarda en Git y debe permanecer únicamente en el servidor.
 
+Los orígenes llevan `www`: es el dominio canónico, y el pelado redirige hacia él
+(ver «Dominio canónico y PWA»).
+
 ```env
-VITE_API_BASE_URL=https://starcraft-builder.com/api
+VITE_API_BASE_URL=https://www.starcraft-builder.com/api
 VITE_GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
 GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
-APP_ORIGIN=https://starcraft-builder.com
-APP_BASE_URL=https://starcraft-builder.com
+APP_ORIGIN=https://www.starcraft-builder.com
+APP_BASE_URL=https://www.starcraft-builder.com
 DATABASE_URL=mysql://USUARIO:CONTRASENA_CODIFICADA@localhost:3306/BASE_DE_DATOS
 SESSION_SECRET=SECRETO_ALEATORIO_DE_AL_MENOS_32_CARACTERES
 NODE_ENV=production
@@ -40,7 +43,7 @@ se incrusta en el bundle durante `vite build`, así que debe estar en `.env`
 botón de Google no aparece y el resto de la aplicación funciona igual.
 
 En Google Cloud Console, el dominio de producción debe figurar en «Orígenes de
-JavaScript autorizados» (`https://starcraft-builder.com`, sin barra final) y la
+JavaScript autorizados» (`https://www.starcraft-builder.com`, sin barra final) y la
 pantalla de consentimiento debe estar publicada: en modo de prueba sólo entran
 las cuentas añadidas como usuarios de prueba.
 
@@ -95,18 +98,64 @@ backend, aplique migraciones pendientes y reinicie la aplicación.
 
 ## Dominio canónico y PWA
 
-El origen de una PWA forma parte de su instalación. Debe elegirse un único
-dominio canónico (`starcraft-builder.com` o `www.starcraft-builder.com`) antes
-de distribuirla y mantenerse estable en `APP_ORIGIN`, `APP_BASE_URL`, Google y
-la configuración de Nginx/Plesk.
+El origen de una PWA forma parte de su instalación. El dominio canónico es
+**`www.starcraft-builder.com`**: es el que sirve Nginx hoy, y `APP_ORIGIN`,
+`APP_BASE_URL`, `VITE_API_BASE_URL` y los orígenes autorizados de Google deben
+llevar todos ese `www`. Un despliegue en el que el bundle se sirve desde `www` y
+pide la API al dominio pelado es cruzado en origen y con redirección: las
+cookies de sesión no viajan.
 
 No se debe redirigir `/sw.js` de un origen que ya tuvo instalaciones al otro
 origen. El navegador exige que la actualización del service worker proceda del
 mismo origen; una redirección deja esas instalaciones usando su caché anterior.
-Para cambiar de dominio, el virtual host antiguo debe servir temporalmente en
-`/sw.js` un worker de migración que vacíe sus cachés y se desregistre, y
-redirigir después la navegación al dominio nuevo. Mantener esa excepción al
-menos mientras existan instalaciones de la PWA antigua.
+
+### Comprobado en producción (2026-08-10)
+
+`https://starcraft-builder.com` responde `301` hacia `www` en **todas** las
+rutas, `/sw.js` incluido:
+
+```sh
+curl -sSI https://starcraft-builder.com/sw.js | grep -i location
+```
+
+Cualquier dispositivo que abriera o instalara la aplicación desde el dominio sin
+`www` tiene ahí registrado su service worker. Al intentar actualizarse recibe la
+redirección, el navegador la trata como error irrecuperable y aborta: esa
+instalación queda **congelada para siempre** sirviendo su propio precacheo, por
+muchos despliegues que se hagan. El origen `www` sí se actualiza con normalidad.
+
+Como el dominio pelado redirige todo, ya no puede registrar instalaciones
+nuevas: sólo quedan las históricas. Para recuperarlas sin tocar el dispositivo,
+hay que servir en el dominio pelado un `/sw.js` que se autodestruya, con `200` y
+sin redirección. En «Configuración de Apache y Nginx» del dominio, en las
+directivas adicionales de Nginx:
+
+```nginx
+location = /sw.js {
+    if ($host !~* ^www\.) {
+        add_header Cache-Control "no-cache, max-age=0, must-revalidate" always;
+        add_header Content-Type "application/javascript" always;
+        return 200 "self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',async()=>{const n=await caches.keys();await Promise.all(n.map(c=>caches.delete(c)));await self.registration.unregister();const l=await self.clients.matchAll({type:'window'});l.forEach(c=>c.navigate('https://www.starcraft-builder.com/'));});";
+    }
+}
+```
+
+Esa excepción debe mantenerse mientras queden instalaciones de la PWA en el
+dominio pelado. La alternativa, dispositivo a dispositivo, es borrar los datos
+del sitio en el navegador y volver a instalar desde `www`.
+
+### Detección de despliegue independiente del service worker
+
+`vite build` publica `dist/version.json` con un `buildId` distinto en cada
+compilación, y `src/pwa/deploymentVersion.ts` lo consulta siempre contra la red
+al arrancar, al recuperar el foco y cada quince minutos. Si el identificador no
+coincide con el del bundle en ejecución, pide la actualización al service worker
+y, si en diez segundos no se ha hecho cargo, vacía las cachés, lo desregistra y
+recarga —una sola vez por sesión, para no encadenar recargas—.
+
+`version.json` no entra en el precacheo (`globPatterns` no incluye `.json`) y
+`dist/.htaccess` lo sirve con `no-cache`. Si alguna vez se pone una CDN por
+delante, debe quedar excluido de su caché junto a `sw.js` e `index.html`.
 
 El script `deploy:plesk` arranca el orquestador con la instalación seleccionada
 de Plesk (`/opt/plesk/node/22/bin/node`). El orquestador reutiliza ese mismo

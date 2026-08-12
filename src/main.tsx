@@ -5,6 +5,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
 import './i18n/config';
 import { LocaleBootstrap } from './i18n/LocaleBootstrap';
+import { watchForNewDeployments } from './pwa/deploymentVersion';
 import { watchForServiceWorkerUpdates } from './pwa/serviceWorkerUpdates';
 import './styles/global.css';
 import './styles/design-system.css';
@@ -30,6 +31,9 @@ createRoot(root).render(
 registerSW({
   immediate: true,
   onRegisteredSW: (_serviceWorkerUrl, registration) => {
-    if (registration) watchForServiceWorkerUpdates(registration);
+    if (!registration) return;
+    watchForServiceWorkerUpdates(registration);
+    // Segunda vía por si el relevo del service worker no llega a producirse.
+    watchForNewDeployments(registration, __APP_BUILD_ID__);
   },
 });

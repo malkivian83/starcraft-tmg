@@ -387,3 +387,5 @@ Error: Table 'starcraft_tmg.list_match_records' doesn't exist
     '        WHERE list_id = ? AND owner_id = ?\n' +
     '        ORDER BY played_on IS NULL, played_on DESC, created_at DESC'
 }
+13:28:40 [tsx] change in ./server\src\db\pool.ts Restarting...
+API disponible en http://localhost:3001/api

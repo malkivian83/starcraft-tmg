@@ -4,10 +4,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
 
-# El service worker, su registro, el HTML y el manifiesto son los archivos que
-# anuncian que hay versión nueva. Si se cachean, ni el navegador ni Cloudflare
-# llegan a enterarse del despliegue.
-<FilesMatch "^(sw\.js|registerSW\.js|index\.html|manifest\.webmanifest)$">
+# El service worker, su registro, el HTML, el manifiesto y el identificador de
+# compilación son los archivos que anuncian que hay versión nueva. Si se
+# cachean, ni el navegador ni Cloudflare llegan a enterarse del despliegue.
+<FilesMatch "^(sw\.js|registerSW\.js|index\.html|manifest\.webmanifest|version\.json)$">
   <IfModule mod_expires.c>
     ExpiresActive Off
   </IfModule>
