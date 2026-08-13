@@ -326,7 +326,7 @@ describe('Filtrado en dos niveles (SDD §6.6)', () => {
 
     // Imposible: etiqueta que la facción no tiene.
     expect(
-      units.find((u) => u.entry.id === 'zerg.entry.kerrigan')?.status,
+      units.find((u) => u.entry.id === 'zerg.entry.kerrigan_swarm_raptor')?.status,
     ).toBe('impossible');
 
     // Bloqueado: es legal, pero no hay minerales. Debe verse en pantalla.

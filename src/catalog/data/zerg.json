@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "contentVersion": "2026.05.1.1",
+  "contentVersion": "2026.05.1.2",
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Zerg-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
   "race": "ZERG",
 
@@ -1759,7 +1759,7 @@
       "cardId": "zerg.card.kerrigan",
       "race": "ZERG",
       "name": "Kerrigan",
-      "tags": ["ZERG", "KERRIGAN'S SWARM"],
+      "tags": ["ZERG"],
       "slotType": "HERO",
       "combatRole": { "es": "Especialista en daño", "en": "Damage Dealer" },
       "unique": true,

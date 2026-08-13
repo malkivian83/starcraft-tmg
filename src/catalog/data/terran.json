@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "contentVersion": "2026.05.1.1",
+  "contentVersion": "2026.05.1.2",
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 + StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf",
   "race": "TERRAN",
 
@@ -1033,7 +1033,7 @@
       "cardId": "terran.card.jim_raynor",
       "race": "TERRAN",
       "name": "Jim Raynor",
-      "tags": ["TERRAN", "RAYNOR'S RAIDERS"],
+      "tags": ["TERRAN"],
       "slotType": "HERO",
       "combatRole": { "es": "Táctico", "en": "Tactician" },
       "unique": true,
