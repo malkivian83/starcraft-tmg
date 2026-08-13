@@ -158,6 +158,11 @@ describe('Catálogo Protoss', () => {
       expect(bajoDaelaam?.status).toBe('impossible');
     });
 
+    /**
+     * El Pylon también lleva la etiqueta KHALAI en su carta, y es coherente:
+     * solo la carta de facción Khalai lo pone en mesa (Pylon Warp-In), así que
+     * bajo Daelaam no hay forma de invocarlo ni siquiera como referencia.
+     */
     it('el resto de unidades es elegible con ambas facciones', () => {
       for (const faction of ['protoss.faction.khalai', 'protoss.faction.daelaam']) {
         const bloqueadasPorEtiqueta = getEligibleUnits(
@@ -169,7 +174,7 @@ describe('Catálogo Protoss', () => {
 
         expect(bloqueadasPorEtiqueta).toEqual(
           faction === 'protoss.faction.daelaam'
-            ? ['protoss.entry.praetor_guard']
+            ? ['protoss.entry.praetor_guard', 'protoss.entry.pylon']
             : [],
         );
       }

@@ -115,9 +115,12 @@ function applyUpgradeGlossary(catalog: RaceCatalogData): RaceCatalogData {
             : [
                 {
                   name: upgrade.name,
-                  phase: shared.phase,
+                  phase: upgrade.phase ?? shared.phase,
                   type: shared.type,
                   cost: shared.cost,
+                  ...((upgrade.resource ?? shared.resource)
+                    ? { resource: upgrade.resource ?? shared.resource }
+                    : {}),
                   text: shared.text,
                   fromUpgrade: true,
                 },

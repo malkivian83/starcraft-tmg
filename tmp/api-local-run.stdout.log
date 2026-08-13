@@ -1,0 +1,5 @@
+
+> starcraft-tmg-army-builder@0.1.9 dev:server
+> tsx watch server/src/index.ts
+
+API disponible en http://localhost:3001/api

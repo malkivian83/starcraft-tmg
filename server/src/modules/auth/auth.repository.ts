@@ -3,6 +3,7 @@ import type { Pool, PoolConnection, RowDataPacket } from 'mysql2/promise';
 
 export type Race = 'ZERG' | 'TERRAN' | 'PROTOSS';
 export type AuthProvider = 'PASSWORD' | 'GOOGLE' | 'BOTH';
+export type SupportedLocale = 'es' | 'en';
 
 /** Cómo puede entrar la cuenta hoy, no cómo se creó: al añadir contraseña o vincular Google, cambia. */
 export function authProviderOf(user: { passwordHash: string | null; googleSub: string | null }): AuthProvider {
@@ -20,6 +21,7 @@ export interface UserRecord {
   deletedAt: string | null;
   sessionVersion: number;
   defaultRace: Race;
+  locale: SupportedLocale;
   nickname: string | null;
   avatar: string | null;
   isActive: boolean;
@@ -35,6 +37,7 @@ interface UserRow extends RowDataPacket {
   deleted_at: string | null;
   session_version: number;
   default_race: Race;
+  locale: SupportedLocale;
   nickname: string | null;
   avatar: string | null;
   is_active: number;
@@ -42,10 +45,10 @@ interface UserRow extends RowDataPacket {
 }
 
 function mapUser(row: UserRow): UserRecord {
-  return { id: row.id, email: row.email, passwordHash: row.password_hash, googleSub: row.google_sub, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, nickname: row.nickname, avatar: row.avatar, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at };
+  return { id: row.id, email: row.email, passwordHash: row.password_hash, googleSub: row.google_sub, emailVerifiedAt: row.email_verified_at, deletedAt: row.deleted_at, sessionVersion: row.session_version, defaultRace: row.default_race, locale: row.locale, nickname: row.nickname, avatar: row.avatar, isActive: Boolean(row.is_active), lastLoginAt: row.last_login_at };
 }
 
-const userColumns = `SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, u.session_version, u.last_login_at, p.default_race, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
+const userColumns = `SELECT u.id, u.email, u.password_hash, u.google_sub, u.email_verified_at, u.deleted_at, u.is_active, u.session_version, u.last_login_at, p.default_race, p.locale, p.nickname, p.avatar FROM users u JOIN profiles p ON p.user_id = u.id`;
 
 export class AuthRepository {
   constructor(private readonly pool: Pool) {}
@@ -60,11 +63,11 @@ export class AuthRepository {
     return rows[0] ? mapUser(rows[0]) : null;
   }
 
-  async createUser(email: string, emailNormalized: string, passwordHash: string): Promise<UserRecord> {
+  async createUser(email: string, emailNormalized: string, passwordHash: string, locale: SupportedLocale = 'es'): Promise<UserRecord> {
     return this.transaction(async (connection) => {
       const id = randomUUID();
       await connection.execute('INSERT INTO users (id, email, email_normalized, password_hash) VALUES (?, ?, ?, ?)', [id, email, emailNormalized, passwordHash]);
-      await connection.execute('INSERT INTO profiles (user_id) VALUES (?)', [id]);
+      await connection.execute('INSERT INTO profiles (user_id, locale) VALUES (?, ?)', [id, locale]);
       const [rows] = await connection.execute<UserRow[]>(`${userColumns} WHERE u.id = ?`, [id]);
       return mapUser(rows[0]!);
     });
@@ -76,11 +79,11 @@ export class AuthRepository {
   }
 
   /** Alta de una cuenta cuya identidad la respalda Google: sin contraseña y ya verificada. */
-  async createGoogleUser(email: string, emailNormalized: string, googleSub: string, nickname: string | null): Promise<UserRecord> {
+  async createGoogleUser(email: string, emailNormalized: string, googleSub: string, nickname: string | null, locale: SupportedLocale = 'es'): Promise<UserRecord> {
     return this.transaction(async (connection) => {
       const id = randomUUID();
       await connection.execute('INSERT INTO users (id, email, email_normalized, password_hash, google_sub, email_verified_at) VALUES (?, ?, ?, NULL, ?, NOW())', [id, email, emailNormalized, googleSub]);
-      await connection.execute('INSERT INTO profiles (user_id, nickname) VALUES (?, ?)', [id, nickname]);
+      await connection.execute('INSERT INTO profiles (user_id, nickname, locale) VALUES (?, ?, ?)', [id, nickname, locale]);
       const [rows] = await connection.execute<UserRow[]>(`${userColumns} WHERE u.id = ?`, [id]);
       return mapUser(rows[0]!);
     });
@@ -122,14 +125,28 @@ export class AuthRepository {
   async recordLogin(userId: string): Promise<void> { await this.pool.execute('UPDATE users SET last_login_at = NOW() WHERE id = ?', [userId]); }
   async setUserActive(userId: string, isActive: boolean): Promise<void> { await this.pool.execute('UPDATE users SET is_active = ?, session_version = session_version + 1 WHERE id = ?', [isActive, userId]); }
 
-  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; emailVerifiedAt: string | null; authProvider: AuthProvider; lastLoginAt: string | null; savedLists: number }>> {
-    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.google_sub, u.password_hash IS NOT NULL AS has_password, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, u.is_active, u.email_verified_at, u.google_sub, has_password, u.last_login_at ORDER BY u.created_at DESC`);
-    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), emailVerifiedAt: row.email_verified_at, authProvider: authProviderOf({ googleSub: row.google_sub, passwordHash: Number(row.has_password) ? 'set' : null }), lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
+  async listUsersForAdmin(): Promise<Array<{ id: string; email: string; nickname: string | null; isActive: boolean; emailVerifiedAt: string | null; authProvider: AuthProvider; locale: SupportedLocale; lastLoginAt: string | null; savedLists: number }>> {
+    const [rows] = await this.pool.execute<RowDataPacket[]>(`SELECT u.id, u.email, p.nickname, p.locale, u.is_active, u.email_verified_at, u.google_sub, u.password_hash IS NOT NULL AS has_password, u.last_login_at, COUNT(l.id) AS saved_lists FROM users u JOIN profiles p ON p.user_id = u.id LEFT JOIN saved_lists l ON l.owner_id = u.id GROUP BY u.id, u.email, p.nickname, p.locale, u.is_active, u.email_verified_at, u.google_sub, has_password, u.last_login_at ORDER BY u.created_at DESC`);
+    return rows.map((row) => ({ id: row.id, email: row.email, nickname: row.nickname, isActive: Boolean(row.is_active), emailVerifiedAt: row.email_verified_at, authProvider: authProviderOf({ googleSub: row.google_sub, passwordHash: Number(row.has_password) ? 'set' : null }), locale: row.locale === 'en' ? 'en' : 'es', lastLoginAt: row.last_login_at, savedLists: Number(row.saved_lists) }));
   }
 
   async updateDefaultRace(userId: string, defaultRace: Race): Promise<UserRecord> {
     await this.pool.execute('UPDATE profiles SET default_race = ? WHERE user_id = ?', [defaultRace, userId]);
     return (await this.findById(userId))!;
+  }
+
+  async updateLocale(userId: string, locale: SupportedLocale): Promise<UserRecord> {
+    await this.pool.execute('UPDATE profiles SET locale = ? WHERE user_id = ?', [locale, userId]);
+    return (await this.findById(userId))!;
+  }
+
+  async recordTermsAcceptance(userId: string, termsVersion: string, locale: SupportedLocale, source: 'PASSWORD_REGISTRATION' | 'GOOGLE_REGISTRATION'): Promise<void> {
+    await this.pool.execute(
+      `INSERT INTO user_terms_acceptances (user_id, terms_version, locale, source)
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE accepted_at = CURRENT_TIMESTAMP, source = VALUES(source)`,
+      [userId, termsVersion, locale, source],
+    );
   }
 
   async updateProfile(userId: string, profile: { defaultRace: Race; nickname: string | null; avatar: string | null }): Promise<UserRecord> {

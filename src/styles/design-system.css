@@ -29,6 +29,9 @@
   --ok: oklch(0.8 0.11 165);
   --warn: oklch(0.78 0.14 75);
   --error: oklch(0.7 0.15 22);
+  --stat-win: var(--ok);
+  --stat-loss: var(--error);
+  --stat-draw: oklch(0.55 0.05 260);
   --danger: var(--error);
   --teal: oklch(0.8 0.1 175);
 
@@ -340,7 +343,7 @@ label.field textarea {
   min-height: 62px;
   flex-wrap: nowrap;
   gap: 18px;
-  padding: 10px 22px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 22px 10px;
   border-top: 0;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, #1c2033, #171b29);
@@ -478,7 +481,7 @@ label.field textarea {
 .app__footer,
 .auth-page__footer {
   margin-top: auto;
-  padding: 20px 22px 26px;
+  padding: 20px 22px calc(26px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--line);
   background: var(--bg);
   color: var(--text-faint);
@@ -553,7 +556,7 @@ label.field textarea {
     min-height: 0;
     flex-wrap: wrap;
     gap: 8px 10px;
-    padding: 9px 12px;
+    padding: calc(9px + env(safe-area-inset-top, 0px)) 12px 9px;
   }
 
   .topbar__logo {
@@ -619,7 +622,7 @@ label.field textarea {
 
   .app__footer,
   .auth-page__footer {
-    padding: 18px 16px 22px;
+    padding: 18px 16px calc(22px + env(safe-area-inset-bottom, 0px));
   }
 }
 

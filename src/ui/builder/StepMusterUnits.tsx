@@ -1,12 +1,18 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { findComposition, upgradeCostFor } from '@/engine/costing';
 import { getEligibleUnits } from '@/engine/eligibility';
 import type { ListEntry, UnitCard, UnitEntry } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
-import { slotLabel, UniqueChip } from '../common/Chips';
+import { CombatTagChips, slotLabel, UniqueChip } from '../common/Chips';
 import { models } from '../common/plural';
 import { StatBlock } from '../common/StatBlock';
+import { SupplyBands } from '../common/SupplyBands';
+import { groupAbilitiesByPhase, groupUnitProfileByPhase, groupUpgradesByPhase } from '../common/abilityPhases';
+import { KeywordText } from '../common/KeywordText';
 import { upgradeDescription } from '../common/upgradeText';
+import { localizedText } from '@/i18n/localized-content';
+import { normalizeLocale, type SupportedLocale } from '@/i18n/types';
 import './unitcard.css';
 
 /**
@@ -17,6 +23,9 @@ import './unitcard.css';
  * al usuario sin saber que la unidad existe.
  */
 export function StepMusterUnits() {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const { list, index, summary } = useListStore();
   const addUnit = useListStore((s) => s.addUnit);
   const addReferenceUnit = useListStore((s) => s.addReferenceUnit);
@@ -25,8 +34,7 @@ export function StepMusterUnits() {
     return (
       <div className="panel">
         <p className="empty">
-          Primero elige una Carta de Facción en el paso 1: es la que determina
-          qué unidades puedes reclutar y cuántos espacios tienes.
+          {t('chooseFactionHint')}
         </p>
       </div>
     );
@@ -43,7 +51,7 @@ export function StepMusterUnits() {
     <div className="split">
       <div className="stack">
         <section className="panel">
-          <h2 className="panel__title">Catálogo de unidades</h2>
+          <h2 className="panel__title">{t('catalog')}</h2>
           <div className="stack">
             {recruitable.map(({ entry, status, reason, remedy, compositions }) => (
               <div
@@ -54,8 +62,8 @@ export function StepMusterUnits() {
                   <span className="card__name">
                     {entry.name} <UniqueChip unique={entry.unique} />
                   </span>
-                  <span className="chip chip--slot">
-                    {slotLabel(entry.slotType)}
+                    <span className="chip chip--slot">
+                    {slotLabel(entry.slotType, locale)}
                   </span>
                 </div>
 
@@ -65,15 +73,15 @@ export function StepMusterUnits() {
                       key={composition.id}
                       className="comp"
                       disabled={cs !== 'available'}
-                      title={cr?.es}
-                      aria-label={`Añadir ${entry.name} con ${models(composition.models)} por ${composition.mineralCost} minerales`}
+                      title={cr ? localizedText(cr, locale) : undefined}
+                      aria-label={t('addUnitAria', { name: entry.name, models: models(composition.models), cost: composition.mineralCost })}
                       onClick={() => addUnit(entry.id, composition.id)}
                     >
                       <span className="comp__models">
                         {models(composition.models)}
                       </span>
                       <span className="comp__supply">
-                        suministro {composition.supplyValue}
+                        {t('supply')} {composition.supplyValue}
                       </span>
                       <span className="comp__cost">
                         {composition.mineralCost} min.
@@ -84,8 +92,8 @@ export function StepMusterUnits() {
 
                 {status === 'blocked' && reason && (
                   <>
-                    <span className="card__reason">{reason.es}</span>
-                    {remedy && <span className="card__remedy">{remedy.es}</span>}
+                    <span className="card__reason">{localizedText(reason, locale)}</span>
+                    {remedy && <span className="card__remedy">{localizedText(remedy, locale)}</span>}
                   </>
                 )}
               </div>
@@ -96,22 +104,21 @@ export function StepMusterUnits() {
         {summoned.length > 0 && (
           <section className="panel">
             <h2 className="panel__title">
-              Unidades invocadas — referencia, sin coste
+              {t('summoned')}
             </h2>
             <p className="small muted" style={{ marginTop: 0 }}>
-              No se reclutan ni ocupan espacios (§9.1.9). Añádelas para tener
-              sus características a mano en la lista impresa.
+              {t('noRecruit')}
             </p>
             <div className="stack">
               {summoned.map(({ entry }) => (
                 <div key={entry.id} className="card">
                   <div className="card__head">
                     <span className="card__name">{entry.name}</span>
-                    <span className="chip">Invocada</span>
+                    <span className="chip">{t('summoned').split(' — ')[0]}</span>
                   </div>
                   <div>
                     <button onClick={() => addReferenceUnit(entry.id)}>
-                      Añadir como referencia
+                      {t('addReference')}
                     </button>
                   </div>
                 </div>
@@ -127,14 +134,14 @@ export function StepMusterUnits() {
 }
 
 function Roster() {
+  const { t } = useTranslation('builderUi');
   const { list } = useListStore();
 
   if (list.entries.length === 0) {
     return (
       <section className="panel">
         <p className="empty">
-          Aún no has reclutado ninguna unidad. Elige una composición del
-          catálogo para añadirla.
+          {t('noUnits')}
         </p>
       </section>
     );
@@ -142,9 +149,9 @@ function Roster() {
 
   return (
     <section className="panel">
-      <h2 className="panel__title">Tu ejército ({list.entries.length})</h2>
+      <h2 className="panel__title">{t('yourArmy', { count: list.entries.length })}</h2>
       <p className="small muted roster__hint">
-        Usa ↑ y ↓ para ordenar las unidades como aparecerán en la impresión.
+        {t('reorderHint')}
       </p>
       <div className="stack">
         {list.entries.map((entry, position) => (
@@ -169,6 +176,9 @@ function RosterEntry({
   position: number;
   total: number;
 }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const { index, validation } = useListStore();
   const removeUnit = useListStore((s) => s.removeUnit);
   const moveUnit = useListStore((s) => s.moveUnit);
@@ -195,7 +205,7 @@ function RosterEntry({
           <img
             className="unitcard__mini"
             src={`/${card.miniRef}`}
-            alt={`Miniatura de ${unit.name}`}
+            alt={locale === 'en' ? `Thumbnail of ${unit.name}` : `Miniatura de ${unit.name}`}
             /*
              * Sin carga diferida a propósito: son pocas y pequeñas, y al
              * imprimir hay que garantizar que ya están descargadas. Una
@@ -213,15 +223,15 @@ function RosterEntry({
           <div className="card__head">
             <h3>
               {unit.name}{' '}
-              {listEntry.reference && <span className="chip">Referencia</span>}
+              {listEntry.reference && <span className="chip">{t('addReference')}</span>}
             </h3>
             <div className="unitcard__actions">
               <button
                 className="card-action"
                 onClick={() => moveUnit(listEntry.instanceId, 'up')}
                 disabled={position === 0}
-                aria-label={`Subir ${unit.name}`}
-                title="Subir unidad"
+                aria-label={`${t('moveUp', { defaultValue: locale === 'en' ? 'Move up' : 'Subir' })} ${unit.name}`}
+                title={t('moveUp', { defaultValue: locale === 'en' ? 'Move up' : 'Subir' })}
               >
                 ↑
               </button>
@@ -229,27 +239,38 @@ function RosterEntry({
                 className="card-action"
                 onClick={() => moveUnit(listEntry.instanceId, 'down')}
                 disabled={position === total - 1}
-                aria-label={`Bajar ${unit.name}`}
-                title="Bajar unidad"
+                aria-label={`${t('moveDown', { defaultValue: locale === 'en' ? 'Move down' : 'Bajar' })} ${unit.name}`}
+                title={t('moveDown', { defaultValue: locale === 'en' ? 'Move down' : 'Bajar' })}
               >
                 ↓
               </button>
               <button
                 className="card-action card-action--remove"
                 onClick={() => removeUnit(listEntry.instanceId)}
-                aria-label={`Quitar ${unit.name}`}
-                title="Quitar de la lista"
+                aria-label={`${t('remove')} ${unit.name}`}
+                title={t('remove')}
               >
                 ×
               </button>
             </div>
           </div>
 
-          {card && <StatBlock profile={card.profile} />}
+          {card && (
+            <div className="unitcard__stats">
+              <StatBlock profile={card.profile} />
+              <SupplyBands bands={card.supplyProfile} />
+            </div>
+          )}
+
+          {card && (
+            <div className="unitcard__combat-tags">
+              <CombatTagChips tags={card.combatTags} />
+            </div>
+          )}
 
           {!listEntry.reference && (
             <div className="row small" style={{ marginTop: 8 }}>
-              <span className="muted">Composición:</span>
+              <span className="muted">{t('composition')}</span>
               {unit.compositions.map((c) => (
                 <button
                   key={c.id}
@@ -258,7 +279,7 @@ function RosterEntry({
                   }
                   style={{ cursor: 'pointer' }}
                   aria-pressed={c.id === listEntry.compositionId}
-                  aria-label={`Cambiar a ${models(c.models)} por ${c.mineralCost} minerales`}
+                  aria-label={t('changeComposition', { defaultValue: locale === 'en' ? 'Change to {{models}} for {{cost}} minerals' : 'Cambiar a {{models}} por {{cost}} minerales', models: models(c.models), cost: c.mineralCost })}
                   onClick={() => changeComposition(listEntry.instanceId, c.id)}
                 >
                   {models(c.models)} · {c.mineralCost}
@@ -286,9 +307,9 @@ function RosterEntry({
 
       {issues.map((issue, i) => (
         <div key={i} className="issue issue--error" style={{ marginTop: 6 }}>
-          {issue.message.es}
+          {localizedText(issue.message, locale)}
           {issue.remedy && (
-            <div className="issue__remedy">{issue.remedy.es}</div>
+            <div className="issue__remedy">{localizedText(issue.remedy, locale)}</div>
           )}
         </div>
       ))}
@@ -298,19 +319,48 @@ function RosterEntry({
 
 /** Armas y habilidades de serie de la unidad, antes de las mejoras. */
 function UnitProfileDetails({ card }: { card: UnitCard }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   return (
     <div className="unitcard__profile">
-      {card.weapons.length > 0 && (
+      {groupUnitProfileByPhase(card.weapons, card.abilities).map(({ phase, weapons, abilities }) => (
+        <section key={phase} className="ability-group">
+          <div className={`ability-group__title phase-tag phase-tag--${phase}`}>
+            {phaseLabel(phase, t)}
+          </div>
+          <WeaponTable weapons={weapons} t={t} locale={locale} />
+          {abilities.map((ability) => {
+            const resource = ability.resource ?? resourceLabel(card.race);
+            return (
+            <p key={ability.name} className="ability">
+              <strong className="ability__name">{ability.name}</strong>
+              <span className={`ability__tag ability__type ability__type--${ability.type.toLowerCase()}`}>
+                {ability.type}
+              </span>
+              {ability.cost !== null && (
+                <span className={`ability__tag ability__resource-cost ability__resource-cost--${resource}`}>
+                  {ability.cost} {resource}
+                </span>
+              )}{' '}
+              <KeywordText text={localizedText(ability.text, locale)} locale={locale} />
+            </p>
+            );
+          })}
+        </section>
+      ))}
+
+      {false && card.weapons.length > 0 && (
         <table className="wtable">
           <thead>
             <tr>
-              <th>Arma</th>
-              <th>Alc.</th>
-              <th>Obj.</th>
-              <th>RdA</th>
-              <th>Imp.</th>
-              <th>Surge</th>
-              <th>Daño</th>
+              <th>{t('weapons')}</th>
+              <th>{t('range')}</th>
+              <th>{t('target')}</th>
+              <th>RoA</th>
+              <th>{t('hit')}</th>
+              <th>{t('surge')}</th>
+              <th>{t('damage')}</th>
             </tr>
           </thead>
           <tbody>
@@ -340,10 +390,10 @@ function UnitProfileDetails({ card }: { card: UnitCard }) {
         </table>
       )}
 
-      {groupAbilitiesByPhase(card.abilities).map(([phase, abilities]) => (
+      {false && groupAbilitiesByPhase(card.abilities).map(([phase, abilities]) => (
         <section key={phase} className="ability-group">
           <div className={`ability-group__title phase-tag phase-tag--${phase}`}>
-            {phaseLabel(phase)}
+            {phaseLabel(phase, t)}
           </div>
           {abilities.map((ability) => (
             <p key={ability.name} className="ability">
@@ -352,11 +402,66 @@ function UnitProfileDetails({ card }: { card: UnitCard }) {
                 {ability.type}
                 {ability.cost ? ` ${ability.cost} ${resourceLabel(card.race)}` : ''}
               </span>{' '}
-              {ability.text.es}
+              {localizedText(ability.text, locale)}
             </p>
           ))}
         </section>
       ))}
+    </div>
+  );
+}
+
+function WeaponTable({
+  weapons,
+  t,
+  locale,
+}: {
+  weapons: UnitCard['weapons'];
+  t: (key: string) => string;
+  locale: SupportedLocale;
+}) {
+  if (weapons.length === 0) return null;
+
+  return (
+    <div className="wtable-scroll">
+      <table className="wtable">
+        <thead>
+          <tr>
+            <th>{t('weapons')}</th>
+            <th>{t('range')}</th>
+            <th>{t('target')}</th>
+            <th>RoA</th>
+            <th>{t('hit')}</th>
+            <th>{t('surge')}</th>
+            <th>{t('damage')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {weapons.map((weapon) => (
+            <tr key={weapon.name}>
+              <td className="wtable__name">
+                {weapon.name}
+                {weapon.keywords.length > 0 && (
+                  <span className="wtable__kw">
+                    {weapon.keywords.map((keyword, index) => (
+                      <span key={`${keyword}-${index}`}>
+                        {index > 0 ? ', ' : ''}
+                        <KeywordText text={keyword} locale={locale} />
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </td>
+              <td>{weapon.range}</td>
+              <td>{weapon.target}</td>
+              <td>{weapon.rateOfAttack}</td>
+              <td>{weapon.hit}</td>
+            <td>{weapon.surgeType ? `${weapon.surgeType} ${weapon.surgeDice ?? ''}`.trim() : '—'}</td>
+              <td>{weapon.damage}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -375,6 +480,9 @@ function Upgrades({
   listEntry: ListEntry;
   models: number;
 }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const toggleUpgrade = useListStore((s) => s.toggleUpgrade);
   const setUpgradeModel = useListStore((s) => s.setUpgradeModel);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -394,20 +502,35 @@ function Upgrades({
   return (
     <div style={{ marginTop: 6 }}>
       <div className="panel__title" style={{ marginBottom: 6 }}>
-        Mejoras
+        {t('upgrades')}
       </div>
-      <div className="stack" style={{ gap: 4 }}>
-        {available.map((upgrade) => {
+      <div className="stack" style={{ gap: 8 }}>
+        {groupUpgradesByPhase(available).map(({ phase, upgrades }) => (
+          <section className="upg__phase-group" key={phase}>
+            <div className={`upg__phase-title phase-tag phase-tag--${phase}`}>
+              {phaseLabel(phase, t)}
+            </div>
+            <div className="stack" style={{ gap: 4 }}>
+              {upgrades.map((upgrade) => {
           const applied = listEntry.upgrades.find(
             (a) => a.upgradeId === upgrade.id,
           );
           const cost = upgradeCostFor(upgrade, listEntry.compositionId) ?? 0;
           const detailId = `${listEntry.instanceId}-${upgrade.id}-detalle`;
           const open = expanded.has(upgrade.id);
+          const upgradeTypes = Array.from(new Set(upgrade.grantsAbilities.map((ability) => ability.type)));
+          const upgradeAbilityCosts = Array.from(new Map(
+            upgrade.grantsAbilities
+              .filter((ability) => ability.cost !== null)
+              .map((ability) => {
+                const resource = ability.resource ?? resourceLabel(unit.race);
+                return [`${ability.cost}|${resource}`, { cost: ability.cost, resource }] as const;
+              }),
+          ).values());
 
-          return (
-            <div key={upgrade.id}>
-              <div className="row" style={{ gap: 6 }}>
+                return (
+                  <div key={upgrade.id}>
+              <div className="row upg__row" style={{ gap: 6 }}>
                 {/*
                  * El «+» abre la explicación sin tener que comprar la mejora:
                  * decidir si te interesa exige saber qué hace antes de pagarla.
@@ -416,13 +539,13 @@ function Upgrades({
                   className="upg__toggle"
                   aria-expanded={open}
                   aria-controls={detailId}
-                  aria-label={`${open ? 'Ocultar' : 'Ver'} qué hace ${upgrade.name}`}
+                  aria-label={`${open ? t('hide') : t('show')} ${t('ability')} ${upgrade.name}`}
                   onClick={() => toggle(upgrade.id)}
                 >
                   {open ? '−' : '+'}
                 </button>
 
-                <label className="row" style={{ gap: 6, cursor: 'pointer' }}>
+                <label className="row upg__choice" style={{ gap: 6, cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={Boolean(applied)}
@@ -430,22 +553,31 @@ function Upgrades({
                       toggleUpgrade(listEntry.instanceId, upgrade.id)
                     }
                   />
-                  <span>{upgrade.name}</span>
+                  <span className="upg__name">{upgrade.name}</span>
                   <span className="chip chip--cost">+{cost} min.</span>
-                  <span className={`chip small phase-tag phase-tag--${upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY'}`}>{phaseLabel(upgrade.grantsAbilities[0]?.phase ?? upgrade.grantsWeapons[0]?.phase ?? 'ANY')}</span>
+                  {upgradeTypes.map((type) => (
+                    <span key={type} className={`chip small ability__type ability__type--${type.toLowerCase()}`}>
+                      {type}
+                    </span>
+                  ))}
+                  {upgradeAbilityCosts.map(({ cost: abilityCost, resource }) => (
+                    <span key={`ability-cost-${abilityCost}-${resource}`} className={`chip small ability__resource-cost ability__resource-cost--${resource}`}>
+                      {abilityCost} {resource}
+                    </span>
+                  ))}
                   {upgrade.specialist && (
                     <span className="chip chip--unique">SPECIALIST</span>
                   )}
                   {upgrade.replacesWeapon && (
                     <span className="chip small">
-                      sustituye {upgrade.replacesWeapon}
+                      {t('replaceWeapon', { defaultValue: locale === 'en' ? 'replaces' : 'sustituye' })} {upgrade.replacesWeapon}
                     </span>
                   )}
                 </label>
 
                 {applied && upgrade.specialist && (
-                  <label className="row small muted" style={{ gap: 4 }}>
-                    Modelo
+                  <label className="row small muted upg__model" style={{ gap: 4 }}>
+                    {t('model', { defaultValue: locale === 'en' ? 'Model' : 'Modelo' })}
                     <select
                       value={applied.modelIndex ?? 0}
                       onChange={(e) =>
@@ -468,58 +600,71 @@ function Upgrades({
 
               {open && (
                 <div id={detailId} className="upg__detail">
-                  <p style={{ margin: 0 }}>{upgradeDescription(upgrade)}</p>
+                  <p style={{ margin: 0 }}>
+                    <KeywordText text={upgradeDescription(upgrade, locale)} locale={locale} />
+                  </p>
                   {upgrade.grantsWeapons.length > 0 && (
-                    <table className="wtable wtable--upgrade">
-                      <thead>
-                        <tr>
-                          <th>Arma</th><th>Alc.</th><th>Obj.</th><th>RdA</th>
-                          <th>Imp.</th><th>Surge</th><th>Daño</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {upgrade.grantsWeapons.map((weapon) => (
-                          <tr key={weapon.name}>
-                            <td className="wtable__name">
-                              {weapon.name}
-                              {weapon.keywords.length > 0 && <span className="wtable__kw">{weapon.keywords.join(', ')}</span>}
-                            </td>
-                            <td>{weapon.range}</td><td>{weapon.target}</td><td>{weapon.rateOfAttack}</td>
-                            <td>{weapon.hit}</td>
-                            <td>{weapon.surgeType ? `${weapon.surgeType} ${weapon.surgeDice ?? ''}`.trim() : '—'}</td>
-                            <td>{weapon.damage}</td>
+                    <div className="wtable-scroll">
+                      <table className="wtable wtable--upgrade">
+                        <thead>
+                          <tr>
+                            <th>{t('weapons')}</th><th>{t('range')}</th><th>{t('target')}</th><th>RoA</th>
+                            <th>{t('hit')}</th><th>{t('surge')}</th><th>{t('damage')}</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {upgrade.grantsWeapons.map((weapon) => (
+                            <tr key={weapon.name}>
+                              <td className="wtable__name">
+                                {weapon.name}
+                                {weapon.keywords.length > 0 && (
+                                  <span className="wtable__kw">
+                                    {weapon.keywords.map((keyword, index) => (
+                                      <span key={`${keyword}-${index}`}>
+                                        {index > 0 ? ', ' : ''}
+                                        <KeywordText text={keyword} locale={locale} />
+                                      </span>
+                                    ))}
+                                  </span>
+                                )}
+                              </td>
+                              <td>{weapon.range}</td><td>{weapon.target}</td><td>{weapon.rateOfAttack}</td>
+                              <td>{weapon.hit}</td>
+                            <td>{weapon.surgeType ? `${weapon.surgeType} ${weapon.surgeDice ?? ''}`.trim() : '—'}</td>
+                              <td>{weapon.damage}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                   {upgrade.grantsAbilities.map((ability) => (
                     <p key={ability.name} className="upg__weapon">
-                      <strong>{ability.name}</strong> · {phaseLabel(ability.phase)} · {ability.type}
-                      {ability.cost ? ` ${ability.cost} ${resourceLabel(unit.race)}` : ''}
+                      <strong>{ability.name}</strong> · {phaseLabel(ability.phase, t)} · {ability.type}
+                      {ability.cost !== null && (
+                        <span className={`ability__tag ability__resource-cost ability__resource-cost--${ability.resource ?? resourceLabel(unit.race)}`}>
+                          {ability.cost} {ability.resource ?? resourceLabel(unit.race)}
+                        </span>
+                      )}
                     </p>
                   ))}
                 </div>
               )}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </section>
+        ))}
       </div>
     </div>
   );
 }
 
-function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY') {
-  return ({ MOVEMENT: 'Movimiento', ASSAULT: 'Asalto', COMBAT: 'Combate', ANY: 'Cualquier fase' })[phase];
+function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY', t: (key: string) => string) {
+  return ({ MOVEMENT: t('phaseMovement'), ASSAULT: t('phaseAssault'), COMBAT: t('phaseCombat'), ANY: t('phaseAny') })[phase].toUpperCase();
 }
 
 function resourceLabel(race: 'ZERG' | 'TERRAN' | 'PROTOSS') {
   return ({ ZERG: 'BM', TERRAN: 'CP', PROTOSS: 'PE' })[race];
-}
-
-function groupAbilitiesByPhase<T extends { phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY' }>(abilities: T[]) {
-  const order = ['MOVEMENT', 'ASSAULT', 'COMBAT', 'ANY'] as const;
-  return order
-    .map((phase) => [phase, abilities.filter((ability) => ability.phase === phase)] as const)
-    .filter(([, grouped]) => grouped.length > 0);
 }

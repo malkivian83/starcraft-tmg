@@ -7,6 +7,7 @@ import { createPool } from './pool.js';
 const env = readEnvironment();
 const pool = createPool(env.DATABASE_URL);
 const migrationDirectory = resolve(process.cwd(), 'server/src/db/migrations');
+console.info('Comprobando migraciones de base de datos...');
 
 try {
   // MariaDB asocia GET_LOCK a una conexión: se conserva el mismo cliente
@@ -27,6 +28,7 @@ try {
     const migrations = (await readdir(migrationDirectory))
       .filter((name) => name.endsWith('.sql'))
       .sort();
+    let appliedCount = 0;
 
     for (const name of migrations) {
       const [applied] = await client.query<RowDataPacket[]>('SELECT 1 FROM schema_migrations WHERE name = ?', [name]);
@@ -40,8 +42,10 @@ try {
         if (statement.trim()) await client.query(statement);
       }
       await client.query('INSERT INTO schema_migrations (name) VALUES (?)', [name]);
+      appliedCount += 1;
       console.info(`Migración aplicada: ${name}`);
     }
+    console.info(appliedCount === 0 ? 'Migraciones al dia: no habia migraciones pendientes.' : `Migraciones completadas: ${appliedCount}.`);
   } finally {
     if (lockAcquired) await client.query("SELECT RELEASE_LOCK('starcraft_tmg_migrations')").catch(() => undefined);
     client.release();

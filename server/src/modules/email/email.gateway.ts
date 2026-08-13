@@ -3,26 +3,29 @@ import type { ServerEnvironment } from '../../config/env.js';
 import type { EmailDeliveryLogRepository, EmailMessageType } from './email-delivery-log.repository.js';
 import type { SmtpSettings, SmtpSettingsRepository } from './smtp-settings.repository.js';
 
+export type SupportedLocale = 'es' | 'en';
+
 export interface SupportEmailInput {
   ticketId: string;
   contactEmail: string;
   subject: string;
   body: string;
+  locale?: SupportedLocale;
 }
 
 export interface EmailGateway {
-  sendVerificationEmail(email: string, token: string): Promise<void>;
-  sendPasswordResetEmail(email: string, token: string): Promise<void>;
-  sendAccountVerifiedEmail(email: string): Promise<void>;
+  sendVerificationEmail(email: string, token: string, locale?: SupportedLocale): Promise<void>;
+  sendPasswordResetEmail(email: string, token: string, locale?: SupportedLocale): Promise<void>;
+  sendAccountVerifiedEmail(email: string, locale?: SupportedLocale): Promise<void>;
   sendSupportCreatedEmail?: (input: SupportEmailInput) => Promise<void>;
   sendSupportReplyEmail?: (input: SupportEmailInput) => Promise<void>;
 }
 
 export class DevelopmentEmailGateway implements EmailGateway {
   constructor(private readonly env: ServerEnvironment) {}
-  async sendVerificationEmail(email: string, token: string): Promise<void> { console.info(`Verification for ${email}: ${this.env.APP_BASE_URL}/verify-email?token=${token}`); }
-  async sendPasswordResetEmail(email: string, token: string): Promise<void> { console.info(`Password reset for ${email}: ${this.env.APP_BASE_URL}/reset-password?token=${token}`); }
-  async sendAccountVerifiedEmail(email: string): Promise<void> { console.info(`Account verified by the administrator for ${email}: ${this.env.APP_BASE_URL}`); }
+  async sendVerificationEmail(email: string, token: string, locale: SupportedLocale = 'es'): Promise<void> { console.info(`Verification for ${email}: ${this.env.APP_BASE_URL}/${locale}/${locale === 'en' ? 'verify-email' : 'verificar-correo'}?token=${token}`); }
+  async sendPasswordResetEmail(email: string, token: string, locale: SupportedLocale = 'es'): Promise<void> { console.info(`Password reset for ${email}: ${this.env.APP_BASE_URL}/${locale}/${locale === 'en' ? 'reset-password' : 'restablecer-contrasena'}?token=${token}`); }
+  async sendAccountVerifiedEmail(email: string, locale: SupportedLocale = 'es'): Promise<void> { console.info(`Account verified by the administrator for ${email} (${locale}): ${this.env.APP_BASE_URL}`); }
   async sendSupportCreatedEmail(input: SupportEmailInput): Promise<void> { console.info(`Support ticket ${input.ticketId} from ${input.contactEmail}: ${input.subject}\n${input.body}`); }
   async sendSupportReplyEmail(input: SupportEmailInput): Promise<void> { console.info(`Support reply for ${input.ticketId} to ${input.contactEmail}: ${input.subject}\n${input.body}`); }
 }
@@ -47,26 +50,30 @@ export function describeSmtpError(error: unknown): string {
 
 export interface SmtpDeliveryResult { messageId: string | null; accepted: string[]; rejected: string[]; response: string | null; }
 
-function emailTemplate(input: { preheader: string; title: string; heading: string; message: string; action: string; url: string; securityNote: string; appBaseUrl: string }): string {
+function emailTemplate(input: { locale: SupportedLocale; preheader: string; title: string; heading: string; message: string; action: string; url: string; securityNote: string; appBaseUrl: string }): string {
   const logoUrl = new URL('/logo.png', input.appBaseUrl).toString();
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${input.title}</title></head><body style="margin:0;padding:0;background:#080c12;color:#eef3f8;font-family:Arial,Helvetica,sans-serif;"><span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;">${input.preheader}</span><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#080c12;padding:32px 12px;"><tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#111923;border:1px solid #27384b;border-radius:14px;overflow:hidden;"><tr><td align="center" style="padding:28px 28px 20px;background:#182a3c;border-bottom:3px solid #d19d33;"><img src="${logoUrl}" width="280" alt="StarCraft: The Miniatures Game" style="display:block;max-width:100%;height:auto;border:0;"></td></tr><tr><td style="padding:32px 34px 12px;"><p style="margin:0 0 10px;color:#d19d33;font-size:12px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;">StarCraft TMG</p><h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.2;">${input.heading}</h1><p style="margin:20px 0 0;color:#c4d0dc;font-size:16px;line-height:1.6;">${input.message}</p></td></tr><tr><td align="center" style="padding:28px 34px 20px;"><a href="${input.url}" style="display:inline-block;background:#d19d33;color:#111923;text-decoration:none;font-size:16px;font-weight:bold;padding:14px 24px;border-radius:6px;">${input.action}</a></td></tr><tr><td style="padding:4px 34px 30px;"><p style="margin:0;color:#8fa1b3;font-size:13px;line-height:1.55;">${input.securityNote}</p><p style="margin:18px 0 0;color:#8fa1b3;font-size:12px;line-height:1.5;word-break:break-all;">Si el boton no funciona, copia este enlace en tu navegador:<br><a href="${input.url}" style="color:#74b9ff;">${input.url}</a></p></td></tr><tr><td style="padding:18px 34px;background:#0c121a;border-top:1px solid #27384b;"><p style="margin:0;color:#718397;font-size:12px;line-height:1.5;">Proyecto fanmade no oficial. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</p></td></tr></table></td></tr></table></body></html>`;
+  const linkHint = input.locale === 'en' ? 'If the button does not work, copy this link into your browser:' : 'Si el botón no funciona, copia este enlace en tu navegador:';
+  const footer = input.locale === 'en' ? 'Unofficial fan-made project. StarCraft and its related elements belong to their respective owners.' : 'Proyecto fanmade no oficial. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.';
+  return `<!doctype html><html lang="${input.locale}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${input.title}</title></head><body style="margin:0;padding:0;background:#080c12;color:#eef3f8;font-family:Arial,Helvetica,sans-serif;"><span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;">${input.preheader}</span><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#080c12;padding:32px 12px;"><tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#111923;border:1px solid #27384b;border-radius:14px;overflow:hidden;"><tr><td align="center" style="padding:28px 28px 20px;background:#182a3c;border-bottom:3px solid #d19d33;"><img src="${logoUrl}" width="280" alt="StarCraft: The Miniatures Game" style="display:block;max-width:100%;height:auto;border:0;"></td></tr><tr><td style="padding:32px 34px 12px;"><p style="margin:0 0 10px;color:#d19d33;font-size:12px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;">StarCraft TMG</p><h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.2;">${input.heading}</h1><p style="margin:20px 0 0;color:#c4d0dc;font-size:16px;line-height:1.6;">${input.message}</p></td></tr><tr><td align="center" style="padding:28px 34px 20px;"><a href="${input.url}" style="display:inline-block;background:#d19d33;color:#111923;text-decoration:none;font-size:16px;font-weight:bold;padding:14px 24px;border-radius:6px;">${input.action}</a></td></tr><tr><td style="padding:4px 34px 30px;"><p style="margin:0;color:#8fa1b3;font-size:13px;line-height:1.55;">${input.securityNote}</p><p style="margin:18px 0 0;color:#8fa1b3;font-size:12px;line-height:1.5;word-break:break-all;">${linkHint}<br><a href="${input.url}" style="color:#74b9ff;">${input.url}</a></p></td></tr><tr><td style="padding:18px 34px;background:#0c121a;border-top:1px solid #27384b;"><p style="margin:0;color:#718397;font-size:12px;line-height:1.5;">${footer}</p></td></tr></table></td></tr></table></body></html>`;
 }
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character] ?? character);
 }
 
-function supportEmailTemplate(input: { heading: string; intro: string; ticketId: string; subject: string; body: string; appBaseUrl: string }): string {
+function supportEmailTemplate(input: { locale: SupportedLocale; heading: string; intro: string; ticketId: string; subject: string; body: string; appBaseUrl: string }): string {
   const logoUrl = new URL('/logo.png', input.appBaseUrl).toString();
   const escapedBody = escapeHtml(input.body).replace(/\r?\n/g, '<br>');
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(input.heading)}</title></head><body style="margin:0;padding:0;background:#080c12;color:#eef3f8;font-family:Arial,Helvetica,sans-serif;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#080c12;padding:32px 12px;"><tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#111923;border:1px solid #27384b;border-radius:14px;overflow:hidden;"><tr><td align="center" style="padding:28px 28px 20px;background:#182a3c;border-bottom:3px solid #d19d33;"><img src="${logoUrl}" width="280" alt="StarCraft: The Miniatures Game" style="display:block;max-width:100%;height:auto;border:0;"></td></tr><tr><td style="padding:32px 34px;"><p style="margin:0 0 10px;color:#d19d33;font-size:12px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;">StarCraft TMG · Soporte</p><h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.2;">${escapeHtml(input.heading)}</h1><p style="margin:20px 0 0;color:#c4d0dc;font-size:16px;line-height:1.6;">${escapeHtml(input.intro)}</p><p style="margin:20px 0 6px;color:#8fa1b3;font-size:13px;">Ticket ${escapeHtml(input.ticketId)}</p><h2 style="margin:0 0 16px;color:#ffffff;font-size:19px;">${escapeHtml(input.subject)}</h2><div style="padding:16px;border:1px solid #27384b;border-radius:8px;background:#0c121a;color:#eef3f8;font-size:15px;line-height:1.6;">${escapedBody}</div></td></tr><tr><td style="padding:18px 34px;background:#0c121a;border-top:1px solid #27384b;"><p style="margin:0;color:#718397;font-size:12px;line-height:1.5;">Proyecto fanmade no oficial. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.</p></td></tr></table></td></tr></table></body></html>`;
+  const supportLabel = input.locale === 'en' ? 'Support' : 'Soporte';
+  const footer = input.locale === 'en' ? 'Unofficial fan-made project. StarCraft and its related elements belong to their respective owners.' : 'Proyecto fanmade no oficial. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares.';
+  return `<!doctype html><html lang="${input.locale}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(input.heading)}</title></head><body style="margin:0;padding:0;background:#080c12;color:#eef3f8;font-family:Arial,Helvetica,sans-serif;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#080c12;padding:32px 12px;"><tr><td align="center"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#111923;border:1px solid #27384b;border-radius:14px;overflow:hidden;"><tr><td align="center" style="padding:28px 28px 20px;background:#182a3c;border-bottom:3px solid #d19d33;"><img src="${logoUrl}" width="280" alt="StarCraft: The Miniatures Game" style="display:block;max-width:100%;height:auto;border:0;"></td></tr><tr><td style="padding:32px 34px;"><p style="margin:0 0 10px;color:#d19d33;font-size:12px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;">StarCraft TMG · ${supportLabel}</p><h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.2;">${escapeHtml(input.heading)}</h1><p style="margin:20px 0 0;color:#c4d0dc;font-size:16px;line-height:1.6;">${escapeHtml(input.intro)}</p><p style="margin:20px 0 6px;color:#8fa1b3;font-size:13px;">Ticket ${escapeHtml(input.ticketId)}</p><h2 style="margin:0 0 16px;color:#ffffff;font-size:19px;">${escapeHtml(input.subject)}</h2><div style="padding:16px;border:1px solid #27384b;border-radius:8px;background:#0c121a;color:#eef3f8;font-size:15px;line-height:1.6;">${escapedBody}</div></td></tr><tr><td style="padding:18px 34px;background:#0c121a;border-top:1px solid #27384b;"><p style="margin:0;color:#718397;font-size:12px;line-height:1.5;">${footer}</p></td></tr></table></td></tr></table></body></html>`;
 }
 
 export class SmtpEmailGateway implements EmailGateway {
   constructor(private readonly settings: SmtpSettingsRepository, private readonly logs: EmailDeliveryLogRepository, private readonly env: ServerEnvironment) {}
   private transporter(settings: SmtpSettings) { return nodemailer.createTransport({ host: settings.host, port: settings.port, secure: settings.secure, auth: settings.username ? { user: settings.username, pass: settings.password ?? '' } : undefined, connectionTimeout: 10_000, greetingTimeout: 10_000, socketTimeout: 20_000 }); }
   private async withTimeout<T>(operation: Promise<T>, timeoutMs: number, command: string): Promise<T> { let timeout: ReturnType<typeof setTimeout> | undefined; const expired = new Promise<never>((_resolve, reject) => { timeout = setTimeout(() => reject(Object.assign(new Error(`SMTP operation timed out after ${Math.round(timeoutMs / 1000)} seconds.`), { code: 'ETIMEDOUT', command })), timeoutMs); }); try { return await Promise.race([operation, expired]); } finally { if (timeout) clearTimeout(timeout); } }
-  private async deliver(input: { recipient: string; messageType: EmailMessageType; subject: string; text: string; html: string; replyTo?: string }): Promise<SmtpDeliveryResult> {
+  private async deliver(input: { recipient: string; messageType: EmailMessageType; subject: string; text: string; html: string; locale?: SupportedLocale; replyTo?: string }): Promise<SmtpDeliveryResult> {
     try {
       const settings = await this.settings.get(true);
       if (!settings) throw new Error('SMTP settings have not been saved yet.');
@@ -75,44 +82,57 @@ export class SmtpEmailGateway implements EmailGateway {
       const result = await this.withTimeout(transporter.sendMail({ from: settings.from, to: input.recipient, replyTo: input.replyTo, subject: input.subject, text: input.text, html: input.html }), 30_000, 'CONNECT / AUTH / SEND').finally(() => transporter.close());
       const messageId = result.messageId || null; const accepted = result.accepted.map(String); const rejected = result.rejected.map(String);
       if (accepted.length === 0 || rejected.length > 0) throw Object.assign(new Error('The SMTP server did not accept the recipient.'), { code: 'EENVELOPE', command: 'RCPT TO', response: result.response });
-      await this.logs.record({ recipient: input.recipient, messageType: input.messageType, subject: input.subject, status: 'SENT', providerMessageId: messageId, errorMessage: null });
+      await this.logs.record({ recipient: input.recipient, messageType: input.messageType, subject: input.subject, locale: input.locale ?? 'es', status: 'SENT', providerMessageId: messageId, errorMessage: null });
       return { messageId, accepted, rejected, response: result.response || null };
     } catch (error) {
       const errorMessage = describeSmtpError(error);
-      await this.logs.record({ recipient: input.recipient, messageType: input.messageType, subject: input.subject, status: 'FAILED', providerMessageId: null, errorMessage }).catch((logError) => console.error('Could not record SMTP failure.', logError));
+      await this.logs.record({ recipient: input.recipient, messageType: input.messageType, subject: input.subject, locale: input.locale ?? 'es', status: 'FAILED', providerMessageId: null, errorMessage }).catch((logError) => console.error('Could not record SMTP failure.', logError));
       throw Object.assign(new Error(errorMessage), { cause: error });
     }
   }
-  async sendVerificationEmail(email: string, token: string): Promise<void> {
-    const url = `${this.env.APP_BASE_URL}/verify-email?token=${encodeURIComponent(token)}`;
-    await this.deliver({ recipient: email, messageType: 'VERIFY_EMAIL', subject: 'StarCraft TMG - Verifica tu cuenta', text: `Verifica tu cuenta: ${url}\n\nSi no creaste esta cuenta, ignora este correo.`, html: emailTemplate({ preheader: 'Confirma tu direccion de correo para acceder a tus listas.', title: 'Verifica tu cuenta', heading: 'Confirma tu correo', message: 'Activa tu cuenta para guardar y gestionar tus listas de ejercito.', action: 'Verificar mi correo', url, securityNote: 'Si no has creado una cuenta en StarCraft TMG, puedes ignorar este correo.', appBaseUrl: this.env.APP_BASE_URL }) });
+  async sendVerificationEmail(email: string, token: string, locale: SupportedLocale = 'es'): Promise<void> {
+    const url = `${this.env.APP_BASE_URL}/${locale}/${locale === 'en' ? 'verify-email' : 'verificar-correo'}?token=${encodeURIComponent(token)}`;
+    const copy = locale === 'en'
+      ? { subject: 'StarCraft TMG - Verify your account', text: `Verify your account: ${url}\n\nIf you did not create this account, ignore this email.`, preheader: 'Confirm your email address to access your lists.', title: 'Verify your account', heading: 'Confirm your email', message: 'Activate your account to save and manage your army lists.', action: 'Verify my email', securityNote: 'If you did not create an account with StarCraft TMG, you can ignore this email.' }
+      : { subject: 'StarCraft TMG - Verifica tu cuenta', text: `Verifica tu cuenta: ${url}\n\nSi no creaste esta cuenta, ignora este correo.`, preheader: 'Confirma tu dirección de correo para acceder a tus listas.', title: 'Verifica tu cuenta', heading: 'Confirma tu correo', message: 'Activa tu cuenta para guardar y gestionar tus listas de ejército.', action: 'Verificar mi correo', securityNote: 'Si no has creado una cuenta en StarCraft TMG, puedes ignorar este correo.' };
+    await this.deliver({ recipient: email, messageType: 'VERIFY_EMAIL', locale, subject: copy.subject, text: copy.text, html: emailTemplate({ ...copy, locale, url, appBaseUrl: this.env.APP_BASE_URL }) });
   }
-  async sendPasswordResetEmail(email: string, token: string): Promise<void> {
-    const url = `${this.env.APP_BASE_URL}/reset-password?token=${encodeURIComponent(token)}`;
-    await this.deliver({ recipient: email, messageType: 'RESET_PASSWORD', subject: 'StarCraft TMG - Restablece tu contrasena', text: `Restablece tu contrasena: ${url}\n\nSi no solicitaste este cambio, ignora este correo.`, html: emailTemplate({ preheader: 'Restablece de forma segura el acceso a tu cuenta.', title: 'Restablece tu contrasena', heading: 'Recupera el acceso', message: 'Hemos recibido una solicitud para cambiar la contrasena de tu cuenta.', action: 'Cambiar mi contrasena', url, securityNote: 'Si no solicitaste este cambio, puedes ignorar este correo. Tu contrasena seguira siendo la misma.', appBaseUrl: this.env.APP_BASE_URL }) });
+  async sendPasswordResetEmail(email: string, token: string, locale: SupportedLocale = 'es'): Promise<void> {
+    const url = `${this.env.APP_BASE_URL}/${locale}/${locale === 'en' ? 'reset-password' : 'restablecer-contrasena'}?token=${encodeURIComponent(token)}`;
+    const copy = locale === 'en'
+      ? { subject: 'StarCraft TMG - Reset your password', text: `Reset your password: ${url}\n\nIf you did not request this change, ignore this email.`, preheader: 'Securely restore access to your account.', title: 'Reset your password', heading: 'Restore access', message: 'We received a request to change your account password.', action: 'Change my password', securityNote: 'If you did not request this change, you can ignore this email. Your password remains unchanged.' }
+      : { subject: 'StarCraft TMG - Restablece tu contraseña', text: `Restablece tu contraseña: ${url}\n\nSi no solicitaste este cambio, ignora este correo.`, preheader: 'Restablece de forma segura el acceso a tu cuenta.', title: 'Restablece tu contraseña', heading: 'Recupera el acceso', message: 'Hemos recibido una solicitud para cambiar la contraseña de tu cuenta.', action: 'Cambiar mi contraseña', securityNote: 'Si no solicitaste este cambio, puedes ignorar este correo. Tu contraseña seguirá siendo la misma.' };
+    await this.deliver({ recipient: email, messageType: 'RESET_PASSWORD', locale, subject: copy.subject, text: copy.text, html: emailTemplate({ ...copy, locale, url, appBaseUrl: this.env.APP_BASE_URL }) });
   }
-  async sendAccountVerifiedEmail(email: string): Promise<void> {
+  async sendAccountVerifiedEmail(email: string, locale: SupportedLocale = 'es'): Promise<void> {
     const url = this.env.APP_BASE_URL;
-    await this.deliver({ recipient: email, messageType: 'ACCOUNT_VERIFIED', subject: 'StarCraft TMG - Tu cuenta ya esta verificada', text: `Un administrador ha verificado tu cuenta manualmente. Ya puedes entrar y gestionar tus listas: ${url}\n\nSi no reconoces esta cuenta, ignora este correo.`, html: emailTemplate({ preheader: 'Un administrador ha verificado tu cuenta.', title: 'Cuenta verificada', heading: 'Tu cuenta ya esta verificada', message: 'Un administrador ha verificado tu correo manualmente. Ya puedes acceder con tu contrasena habitual y gestionar tus listas de ejercito.', action: 'Entrar en la aplicacion', url, securityNote: 'No hace falta que hagas nada mas. Si no reconoces esta cuenta, puedes ignorar este correo.', appBaseUrl: this.env.APP_BASE_URL }) });
+    const copy = locale === 'en'
+      ? { subject: 'StarCraft TMG - Your account is verified', text: `An administrator verified your account manually. You can now sign in and manage your lists: ${url}\n\nIf you do not recognize this account, ignore this email.`, preheader: 'An administrator verified your account.', title: 'Account verified', heading: 'Your account is verified', message: 'An administrator manually verified your email. You can now access the application and manage your army lists.', action: 'Open the application', securityNote: 'No further action is needed. If you do not recognize this account, ignore this email.' }
+      : { subject: 'StarCraft TMG - Tu cuenta ya está verificada', text: `Un administrador ha verificado tu cuenta manualmente. Ya puedes entrar y gestionar tus listas: ${url}\n\nSi no reconoces esta cuenta, ignora este correo.`, preheader: 'Un administrador ha verificado tu cuenta.', title: 'Cuenta verificada', heading: 'Tu cuenta ya está verificada', message: 'Un administrador ha verificado tu correo manualmente. Ya puedes acceder con tu contraseña habitual y gestionar tus listas de ejército.', action: 'Entrar en la aplicación', securityNote: 'No hace falta que hagas nada más. Si no reconoces esta cuenta, puedes ignorar este correo.' };
+    await this.deliver({ recipient: email, messageType: 'ACCOUNT_VERIFIED', locale, subject: copy.subject, text: copy.text, html: emailTemplate({ ...copy, locale, url, appBaseUrl: this.env.APP_BASE_URL }) });
   }
   async sendSupportCreatedEmail(input: SupportEmailInput): Promise<void> {
-    const subject = `StarCraft TMG - Nuevo soporte: ${input.subject}`;
+    const locale = input.locale ?? 'es';
+    const subject = locale === 'en' ? `StarCraft TMG - New support request: ${input.subject}` : `StarCraft TMG - Nuevo soporte: ${input.subject}`;
     await this.deliver({
       recipient: 'info@starcraft-builder.com',
       messageType: 'SUPPORT_CREATED',
       subject,
-      text: `Nuevo soporte (${input.ticketId}) de ${input.contactEmail}\n\nAsunto: ${input.subject}\n\n${input.body}`,
-      html: supportEmailTemplate({ heading: 'Nuevo soporte recibido', intro: `Solicitud enviada desde ${input.contactEmail}.`, ticketId: input.ticketId, subject: input.subject, body: input.body, appBaseUrl: this.env.APP_BASE_URL }),
+      locale,
+      text: locale === 'en' ? `New support request (${input.ticketId}) from ${input.contactEmail}\n\nSubject: ${input.subject}\n\n${input.body}` : `Nuevo soporte (${input.ticketId}) de ${input.contactEmail}\n\nAsunto: ${input.subject}\n\n${input.body}`,
+      html: supportEmailTemplate({ locale, heading: locale === 'en' ? 'New support request' : 'Nuevo soporte recibido', intro: locale === 'en' ? `Request sent from ${input.contactEmail}.` : `Solicitud enviada desde ${input.contactEmail}.`, ticketId: input.ticketId, subject: input.subject, body: input.body, appBaseUrl: this.env.APP_BASE_URL }),
     });
   }
   async sendSupportReplyEmail(input: SupportEmailInput): Promise<void> {
-    const subject = `StarCraft TMG - Respuesta a tu soporte: ${input.subject}`;
+    const locale = input.locale ?? 'es';
+    const subject = locale === 'en' ? `StarCraft TMG - Reply to your support request: ${input.subject}` : `StarCraft TMG - Respuesta a tu soporte: ${input.subject}`;
     await this.deliver({
       recipient: input.contactEmail,
       messageType: 'SUPPORT_REPLY',
       subject,
-      text: `Respuesta a tu soporte (${input.ticketId})\n\nAsunto: ${input.subject}\n\n${input.body}`,
-      html: supportEmailTemplate({ heading: 'Respuesta de soporte', intro: 'El administrador ha respondido a tu solicitud.', ticketId: input.ticketId, subject: input.subject, body: input.body, appBaseUrl: this.env.APP_BASE_URL }),
+      locale,
+      text: locale === 'en' ? `Reply to your support request (${input.ticketId})\n\nSubject: ${input.subject}\n\n${input.body}` : `Respuesta a tu soporte (${input.ticketId})\n\nAsunto: ${input.subject}\n\n${input.body}`,
+      html: supportEmailTemplate({ locale, heading: locale === 'en' ? 'Support reply' : 'Respuesta de soporte', intro: locale === 'en' ? 'An administrator replied to your request.' : 'El administrador ha respondido a tu solicitud.', ticketId: input.ticketId, subject: input.subject, body: input.body, appBaseUrl: this.env.APP_BASE_URL }),
     });
   }
   async sendTestEmail(recipient: string): Promise<SmtpDeliveryResult> {
@@ -121,8 +141,10 @@ export class SmtpEmailGateway implements EmailGateway {
       recipient,
       messageType: 'SMTP_TEST',
       subject: 'StarCraft TMG - Prueba SMTP',
+      locale: 'es',
       text: `La configuracion SMTP funciona correctamente. Abre la aplicacion: ${url}`,
       html: emailTemplate({
+        locale: 'es',
         preheader: 'Prueba de configuracion SMTP de StarCraft TMG.',
         title: 'Prueba SMTP',
         heading: 'Configuracion SMTP correcta',

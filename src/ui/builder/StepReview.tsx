@@ -1,23 +1,28 @@
 import { SLOT_TYPES } from '@/engine/types';
+import { useTranslation } from 'react-i18next';
+import { localizedText } from '@/i18n/localized-content';
+import { normalizeLocale } from '@/i18n/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
 
 /** Paso 4 — Revisión, libro mayor de espacios e impresión. */
 export function StepReview() {
+  const { t } = useTranslation('builderUi');
+  const { i18n } = useTranslation();
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const { summary, validation } = useListStore();
 
   return (
     <div className="review-layout">
       <section className="panel no-print review-layout__validation">
-        <h2 className="panel__title">Validación</h2>
+        <h2 className="panel__title">{t('validation')}</h2>
         {validation.legal ? (
           <p style={{ color: 'var(--ok)', margin: 0 }}>
-            ✓ La lista es legal.
+            {t('legal')}
           </p>
         ) : (
           <p style={{ color: 'var(--error)', margin: '0 0 10px' }}>
-            La lista todavía no es legal: {validation.errors.length} problema(s)
-            por resolver.
+            {t('illegal', { count: validation.errors.length })}
           </p>
         )}
 
@@ -27,9 +32,9 @@ export function StepReview() {
               <span className="issue__rule">
                 {issue.rule} · {issue.ruleRef}
               </span>
-              <div>{issue.message.es}</div>
+              <div>{localizedText(issue.message, locale)}</div>
               {issue.remedy && (
-                <div className="issue__remedy">→ {issue.remedy.es}</div>
+                <div className="issue__remedy">→ {localizedText(issue.remedy, locale)}</div>
               )}
             </div>
           ))}
@@ -38,7 +43,7 @@ export function StepReview() {
               <span className="issue__rule">
                 {issue.rule} · {issue.ruleRef}
               </span>
-              <div>{issue.message.es}</div>
+              <div>{localizedText(issue.message, locale)}</div>
             </div>
           ))}
         </div>
@@ -47,7 +52,7 @@ export function StepReview() {
       <div className="review-layout__main stack">
       <section className="panel no-print">
         <h2 className="panel__title">
-          Libro mayor de espacios — de dónde sale cada uno
+          {t('ledger')}
         </h2>
         <div className="ledger">
           {SLOT_TYPES.filter(
@@ -58,7 +63,7 @@ export function StepReview() {
             return (
               <div key={type} className="ledger__block">
                 <h3 className="ledger__title">
-                  {slotLabel(type)}{' '}
+                  {slotLabel(type, locale)}{' '}
                   <span className={free < 0 ? 'ledger__bad' : 'ledger__ok'}>
                     {ledger.used}/{ledger.total}
                   </span>
@@ -82,7 +87,7 @@ export function StepReview() {
                       </tr>
                     ))}
                     <tr className="ledger__total">
-                      <td>Libres</td>
+                      <td>{t('free')}</td>
                       <td
                         className={`ledger__num ${
                           free < 0 ? 'ledger__bad' : ''
@@ -100,12 +105,11 @@ export function StepReview() {
       </section>
 
       <section className="panel no-print">
-        <h2 className="panel__title">Hoja de lista</h2>
+        <h2 className="panel__title">{t('sheet')}</h2>
         <p className="small muted" style={{ marginTop: 0 }}>
-          Imprime la hoja de tu lista o guárdala como PDF desde el destino de
-          impresión.
+          {t('printHint')}
         </p>
-        <button onClick={() => window.print()}>Imprimir / PDF</button>
+        <button onClick={() => window.print()}>{t('print')}</button>
       </section>
       </div>
     </div>

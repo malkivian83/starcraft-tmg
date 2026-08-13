@@ -137,6 +137,15 @@
   color: var(--page-text);
 }
 
+.page-content .page-message--success {
+  border-left-color: #5be0b0;
+}
+
+.page-content .page-message--error {
+  border-left-color: var(--error);
+  color: #ffd5d5;
+}
+
 .page-content .issue,
 .public-list-page .issue {
   border-radius: 8px;
@@ -290,6 +299,54 @@
 }
 
 /* Library and reusable list tables -------------------------------------- */
+
+.lists-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.lists-page::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 10 20 / 78%) 0%, rgb(17 19 31 / 86%) 52%, rgb(17 19 31 / 97%) 100%),
+    url('/lists-bg.jpg') center top / cover no-repeat;
+}
+
+.lists-page > * {
+  position: relative;
+}
+
+.public-lists-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.public-lists-page::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 10 20 / 78%) 0%, rgb(17 19 31 / 86%) 52%, rgb(17 19 31 / 97%) 100%),
+    url('/public-lists-bg.jpeg') center top / cover no-repeat;
+}
+
+.public-lists-page > * {
+  position: relative;
+}
 
 .saved-list-filters {
   align-items: flex-end;
@@ -476,6 +533,7 @@
 
 .page-content .saved-list-table--directory .list-status--valid,
 .page-content .saved-list-table--directory .list-status--invalid {
+  display: flex;
   width: 32px;
   min-height: 32px;
   margin-inline: auto;
@@ -552,6 +610,27 @@
 
 .home-page {
   max-width: none;
+  position: relative;
+  isolation: isolate;
+}
+
+.home-page::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 11 19 / 76%) 0%, rgb(17 19 31 / 82%) 48%, rgb(17 19 31 / 96%) 100%),
+    url('/home-bg.jpg') center top / cover no-repeat;
+}
+
+.home-page > * {
+  position: relative;
 }
 
 .home-brand {
@@ -680,6 +759,30 @@
 
 /* Account and administration -------------------------------------------- */
 
+.profile-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.profile-page::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(8 10 20 / 76%) 0%, rgb(17 19 31 / 84%) 52%, rgb(17 19 31 / 96%) 100%),
+    url('/profile-bg.jpg') center top / cover no-repeat;
+}
+
+.profile-page > * {
+  position: relative;
+}
+
 .profile-preview {
   gap: 11px;
   padding: 7px 14px 7px 7px;
@@ -724,6 +827,70 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.avatar-picker__upload {
+  display: grid;
+  gap: 7px;
+  max-width: 320px;
+  margin-top: 8px;
+  color: var(--page-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.avatar-picker__upload input[type='file'] {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid var(--page-line);
+  border-radius: 8px;
+  background: var(--page-field);
+  color: var(--page-muted);
+  font-size: 13px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.avatar-picker__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 7px;
+}
+
+.avatar-picker__actions .small {
+  font-size: 12px;
+}
+
+.page-content .avatar-picker .issue {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.page-content .saved-list-table__owner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 88px;
+}
+
+.page-content .saved-list-table__owner .profile-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+}
+
+.page-content .saved-list-table__owner > span:last-child {
+  color: var(--page-text);
+  white-space: nowrap;
 }
 
 .page-content .avatar-choice {

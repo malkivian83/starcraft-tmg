@@ -8,6 +8,13 @@ el directorio público incluye filtros, ordenación por likes y valoración por
 usuario. El registro exige aceptar los términos de uso de
 `starcraft-builder.com`.
 
+La interfaz está disponible en español e inglés. El selector cambia también la
+ruta (`/es/...` o `/en/...`) y, cuando hay una cuenta, guarda la preferencia en
+el perfil. El español es el idioma base; las rutas antiguas sin prefijo se
+redirigen automáticamente. Los nombres de unidades, cartas, armas y
+habilidades se conservan en inglés, mientras que los textos explicativos se
+localizan.
+
 > **Estado actual:** las funciones de cuenta y listas remotas requieren conexión
 > con la API. El modo invitado descrito a continuación está implementado y
 > verificado con pruebas de permisos, renderizado y navegación local. La
@@ -17,22 +24,32 @@ usuario. El registro exige aceptar los términos de uso de
 
 ## Modo invitado
 
-La entrada pública del constructor será `/crear-lista`. Sin iniciar sesión, un
+Las entradas públicas del constructor son `/es/crear-lista` y
+`/en/create-list` (`/crear-lista` se conserva como alias). Sin iniciar sesión, un
 invitado podrá crear y validar una lista, importar o exportar JSON, copiar o
 importar un seed e imprimir o guardar como PDF. También podrá imprimir una lista
 inválida, pero la salida conservará un aviso visible de que no es válida.
 
 El invitado no podrá guardar en la cuenta, abrir «Mis listas» ni acceder al
-perfil. Su borrador vivirá únicamente en la memoria de la pestaña: recargar la
-página, cerrarla o abandonar el flujo lo descartará. JSON y seed son salidas
-portables iniciadas expresamente por el usuario y no convierten el borrador en
-persistencia automática.
+perfil. Su borrador se guarda únicamente en el almacenamiento local de ese
+dispositivo; no se envía a la API ni se sincroniza entre dispositivos. JSON y
+seed son salidas portables iniciadas expresamente por el usuario.
 
 Si el invitado inicia el flujo de acceso o registro sin recargar la aplicación,
-el borrador se conservará en memoria. Tras completar la autenticación y la
-verificación exigida, podrá guardarlo como una lista remota. Este traspaso no
+el borrador se conservará en memoria y seguirá disponible localmente. Tras
+completar la autenticación y la verificación exigida, podrá guardarlo como una
+lista remota. Este traspaso no
 abre ningún endpoint público: toda operación de guardado, biblioteca o perfil
 seguirá protegida por la sesión en la API.
+
+## Instalar la PWA
+
+La interfaz se puede instalar desde un navegador compatible sin pasar por una
+tienda. En Android/Chrome aparece el botón «Instalar» dentro de la aplicación;
+en iPhone abre la página en Safari y usa **Compartir → Añadir a pantalla de
+inicio**. La instalación incluye el shell de la interfaz y algunas imágenes en
+caché, pero las cuentas y las listas guardadas siguen necesitando conexión con
+la API y MariaDB online.
 
 ## Puesta en marcha
 
@@ -81,7 +98,8 @@ SMTP, HTTPS, MariaDB y el backend desplegado.
 La compilación del frontend queda en `dist/` y la del backend en
 `server/dist/`. El frontend contendrá el catálogo, el motor y el constructor
 público; autenticación, perfil y listas guardadas seguirán dependiendo de la
-API. El servidor web debe resolver `/crear-lista` con el `index.html` de la SPA.
+API. El servidor web debe resolver las rutas localizadas (`/es/*`, `/en/*`) y
+el alias `/crear-lista` con el `index.html` de la SPA.
 
 ## Despliegue
 
@@ -103,6 +121,7 @@ src/
   auth/       clientes de autenticación y listas remotas
   store/      sesión y estado de la lista en edición
   ui/         interfaz React, cuenta, listas e impresión
+  i18n/       catálogos, selector y rutas localizadas
 server/
   src/        API Express, autenticación, administración y migraciones
 docs/         PRD, SDD, modelo de datos y análisis
@@ -113,10 +132,11 @@ El motor de reglas no importa nada de la interfaz. Es lo único que decide si
 una lista es legal y es lo que está cubierto por pruebas: si esa separación se
 rompe, la corrección del producto deja de ser verificable.
 
-Las listas guardadas se persisten en MariaDB. El borrador de invitado sólo vive
-en Zustand mientras la pestaña permanece cargada. JSON y seed siguen siendo
-formatos portables de importación y exportación, no el almacén principal de la
-cuenta ni un guardado automático del invitado.
+Las listas guardadas se persisten en MariaDB. El borrador de invitado se guarda
+localmente en el dispositivo mientras no se elimine el almacenamiento del
+navegador; no es el almacén principal de la cuenta ni un dato compartido entre
+dispositivos. JSON y seed siguen siendo formatos portables de importación y
+exportación.
 
 ## Estado del contenido
 
@@ -138,7 +158,7 @@ de carta siguen siendo opcionales: la interfaz las oculta si no existen.
 
 ## Verificación
 
-Actualmente hay **141 pruebas**. La más importante es
+Actualmente hay **181 pruebas**. La más importante es
 `tests/engine/regression-manual.test.ts`: reproduce
 la lista de ejemplo del reglamento §9.1 y comprueba las cifras **publicadas por
 el fabricante** — 1670 minerales, 185 de gas, 8/8 Núcleo, 2/2 Élite, 2/3 Apoyo,

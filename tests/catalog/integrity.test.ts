@@ -214,4 +214,14 @@ describe('Escenarios (comunes a las tres razas)', () => {
       expect(other.deploymentCards).toEqual(catalog.deploymentCards);
     }
   });
+
+  it('mantiene los valores impresos de Supply Drop en Skirmish', () => {
+    const supplyDrop = catalog.missionCards.find(
+      (mission) => mission.id === 'mission.supply_drop.skirmish',
+    );
+    expect(supplyDrop).toMatchObject({
+      startingSupply: 4,
+      gameLength: 4,
+    });
+  });
 });

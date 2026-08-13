@@ -38,4 +38,35 @@ describe('Costes Zerg del reglamento', () => {
     const cards = [...catalog.tacticalCards, ...catalog.creepCards];
     expect(Object.fromEntries(cards.map((item) => [item.id, item.vespeneCost]))).toEqual(GAS_COSTS);
   });
+
+  it('sitúa Mutating Carapace de Kerrigan en la fase de movimiento', () => {
+    const kerrigan = catalog.unitCards.find((card) => card.id === 'zerg.card.kerrigan');
+    const mutatingCarapace = kerrigan?.abilities.find(
+      (ability) => ability.name === 'Mutating Carapace',
+    );
+
+    expect(mutatingCarapace?.phase).toBe('MOVEMENT');
+  });
+
+  it('conserva el recurso explícito de Glial Reconstitution', () => {
+    for (const entryId of [
+      'zerg.entry.roach',
+      'zerg.entry.corpser',
+    ]) {
+      const upgrade = catalog.unitEntries
+        .find((entry) => entry.id === entryId)
+        ?.upgrades.find((item) => item.id === 'glial_reconstitution');
+
+      expect(upgrade?.grantsAbilities[0]).toMatchObject({
+        cost: 1,
+        resource: 'CP',
+      });
+    }
+
+    const vileUpgrade = catalog.unitEntries
+      .find((entry) => entry.id === 'zerg.entry.vile')
+      ?.upgrades.find((item) => item.id === 'glial_reconstitution');
+    expect(vileUpgrade?.grantsAbilities[0]?.cost).toBe(1);
+    expect(vileUpgrade?.grantsAbilities[0]?.resource).toBeUndefined();
+  });
 });

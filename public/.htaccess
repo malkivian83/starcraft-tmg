@@ -3,3 +3,22 @@ RewriteCond %{REQUEST_URI} !^/api(?:/|$)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
+
+# El service worker, su registro, el HTML, el manifiesto y el identificador de
+# compilación son los archivos que anuncian que hay versión nueva. Si se
+# cachean, ni el navegador ni Cloudflare llegan a enterarse del despliegue.
+<FilesMatch "^(sw\.js|registerSW\.js|index\.html|manifest\.webmanifest|version\.json)$">
+  <IfModule mod_expires.c>
+    ExpiresActive Off
+  </IfModule>
+  <IfModule mod_headers.c>
+    Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </IfModule>
+</FilesMatch>
+
+# Los assets llevan hash en el nombre: si cambia el contenido cambia la URL,
+# así que pueden cachearse indefinidamente.
+<IfModule mod_headers.c>
+  SetEnvIf Request_URI "^/assets/" HASHED_ASSET
+  Header always set Cache-Control "public, max-age=31536000, immutable" env=HASHED_ASSET
+</IfModule>

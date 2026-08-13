@@ -17,14 +17,14 @@ operativo se resume aquí y los riesgos actuales están en
 | Alcance actual | Construcción, validación, impresión, cuentas, listas remotas y directorio público |
 | Persistencia | MariaDB por cuenta; JSON y seed como formatos portables |
 | Contenido | Cartas completas (texto e imágenes); listas privadas o públicas bajo control del propietario |
-| Idioma | **Nombres propios en inglés, textos explicativos en español** |
+| Idioma | **Español e inglés; nombres propios siempre en inglés** |
 | Razas | Zerg, Terran y Protoss implementadas |
 | Impresión | Hoja resumen A4 + cartas de las unidades + exportación a PDF |
 | Cartas impresas | **Recorte de la imagen original en inglés** del PDF |
 | Versión de reglas | Los PDFs actuales (`May 2026, v.1.0`) son la fuente vigente |
 | PWA | Instalable; el acceso autenticado requiere conexión con la API |
 
-### Regla de idioma (Q11 resuelta)
+### Regla de idioma (Q11 resuelta; ampliada a interfaz bilingüe)
 
 Se traduce **lo que explica**, no **lo que nombra**:
 
@@ -35,11 +35,16 @@ Se traduce **lo que explica**, no **lo que nombra**:
 | Nombre de arma | Inglés | `C-14 Rifle`, `Needle Spines` |
 | Nombre de carta | Inglés | `Spawning Pool`, `Malignant Creep` |
 | Palabra clave de regla | Inglés | `SPECIALIST`, `LONG RANGE (18")` |
-| **Texto de efecto** | **Español** | «Esta unidad sufre DAÑO NO LETAL (2)…» |
-| **Interfaz de la app** | **Español** | Menús, botones, errores, avisos |
-| **Términos estructurales** | **Español** | Minerales, Gas Vespeno, Suministro, Núcleo, Élite, Apoyo |
+| **Texto de efecto** | Idioma activo (`es`/`en`) | «Esta unidad sufre DAÑO NO LETAL (2)…» / “This unit suffers…” |
+| **Interfaz de la app** | Idioma activo (`es`/`en`) | Menús, botones, errores, avisos |
+| **Términos estructurales** | Idioma activo (`es`/`en`) | Minerales/Minerals, Suministro/Supply, Núcleo/Core |
 
-Ventaja: cualquier nombre que veas en la app se localiza tal cual en tus cartas físicas y en los PDFs, mientras que lo que hay que entender está en tu idioma. Elimina el glosario de traducción de nombres, que era el punto más discutible del plan anterior.
+El español es la base y el selector permite cambiar a inglés. Las rutas se
+prefijan con `/es` o `/en`; las rutas antiguas sin prefijo redirigen al idioma
+preferido. Cualquier nombre que veas en la app se conserva tal cual en las
+cartas físicas y en los PDFs, mientras que los textos explicativos se sirven en
+el idioma activo. Elimina el glosario de traducción de nombres, que era el punto
+más discutible del plan anterior.
 
 ### Supuesto que mantengo
 

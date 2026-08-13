@@ -1,6 +1,7 @@
 import { openDB, type IDBPDatabase } from 'idb';
 import { armyListSchema } from '@/catalog/schema';
 import type { ArmyList } from '@/engine/types';
+import type { SupportedLocale } from '@/i18n/types';
 
 const DB_NAME = 'sctmg-army-builder';
 const DB_VERSION = 1;
@@ -43,12 +44,12 @@ export interface ImportResult {
 }
 
 /** Importa desde JSON explicando qué falla, en lugar de un error genérico. */
-export function importListFromJson(text: string): ImportResult {
+export function importListFromJson(text: string, locale: SupportedLocale = 'es'): ImportResult {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
   } catch {
-    return { list: null, error: 'El fichero no contiene JSON válido.' };
+    return { list: null, error: locale === 'en' ? 'The file does not contain valid JSON.' : 'El fichero no contiene JSON válido.' };
   }
 
   const parsed = armyListSchema.safeParse(raw);
@@ -57,8 +58,10 @@ export function importListFromJson(text: string): ImportResult {
     return {
       list: null,
       error: first
-        ? `El fichero no tiene el formato esperado: ${first.path.join('.')} — ${first.message}`
-        : 'El fichero no tiene el formato esperado.',
+        ? locale === 'en'
+          ? `The file does not have the expected format: ${first.path.join('.')} — ${first.message}`
+          : `El fichero no tiene el formato esperado: ${first.path.join('.')} — ${first.message}`
+        : locale === 'en' ? 'The file does not have the expected format.' : 'El fichero no tiene el formato esperado.',
     };
   }
   return { list: parsed.data };

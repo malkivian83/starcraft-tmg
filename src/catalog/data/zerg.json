@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "contentVersion": "2026.05.1.0",
+  "contentVersion": "2026.05.1.1",
   "sourceRef": "StarCraft-TMG_EN.pdf §12.10/§12.11 (costes) + StarCraft-Zerg-P2P-Card-Sheets-A4_EN.pdf (perfiles, etiquetas, espacios)",
   "race": "ZERG",
 
@@ -315,7 +315,7 @@
       "resourcePerRound": 1,
       "abilities": [
         {
-          "name": "Chitinous Plating",
+          "name": "Carapace",
           "phase": "ANY",
           "type": "REACTION",
           "cost": null,
@@ -540,7 +540,7 @@
       "seedId": 3102,
       "race": "ZERG",
       "name": "Malignant Creep",
-      "tags": ["ZERG"],
+      "tags": ["ZERG", "KERRIGAN'S SWARM"],
       "vespeneCost": 10,
       "unique": true,
       "abilities": [
@@ -588,6 +588,7 @@
       "race": "ZERG",
       "name": "Zergling",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "4/8", "shield": null },
       "weapons": [
         {
@@ -648,6 +649,7 @@
       "race": "ZERG",
       "name": "Raptor (Zergling)",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "1", "hitPoints": "1", "evade": "4+", "armour": "6+", "speed": "5/9", "shield": null },
       "weapons": [
         {
@@ -723,6 +725,7 @@
       "race": "ZERG",
       "name": "Kerrigan Swarm Raptor (Zergling)",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "1", "hitPoints": "2", "evade": "4+", "armour": "5+", "speed": "5/9", "shield": null },
       "weapons": [
         {
@@ -792,6 +795,7 @@
       "race": "ZERG",
       "name": "Swarmling (Zergling)",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "1", "hitPoints": "1", "evade": "5+", "armour": "6+", "speed": "4/8", "shield": null },
       "weapons": [
         {
@@ -865,6 +869,7 @@
       "race": "ZERG",
       "name": "Roach",
       "baseSize": "Ø 50MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -897,7 +902,10 @@
         { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
         { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (2) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (2) 4+ effect." } }
       ],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 3, "supply": 1 }
+      ],
       "imageRefFront": "cards/zerg/unit-roach-front.png",
       "imageRefBack": "cards/zerg/unit-roach-back.png"
     },
@@ -906,6 +914,7 @@
       "race": "ZERG",
       "name": "Vile (Roach)",
       "baseSize": "Ø 50MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -949,7 +958,10 @@
         { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
         { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (1) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (1) 4+ effect." } }
       ],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 3, "supply": 1 }
+      ],
       "imageRefFront": "cards/zerg/unit-vile-front.png",
       "imageRefBack": "cards/zerg/unit-vile-back.png"
     },
@@ -958,6 +970,7 @@
       "race": "ZERG",
       "name": "Corpser (Roach)",
       "baseSize": "Ø 50MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "3+", "speed": "4/7", "shield": null },
       "weapons": [
         {
@@ -1004,14 +1017,17 @@
           "cost": 2,
           "fromUpgrade": false,
           "text": {
-            "es": "Una vez por partida. Resuelve el efecto SUMMON para poner en juego una unidad de Roachlings.",
-            "en": "Once Per Game. Resolve the SUMMON effect to bring a Roachling Unit into play."
+            "es": "Una vez por partida. Resuelve el efecto SUMMON (Roachling).",
+            "en": "Once Per Game. Resolve the SUMMON (Roachling) effect."
           }
         },
         { "name": "Regeneration", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad se activa, si tiene el estado Burrowed, resuelve el efecto HEAL (2).", "en": "When this Unit becomes Activated, if it has the Burrowed Status, resolve the HEAL (2) effect." } },
         { "name": "Devastating Charge", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Inmediatamente después de que esta unidad complete una Carga con éxito, resuelve el efecto IMPACT (3) 4+.", "en": "Immediately after this Unit completes a successful Charge, resolve the IMPACT (3) 4+ effect." } }
       ],
-      "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 1 }],
+      "supplyProfile": [
+        { "minModels": 1, "maxModels": 1, "supply": 0 },
+        { "minModels": 2, "maxModels": 3, "supply": 1 }
+      ],
       "imageRefFront": "cards/zerg/unit-corpser-front.png",
       "imageRefBack": "cards/zerg/unit-corpser-back.png"
     },
@@ -1020,6 +1036,7 @@
       "race": "ZERG",
       "name": "Hydralisk",
       "baseSize": "40×100MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "4", "evade": "5+", "armour": "5+", "speed": "4/8", "shield": null },
       "weapons": [
         {
@@ -1061,7 +1078,7 @@
         },
         {
           "name": "Lunge",
-          "phase": "COMBAT",
+          "phase": "ASSAULT",
           "type": "REACTION",
           "cost": 1,
           "fromUpgrade": false,
@@ -1084,6 +1101,7 @@
       "race": "ZERG",
       "name": "Queen",
       "baseSize": "Ø 80MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "PSIONIC", "GROUND"],
       "profile": { "size": "3", "hitPoints": "9", "evade": "—", "armour": "4+", "speed": "4", "shield": null },
       "weapons": [
         { "name": "Talons", "phase": "ASSAULT", "range": "6", "target": "Ground", "rateOfAttack": "4", "hit": "4+", "surgeType": "Light", "surgeDice": "D3", "damage": "2", "keywords": [] },
@@ -1156,6 +1174,7 @@
       "race": "ZERG",
       "name": "Kerrigan",
       "baseSize": "Ø 40MM",
+      "combatTags": ["BIOLOGICAL", "PSIONIC", "GROUND"],
       "profile": { "size": "2", "hitPoints": "9", "evade": "6+", "armour": "5+", "speed": "7", "shield": null },
       "weapons": [
         {
@@ -1208,7 +1227,7 @@
         },
         {
           "name": "Mutating Carapace",
-          "phase": "ANY",
+          "phase": "MOVEMENT",
           "type": "ACTIVE",
           "cost": 1,
           "fromUpgrade": false,
@@ -1249,6 +1268,7 @@
       "race": "ZERG",
       "name": "Roachling",
       "baseSize": "Ø 32MM",
+      "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "1", "hitPoints": "1", "evade": "6+", "armour": "6+", "speed": "4/7", "shield": null },
       "weapons": [{ "name": "Claws", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [{ "name": "Underdeveloped Claws", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Esta unidad no puede ganar el estado Burrowed.", "en": "This Unit cannot gain Burrowed Status." } }],
@@ -1261,6 +1281,7 @@
       "race": "ZERG",
       "name": "Omega Worm",
       "baseSize": "Ø 80MM",
+      "combatTags": ["ARMOURED", "BIOLOGICAL", "GROUND"],
       "profile": { "size": "3", "hitPoints": "10", "evade": "—", "armour": "5+", "speed": "—", "shield": null },
       "weapons": [],
       "abilities": [
@@ -1444,6 +1465,7 @@
           "id": "glial_reconstitution",
           "seedId": 5132,
           "name": "Glial Reconstitution",
+          "resource": "CP",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },
@@ -1525,7 +1547,8 @@
           "replacesWeapon": null,
           "costByComposition": { "3": 10 },
           "grantsWeapons": [],
-          "grantsAbilities": []
+          "grantsAbilities": [],
+          "phase": "MOVEMENT"
         }
       ]
     },
@@ -1558,6 +1581,7 @@
           "id": "glial_reconstitution",
           "seedId": 5152,
           "name": "Glial Reconstitution",
+          "resource": "CP",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },
@@ -1767,7 +1791,7 @@
       "cardId": "zerg.card.omega_worm",
       "race": "ZERG",
       "name": "Omega Worm",
-      "tags": ["ZERG"],
+      "tags": ["ZERG", "KERRIGAN'S SWARM"],
       "slotType": "CORE",
       "combatRole": { "es": "Táctico", "en": "Tactician" },
       "unique": false,

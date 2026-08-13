@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
@@ -21,28 +22,35 @@ import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
+import { StepStatistics } from './ui/builder/StepStatistics';
 import { PrintSheet } from './ui/print/PrintSheet';
 import { SupportPage } from './ui/support/SupportPage';
+import { LanguageSelector } from './ui/common/LanguageSelector';
+import { AppVersion } from './ui/common/AppVersion';
+import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
+import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
 
-type StepId = 'cards' | 'units' | 'scenario' | 'review';
+type StepId = 'cards' | 'units' | 'scenario' | 'review' | 'stats';
 type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list' | 'support';
 const STEPS: Array<{ id: StepId; label: string }> = [
-  { id: 'cards', label: '1 · Cartas de mando' }, { id: 'units', label: '2 · Reclutamiento' },
-  { id: 'scenario', label: '3 · Misión y despliegue' }, { id: 'review', label: '4 · Revisión e impresión' },
+  { id: 'cards', label: 'commandCards' }, { id: 'units', label: 'recruitment' },
+  { id: 'scenario', label: 'mission' }, { id: 'review', label: 'review' },
 ];
+const STATS_STEP = { id: 'stats' as const, label: 'statistics' };
+
+export function statisticsAvailable(mode: AccessMode, remoteRevision: number | null): boolean {
+  return capabilitiesFor(mode).saveRemoteLists && remoteRevision !== null;
+}
 const RACE_LABEL: Record<Race, string> = { ZERG: 'Zerg', TERRAN: 'Terran', PROTOSS: 'Protoss' };
 const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'industrial', PROTOSS: 'cristal' };
-const PUBLIC_LISTS_NAV_LABEL = `LISTAS P${String.fromCharCode(218)}BLICAS`;
-const PUBLIC_LISTS_PAGE_LABEL = `Listas p${String.fromCharCode(250)}blicas`;
 const NAV_ITEMS = [
-  { page: 'home' as const, label: 'INICIO', icon: 'inicio' },
-  { page: 'lists' as const, label: 'MIS LISTAS', icon: 'mis-listas' },
-  { page: 'public-lists' as const, label: PUBLIC_LISTS_NAV_LABEL, icon: 'listas-publicas' },
-  { page: 'builder' as const, label: 'NUEVA LISTA', icon: 'nueva-lista' },
-  { page: 'support' as const, label: 'SOPORTE', icon: null },
+  { page: 'home' as const, key: 'home', icon: 'inicio' },
+  { page: 'lists' as const, key: 'lists', icon: 'mis-listas' },
+  { page: 'public-lists' as const, key: 'publicLists', icon: 'listas-publicas' },
+  { page: 'builder' as const, key: 'newList', icon: 'nueva-lista' },
+  { page: 'support' as const, key: 'support', icon: null },
 ];
-const navLabel = (item: typeof NAV_ITEMS[number]) => item.label;
 const NAV_ICON_SOURCES = import.meta.glob('./assets/navigation/**/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
 
 function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
@@ -56,23 +64,55 @@ function NavigationIcon({ race, icon }: { race: Race; icon: string }) {
 }
 
 function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; race: Race; onNavigate: (page: PageId, label: string) => void; onCreate: () => void }) {
+  const { t } = useTranslation('navigation');
   const current = NAV_ITEMS.find((item) => item.page === page) ?? NAV_ITEMS[0]!;
   const selectItem = (item: typeof NAV_ITEMS[number], event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.closest('details')?.removeAttribute('open');
     if (item.page === 'builder') onCreate();
-    else onNavigate(item.page, navLabel(item));
+    else onNavigate(item.page, t(item.key));
   };
   return <details className="primary-nav__mobile">
-    <summary>{current.icon ? <NavigationIcon race={race} icon={current.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{navLabel(current)}</span></summary>
+    <summary>{current.icon ? <NavigationIcon race={race} icon={current.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{t(current.key)}</span></summary>
     <div className="primary-nav__mobile-menu">
-      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}>{item.icon ? <NavigationIcon race={race} icon={item.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{navLabel(item)}</span></button>)}
+      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}>{item.icon ? <NavigationIcon race={race} icon={item.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{t(item.key)}</span></button>)}
     </div>
   </details>;
 }
 const publicListPath = () => {
-  const match = window.location.pathname.match(/^\/public-lists\/([^/]+)$/);
-  return match?.[1] ? decodeURIComponent(match[1]) : null;
+  return findPublicListId(window.location.pathname) ?? (window.location.pathname.match(/^\/public-lists\/([^/]+)$/)?.[1] ?? null);
 };
+
+const PAGE_PATHS: Record<Exclude<PageId, 'public-list'>, string> = {
+  home: '/',
+  builder: '/nueva-lista',
+  lists: '/mis-listas',
+  'public-lists': '/listas-publicas',
+  profile: '/perfil',
+  support: '/soporte',
+};
+
+function pathForPage(page: PageId, publicListId?: string | null): string {
+  const locale = routeLocale(typeof window === 'undefined' ? '/' : window.location.pathname);
+  if (page === 'public-list' && publicListId) return localizedPath('public-list', locale, publicListId);
+  return localizedPath(page === 'public-list' ? 'home' : page, locale);
+}
+
+export function pageForPathname(pathname: string, publicListId: string | null = null): PageId {
+  if (publicListId) return 'public-list';
+  const localizedPage = pageFromPath(pathname);
+  if (localizedPage === 'public-list') return 'public-list';
+  if (localizedPage === 'builder') return 'builder';
+  if (localizedPage === 'lists') return 'lists';
+  if (localizedPage === 'public-lists') return 'public-lists';
+  if (localizedPage === 'profile') return 'profile';
+  if (localizedPage === 'support') return 'support';
+  if (pathname === PAGE_PATHS.builder) return 'builder';
+  if (pathname === PAGE_PATHS.lists) return 'lists';
+  if (pathname === PAGE_PATHS['public-lists']) return 'public-lists';
+  if (pathname === PAGE_PATHS.profile) return 'profile';
+  if (pathname === PAGE_PATHS.support) return 'support';
+  return 'home';
+}
 
 interface DraftNavigationState {
   preserveGuestDraft?: boolean;
@@ -84,25 +124,37 @@ export function initialPageFor(mode: AccessMode, preserveGuestDraft: boolean, pu
 }
 
 export function App() {
-  return <Routes>
-    <Route path="/crear-lista" element={<GuestBuilderRoute />} />
-    <Route path="/soporte" element={<SupportRoute />} />
-    <Route path="*" element={<AccountRoute />} />
-  </Routes>;
+  return <>
+    <PwaPrompt />
+    <PwaNetworkStatus />
+    <Routes>
+      <Route path="/crear-lista" element={<GuestBuilderRoute />} />
+      <Route path="/:locale/crear-lista" element={<GuestBuilderRoute />} />
+      <Route path="/:locale/create-list" element={<GuestBuilderRoute />} />
+      <Route path="/soporte" element={<SupportRoute />} />
+      <Route path="/:locale/soporte" element={<SupportRoute />} />
+      <Route path="/:locale/support" element={<SupportRoute />} />
+      <Route path="*" element={<AccountRoute />} />
+    </Routes>
+  </>;
 }
 
 function SupportRoute() {
+  const { t: tCommon } = useTranslation('common');
+  const { t: tNavigation } = useTranslation('navigation');
+  const { t: tLegal } = useTranslation('legal');
   const status = useAuthStore((state) => state.status);
-  const user = useAuthStore((state) => state.user);
   const restore = useAuthStore((state) => state.restore);
   useEffect(() => {
     if (status === 'checking') void restore();
   }, [restore, status]);
+  if (status === 'authenticated') return <AccountRoute />;
   if (status === 'checking') return <div className="support-standalone support-standalone--loading"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></div>;
+  const locale = routeLocale(window.location.pathname);
   return <div className="support-standalone">
-    <header className="support-standalone__header"><a href="/" aria-label="Volver a StarCraft TMG"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><a className="support-standalone__back" href="/">Volver a la aplicación</a></header>
-    <SupportPage user={status === 'authenticated' ? user : null} />
-    <footer className="auth-page__footer">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
+    <header className="support-standalone__header"><a href={localizedPath('home', locale)} aria-label={tCommon('appName')}><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><LanguageSelector /><a className="support-standalone__back" href={localizedPath('home', locale)}>{tNavigation('home')}</a></header>
+    <SupportPage user={null} />
+    <footer className="auth-page__footer">{tLegal('footer')} <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> <AppVersion /></footer>
   </div>;
 }
 
@@ -153,9 +205,19 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   onDraftClaimed?: () => void;
   onRequestAuthentication?: () => void;
 }) {
+  const { t: tBuilder } = useTranslation('builder');
+  const { t: tBuilderUi } = useTranslation('builderUi');
+  const { t: tNavigation } = useTranslation('navigation');
+  const { t: tCommon } = useTranslation('common');
+  const { t: tLegal } = useTranslation('legal');
+  const { t: tPwa } = useTranslation('pwa');
+  const locale = routeLocale(typeof window === 'undefined' ? '/' : window.location.pathname);
   const [step, setStep] = useState<StepId>('cards');
   const initialPublicListId = mode === 'account' ? publicListPath() : null;
-  const [page, setPage] = useState<PageId>(initialPageFor(mode, preserveDraftOnMount, initialPublicListId));
+  const initialPage = mode === 'account' && !preserveDraftOnMount
+    ? pageForPathname(window.location.pathname, initialPublicListId)
+    : initialPageFor(mode, preserveDraftOnMount, initialPublicListId);
+  const [page, setPage] = useState<PageId>(initialPage);
   const [publicList, setPublicList] = useState<RemoteList | null>(null);
   const [publicListId, setPublicListId] = useState<string | null>(initialPublicListId);
   const [listIsPublic, setListIsPublic] = useState(false);
@@ -174,7 +236,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const capabilities = capabilitiesFor(mode);
-  const draftScope: DraftScope | null = mode === 'account' && user ? `account:${user.id}` : null;
+  const statsAvailable = statisticsAvailable(mode, remoteRevision);
+  const steps = statsAvailable ? [...STEPS, STATS_STEP] : STEPS;
+  const draftScope: DraftScope | null = mode === 'account' && user
+    ? `account:${user.id}`
+    : mode === 'guest'
+      ? 'guest'
+      : null;
   const hydratedDraftScope = useRef<DraftScope | null>(null);
 
   useEffect(() => {
@@ -182,21 +250,26 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     hydratedDraftScope.current = draftScope;
 
     // Al pasar del constructor invitado al login se conserva el estado vivo
-    // del store; solo se crea el borrador persistente cuando ya hay cuenta.
+    // del store; el borrador de invitado se conserva localmente y el de cuenta
+    // se mantiene separado por usuario para no mezclar dispositivos/cuentas.
     if (mode === 'account' && preserveDraftOnMount) {
+      clearDraft('guest');
       onDraftClaimed?.();
       return;
     }
 
-    const draft = loadDraft(draftScope);
-    if (draft) {
-      setList(draft.list);
-      setPage('builder');
+      const draft = loadDraft(draftScope);
+      if (draft) {
+        setList(draft.list);
+      if (window.location.pathname === pathForPage('home') || window.location.pathname === PAGE_PATHS.home) {
+        window.history.replaceState({}, '', pathForPage('builder'));
+        setPage('builder');
+      }
       setListIsPublic(draft.isPublic);
       setListVisibilityDirty(false);
       setRemoteRevision(draft.remoteRevision);
       setSeedVisible(false);
-      setToast('Se ha recuperado tu borrador de lista.');
+      setToast(tBuilderUi('draftRecovered', { defaultValue: locale === 'en' ? 'Your list draft was recovered.' : 'Se ha recuperado tu borrador de lista.' }));
     } else if (mode === 'account' && user) {
       resetForRace(user.defaultRace);
       setListIsPublic(false);
@@ -226,8 +299,8 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       .then((loaded) => { if (active) setPublicList(loaded); })
       .catch((error: unknown) => {
         if (!active) return;
-        setToast(error instanceof Error ? error.message : 'No se pudo cargar la lista pública.');
-        window.history.replaceState({}, '', '/');
+        setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError'));
+        window.history.replaceState({}, '', pathForPage('home'));
         setPublicListId(null);
         setPage('home');
       });
@@ -238,42 +311,46 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     const onPopState = () => {
       const id = publicListPath();
       setPublicListId(id);
-      setPage(id ? 'public-list' : 'home');
+      setPage(pageForPathname(window.location.pathname, id));
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [mode]);
+  useEffect(() => {
+    if (!statsAvailable && step === 'stats') setStep('cards');
+  }, [statsAvailable, step]);
   const errorsByStep: Record<StepId, number> = {
     cards: validation.errors.filter((error) => ['R0', 'R2', 'R7', 'R11'].includes(error.rule)).length,
     units: validation.errors.filter((error) => ['R1', 'R3', 'R4', 'R6', 'R8', 'R9', 'R10'].includes(error.rule)).length,
-    scenario: validation.errors.filter((error) => error.rule === 'R12').length, review: 0,
+    scenario: validation.errors.filter((error) => error.rule === 'R12').length, review: 0, stats: 0,
   };
-  const confirmDiscard = (action: string) => (!isDirty && !listVisibilityDirty) || window.confirm(`${action} hará que se pierdan los cambios sin guardar de esta lista. ¿Quieres continuar?`);
+  const confirmDiscard = (action: string) => (!isDirty && !listVisibilityDirty) || window.confirm(tBuilderUi('discardConfirm', { action }));
   const changeListVisibility = (isPublic: boolean) => { setListIsPublic(isPublic); setListVisibilityDirty(true); };
   const navigateToPage = (nextPage: PageId, destination: string) => {
     if (page === nextPage) return;
-    if (page === 'builder' && !confirmDiscard(`Ir a la sección «${destination}»`)) return;
-    if (publicListId) window.history.pushState({}, '', '/');
+    if (page === 'builder' && !confirmDiscard(locale === 'en' ? `Go to “${destination}”` : `Ir a la sección «${destination}»`)) return;
+    const nextPath = pathForPage(nextPage);
+    if (window.location.pathname !== nextPath) window.history.pushState({}, '', nextPath);
     setPublicListId(null);
     setPublicList(null);
     setPage(nextPage);
   };
   const logoutFromApp = () => {
-    if (!confirmDiscard('Cerrar sesión')) return;
+    if (!confirmDiscard(tBuilderUi('logout'))) return;
     void logout();
   };
   const clearList = () => {
-    if (!confirmDiscard('Borrar esta lista')) return;
+    if (!confirmDiscard(tBuilderUi('deleteList'))) return;
     resetForRace(list.race);
     setListIsPublic(false);
     setListVisibilityDirty(false);
     setSeedVisible(false);
     setPage('builder');
   };
-  const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard('Crear una lista nueva')) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== '/') window.history.pushState({}, '', '/'); setPage('builder'); };
+  const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard(tBuilderUi('newList'))) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder')); setPage('builder'); };
   const onImportFile = async (file: File) => {
-    if (!confirmDiscard('Importar una lista')) return;
-    const result = importListFromJson(await file.text());
+    if (!confirmDiscard(tBuilderUi('import'))) return;
+    const result = importListFromJson(await file.text(), locale);
     if (result.list) {
       setList(result.list);
       setListIsPublic(false);
@@ -281,10 +358,10 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setSeedVisible(false);
       setPublicListId(null);
       setPublicList(null);
-      if (mode === 'account' && window.location.pathname !== '/') window.history.pushState({}, '', '/');
+      if (mode === 'account' && window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder'));
       setPage('builder');
-      setToast('Lista importada.');
-    } else setToast(result.error ?? 'No se pudo importar el fichero.');
+      setToast(tBuilderUi('imported'));
+    } else setToast(result.error ?? tBuilderUi('listSaveError'));
   };
   const saveList = async () => {
     if (!capabilities.saveRemoteLists) {
@@ -298,24 +375,24 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setListVisibilityDirty(false);
       setRemoteRevision(visible.revision);
       markSaved();
-      setToast('Lista guardada en tu cuenta.');
-    } catch (error) { setToast(error instanceof Error ? error.message : 'No se pudo guardar la lista.'); }
+      setToast(tBuilder('listSaved'));
+    } catch (error) { setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError')); }
   };
-  const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard('Cargar otra lista')) return; setList(loaded); setListIsPublic(Boolean((loaded as Partial<RemoteList>).isPublic)); setListVisibilityDirty(false); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== '/') window.history.pushState({}, '', '/'); setPage('builder'); setToast('Lista cargada.'); };
+  const loadList = (loaded: typeof list, revision: number) => { if (!confirmDiscard(tBuilderUi('loadList'))) return; setList(loaded); setListIsPublic(Boolean((loaded as Partial<RemoteList>).isPublic)); setListVisibilityDirty(false); setRemoteRevision(revision); markSaved(); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder')); setPage('builder'); setToast(tBuilder('listLoaded')); };
   const openPublicList = async (id: string) => {
-    if (!confirmDiscard('Abrir una lista pública')) return;
+    if (!confirmDiscard(tBuilderUi('openPublic'))) return;
     try {
       const loaded = await loadPublicList(id);
       setPublicList(loaded);
       setPublicListId(id);
-      window.history.pushState({}, '', `/public-lists/${encodeURIComponent(id)}`);
+      window.history.pushState({}, '', pathForPage('public-list', id));
       setPage('public-list');
     } catch (error) {
-      setToast(error instanceof Error ? error.message : 'No se pudo cargar la lista pública.');
+      setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError'));
     }
   };
   const clonePublicList = async (id: string) => {
-    if (!confirmDiscard('Clonar una lista pública')) return;
+    if (!confirmDiscard(tBuilderUi('clonePublic'))) return;
     try {
       const cloned = await cloneRemotePublicList(id);
       setList(cloned);
@@ -325,23 +402,23 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       markSaved();
       setPublicListId(null);
       setPublicList(null);
-      if (window.location.pathname !== '/') window.history.pushState({}, '', '/');
+      if (window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder'));
       setPage('builder');
-      setToast('Lista clonada. Ya puedes editarla.');
+      setToast(tBuilder('listCloned'));
     } catch (error) {
-      setToast(error instanceof Error ? error.message : 'No se pudo clonar la lista pública.');
+      setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError'));
     }
   };
   const closePublicList = () => {
-    window.history.pushState({}, '', '/');
+    window.history.pushState({}, '', pathForPage('home'));
     setPublicListId(null);
     setPublicList(null);
     setPage('home');
   };
-  const changeRace = (race: Race) => { if (race !== list.race && !confirmDiscard('Cambiar de raza')) return; setRace(race); };
+  const changeRace = (race: Race) => { if (race !== list.race && !confirmDiscard(tBuilderUi('changeRace'))) return; setRace(race); };
   const confirmFactionChange = () => {
     const hasDependentSelections = list.tacticalCardIds.length > 0 || list.entries.length > 0 || list.creepCardId !== null;
-    return !hasDependentSelections || window.confirm('Cambiar de Carta de Faccion eliminara las unidades y cartas dependientes. Quieres continuar?');
+    return !hasDependentSelections || window.confirm(tBuilderUi('factionChangeConfirm'));
   };
 
   return (
@@ -356,121 +433,122 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             height={149}
             role="button"
             tabIndex={0}
-            onClick={() => navigateToPage('home', 'Inicio')}
+            onClick={() => navigateToPage('home', tNavigation('home'))}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') navigateToPage('home', 'Inicio');
+              if (event.key === 'Enter' || event.key === ' ') navigateToPage('home', tNavigation('home'));
             }}
           />
         ) : (
           <img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} />
         )}
-        <span className="topbar__title">Listas de ejército</span>
-        <nav className="primary-nav" aria-label="Navegación principal">
+        <span className="topbar__title">{tCommon('appName')}</span>
+        <nav className="primary-nav" aria-label={tNavigation('main')}>
           {mode === 'guest' ? (
-            <button className="primary-nav__item" onClick={clearList}>Borrar lista</button>
+            <button className="primary-nav__item" onClick={clearList}>{tCommon('close')}</button>
           ) : (
             <>
             <div className="primary-nav__buttons">
-              <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', 'Inicio')}><NavigationIcon race={list.race} icon="inicio" />Inicio</button>
-              <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', 'Mis listas')}><NavigationIcon race={list.race} icon="mis-listas" />Mis listas</button>
-              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', PUBLIC_LISTS_PAGE_LABEL)}>{PUBLIC_LISTS_PAGE_LABEL}</button>
-              <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />Nueva lista</button>
+              <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', tNavigation('home'))}><NavigationIcon race={list.race} icon="inicio" />{tNavigation('home')}</button>
+              <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', tNavigation('lists'))}><NavigationIcon race={list.race} icon="mis-listas" />{tNavigation('lists')}</button>
+              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', tNavigation('publicLists'))}>{tNavigation('publicLists')}</button>
+              <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />{tNavigation('newList')}</button>
             </div>
-            <button className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', 'Soporte')}><span className="primary-nav__support-mark" aria-hidden="true">?</span>Soporte</button>
+            <button className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', tNavigation('support'))}><span className="primary-nav__support-mark" aria-hidden="true">?</span>{tNavigation('support')}</button>
             <MobileNavigation page={page} race={list.race} onNavigate={navigateToPage} onCreate={() => createList()} />
             <select
               className="primary-nav__select"
-              aria-label="Navegación principal"
+              aria-label={tNavigation('main')}
               value={page === 'public-list' ? 'home' : page}
               onChange={(event) => {
                 const destination = event.target.value as PageId;
                 if (destination === 'builder') createList();
-                else navigateToPage(destination, destination === 'home' ? 'Inicio' : destination === 'lists' ? 'Mis listas' : destination === 'public-lists' ? 'Listas públicas' : 'Soporte');
+                else navigateToPage(destination, tNavigation(destination === 'home' ? 'home' : destination === 'lists' ? 'lists' : destination === 'public-lists' ? 'publicLists' : 'support'));
               }}
             >
-              <option value="home">Inicio</option>
-              <option value="lists">Mis listas</option>
-              <option value="public-lists">Listas públicas</option>
-              <option value="builder">Nueva lista</option>
-              <option value="support">Soporte</option>
+              <option value="home">{tNavigation('home')}</option>
+              <option value="lists">{tNavigation('lists')}</option>
+              <option value="public-lists">{tNavigation('publicLists')}</option>
+              <option value="builder">{tNavigation('newList')}</option>
+              <option value="support">{tNavigation('support')}</option>
             </select>
             </>
           )}
         </nav>
         <div className="topbar__spacer" />
-        {mode === 'guest' && <span className="guest-mode">Modo invitado</span>}
+        {mode === 'guest' && <span className="guest-mode">{tBuilder('guestMode')}</span>}
         {capabilities.manageAccount && user && (
-          <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => navigateToPage('profile', 'tu perfil')} aria-label="Abrir perfil">
+          <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => navigateToPage('profile', tNavigation('profile'))} aria-label={tNavigation('openProfile')}>
             <ProfileAvatar user={user} />
             <span className="profile-trigger__name">{profileName(user)}</span>
           </button>
         )}
-        {mode === 'account' && <button className="header-logout" onClick={logoutFromApp}>Salir</button>}
+        {mode === 'account' && <LanguageSelector />}
+        {mode === 'account' && <button className="header-logout" onClick={logoutFromApp}>{tNavigation('logout')}</button>}
       </header>
 
       {mode === 'guest' && (
         <aside className="guest-notice no-print" role="status">
-          Esta lista se perderá al cerrar o recargar. Puedes imprimirla, exportarla o iniciar sesión para guardarla en tu cuenta.
+          {tPwa('guestDraftMessage')}
         </aside>
       )}
 
       {page === 'builder' && (
         <>
-          <section className="builder-toolbar no-print" aria-label="Opciones de la lista">
+          <section className="builder-toolbar no-print" aria-label={tBuilderUi('listOptions')}>
             <div className="field">
-              <label htmlFor="list-name">Nombre</label>
+              <label htmlFor="list-name">{tBuilderUi('name')}</label>
               <input id="list-name" value={list.name} onChange={(event) => setName(event.target.value)} />
             </div>
             <div className="field">
-              <label htmlFor="race">Raza</label>
+              <label htmlFor="race">{tBuilderUi('race')}</label>
               <select id="race" value={list.race} onChange={(event) => changeRace(event.target.value as Race)}>
                 {availableRaces().map((race) => <option key={race} value={race}>{RACE_LABEL[race]}</option>)}
               </select>
             </div>
             <div className="field">
-              <label htmlFor="scale">Escala</label>
+              <label htmlFor="scale">{tBuilderUi('scale')}</label>
               <select id="scale" value={list.scaleId} onChange={(event) => setScale(event.target.value as ScaleId)}>
-                {index.catalog.scales.map((scale) => <option key={scale.id} value={scale.id}>{scale.name.es}</option>)}
+                {index.catalog.scales.map((scale) => <option key={scale.id} value={scale.id}>{scale.name[locale]}</option>)}
               </select>
             </div>
             <div className="field">
-              <label htmlFor="minerals">Minerales</label>
+              <label htmlFor="minerals">{tBuilderUi('minerals')}</label>
               <input id="minerals" type="number" min={100} step={50} value={list.mineralLimit} onChange={(event) => setMineralLimit(Number(event.target.value))} />
             </div>
             {capabilities.saveRemoteLists && (
               <div className="list-visibility-control list-visibility-control--inline no-print">
-                <span className="list-visibility-control__label">Visibilidad</span>
+                <span className="list-visibility-control__label">{tBuilderUi('visibility')}</span>
                 <label className="visibility-switch">
                   <input type="checkbox" checked={listIsPublic} onChange={(event) => changeListVisibility(event.target.checked)} />
                   <span className="visibility-switch__track" aria-hidden="true"><span className="visibility-switch__thumb" /></span>
-                  <span className="visibility-switch__text">{listIsPublic ? 'Pública' : 'Privada'}</span>
+                  <span className="visibility-switch__text">{listIsPublic ? tBuilderUi('public') : tBuilderUi('private')}</span>
                 </label>
               </div>
             )}
             <div className="builder-toolbar__actions">
-              <button onClick={() => { void saveList(); }}>{capabilities.saveRemoteLists ? 'Guardar' : 'Inicia sesión para guardar'}</button>
+              <button onClick={() => { void saveList(); }}>{capabilities.saveRemoteLists ? tBuilder('save') : tBuilder('signInToSave')}</button>
               {capabilities.usePortableFormats && (
                 <>
-                  <button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? 'Cerrar seed' : 'Seed'}</button>
-                  <label className="button-like">
-                    Importar
+                  <button onClick={() => setSeedVisible((visible) => !visible)}>{seedVisible ? tBuilderUi('closeSeed') : tBuilderUi('seed')}</button>
+                  <label className="button-like builder-toolbar__portable-action">
+                    {tBuilderUi('import')}
                     <input type="file" accept="application/json" hidden onChange={(event) => {
                       const file = event.target.files?.[0];
                       if (file) void onImportFile(file);
                       event.target.value = '';
                     }} />
                   </label>
-                  <button onClick={() => downloadJson(list)}>Exportar</button>
-                  {mode === 'guest' && <button onClick={() => window.print()}>Imprimir / PDF</button>}
+                  <button className="builder-toolbar__portable-action" onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
+                  {mode === 'guest' && <button onClick={() => window.print()}>{tBuilderUi('printPdf')}</button>}
                 </>
               )}
             </div>
           </section>
           <ResourceBar summary={summary} hasErrors={!validation.legal} />
           <nav className="tabs no-print">
-            {STEPS.map((item) => (
+            {steps.map((item) => (
               <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
-                {item.label}
+                {tBuilder(item.label)}
                 {errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}
               </button>
             ))}
@@ -478,12 +556,12 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
           {seedVisible && (
             <div className="content content--tool no-print">
               <SeedPanel onImported={(imported) => {
-                if (!confirmDiscard('Importar una lista desde la seed')) return;
+                if (!confirmDiscard(tBuilderUi('importSeed'))) return;
                 setList(imported);
                 setListIsPublic(false);
                 setListVisibilityDirty(false);
                 setRemoteRevision(null);
-                setToast('Lista importada desde seed.');
+                setToast(tBuilder('seedImported'));
               }} />
             </div>
           )}
@@ -492,6 +570,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             {step === 'units' && <StepMusterUnits />}
             {step === 'scenario' && <StepScenario />}
             {step === 'review' && <StepReview />}
+            {step === 'stats' && statsAvailable && <StepStatistics listId={list.id} />}
           </main>
           <div className={`content print-sheet-host${step === 'review' ? ' print-sheet-host--preview' : ''}`}>
             <PrintSheet />
@@ -499,14 +578,14 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
         </>
       )}
 
-      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', 'Listas públicas')} />}
+      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} />}
       {mode === 'account' && page === 'lists' && <SavedListsPage onCreate={() => createList()} onLoad={loadList} onViewPublic={(id) => { void openPublicList(id); }} />}
       {mode === 'account' && page === 'public-lists' && <PublicListsPage onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} />}
       {mode === 'account' && page === 'support' && <SupportPage user={user} />}
       {mode === 'account' && page === 'profile' && <AccountPage />}
       {mode === 'account' && page === 'public-list' && publicList && <PublicListPage list={publicList} onBack={closePublicList} onClone={() => { void clonePublicList(publicList.id); }} />}
       {toast && <div className="toast no-print">{toast}</div>}
-      <footer className="auth-page__footer app__footer no-print">Proyecto fanmade no oficial, creado por aficionados. StarCraft y sus elementos relacionados pertenecen a sus respectivos titulares. <a href="/soporte">Soporte</a> · <a href="/terminos-y-condiciones">Términos y condiciones</a></footer>
+      <footer className="auth-page__footer app__footer no-print">{tLegal('footer')} <a href={localizedPath('support', locale)}>{tNavigation('support')}</a> · <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> · <AppVersion /></footer>
     </div>
   );
 }

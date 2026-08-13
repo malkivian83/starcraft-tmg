@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   getEligibleCreepCards,
   getEligibleTacticalCards,
 } from '@/engine/eligibility';
 import { useListStore } from '@/store/listStore';
-import type { TacticalCard } from '@/engine/types';
+import type { Localized, TacticalCard } from '@/engine/types';
 import { SlotChips, UniqueChip } from '../common/Chips';
+import { KeywordText } from '../common/KeywordText';
+import { localizedText } from '@/i18n/localized-content';
+import { normalizeLocale } from '@/i18n/types';
 
 /**
  * Paso 1 — Cartas de mando: facción, tácticas y Creep Card.
@@ -15,6 +19,9 @@ import { SlotChips, UniqueChip } from '../common/Chips';
  * opcionales llevaría a listas ilegales sin que nadie lo note.
  */
 export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionChange?: () => boolean }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   const { list, index, summary, validation } = useListStore();
   const [previewCard, setPreviewCard] = useState<TacticalCard | null>(null);
   const selectFactionCard = useListStore((s) => s.selectFactionCard);
@@ -41,7 +48,7 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
     <div className="split">
       <div className="stack">
         <section className="panel">
-          <h2 className="panel__title">1 · Carta de Facción (obligatoria)</h2>
+          <h2 className="panel__title">{t('factionTitle')}</h2>
           <div className="stack">
             {factionCards.map((card) => (
               <button
@@ -76,7 +83,7 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
         {!list.factionCardId ? (
           <section className="panel">
             <p className="empty small">
-              Elige una Carta de Facción para desbloquear las Cartas Tácticas.
+              {t('selectFactionHint')}
             </p>
           </section>
         ) : (
@@ -84,15 +91,14 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
             {creep.length > 0 && (
               <section className="panel">
                 <h2 className="panel__title">
-                  2 · Creep Card — obligatoria, exactamente una
+                  {creep.length > 0 ? '2' : '1'} · {t('creepTitle')}
                 </h2>
                 {creepMissing && (
                   <div
                     className="issue issue--error"
                     style={{ marginBottom: 10 }}
                   >
-                    Tu Carta de Facción exige incluir una Creep Card. Sin ella
-                    la lista no es legal.
+                    {t('creepRequired')}
                   </div>
                 )}
                 <div className="stack">
@@ -115,7 +121,7 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                           </span>
                         </div>
                         {blocked && reason && (
-                          <span className="card__reason">{reason.es}</span>
+                          <span className="card__reason">{localizedText(reason, locale)}</span>
                         )}
                       </button>
                     );
@@ -126,7 +132,7 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
 
             <section className="panel">
               <h2 className="panel__title">
-                {creep.length > 0 ? '3' : '2'} · Cartas Tácticas (cuestan gas)
+                {creep.length > 0 ? '3' : '2'} · {t('tacticalTitle')}
               </h2>
               <div className="stack">
                 {tactical
@@ -175,9 +181,9 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                         </div>
                         {blocked && reason && (
                           <>
-                            <span className="card__reason">{reason.es}</span>
+                            <span className="card__reason">{localizedText(reason, locale)}</span>
                             {remedy && (
-                              <span className="card__remedy">{remedy.es}</span>
+                              <span className="card__remedy">{localizedText(remedy, locale)}</span>
                             )}
                           </>
                         )}
@@ -185,12 +191,12 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                           <button
                             type="button"
                             className="card-action card-action--preview"
-                            title={`Ver ${card.name}`}
-                            aria-label={`Ver carta ${card.name}`}
+                            title={`${t('viewCard')} ${card.name}`}
+                            aria-label={`${t('viewCard')} ${card.name}`}
                             onClick={() => setPreviewCard(card)}
                           >
                             <span className="card-action__icon" aria-hidden="true">▣</span>
-                            Ver carta
+                            {t('viewCard')}
                           </button>
                           <button
                             type="button"
@@ -199,28 +205,28 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                             title={
                               card.unique && count > 0
                                 ? 'Es UNIQUE: solo se permite una copia.'
-                                : reason?.es
+                                : reason ? localizedText(reason, locale) : undefined
                             }
-                            aria-label={`Añadir ${card.name}`}
+                            aria-label={`${t('add')} ${card.name}`}
                             onClick={() => addTacticalCard(card.id)}
                           >
                             <span className="card-action__icon" aria-hidden="true">+</span>
-                            Añadir
+                            {t('add')}
                           </button>
                           {count > 0 && (
                             <button
                               type="button"
                               className="card-action card-action--remove"
-                              aria-label={`Quitar ${card.name}`}
+                              aria-label={`${t('remove')} ${card.name}`}
                               onClick={() => removeTacticalCard(card.id)}
                             >
                               <span className="card-action__icon" aria-hidden="true">−</span>
-                              Quitar
+                              {t('remove')}
                             </button>
                           )}
                           {card.unique && count > 0 && (
                             <span className="small muted">
-                              UNIQUE: máximo una copia
+                              {t('uniqueMax')}
                             </span>
                           )}
                         </div>
@@ -251,6 +257,7 @@ function TacticalCardModal({
   card: TacticalCard;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('builderUi');
   return (
     <div
       className="modal"
@@ -268,22 +275,22 @@ function TacticalCardModal({
       >
         <div className="modal__header">
           <div>
-            <p className="eyebrow">Previsualización</p>
-            <h2 id="tactical-card-preview-title">Vista de carta táctica</h2>
+            <p className="eyebrow">{t('preview')}</p>
+            <h2 id="tactical-card-preview-title">{t('tacticalCardView')}</h2>
           </div>
           <button
             type="button"
             className="card-action modal__close"
             onClick={onClose}
-            aria-label="Cerrar previsualización"
-            title="Cerrar"
+            aria-label={t('closePreview')}
+            title={t('closePreview')}
           >
             <span className="card-action__icon" aria-hidden="true">×</span>
           </button>
         </div>
         <CardDetail
           title={card.name}
-          kind="Carta Táctica"
+          kind={t('tacticalCard')}
           badge={`${card.vespeneCost} gas`}
           slots={card.slotsGranted}
           abilities={card.abilities}
@@ -295,6 +302,7 @@ function TacticalCardModal({
 
 /** Panel derecho: qué llevas y qué hace cada carta. */
 function ActiveCards() {
+  const { t } = useTranslation('builderUi');
   const { list, index } = useListStore();
 
   const faction = list.factionCardId
@@ -311,8 +319,7 @@ function ActiveCards() {
     return (
       <section className="panel">
         <p className="empty">
-          Selecciona una Carta de Facción para ver aquí sus habilidades y las
-          cartas activas de tu lista.
+          {t('activeCardsHint')}
         </p>
       </section>
     );
@@ -320,11 +327,11 @@ function ActiveCards() {
 
   return (
     <section className="panel">
-      <h2 className="panel__title">Cartas de mando activas</h2>
+      <h2 className="panel__title">{t('activeCards')}</h2>
       <div className="stack">
         <CardDetail
           title={faction.name}
-          kind="Carta de Facción"
+          kind={t('factionCard')}
           badge={`+${faction.resourcePerRound} ${faction.resource}`}
           slots={faction.startingSlots}
           abilities={faction.abilities}
@@ -341,7 +348,7 @@ function ActiveCards() {
           <CardDetail
             key={`${card.id}-${i}`}
             title={card.name}
-            kind="Carta Táctica"
+            kind={t('tacticalCard')}
             badge={`${card.vespeneCost} gas`}
             slots={card.slotsGranted}
             abilities={card.abilities}
@@ -363,8 +370,11 @@ function CardDetail({
   kind: string;
   badge: string;
   slots?: Parameters<typeof SlotChips>[0]['slots'];
-  abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; text: { es: string } }>;
+  abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; resource?: 'CP' | 'BM' | 'PE'; text: Localized }>;
 }) {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation('builderUi');
+  const locale = normalizeLocale(i18n.language) ?? 'es';
   return (
     <article
       className="panel"
@@ -382,15 +392,17 @@ function CardDetail({
         <p key={ability.name} className="small card-detail__ability" style={{ margin: '6px 0' }}>
           {/* Nombre en inglés, explicación en español (regla de idioma). */}
           <strong style={{ color: 'var(--accent)' }}>{ability.name}</strong>
-          <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase)}</span>
-          <span className="chip small">{ability.type}{ability.cost ? ` ${ability.cost}` : ''}</span>
-          {ability.text.es && <> — {ability.text.es}</>}
+          <span className={`chip small phase-tag phase-tag--${ability.phase}`} style={{ marginLeft: 6 }}>{phaseLabel(ability.phase, t)}</span>
+          <span className="chip small">{ability.type}{ability.cost !== null ? ` ${ability.cost}${ability.resource ? ` ${ability.resource}` : ''}` : ''}</span>
+          {ability.text && localizedText(ability.text, locale) && (
+            <> — <KeywordText text={localizedText(ability.text, locale)} locale={locale} /></>
+          )}
         </p>
       ))}
     </article>
   );
 }
 
-function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY') {
-  return ({ MOVEMENT: 'Movimiento', ASSAULT: 'Asalto', COMBAT: 'Combate', ANY: 'Cualquier fase' })[phase];
+function phaseLabel(phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY', t: (key: string) => string) {
+  return ({ MOVEMENT: t('phaseMovement'), ASSAULT: t('phaseAssault'), COMBAT: t('phaseCombat'), ANY: t('phaseAny') })[phase].toUpperCase();
 }
