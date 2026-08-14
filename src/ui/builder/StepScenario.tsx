@@ -53,7 +53,7 @@ export function StepScenario() {
         <h2 className="panel__title">
           {t('missions', { count: list.missionCardIds.length })}
         </h2>
-        <div className="scenario-grid">
+        <div className="scenario-grid scenario-grid--missions">
           {missions.map((mission) => (
             <MissionCardView
               key={mission.id}
@@ -73,7 +73,7 @@ export function StepScenario() {
         <h2 className="panel__title">
           {t('deployments', { count: list.deploymentCardIds.length })}
         </h2>
-        <div className="scenario-grid">
+        <div className="scenario-grid scenario-grid--deployments">
           {deployments.map((deployment) => (
             <DeploymentCardView
               key={deployment.id}
@@ -119,14 +119,23 @@ function MissionCardView({
         <span className="card__name">{mission.name}</span>
         <span className="chip">{scaleLabel(mission.scale, t)}</span>
       </div>
-      <div className="row small muted" style={{ gap: 10 }}>
-        <span>
-          {t('supply')} <strong>{mission.startingSupply}</strong> (+
-          {mission.supplyEscalation}/{tBuilder('perRound')})
+      <div className="scenario-mission-stats" aria-label={t('missions', { count: 0 })}>
+        <span className="scenario-mission-stat scenario-mission-stat--supply">
+          <span className="scenario-mission-stat__label">{t('supply')}</span>
+          <span className="scenario-mission-stat__value">{mission.startingSupply}</span>
+          <span className="scenario-mission-stat__meta">+{mission.supplyEscalation}/{tBuilder('perRound')}</span>
         </span>
-        <span>{mission.gameLength} {t('rounds')}</span>
+        <span className="scenario-mission-stat scenario-mission-stat--rounds">
+          <span className="scenario-mission-stat__label">{t('rounds')}</span>
+          <span className="scenario-mission-stat__value">{mission.gameLength}</span>
+        </span>
         {mission.instantWinLead && (
-          <span>{t('victory', { points: mission.instantWinLead })}</span>
+          <span className="scenario-mission-stat scenario-mission-stat--victory">
+            <span className="scenario-mission-stat__label">{locale === 'en' ? 'Victory' : 'Victoria'}</span>
+            <span className="scenario-mission-stat__value">
+              +{mission.instantWinLead} <small>{locale === 'en' ? 'VP' : 'PV'}</small>
+            </span>
+          </span>
         )}
       </div>
       {localizedText(mission.missionParameters, locale) && (

@@ -12,7 +12,7 @@
       "supplyEscalation": 2,
       "gameLength": 5,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Activados.", "en": "All Mission Markers are Activated." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs." },
       "instantWinLead": 10,
       "imageRef": "cards/scenarios/hold-position-standard.png"
@@ -26,7 +26,7 @@
       "supplyEscalation": 1,
       "gameLength": 5,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Activados.", "en": "All Mission Markers are Activated." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
       "imageRef": "cards/scenarios/hold-position-skirmish.png"
@@ -40,7 +40,7 @@
       "supplyEscalation": 2,
       "gameLength": 5,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Activados.", "en": "All Mission Markers are Activated." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs." },
       "instantWinLead": 10,
       "imageRef": "cards/scenarios/frontlines-standard.png"
@@ -54,7 +54,7 @@
       "supplyEscalation": 1,
       "gameLength": 5,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Activados.", "en": "All Mission Markers are Activated." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
       "imageRef": "cards/scenarios/frontlines-skirmish.png"
@@ -72,7 +72,7 @@
         "en": "All Mission Markers are Activated."
       },
       "scoringConditions": {
-        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
+        "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
         "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour."
       },
       "additionalConditions": {
@@ -95,7 +95,7 @@
         "en": "All Mission Markers are Activated."
       },
       "scoringConditions": {
-        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
+        "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 2 PV por cada Marcador de Misión controlado asociado al color del oponente.",
         "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour."
       },
       "additionalConditions": {
@@ -118,7 +118,7 @@
         "en": "All Mission Markers are Activated. Split the Battlefield in four quarters as shown on the Deployment Card."
       },
       "scoringConditions": {
-        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
+        "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
         "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: Calculate Total Current Supply in each battlefield quarter. Gain 1 VP for each quarter where your Total Current Supply is higher than the Opponent's. Only Units Wholly Within a quarter contribute their Supply to this check. If a Unit controls a Mission Marker, that Unit is worth 1 extra Supply for controlling quarters. Gain 2 VP for Controlling Mission Marker 5."
       },
       "additionalConditions": {
@@ -141,7 +141,7 @@
         "en": "All Mission Markers are Activated. Split the Battlefield in four quarters as shown on the Deployment Card."
       },
       "scoringConditions": {
-        "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
+        "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: calcula el Suministro Actual Total en cada cuadrante. Gana 1 PV por cada cuadrante donde tu Suministro Actual Total supere al del oponente. Solo las unidades completamente dentro de un cuadrante aportan su Suministro. Si una unidad controla un Marcador de Misión, vale 1 de Suministro extra para controlar cuadrantes. Gana 2 PV por controlar el Marcador de Misión 5.",
         "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: Calculate Total Current Supply in each battlefield quarter. Gain 1 VP for each quarter where your Total Current Supply is higher than the Opponent's. Only Units Wholly Within a quarter contribute their Supply to this check. If a Unit controls a Mission Marker, that Unit is worth 1 extra Supply for controlling quarters. Gain 2 VP for Controlling Mission Marker 5."
       },
       "additionalConditions": {
@@ -160,7 +160,7 @@
       "supplyEscalation": 2,
       "gameLength": 5,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Desactivados. INICIO DE LAS RONDAS 1–4: determina al azar un Marcador de Misión desactivado (1–4) y dale la vuelta a su lado Activado. INICIO DE LA RONDA 5: el Marcador de Misión 5 se activa automáticamente.", "en": "All Mission Markers are Deactivated. START OF THE ROUND (1-4): Randomly determine one Deactivated Mission Marker (1-4) and flip it to its Activated side. START OF THE ROUND 5: Mission Marker 5 is automatically Activated." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 12 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 12+ VPs." },
     "instantWinLead": 12,
       "imageRef": "cards/scenarios/supply-drop-standard.png"
@@ -174,7 +174,7 @@
       "supplyEscalation": 1,
       "gameLength": 4,
     "missionParameters": { "es": "Todos los Marcadores de Misión están Desactivados. INICIO DE LAS RONDAS 2–4: determina al azar un Marcador de Misión desactivado (1, 2, 5) y dale la vuelta a su lado Activado.", "en": "All Mission Markers are Deactivated. START OF THE ROUND (2-4): Randomly determine one Deactivated Mission Marker (1,2,5) and flip it to its Activated side." },
-    "scoringConditions": { "es": "Anota PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
+    "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
       "imageRef": "cards/scenarios/supply-drop-skirmish.png"

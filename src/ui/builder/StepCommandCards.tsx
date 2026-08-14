@@ -333,6 +333,7 @@ function ActiveCards() {
           title={faction.name}
           kind={t('factionCard')}
           badge={`+${faction.resourcePerRound} ${faction.resource}`}
+          headerResource={`+${faction.resourcePerRound} ${faction.resource}`}
           slots={faction.startingSlots}
           abilities={faction.abilities}
         />
@@ -350,6 +351,7 @@ function ActiveCards() {
             title={card.name}
             kind={t('tacticalCard')}
             badge={`${card.vespeneCost} gas`}
+            headerResource={card.resource ? `+${card.resourcePerRound} ${card.resource}` : undefined}
             slots={card.slotsGranted}
             abilities={card.abilities}
           />
@@ -363,12 +365,14 @@ function CardDetail({
   title,
   kind,
   badge,
+  headerResource,
   slots,
   abilities,
 }: {
   title: string;
   kind: string;
   badge: string;
+  headerResource?: string;
   slots?: Parameters<typeof SlotChips>[0]['slots'];
   abilities: Array<{ name: string; phase: 'MOVEMENT' | 'ASSAULT' | 'COMBAT' | 'ANY'; type: string; cost: number | 'X' | null; resource?: 'CP' | 'BM' | 'PE'; text: Localized }>;
 }) {
@@ -382,7 +386,10 @@ function CardDetail({
     >
       <div className="card__head">
         <h3>{title}</h3>
-        <span className="small muted">{kind}</span>
+        <span className="card-detail__kind">
+          <span className="small muted">{kind}</span>
+          {headerResource && <span className="chip chip--resource">{headerResource}</span>}
+        </span>
       </div>
       <div className="row" style={{ gap: 4, margin: '6px 0' }}>
         {slots && <SlotChips slots={slots} />}

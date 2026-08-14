@@ -26,6 +26,7 @@ export function StepMusterUnits() {
   const { i18n } = useTranslation();
   const { t } = useTranslation('builderUi');
   const locale = normalizeLocale(i18n.language) ?? 'es';
+  const summonedLabel = locale === 'en' ? 'Summoned' : 'Invocadas';
   const { list, index, summary } = useListStore();
   const addUnit = useListStore((s) => s.addUnit);
   const addReferenceUnit = useListStore((s) => s.addReferenceUnit);
@@ -104,7 +105,7 @@ export function StepMusterUnits() {
         {summoned.length > 0 && (
           <section className="panel">
             <h2 className="panel__title">
-              {t('summoned')}
+              {summonedLabel}
             </h2>
             <p className="small muted" style={{ marginTop: 0 }}>
               {t('noRecruit')}
@@ -114,7 +115,7 @@ export function StepMusterUnits() {
                 <div key={entry.id} className="card">
                   <div className="card__head">
                     <span className="card__name">{entry.name}</span>
-                    <span className="chip">{t('summoned').split(' — ')[0]}</span>
+                    <span className="chip">{summonedLabel}</span>
                   </div>
                   <div>
                     <button onClick={() => addReferenceUnit(entry.id)}>
