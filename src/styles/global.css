@@ -1325,11 +1325,10 @@ a {
   outline: none;
 }
 
-.keyword-term::after {
-  position: absolute;
-  z-index: 30;
-  bottom: calc(100% + 8px);
-  left: 50%;
+.keyword-tooltip {
+  position: fixed;
+  z-index: 1000;
+  visibility: hidden;
   width: max-content;
   max-width: min(340px, calc(100vw - 24px));
   padding: 8px 10px;
@@ -1338,22 +1337,17 @@ a {
   color: var(--text);
   background: var(--bg-raised);
   box-shadow: 0 8px 22px rgb(0 0 0 / 35%);
-  content: attr(data-tooltip);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.35;
   text-align: left;
   white-space: normal;
-  opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 4px);
-  transition: opacity 120ms ease, transform 120ms ease;
+  transform: translateX(-50%);
 }
 
-.keyword-term:hover::after,
-.keyword-term:focus-visible::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
+.keyword-tooltip[data-placement] {
+  visibility: visible;
 }
 
 .keyword-term:focus-visible {
