@@ -636,6 +636,22 @@
     line-height: 1.5;
   }
 
+  .app:has(> .builder-toolbar) > main.content.no-print .card-detail__kind {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-detail__kind .chip--resource {
+    border-color: color-mix(in srgb, var(--accent) 70%, var(--line-strong));
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, var(--bg-raised));
+    font-weight: 750;
+  }
+
   .app:has(> .builder-toolbar) > main.content.no-print .card-detail__ability > .chip + .chip {
     margin-left: 6px;
   }
@@ -995,10 +1011,85 @@
     align-items: stretch;
     min-height: 0;
     padding: 14px;
+    font-weight: 400;
   }
 
   .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card__name {
     font-size: 17px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat {
+    display: flex;
+    min-width: 0;
+    min-height: 58px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 7px 8px;
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--scenario-stat-color, var(--accent));
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--scenario-stat-color, var(--accent)) 8%, var(--bg-panel));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat--supply {
+    --scenario-stat-color: #54b5ec;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat--rounds {
+    --scenario-stat-color: #a18bf0;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat--victory {
+    --scenario-stat-color: #f0b34d;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat__label {
+    color: var(--text-faint);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat__value {
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.05;
+    white-space: nowrap;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat__value small {
+    color: var(--scenario-stat-color, var(--accent));
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-mission-stat__meta {
+    overflow-wrap: anywhere;
+    color: var(--text-dim);
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card > .small.muted {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.45;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid .card > .small.muted strong {
+    font-weight: 700;
   }
 
   .app:has(> .builder-toolbar) > main.content.no-print .scenario-diagram {
@@ -1183,6 +1274,12 @@
       0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent),
       0 12px 32px rgb(0 0 0 / 48%);
     font-size: 13.5px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .app:has(> .builder-toolbar) > main.content.no-print .scenario-grid--missions {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
