@@ -560,6 +560,7 @@
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 3, "supply": 1 }
       ],
+      "miniRef": "cards/terran/mini-medic.png",
       "imageRefFront": "cards/terran/unit-medic-front.png",
       "imageRefBack": "cards/terran/unit-medic-back.png"
     },
