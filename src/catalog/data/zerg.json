@@ -787,6 +787,7 @@
         { "minModels": 1, "maxModels": 3, "supply": 0 },
         { "minModels": 4, "maxModels": 6, "supply": 1 }
       ],
+      "miniRef": "cards/zerg/mini-kerrigan_swarm_raptor.png",
       "imageRefFront": "cards/zerg/unit-kerrigan-swarm-raptor-front.png",
       "imageRefBack": "cards/zerg/unit-kerrigan-swarm-raptor-back.png"
     },
