@@ -411,10 +411,13 @@
 
 /* --- Impresión ----------------------------------------------------------- */
 
-/* El PDF es SIEMPRE A4 vertical, con independencia del papel del navegador. */
+/*
+ * El PDF es SIEMPRE A4 vertical. El margen de la hoja lo aporta `.sheet` para
+ * que el navegador no reserve sus propios encabezados y pies de página.
+ */
 @page {
   size: A4 portrait;
-  margin: 10mm;
+  margin: 0;
 }
 
 @media print {
@@ -458,7 +461,7 @@
   }
 
   .sheet {
-    padding: 0;
+    padding: 10mm 12mm;
     border-radius: 0;
     font-size: 10pt;
   }
