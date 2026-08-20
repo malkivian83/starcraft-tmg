@@ -101,37 +101,16 @@
   }
 }
 
-/* En papel: sin degradados ni inclinación, que se lea en blanco y negro. */
+/*
+ * La ficha impresa conserva el mismo tratamiento visual que la previsualización:
+ * colores, fondos y casillas inclinadas. `print-color-adjust` evita que el
+ * navegador la convierta automáticamente a escala de grises.
+ */
 @media print {
-  .statblock__cell {
-    transform: none;
-    background: none;
-    border: 1px solid #999;
-  }
-
+  .statblock,
+  .statblock__cell,
   .statblock__cell > * {
-    transform: none;
-  }
-
-  .statblock__label {
-    color: #555;
-  }
-
-  .statblock__value {
-    color: #000;
-  }
-
-  .supplybands .statblock__cell {
-    background: #f0e2f2;
-    border-color: #7b4a82;
-  }
-
-  .supplybands .statblock__label,
-  .supplybands .statblock__value {
-    color: #321633;
-  }
-
-  .supplybands__caption {
-    color: #555;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

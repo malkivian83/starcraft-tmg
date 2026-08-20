@@ -1,6 +1,6 @@
 /*
  * Hoja A4. En pantalla se muestra como vista previa; al imprimir es lo ÚNICO
- * que sale (CA-11.3), en blanco y negro y sin elementos de interfaz.
+ * que sale (CA-11.3), con el color de la previsualización y sin elementos de interfaz.
  */
 
 .sheet {
@@ -10,6 +10,8 @@
   border-radius: var(--radius);
   font-size: 11pt;
   line-height: 1.35;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 /*
@@ -237,14 +239,14 @@
 .unitref__head {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
 .unitref__mini {
   flex: 0 0 auto;
-  width: 22mm;
-  height: 30mm;
+  width: 20mm;
+  height: 27mm;
   object-fit: cover;
   object-position: center top;
   border: 1px solid #999;
@@ -264,30 +266,30 @@
 .unitref__stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 7px;
   align-items: flex-end;
 }
 
 /* Estos datos se consultan constantemente durante la partida: en la hoja
    impresa necesitan una escala claramente superior a la del texto auxiliar. */
 .unitref__stats .statblock--small .statblock__cell {
-  min-width: 52px;
-  padding: 5px 9px;
+  min-width: 48px;
+  padding: 4px 7px;
 }
 
 .unitref__stats .statblock--small .statblock__label {
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .unitref__stats .supplybands--small .supplybands__caption {
   color: #333;
-  font-size: 10pt;
+  font-size: 9pt;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
 .unitref__stats .statblock--small .statblock__value {
-  font-size: 26px;
+  font-size: 23px;
 }
 
 /*
@@ -295,8 +297,8 @@
  * ocupan menos y se leen igual de rápido cuando la hoja está en la mesa.
  */
 .unitref__combat-tags {
-  margin: 4px 0 0;
-  font-size: 9pt;
+  margin: 2px 0 0;
+  font-size: 8.5pt;
   line-height: 1.25;
   color: #333;
 }
@@ -330,17 +332,17 @@
 }
 
 .unitref__phase-group {
-  margin: 7px 0;
-  padding: 5px 8px;
+  margin: 4px 0;
+  padding: 4px 7px;
   border-left: 2px solid #777;
   background: #f1f1f1;
 }
 
 .unitref__phase-title {
   display: inline-block;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 2px;
-  font-size: 8pt;
+  font-size: 7.5pt;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
