@@ -445,6 +445,12 @@
     color-scheme: light;
   }
 
+  /* En las casillas oscuras, los rótulos de las características se imprimen
+     en blanco para mantener el contraste de la previsualización. */
+  .unitref__stats > .statblock .statblock__label {
+    color: #fff;
+  }
+
   body {
     background: #fff;
     color: #000;
