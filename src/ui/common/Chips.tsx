@@ -3,13 +3,13 @@ import i18n from '@/i18n/config';
 import { normalizeLocale } from '@/i18n/types';
 
 const SLOT_LABEL: Record<'es' | 'en', Record<SlotType, string>> = {
-  es: { CORE: 'Núcleo', ELITE: 'Élite', SUPPORT: 'Apoyo', AIR: 'Aéreo', HERO: 'Héroe' },
+  es: { CORE: 'Core', ELITE: 'Élite', SUPPORT: 'Apoyo', AIR: 'Aéreo', HERO: 'Héroe' },
   en: { CORE: 'Core', ELITE: 'Elite', SUPPORT: 'Support', AIR: 'Air', HERO: 'Hero' },
 };
 
 function currentLocale(): 'es' | 'en' { return normalizeLocale(i18n.language) ?? 'es'; }
 
-/** Espacios que otorga una carta: `3× Núcleo`, `1× Aéreo`… */
+/** Espacios que otorga una carta: `3× Core`, `1× Aéreo`… */
 export function SlotChips({ slots }: { slots: SlotPool }) {
   const entries = SLOT_TYPES.filter((t) => (slots[t] ?? 0) > 0);
   if (entries.length === 0) {

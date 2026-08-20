@@ -63,9 +63,19 @@
 }
 
 .sheet__sub {
-  margin: 3px 0 0;
-  font-size: 9.5pt;
-  color: #333;
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 5px 0 0;
+  padding: 4px 7px;
+  font-size: 10pt;
+  font-weight: 600;
+  color: #222;
+  border-top: 1px solid #bbb;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #bbb;
+  border-left: 3px solid #111;
+  background: #f3f3f3;
 }
 
 .sheet__illegal {
