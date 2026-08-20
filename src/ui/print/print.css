@@ -12,6 +12,8 @@
   line-height: 1.35;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /*
@@ -412,8 +414,8 @@
 /* --- Impresión ----------------------------------------------------------- */
 
 /*
- * El PDF es SIEMPRE A4 vertical. El margen de la hoja lo aporta `.sheet` para
- * que el navegador no reserve sus propios encabezados y pies de página.
+ * El PDF es SIEMPRE A4 vertical. El margen de la hoja lo aporta `.sheet` y se
+ * repite en cada fragmento de página para que no aparezca pegado al borde.
  */
 @page {
   size: A4 portrait;
