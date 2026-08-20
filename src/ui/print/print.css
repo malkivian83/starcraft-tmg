@@ -414,12 +414,30 @@
 /* --- Impresión ----------------------------------------------------------- */
 
 /*
- * El PDF es SIEMPRE A4 vertical. El margen de la hoja lo aporta `.sheet` y se
- * repite en cada fragmento de página para que no aparezca pegado al borde.
+ * El PDF es SIEMPRE A4 vertical. Los márgenes de página contienen únicamente
+ * el número de página; así no aparecen los campos automáticos del navegador.
  */
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 10mm 12mm;
+
+  @top-left-corner { content: ''; }
+  @top-left { content: ''; }
+  @top-center { content: ''; }
+  @top-right { content: ''; }
+  @top-right-corner { content: ''; }
+  @bottom-left-corner { content: ''; }
+  @bottom-left { content: ''; }
+  @bottom-center { content: ''; }
+  @bottom-right-corner {
+    content: '';
+  }
+
+  @bottom-right {
+    content: counter(page);
+    color: #555;
+    font-size: 8pt;
+  }
 }
 
 @media print {
@@ -463,7 +481,7 @@
   }
 
   .sheet {
-    padding: 10mm 12mm;
+    padding: 0;
     border-radius: 0;
     font-size: 10pt;
   }
