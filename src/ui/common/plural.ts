@@ -9,7 +9,7 @@ export function plural(count: number, singular: string, plural_: string): string
 }
 
 export function models(count: number): string {
-  return `${count} ${plural(count, 'modelo', 'modelos')}`;
+  return `${count} ${plural(count, 'miniatura', 'miniaturas')}`;
 }
 
 export function slots(count: number, slotLabel: string): string {

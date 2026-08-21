@@ -226,7 +226,7 @@ export function decodeSeed(
       }
 
       if (!unit || !composition) {
-        missing.push(`unidad #${unitSeed} (${models} modelos)`);
+        missing.push(`unidad #${unitSeed} (${models} miniaturas)`);
         continue;
       }
 

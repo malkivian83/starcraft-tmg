@@ -578,7 +578,7 @@ function Upgrades({
 
                 {applied && upgrade.specialist && (
                   <label className="row small muted upg__model" style={{ gap: 4 }}>
-                    {t('model', { defaultValue: locale === 'en' ? 'Model' : 'Modelo' })}
+                    {t('model', { defaultValue: locale === 'en' ? 'Model' : 'Miniatura' })}
                     <select
                       value={applied.modelIndex ?? 0}
                       onChange={(e) =>

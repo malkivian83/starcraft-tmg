@@ -19,7 +19,7 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ningún modelo puede colocarse a menos de 10\" de un modelo enemigo. La activación de esta unidad termina.",
+        "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ninguna miniatura puede colocarse a menos de 10\" de una miniatura enemiga. La activación de esta unidad termina.",
         "en": "When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10\" of any Enemy model. This Unit's Activation ends."
       }
     },
@@ -177,7 +177,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Si no hay ningún Omega Worm amigo en el campo de batalla, coloca una unidad Omega Worm amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier modelo enemigo. Esta ronda, el Omega Worm no puede usar sus Habilidades Especiales (excepto Structure).",
+            "es": "Si no hay ningún Omega Worm amigo en el campo de batalla, coloca una unidad Omega Worm amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier miniatura enemiga. Esta ronda, el Omega Worm no puede usar sus Habilidades Especiales (excepto Structure).",
             "en": "If there is no Friendly Omega Worm on the battlefield, set a Friendly Omega Worm Unit anywhere on GROUND LEVEL of the battlefield, more than 10\" away from any Enemy model. This Round, the Omega Worm is not eligible to use its Special Abilities (excluding Structure)."
           }
         }
@@ -232,7 +232,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "La unidad Zergling activa se despliega desde cualquier borde de mesa que no sea el Borde de Entrada de un jugador. Esta acción debe terminar a más de 10\" de cualquier modelo enemigo.",
+            "es": "La unidad Zergling activa se despliega desde cualquier borde de mesa que no sea el Borde de Entrada de un jugador. Esta acción debe terminar a más de 10\" de cualquier miniatura enemiga.",
             "en": "The active Zergling Unit Deploys from any table edge that is not a Player's Entry Edge. This action must end more than 10\" away from any Enemy model."
           }
         },
@@ -432,7 +432,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Coloca un Indicador de Facción en cualquier punto del campo de batalla a más de 10\" de cualquier modelo enemigo. Al final de la ronda, el jugador que lo controla puede desplegar una unidad terrestre desde la Reserva en contacto peana con peana con ese Indicador.",
+            "es": "Coloca un Indicador de Facción en cualquier punto del campo de batalla a más de 10\" de cualquier miniatura enemiga. Al final de la ronda, el jugador que lo controla puede desplegar una unidad terrestre desde la Reserva en contacto peana con peana con ese Indicador.",
             "en": "Set a Faction Indicator anywhere on the battlefield more than 10\" away from any Enemy model. At the End of the Round, the controlling player may Deploy one Ground Unit from Reserves in base-to-base contact with this Faction Indicator."
           }
         },
@@ -1150,7 +1150,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Una vez por ronda, si hay al menos 7 modelos amigos a menos de 6\" de esta unidad, puede resolver su Habilidad Especial con el coste en BM reducido en 1.",
+            "es": "Una vez por ronda, si hay al menos 7 miniaturas amigas a menos de 6\" de esta unidad, puede resolver su Habilidad Especial con el coste en BM reducido en 1.",
             "en": "Once per Round, if there are at least 7 Friendly models Within 6\" of this Unit, it may resolve its Special Ability with the BM cost reduced by 1."
           }
         },
@@ -1289,7 +1289,7 @@
         { "name": "Detection", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Mientras las unidades enemigas estén a menos de 6\" de esta unidad, pierden el estado HIDDEN.", "en": "While Enemy Units are Within 6\" of this Unit, they lose HIDDEN Status." } },
         { "name": "Source of Creep", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Una unidad Zerg terrestre amiga o enemiga a menos de 6\" de esta unidad cuenta como SOBRE CREEP.", "en": "A Friendly or Enemy Ground Zerg Unit Within 6\" of this Unit, counts as being ON CREEP." } },
         { "name": "Structure", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Esta unidad no puede activarse ni realizar acciones. Su suministro actual es 0, no puede controlar ni disputar marcadores de misión y no puede ser objetivo de una habilidad salvo que se indique lo contrario.", "en": "This Unit cannot be Activated in any Phase and cannot perform actions. Additionally, its Current Supply Value is treated as 0, and it can never Control or Contest Mission Markers, ignoring the standard Zero Supply Exception. This Unit cannot be a target of an ability, unless stated otherwise." } },
-        { "name": "Omega Network", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "La peana del Omega Worm cuenta como un borde de entrada. Cada ronda, unidades amigas con un coste de suministro combinado de 2 o menos pueden desplegarse por este borde. Un modelo líder amigo que termine Movimiento, Desenganche o Carrera en contacto peana con peana puede volver a Reservas con su unidad.", "en": "The base of the Omega Worm counts as an Entry Edge. Each Round, Friendly Units with a combined Supply cost of 2 or less may be Deployed via this Entry Edge. If a Friendly Leading model finishes a Move, Disengage, or Run action in base-to-base contact with the Omega Worm, the controlling player may remove that Unit from the battlefield and return it to Reserves." } }
+        { "name": "Omega Network", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "La peana del Omega Worm cuenta como un borde de entrada. Cada ronda, unidades amigas con un coste de suministro combinado de 2 o menos pueden desplegarse por este borde. Una miniatura líder amiga que termine Movimiento, Desenganche o Carrera en contacto peana con peana puede volver a Reservas con su unidad.", "en": "The base of the Omega Worm counts as an Entry Edge. Each Round, Friendly Units with a combined Supply cost of 2 or less may be Deployed via this Entry Edge. If a Friendly Leading model finishes a Move, Disengage, or Run action in base-to-base contact with the Omega Worm, the controlling player may remove that Unit from the battlefield and return it to Reserves." } }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
       "imageRefFront": "cards/zerg/unit-omega-worm-front.png",
@@ -1466,7 +1466,7 @@
           "id": "glial_reconstitution",
           "seedId": 5132,
           "name": "Glial Reconstitution",
-          "resource": "CP",
+          "resource": "BM",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },
@@ -1582,7 +1582,7 @@
           "id": "glial_reconstitution",
           "seedId": 5152,
           "name": "Glial Reconstitution",
-          "resource": "CP",
+          "resource": "BM",
           "specialist": false,
           "replacesWeapon": null,
           "costByComposition": { "3": 20 },
@@ -1665,7 +1665,7 @@
               "cost": null,
               "fromUpgrade": true,
               "text": {
-                "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ningún modelo puede colocarse a menos de 10\" de un modelo enemigo. La activación de esta unidad termina.",
+                "es": "Cuando esta unidad es nominada para desplegar desde la Reserva, puede resolver el efecto PLACE (18) desde el Borde de Entrada del jugador que la controla. Ninguna miniatura puede colocarse a menos de 10\" de una miniatura enemiga. La activación de esta unidad termina.",
                 "en": "When this Unit is nominated to deploy from the Reserves, it may resolve the PLACE (18) effect from the controlling player's Entry Edge. No model may be set Within 10\" of any Enemy model. This Unit's Activation ends."
               }
             }

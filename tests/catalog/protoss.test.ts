@@ -120,6 +120,16 @@ describe('Catálogo Protoss', () => {
     expect(path.costByComposition).toEqual({ '1': 20, '2': 40 });
   });
 
+  it('traduce de forma natural la restricción de Blink', () => {
+    const blink = index.unitCards
+      .get('protoss.card.stalker')!
+      .abilities.find((ability) => ability.name === 'Blink')!;
+
+    expect(blink.text.es).toBe(
+      'Resuelve el efecto PLACE (6). Las miniaturas colocadas mediante este efecto no pueden situarse dentro del Alcance de Enfrentamiento de ninguna unidad enemiga.',
+    );
+  });
+
   it('suma correctamente el gas de las cartas tácticas', () => {
     const gas = Object.fromEntries(
       index.catalog.tacticalCards.map((c) => [c.name, c.vespeneCost]),

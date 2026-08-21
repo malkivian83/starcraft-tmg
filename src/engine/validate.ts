@@ -308,7 +308,7 @@ function checkCompositions(
           '§9.1.6',
           'error',
           t(
-            `${entry.name} usa un número de modelos que no existe entre sus opciones de composición.`,
+            `${entry.name} usa un número de miniaturas que no existe entre sus opciones de composición.`,
             `${entry.name} uses a composition that does not exist.`,
           ),
           {
@@ -473,13 +473,13 @@ function checkUpgrades(
               '§9.1.7',
               'error',
               t(
-                `${upgrade.name} es SPECIALIST: hay que nominar qué modelo de ${entry.name} la lleva.`,
+                `${upgrade.name} es SPECIALIST: hay que nominar qué miniatura de ${entry.name} la lleva.`,
                 `${upgrade.name} is SPECIALIST and needs a nominated model.`,
               ),
               {
                 entryInstanceId: listEntry.instanceId,
                 remedy: t(
-                  'Selecciona el modelo que porta esta mejora.',
+                  'Selecciona la miniatura que porta esta mejora.',
                   'Nominate the model carrying it.',
                 ),
               },
@@ -494,7 +494,7 @@ function checkUpgrades(
                 '§9.1.7',
                 'error',
                 t(
-                  `${upgrade.name} está asignada a un modelo que no existe: ${entry.name} tiene ${models} modelos.`,
+                  `${upgrade.name} está asignada a una miniatura que no existe: ${entry.name} tiene ${models} miniaturas.`,
                   `${upgrade.name} assigned to a non-existent model.`,
                 ),
                 { entryInstanceId: listEntry.instanceId },
@@ -509,13 +509,13 @@ function checkUpgrades(
                 '§9.1.7',
                 'error',
                 t(
-                  `Dos mejoras SPECIALIST (${occupant} y ${upgrade.name}) están asignadas al mismo modelo. Cada una debe ir en un modelo distinto.`,
+                  `Dos mejoras SPECIALIST (${occupant} y ${upgrade.name}) están asignadas a la misma miniatura. Cada una debe ir en una miniatura distinta.`,
                   `Two SPECIALIST upgrades assigned to the same model.`,
                 ),
                 {
                   entryInstanceId: listEntry.instanceId,
                   remedy: t(
-                    'Asigna cada mejora SPECIALIST a un modelo diferente.',
+                    'Asigna cada mejora SPECIALIST a una miniatura diferente.',
                     'Assign each SPECIALIST upgrade to a different model.',
                   ),
                 },
@@ -532,7 +532,7 @@ function checkUpgrades(
             '§9.1.7',
             'error',
             t(
-              `${upgrade.name} no es SPECIALIST: se aplica a todos los modelos y no debe nominar uno.`,
+              `${upgrade.name} no es SPECIALIST: se aplica a todas las miniaturas y no debe nominar una.`,
               `${upgrade.name} is not SPECIALIST and must not nominate a model.`,
             ),
             { entryInstanceId: listEntry.instanceId },

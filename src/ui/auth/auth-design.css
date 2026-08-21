@@ -308,14 +308,51 @@
 }
 
 .auth-page .auth-page__account-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: block;
   margin-top: 6px;
   padding-top: 18px;
   border-top: 1px solid rgb(233 233 237 / 10%);
+}
+
+.auth-page .auth-page__account-links > a {
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.auth-page .auth-page__mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid rgb(233 233 237 / 12%);
+  border-radius: 8px;
+  background: rgb(10 13 24 / 42%);
+}
+
+.auth-page .auth-mode-tab {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--auth-muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.auth-page .auth-mode-tab:hover:not(:disabled) {
+  border-color: rgb(105 169 228 / 36%);
+  background: rgb(40 48 68 / 60%);
+  color: var(--auth-text);
+}
+
+.auth-page .auth-mode-tab[aria-selected="true"] {
+  border-color: rgb(105 169 228 / 55%);
+  background: var(--auth-accent-soft);
+  color: #eef7ff;
+  box-shadow: 0 0 0 1px rgb(96 150 224 / 16%);
 }
 
 .auth-page a,
@@ -508,12 +545,11 @@
   }
 
   .auth-page .auth-page__account-links {
-    align-items: stretch;
-    flex-direction: column;
+    display: block;
   }
 
-  .auth-page .auth-page__account-links .auth-action {
-    width: 100%;
+  .auth-page .auth-page__mode-tabs {
+    grid-template-columns: 1fr;
   }
 
   .auth-page .auth-page__footer-links {

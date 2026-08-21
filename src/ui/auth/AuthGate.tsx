@@ -67,6 +67,20 @@ function AuthFooter() {
   return <footer className="auth-page__footer"><span>{tLegal('footer')}</span><span className="auth-page__footer-links"><a href={localizedPath('support', locale)}>{tNavigation('support')}</a><span aria-hidden="true">·</span><a href={localizedPath('terms', locale)}>{tLegal('terms')}</a><span aria-hidden="true">·</span><AppVersion /></span></footer>;
 }
 
+export function AuthModeTabs({ mode, onSelect, loginLabel, registerLabel, accessModeLabel, disabled }: {
+  mode: 'login' | 'register';
+  onSelect: (mode: 'login' | 'register') => void;
+  loginLabel: string;
+  registerLabel: string;
+  accessModeLabel: string;
+  disabled: boolean;
+}) {
+  return <div className="auth-page__mode-tabs" role="tablist" aria-label={accessModeLabel}>
+    <button type="button" role="tab" aria-selected={mode === 'login'} aria-controls="auth-form" className="auth-mode-tab" onClick={() => onSelect('login')} disabled={disabled}>{loginLabel}</button>
+    <button type="button" role="tab" aria-selected={mode === 'register'} aria-controls="auth-form" className="auth-mode-tab" onClick={() => onSelect('register')} disabled={disabled}>{registerLabel}</button>
+  </div>;
+}
+
 function AuthForm() {
   const { t } = useTranslation('auth');
   const locale = routeLocale(window.location.pathname);
@@ -80,6 +94,10 @@ function AuthForm() {
   const login = useAuthStore((state) => state.login);
   const register = useAuthStore((state) => state.register);
   const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
+  const selectMode = (nextMode: 'login' | 'register') => {
+    setMode(nextMode);
+    setError(null);
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -120,7 +138,7 @@ function AuthForm() {
       <div className="auth-page__panels">
         <section className="panel stack auth-page__panel auth-page__panel--account">
           <h1>{mode === 'login' ? t('login') : t('register')}</h1>
-          <form className="stack auth-form" onSubmit={submit}>
+          <form id="auth-form" className="stack auth-form" onSubmit={submit}>
             <label className="field">
               {t('email')}
               <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
@@ -144,7 +162,7 @@ function AuthForm() {
           {googleSignInEnabled && <><p className="auth-separator">{t('or')}</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} locale={locale} /><p className="muted small">{t('googleNote')}</p></>}
           <div className="auth-page__account-links">
             {mode === 'login' && <a href={localizedPath('reset-password', locale)}> {t('forgotPassword')}</a>}
-            <button className="auth-action auth-action--secondary" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} disabled={pending}>{mode === 'login' ? t('createAccount') : t('existingAccount')}</button>
+            <AuthModeTabs mode={mode} onSelect={selectMode} loginLabel={t('login')} registerLabel={t('register')} accessModeLabel={t('accessMode')} disabled={pending} />
           </div>
         </section>
 

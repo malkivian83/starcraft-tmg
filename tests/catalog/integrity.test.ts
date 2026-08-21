@@ -22,6 +22,10 @@ describe.each(races)('Catálogo %s', (race) => {
     expect(loadCatalog(race).problems).toEqual([]);
   });
 
+  it('usa Alcance de Enfrentamiento en las traducciones', () => {
+    expect(JSON.stringify(catalog)).not.toContain('Alcance de Trabazón');
+  });
+
   it('toda UnitEntry apunta a una UnitCard existente', () => {
     const cardIds = new Set(catalog.unitCards.map((c) => c.id));
     const orphans = catalog.unitEntries

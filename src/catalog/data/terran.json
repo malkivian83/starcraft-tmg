@@ -10,7 +10,7 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Un modelo nominado cambia su C-14 Rifle por un AGG-12 de largo alcance y perforación contra objetivos Armoured. Al portar un arma distinta, ese modelo resuelve sus ataques como un lote aparte.",
+        "es": "Una miniatura nominada cambia su C-14 Rifle por un AGG-12 de largo alcance y perforación contra objetivos Armoured. Al portar un arma distinta, esa miniatura resuelve sus ataques como un lote aparte.",
         "en": "A nominated model replaces its C-14 Rifle with an AGG-12. Carrying a different weapon, that model resolves its attacks as a separate Batch."
       }
     },
@@ -28,7 +28,7 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Un modelo nominado gana un Rocket Launcher además de su arma actual: fuego indirecto y largo alcance, sin renunciar al C-14 Rifle por ser SIDEARM.",
+        "es": "Una miniatura nominada gana un Rocket Launcher además de su arma actual: fuego indirecto y largo alcance, sin renunciar al C-14 Rifle por ser SIDEARM.",
         "en": "A nominated model gains a Rocket Launcher in addition to its current weapon: indirect fire and long range, keeping the C-14 Rifle thanks to SIDEARM."
       }
     },
@@ -55,7 +55,7 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Cuando esta unidad resuelve una habilidad Life Support o Medpack, se trata como si tuviera un modelo adicional dentro del alcance al calcular los efectos de esa habilidad.",
+        "es": "Cuando esta unidad resuelve una habilidad Life Support o Medpack, se trata como si tuviera una miniatura adicional dentro del alcance al calcular los efectos de esa habilidad.",
         "en": "When this Unit resolves a Life Support or Medpack ability, treat it as having 1 additional model Within Range for calculating that ability's effects."
       }
     },
@@ -191,7 +191,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Coloca una unidad Point Defence Drone amiga en cualquier punto del campo de batalla, a más de 1\" de cualquier modelo enemigo. Retira esta unidad al final de la ronda.",
+            "es": "Coloca una unidad Point Defence Drone amiga en cualquier punto del campo de batalla, a más de 1\" de cualquier miniatura enemiga. Retira esta unidad al final de la ronda.",
             "en": "Set a Friendly Point Defence Drone Unit anywhere on the battlefield, more than 1\" away from any Enemy model. Remove this Unit at the End of the Round."
           }
         },
@@ -202,7 +202,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Una vez por partida. La unidad activa resuelve el efecto PLACE (12). Los modelos colocados por este efecto no pueden situarse dentro del Alcance de Trabazón de ninguna unidad enemiga. Esto se resuelve en lugar de realizar una acción estándar.",
+            "es": "Una vez por partida. La unidad activa resuelve el efecto PLACE (12). Las miniaturas colocadas por este efecto no pueden situarse dentro del Alcance de Enfrentamiento de ninguna unidad enemiga. Esto se resuelve en lugar de realizar una acción estándar.",
             "en": "Once Per Game. The active Unit resolves the PLACE (12) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit. This resolves instead of performing a standard action."
           }
         }
@@ -237,7 +237,7 @@
       "unique": true,
       "resource": "CP",
       "resourcePerRound": 2,
-      "abilities": [{ "name": "Armed and Ready", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa se despliega desde cualquier borde de la mesa que no sea el borde de entrada de un jugador. Ningún modelo puede colocarse a menos de 10\" de ningún modelo enemigo. Esta habilidad no puede usarse si otra unidad biológica amiga ya se ha desplegado esta ronda.", "en": "The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10\" of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round." } }, { "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
+      "abilities": [{ "name": "Armed and Ready", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa se despliega desde cualquier borde de la mesa que no sea el borde de entrada de un jugador. Ninguna miniatura puede colocarse a menos de 10\" de ninguna miniatura enemiga. Esta habilidad no puede usarse si otra unidad biológica amiga ya se ha desplegado esta ronda.", "en": "The active Biological Unit Deploys from any table edge that is not a player's Entry Edge. No model may be placed Within 10\" of any Enemy model. This ability cannot be used if another Friendly Biological Unit has already been Deployed this Round." } }, { "name": "Go! Go! Go!", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad biológica activa realiza una acción de Mover 2\". No cuenta para su límite de acciones.", "en": "The active Biological Unit performs a 2\" Move action. This does not count towards its action limit." } }],
       "imageRef": "cards/terran/tactical-barracks-proxy.png"
     },
     {
@@ -419,7 +419,7 @@
       "combatTags": ["BIOLOGICAL", "LIGHT", "GROUND"],
       "profile": { "size": "2", "hitPoints": "2", "evade": "5+", "armour": "5+", "speed": "4/7", "shield": null },
       "weapons": [{ "name": "C-14 Rifle", "phase": "ASSAULT", "range": "12", "target": "All", "rateOfAttack": "2", "hit": "3+", "surgeType": "Light", "surgeDice": "D3", "damage": "1", "keywords": [] }, { "name": "Bayonet", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "5+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
-      "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Esta unidad sufre DAÑO NO LETAL (2). Esta unidad gana BUFF Velocidad (3). Además, su C-14 Rifle y todas sus armas de combate cuerpo a cuerpo ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its C-14 Rifle and all Close Combat Weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando se designa a esta unidad para desplegarse desde Reservas, puede resolver su habilidad Stimpack con el coste de CP reducido en 1 (hasta un mínimo de 0).", "en": "When this Unit is nominated to deploy from Reserves, it may resolve its Stimpack ability with the CP cost reduced by 1 (to a minimum of 0)." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando se designa a esta unidad para desplegarse desde Reservas, puede resolver el efecto PLACE (10) desde otra unidad amiga. Ningún modelo puede colocarse a menos de 8\" de ningún enemigo. La activación de esta unidad termina.", "en": "When this Unit is nominated to deploy from Reserves, it may resolve the PLACE (10) effect from another Friendly Unit. No model may be set Within 8\" of any Enemy model. This Unit's Activation ends." } }, { "name": "Slugthrower", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", esa arma gana ANTI-EVADE (1).", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon gains ANTI-EVADE (1)." } }, { "name": "Grenades - Frag", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", el Dado de Oleada de esa arma se sustituye por D6.", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon's S Dice is replaced by D6." } }],
+      "abilities": [{ "name": "Stimpack", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Esta unidad sufre DAÑO NO LETAL (2). Esta unidad gana BUFF Velocidad (3). Además, su C-14 Rifle y todas sus armas de combate cuerpo a cuerpo ganan PRECISION (3).", "en": "This Unit suffers NON-LETHAL DAMAGE (2). This Unit gains BUFF Speed (3). Additionally, its C-14 Rifle and all Close Combat Weapons gain PRECISION (3)." } }, { "name": "Raiders Roll!", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando se designa a esta unidad para desplegarse desde Reservas, puede resolver su habilidad Stimpack con el coste de CP reducido en 1 (hasta un mínimo de 0).", "en": "When this Unit is nominated to deploy from Reserves, it may resolve its Stimpack ability with the CP cost reduced by 1 (to a minimum of 0)." } }, { "name": "Rapid Reinforcements", "phase": "MOVEMENT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando se designa a esta unidad para desplegarse desde Reservas, puede resolver el efecto PLACE (10) desde otra unidad amiga. Ninguna miniatura puede colocarse a menos de 8\" de ningún enemigo. La activación de esta unidad termina.", "en": "When this Unit is nominated to deploy from Reserves, it may resolve the PLACE (10) effect from another Friendly Unit. No model may be set Within 8\" of any Enemy model. This Unit's Activation ends." } }, { "name": "Slugthrower", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", esa arma gana ANTI-EVADE (1).", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon gains ANTI-EVADE (1)." } }, { "name": "Grenades - Frag", "phase": "ASSAULT", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Cuando esta unidad hace un Ataque a Distancia con un C-14 Rifle y el objetivo está a menos de 8\", el Dado de Oleada de esa arma se sustituye por D6.", "en": "When this Unit makes a Ranged Attack with a C-14 Rifle and the target is Within 8\", that weapon's S Dice is replaced by D6." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 6, "supply": 1 }],
       "imageRefFront": "cards/terran/unit-raynors-raider-front.png",
       "imageRefBack": "cards/terran/unit-raynors-raider-back.png"
@@ -518,7 +518,7 @@
           "cost": 1,
           "fromUpgrade": false,
           "text": {
-            "es": "Selecciona otra unidad biológica amiga a 4\". Resuelve HEAL (X), donde X es el número de modelos de esta unidad a 4\" del objetivo.",
+            "es": "Selecciona otra unidad biológica amiga a 4\". Resuelve HEAL (X), donde X es el número de miniaturas de esta unidad a 4\" del objetivo.",
             "en": "Select another Friendly Biological Unit Within 4\". Resolve HEAL (X), where X is the number of models in this Unit Within 4\" of the target." 
           }
         },
@@ -540,7 +540,7 @@
           "cost": 1,
           "fromUpgrade": false,
           "text": {
-            "es": "Cuando otra unidad biológica amiga a 4\" sufre daño, reduce el daño total antes de asignarlo en 1 por cada modelo de esta unidad a 4\" de ella.",
+            "es": "Cuando otra unidad biológica amiga a 4\" sufre daño, reduce el daño total antes de asignarlo en 1 por cada miniatura de esta unidad a 4\" de ella.",
             "en": "Use when another Friendly Biological Unit Within 4\" suffers Damage. Reduce Total Damage before allocation by 1 for each model in this Unit Within 4\" of it." 
           }
         },
@@ -669,7 +669,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Este modelo tiene DISPLACEMENT.",
+            "es": "Esta miniatura tiene DISPLACEMENT.",
             "en": "This model has DISPLACEMENT."
           }
         }
