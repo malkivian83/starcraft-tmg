@@ -23,12 +23,15 @@ export function issueSession(response: Response, userId: string, sessionVersion:
 }
 
 export function clearSession(response: Response, env: ServerEnvironment): void {
-  response.clearCookie(SESSION_COOKIE, {
+  const options = {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/api',
-  });
+    sameSite: 'lax' as const,
+  };
+  response.clearCookie(SESSION_COOKIE, { ...options, path: '/api' });
+  // Elimina también sesiones creadas por versiones antiguas o por una
+  // configuración de proxy que usase la raíz como ámbito de la cookie.
+  response.clearCookie(SESSION_COOKIE, { ...options, path: '/' });
 }
 
 export function readSession(token: string, env: ServerEnvironment): SessionPayload | null {
