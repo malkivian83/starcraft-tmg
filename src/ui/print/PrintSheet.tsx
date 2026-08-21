@@ -158,7 +158,7 @@ export function PrintSheet({ data }: { data?: PrintSheetData } = {}) {
                             // La nominación del modelo se imprime: es lo que
                             // permite montar la miniatura correcta (§9.1.11).
                             return applied.modelIndex !== null
-                              ? `${upgrade.name} (modelo #${applied.modelIndex + 1})`
+                              ? `${upgrade.name} (miniatura #${applied.modelIndex + 1})`
                               : upgrade.name;
                           })
                           .join(', ')}
@@ -482,7 +482,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                         {upgrade.specialist && (
                           <span className="unitref__tag">
                             SPECIALIST
-                            {a.modelIndex !== null && ` · ${t('model', { defaultValue: locale === 'en' ? 'model' : 'modelo' })} #${a.modelIndex + 1}`}
+                            {a.modelIndex !== null && ` · ${t('model', { defaultValue: locale === 'en' ? 'model' : 'miniatura' })} #${a.modelIndex + 1}`}
                           </span>
                         )}
                         {upgrade.replacesWeapon && (
@@ -532,7 +532,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
                     {upgrade.specialist && (
                       <span className="unitref__tag">
                         SPECIALIST
-                        {a.modelIndex !== null && ` · ${t('model', { defaultValue: locale === 'en' ? 'model' : 'modelo' })} #${a.modelIndex + 1}`}
+                        {a.modelIndex !== null && ` · ${t('model', { defaultValue: locale === 'en' ? 'model' : 'miniatura' })} #${a.modelIndex + 1}`}
                       </span>
                     )}
                     {upgrade.replacesWeapon && (

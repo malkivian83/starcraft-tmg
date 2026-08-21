@@ -48,7 +48,7 @@ describe('Costes Zerg del reglamento', () => {
     expect(mutatingCarapace?.phase).toBe('MOVEMENT');
   });
 
-  it('conserva el recurso explícito de Glial Reconstitution', () => {
+  it('usa BM en Glial Reconstitution para los Roach', () => {
     for (const entryId of [
       'zerg.entry.roach',
       'zerg.entry.corpser',
@@ -59,7 +59,7 @@ describe('Costes Zerg del reglamento', () => {
 
       expect(upgrade?.grantsAbilities[0]).toMatchObject({
         cost: 1,
-        resource: 'CP',
+        resource: 'BM',
       });
     }
 

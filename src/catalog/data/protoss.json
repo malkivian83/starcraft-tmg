@@ -19,7 +19,7 @@
       "type": "PASSIVE",
       "cost": null,
       "text": {
-        "es": "Cuando esta unidad resuelve IMPACT, cada modelo elegible genera un dado de IMPACT adicional.",
+        "es": "Cuando esta unidad resuelve IMPACT, cada miniatura elegible genera un dado de IMPACT adicional.",
         "en": "When this Unit resolves IMPACT, each eligible model generates 1 additional IMPACT die."
       }
     },
@@ -85,7 +85,7 @@
       "type": "ACTIVE",
       "cost": 1,
       "text": {
-        "es": "Coloca una ficha de Force Field a menos de 8\" en un espacio libre. Las unidades de Tamaño 2 o menor no pueden atravesar los Force Fields. Los modelos de Tamaño 3 o más sí pueden pasar por encima, y entonces la ficha se retira.",
+        "es": "Coloca una ficha de Force Field a menos de 8\" en un espacio libre. Las unidades de Tamaño 2 o menor no pueden atravesar los Force Fields. Las miniaturas de Tamaño 3 o más sí pueden pasar por encima, y entonces la ficha se retira.",
         "en": "Set a Force Field token Within 8\" in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed."
       }
     },
@@ -148,7 +148,7 @@
           "cost": null,
           "fromUpgrade": false,
           "text": {
-            "es": "Si no hay ningún Pylon amigo en el campo de batalla, coloca una unidad Pylon amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier modelo enemigo. Esta ronda, el Pylon no puede usar sus Habilidades Especiales (excepto Structure).",
+            "es": "Si no hay ningún Pylon amigo en el campo de batalla, coloca una unidad Pylon amiga en cualquier punto a NIVEL DE SUELO del campo de batalla, a más de 10\" de cualquier miniatura enemiga. Esta ronda, el Pylon no puede usar sus Habilidades Especiales (excepto Structure).",
             "en": "If there is no Friendly Pylon on the battlefield, set a Friendly Pylon Unit anywhere on GROUND LEVEL of the battlefield more than 10\" away from any Enemy model. This Round, the Pylon is not eligible to use its Special Abilities (excluding Structure)."
           }
         },
@@ -194,7 +194,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }, { "name": "Warp In", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa se despliega desde cualquier borde de la mesa que no sea el borde de entrada de un jugador. El despliegue debe terminar a más de 10\" de cualquier modelo enemigo. Esta habilidad no puede usarse si otra unidad terrestre amiga ya se ha desplegado esta ronda.", "en": "The active GROUND Unit Deploys from any table edge that is not a player's Entry Edge. This deployment must end more than 10\" away from any Enemy model. The controlling player cannot use this ability if another Friendly Ground Unit has already Deployed this Round." } }],
+      "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }, { "name": "Warp In", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa se despliega desde cualquier borde de la mesa que no sea el borde de entrada de un jugador. El despliegue debe terminar a más de 10\" de cualquier miniatura enemiga. Esta habilidad no puede usarse si otra unidad terrestre amiga ya se ha desplegado esta ronda.", "en": "The active GROUND Unit Deploys from any table edge that is not a player's Entry Edge. This deployment must end more than 10\" away from any Enemy model. The controlling player cannot use this ability if another Friendly Ground Unit has already Deployed this Round." } }],
       "imageRef": "cards/protoss/tactical-warp-gate.png"
     },
     {
@@ -315,7 +315,7 @@
       "unique": true,
       "resource": "PE",
       "resourcePerRound": 1,
-      "abilities": [{ "name": "Phase", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad activa resuelve PLACE (3).", "en": "The active Unit resolves the PLACE (3) effect." } }, { "name": "Warp Conduit", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador de facción en cualquier punto del campo de batalla a más de 10\" de cualquier modelo enemigo. Al final de la ronda, puedes desplegar una unidad terrestre desde Reservas en contacto peana con peana con ese indicador de facción.", "en": "Set a Faction Indicator anywhere on the battlefield more than 10\" away from any Enemy model. At the End of the Round, you may Deploy one Ground Unit from Reserves in base-to-base Contact with this Faction Indicator." } }],
+      "abilities": [{ "name": "Phase", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad activa resuelve PLACE (3).", "en": "The active Unit resolves the PLACE (3) effect." } }, { "name": "Warp Conduit", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador de facción en cualquier punto del campo de batalla a más de 10\" de cualquier miniatura enemiga. Al final de la ronda, puedes desplegar una unidad terrestre desde Reservas en contacto peana con peana con ese indicador de facción.", "en": "Set a Faction Indicator anywhere on the battlefield more than 10\" away from any Enemy model. At the End of the Round, you may Deploy one Ground Unit from Reserves in base-to-base Contact with this Faction Indicator." } }],
       "imageRef": "cards/protoss/tactical-warp-prism.png"
     },
     {
@@ -495,7 +495,7 @@
           "keywords": []
         }
       ],
-      "abilities": [{ "name": "Psionic Transfer", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Shade completamente a menos de 12\" de cualquier modelo de esta unidad. Al final de la ronda, el jugador que la controla puede colocar todos los modelos de esta unidad en coherencia, tratando la ficha Shade como el modelo líder. La ficha Shade tiene DISPLACEMENT.", "en": "Set a Shade token Wholly Within 12\" of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Shade token as the Leading Model. The Shade token has DISPLACEMENT." } }, { "name": "Psionic Presence", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Todas las armas de las unidades amigas que tengan como objetivo a una unidad enemiga a menos de 4\" de la ficha Shade de esta unidad ganan PRECISION (1).", "en": "All Weapons of Friendly Units targeting an Enemy Unit Within 4\" of this Unit's Shade token gain PRECISION (1)." } }],
+      "abilities": [{ "name": "Psionic Transfer", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Shade completamente a menos de 12\" de cualquier miniatura de esta unidad. Al final de la ronda, el jugador que la controla puede colocar todas las miniaturas de esta unidad en coherencia, tratando la ficha Shade como la miniatura líder. La ficha Shade tiene DISPLACEMENT.", "en": "Set a Shade token Wholly Within 12\" of any model in this Unit. At the End of the Round, the controlling player may set all models of this Unit in Coherency, treating the Shade token as the Leading Model. The Shade token has DISPLACEMENT." } }, { "name": "Psionic Presence", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Todas las armas de las unidades amigas que tengan como objetivo a una unidad enemiga a menos de 4\" de la ficha Shade de esta unidad ganan PRECISION (1).", "en": "All Weapons of Friendly Units targeting an Enemy Unit Within 4\" of this Unit's Shade token gain PRECISION (1)." } }],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 2, "supply": 0 },
         { "minModels": 3, "maxModels": 4, "supply": 1 }
@@ -536,7 +536,7 @@
           "keywords": []
         }
       ],
-      "abilities": [{ "name": "Guardian Shield", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Todos los ataques a distancia que tengan como objetivo a una unidad amiga a menos de 4\" (no es necesaria la línea de visión) se realizan con un dado menos en la reserva de ataque.", "en": "All Ranged Attacks targeting a Friendly Unit Within 4\" (Line of Sight is not required) are made with 1 fewer die in the Attack Pool." } }, { "name": "Force Field", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Force Field a menos de 8\" en un espacio desocupado. Las unidades de tamaño 2 o menor no pueden atravesar Force Fields. Los modelos de tamaño 3 o más pueden pasar por encima y la ficha se retira entonces.", "en": "Set a Force Field token Within 8\" in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed." } }, { "name": "Restoration", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Usa esta habilidad cuando una unidad amiga a menos de 4\" reciba un DEBUFF. Retira todos los DEBUFFS de ella.", "en": "Use when a Friendly Unit Within 4\" receives a DEBUFF. Remove all DEBUFFS from it." } }],
+      "abilities": [{ "name": "Guardian Shield", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Todos los ataques a distancia que tengan como objetivo a una unidad amiga a menos de 4\" (no es necesaria la línea de visión) se realizan con un dado menos en la reserva de ataque.", "en": "All Ranged Attacks targeting a Friendly Unit Within 4\" (Line of Sight is not required) are made with 1 fewer die in the Attack Pool." } }, { "name": "Force Field", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca una ficha Force Field a menos de 8\" en un espacio desocupado. Las unidades de tamaño 2 o menor no pueden atravesar Force Fields. Las miniaturas de tamaño 3 o más pueden pasar por encima y la ficha se retira entonces.", "en": "Set a Force Field token Within 8\" in an unoccupied space. Units of Size 2 or lower cannot move across Force Fields. Models of Size 3 or more can move over it, and it's then removed." } }, { "name": "Restoration", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Usa esta habilidad cuando una unidad amiga a menos de 4\" reciba un DEBUFF. Retira todos los DEBUFFS de ella.", "en": "Use when a Friendly Unit Within 4\" receives a DEBUFF. Remove all DEBUFFS from it." } }],
       "supplyProfile": [
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 2, "supply": 1 }
@@ -571,7 +571,7 @@
           "cost": 1,
           "fromUpgrade": false,
           "text": {
-            "es": "Resuelve el efecto PLACE (6). Los modelos colocados por este efecto no pueden situarse dentro del Alcance de Trabazón de ninguna unidad enemiga.",
+            "es": "Resuelve el efecto PLACE (6). Las miniaturas colocadas mediante este efecto no pueden situarse dentro del Alcance de Enfrentamiento de ninguna unidad enemiga.",
             "en": "Resolve the PLACE (6) effect. Models set by this effect cannot be set up Within the Engagement Range of any Enemy Unit."
           }
         }
