@@ -1,11 +1,11 @@
 import { localeFromPathname } from './locale';
 import type { SupportedLocale } from './types';
 
-export type LocalizedPage = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'support' | 'public-list' | 'guest-builder' | 'terms' | 'verify-email' | 'reset-password';
+export type LocalizedPage = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'support' | 'public-list' | 'guest-builder' | 'terms' | 'register' | 'check-email' | 'verify-email' | 'reset-password';
 
 const paths: Record<SupportedLocale, Record<LocalizedPage, string>> = {
-  es: { home: 'inicio', builder: 'nueva-lista', lists: 'mis-listas', 'public-lists': 'listas-publicas', profile: 'perfil', support: 'soporte', 'public-list': 'listas-publicas', 'guest-builder': 'crear-lista', terms: 'terminos-y-condiciones', 'verify-email': 'verificar-correo', 'reset-password': 'restablecer-contrasena' },
-  en: { home: 'home', builder: 'new-list', lists: 'my-lists', 'public-lists': 'public-lists', profile: 'profile', support: 'support', 'public-list': 'public-lists', 'guest-builder': 'create-list', terms: 'terms-and-conditions', 'verify-email': 'verify-email', 'reset-password': 'reset-password' },
+  es: { home: 'inicio', builder: 'nueva-lista', lists: 'mis-listas', 'public-lists': 'listas-publicas', profile: 'perfil', support: 'soporte', 'public-list': 'listas-publicas', 'guest-builder': 'crear-lista', terms: 'terminos-y-condiciones', register: 'registro', 'check-email': 'revisa-tu-correo', 'verify-email': 'verificar-correo', 'reset-password': 'restablecer-contrasena' },
+  en: { home: 'home', builder: 'new-list', lists: 'my-lists', 'public-lists': 'public-lists', profile: 'profile', support: 'support', 'public-list': 'public-lists', 'guest-builder': 'create-list', terms: 'terms-and-conditions', register: 'register', 'check-email': 'check-your-email', 'verify-email': 'verify-email', 'reset-password': 'reset-password' },
 };
 
 export function localizedPath(page: LocalizedPage, locale: SupportedLocale, id?: string | null): string {
@@ -45,6 +45,8 @@ export function pageFromPath(pathname: string): LocalizedPage {
   if (stripped === `/${current.support}`) return 'support';
   if (stripped === `/${current['guest-builder']}`) return 'guest-builder';
   if (stripped === `/${current.terms}`) return 'terms';
+  if (stripped === `/${current.register}`) return 'register';
+  if (stripped === `/${current['check-email']}`) return 'check-email';
   if (stripped === `/${current['verify-email']}`) return 'verify-email';
   if (stripped === `/${current['reset-password']}`) return 'reset-password';
   if (stripped.startsWith(`/${current['public-list']}/`)) return 'public-list';

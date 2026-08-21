@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ApiError, requestPasswordReset, requestVerification, resetPassword, verifyEmail } from '@/auth/authService';
 import { googleSignInEnabled } from '@/auth/googleIdentity';
 import { useAuthStore } from '@/store/authStore';
@@ -11,6 +11,9 @@ import { LanguageSelector } from '../common/LanguageSelector';
 import { AppVersion } from '../common/AppVersion';
 
 export function AuthGate({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const page = pageFromPath(location.pathname);
+  const locale = routeLocale(location.pathname);
   const { status, restore, user, developmentVerificationUrl, emailDeliveryWarning } = useAuthStore();
   useEffect(() => { void restore(); }, [restore]);
   const refreshSession = useAuthStore((state) => state.refreshSession);
@@ -34,13 +37,23 @@ export function AuthGate({ children }: { children: ReactNode }) {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [refreshSession, restore, status]);
-  if (pageFromPath(window.location.pathname) === 'terms') return <TermsPage />;
+  if (page === 'terms') return <TermsPage />;
   if (status === 'checking') return <AuthLoading />;
-  if (pageFromPath(window.location.pathname) === 'verify-email') return <VerifyEmail />;
-  if (pageFromPath(window.location.pathname) === 'reset-password') return <ResetPassword />;
+  if (page === 'verify-email') return <VerifyEmail />;
+  if (page === 'reset-password') return <ResetPassword />;
+  if (page === 'register') {
+    if (status === 'authenticated') return <Navigate to={localizedPath('home', locale)} replace />;
+    if (status === 'unverified') return <Navigate to={localizedPath('check-email', locale)} replace />;
+    return <AuthForm mode="register" />;
+  }
+  if (page === 'check-email') {
+    if (status === 'authenticated') return <Navigate to={localizedPath('home', locale)} replace />;
+    if (status === 'unverified') return <UnverifiedEmail email={user?.email ?? ''} warning={emailDeliveryWarning} developmentVerificationUrl={developmentVerificationUrl} />;
+    return <Navigate to={localizedPath('register', locale)} replace />;
+  }
   if (status === 'authenticated') return <>{children}</>;
   if (status === 'unverified') return <UnverifiedEmail email={user?.email ?? ''} warning={emailDeliveryWarning} developmentVerificationUrl={developmentVerificationUrl} />;
-  return <AuthForm />;
+  return <AuthForm mode="login" />;
 }
 
 function AuthLayout({ children }: { children: ReactNode }) {
@@ -67,24 +80,24 @@ function AuthFooter() {
   return <footer className="auth-page__footer"><span>{tLegal('footer')}</span><span className="auth-page__footer-links"><a href={localizedPath('support', locale)}>{tNavigation('support')}</a><span aria-hidden="true">·</span><a href={localizedPath('terms', locale)}>{tLegal('terms')}</a><span aria-hidden="true">·</span><AppVersion /></span></footer>;
 }
 
-export function AuthModeTabs({ mode, onSelect, loginLabel, registerLabel, accessModeLabel, disabled }: {
+export function AuthModeTabs({ mode, locale, loginLabel, registerLabel, accessModeLabel, disabled }: {
   mode: 'login' | 'register';
-  onSelect: (mode: 'login' | 'register') => void;
+  locale: 'es' | 'en';
   loginLabel: string;
   registerLabel: string;
   accessModeLabel: string;
   disabled: boolean;
 }) {
   return <div className="auth-page__mode-tabs" role="tablist" aria-label={accessModeLabel}>
-    <button type="button" role="tab" aria-selected={mode === 'login'} aria-controls="auth-form" className="auth-mode-tab" onClick={() => onSelect('login')} disabled={disabled}>{loginLabel}</button>
-    <button type="button" role="tab" aria-selected={mode === 'register'} aria-controls="auth-form" className="auth-mode-tab" onClick={() => onSelect('register')} disabled={disabled}>{registerLabel}</button>
+    <Link role="tab" aria-selected={mode === 'login'} aria-controls="auth-form" className="auth-mode-tab" to={localizedPath('home', locale)} aria-disabled={disabled || undefined} onClick={(event) => { if (disabled) event.preventDefault(); }}>{loginLabel}</Link>
+    <Link role="tab" aria-selected={mode === 'register'} aria-controls="auth-form" className="auth-mode-tab" to={localizedPath('register', locale)} aria-disabled={disabled || undefined} onClick={(event) => { if (disabled) event.preventDefault(); }}>{registerLabel}</Link>
   </div>;
 }
 
-function AuthForm() {
+function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const { t } = useTranslation('auth');
   const locale = routeLocale(window.location.pathname);
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -94,10 +107,6 @@ function AuthForm() {
   const login = useAuthStore((state) => state.login);
   const register = useAuthStore((state) => state.register);
   const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
-  const selectMode = (nextMode: 'login' | 'register') => {
-    setMode(nextMode);
-    setError(null);
-  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -109,7 +118,10 @@ function AuthForm() {
     setPending(true);
     try {
       if (mode === 'login') await login(email, password);
-      else await register(email, password);
+      else {
+        await register(email, password);
+        navigate(localizedPath('check-email', locale), { replace: true });
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t('genericError'));
     } finally {
@@ -153,7 +165,7 @@ function AuthForm() {
             {mode === 'register' && (
               <label className="terms-check">
                 <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required />
-                <span>{t('acceptTermsPrefix')} <a href={localizedPath('terms', locale)}>{t('acceptTermsLink')}</a>.</span>
+                <span>{t('acceptTermsPrefix')} <Link to={localizedPath('terms', locale)}>{t('acceptTermsLink')}</Link>.</span>
               </label>
             )}
             {error && <p className="issue issue--error">{error}</p>}
@@ -161,8 +173,8 @@ function AuthForm() {
           </form>
           {googleSignInEnabled && <><p className="auth-separator">{t('or')}</p><GoogleSignInButton text={mode === 'login' ? 'signin_with' : 'signup_with'} onCredential={(credential) => { void enterWithGoogle(credential); }} locale={locale} /><p className="muted small">{t('googleNote')}</p></>}
           <div className="auth-page__account-links">
-            {mode === 'login' && <a href={localizedPath('reset-password', locale)}> {t('forgotPassword')}</a>}
-            <AuthModeTabs mode={mode} onSelect={selectMode} loginLabel={t('login')} registerLabel={t('register')} accessModeLabel={t('accessMode')} disabled={pending} />
+            {mode === 'login' && <Link to={localizedPath('reset-password', locale)}> {t('forgotPassword')}</Link>}
+            <AuthModeTabs mode={mode} locale={locale} loginLabel={t('login')} registerLabel={t('register')} accessModeLabel={t('accessMode')} disabled={pending} />
           </div>
         </section>
 
