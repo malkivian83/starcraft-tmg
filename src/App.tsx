@@ -131,6 +131,12 @@ export function App() {
       <Route path="/crear-lista" element={<GuestBuilderRoute />} />
       <Route path="/:locale/crear-lista" element={<GuestBuilderRoute />} />
       <Route path="/:locale/create-list" element={<GuestBuilderRoute />} />
+      <Route path="/registro" element={<AccountRoute />} />
+      <Route path="/:locale/registro" element={<AccountRoute />} />
+      <Route path="/:locale/register" element={<AccountRoute />} />
+      <Route path="/revisa-tu-correo" element={<AccountRoute />} />
+      <Route path="/:locale/revisa-tu-correo" element={<AccountRoute />} />
+      <Route path="/:locale/check-your-email" element={<AccountRoute />} />
       <Route path="/soporte" element={<SupportRoute />} />
       <Route path="/:locale/soporte" element={<SupportRoute />} />
       <Route path="/:locale/support" element={<SupportRoute />} />

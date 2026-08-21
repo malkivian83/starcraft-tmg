@@ -331,12 +331,17 @@
 }
 
 .auth-page .auth-mode-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 40px;
   padding: 8px 12px;
   border: 1px solid transparent;
   border-radius: 5px;
   background: transparent;
   color: var(--auth-muted);
+  text-decoration: none;
+  cursor: pointer;
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -346,6 +351,7 @@
   border-color: rgb(105 169 228 / 36%);
   background: rgb(40 48 68 / 60%);
   color: var(--auth-text);
+  text-decoration: none;
 }
 
 .auth-page .auth-mode-tab[aria-selected="true"] {

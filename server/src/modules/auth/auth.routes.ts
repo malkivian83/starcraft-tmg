@@ -169,6 +169,9 @@ export function createAuthRouter({ repository, env, email, avatarStorage }: Auth
       console.error('No se pudo enviar el correo de verificación inicial.', error);
       emailDeliveryWarning = 'La cuenta se creó, pero el correo no pudo enviarse todavía. Usa «Reenviar correo» dentro de unos minutos.';
     }
+    // La sesión permite recuperar la pantalla de verificación después de una
+    // recarga. Las rutas de listas exigen además que el correo esté verificado.
+    issueSession(response, user.id, user.sessionVersion, env);
     response.status(emailDeliveryWarning ? 202 : 201).json({
       user: publicUser(user),
       verificationRequired: true,
