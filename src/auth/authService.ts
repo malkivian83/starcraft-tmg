@@ -99,6 +99,7 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 20_0
     response = await fetch(`${apiBaseUrl}${path}`, {
       ...init,
       credentials: 'include',
+      cache: 'no-store',
       headers: { 'Content-Type': 'application/json', ...init.headers },
       signal: controller.signal,
     });

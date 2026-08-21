@@ -98,6 +98,10 @@ export interface AuthRouteDependencies {
 
 export function createAuthRouter({ repository, env, email, avatarStorage }: AuthRouteDependencies): Router {
   const router = Router();
+  router.use((_request, response, next) => {
+    response.setHeader('Cache-Control', 'no-store');
+    next();
+  });
   const authenticated = requireUser(repository, env);
   const googleVerifier = createGoogleVerifier(env);
 
