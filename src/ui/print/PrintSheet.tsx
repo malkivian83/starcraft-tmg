@@ -314,21 +314,14 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
   const index = data?.index ?? store.index;
   if (list.entries.length === 0) return null;
 
-  // Una ficha por unidad DISTINTA: dos escuadras de Zerglings con el mismo
-  // equipo no necesitan dos veces el mismo texto.
-  const seen = new Set<string>();
   const blocks = list.entries
     .map((listEntry) => {
       const unit = index.unitEntries.get(listEntry.unitEntryId);
       if (!unit) return null;
-      const upgradeIds = listEntry.upgrades
-        .map((u) => u.upgradeId)
-        .sort()
-        .join(',');
-      const key = `${unit.id}|${upgradeIds}`;
-      if (seen.has(key)) return null;
-      seen.add(key);
-      return { key, unit, listEntry };
+      // Cada entrada representa una copia real de la unidad. No se agrupan
+      // unidades iguales porque pueden tener distinta composición, mejoras,
+      // orden o simplemente ocupar dos veces la lista impresa.
+      return { key: listEntry.instanceId, unit, listEntry };
     })
     .filter((b): b is NonNullable<typeof b> => b !== null);
 
@@ -337,6 +330,7 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
       <h2>{t('unitProfile')} — {t('abilities').toLocaleLowerCase(locale)} y {t('upgrades').toLocaleLowerCase(locale)}</h2>
       {blocks.map(({ key, unit, listEntry }) => {
         const card = index.unitCards.get(unit.cardId);
+        const composition = findComposition(unit, listEntry.compositionId);
         const applied = listEntry.upgrades
           .map((a) => ({
             applied: a,
@@ -361,10 +355,19 @@ function UnitReference({ data }: { data?: PrintSheetData }) {
               )}
               <div className="unitref__ident">
                 <h3 className="unitref__name">{unit.name}</h3>
+                {composition && (
+                  <p className="unitref__composition">
+                    {composition.models} {t('models').toLocaleLowerCase(locale)} · {t('supply')} {composition.supplyValue}
+                  </p>
+                )}
                 {card && (
                   <div className="unitref__stats">
                     <StatBlock profile={card.profile} size="small" />
-                    <SupplyBands bands={card.supplyProfile} size="small" />
+                    <SupplyBands
+                      bands={card.supplyProfile}
+                      selectedModels={composition?.models}
+                      size="small"
+                    />
                   </div>
                 )}
                 {card && card.combatTags.length > 0 && (

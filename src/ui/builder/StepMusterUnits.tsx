@@ -259,7 +259,10 @@ function RosterEntry({
           {card && (
             <div className="unitcard__stats">
               <StatBlock profile={card.profile} />
-              <SupplyBands bands={card.supplyProfile} />
+              <SupplyBands
+                bands={card.supplyProfile}
+                selectedModels={composition?.models}
+              />
             </div>
           )}
 
