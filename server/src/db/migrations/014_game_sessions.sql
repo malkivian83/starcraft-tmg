@@ -1,0 +1,42 @@
+CREATE TABLE IF NOT EXISTS game_guest_principals (
+  id CHAR(36) PRIMARY KEY,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_activity DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  revoked_at DATETIME NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS game_sessions (
+  id CHAR(36) PRIMARY KEY,
+  owner_type ENUM('ACCOUNT', 'GUEST') NOT NULL,
+  owner_account_id CHAR(36) NULL,
+  owner_guest_id CHAR(36) NULL,
+  origin_type ENUM('ACCOUNT', 'GUEST') NOT NULL,
+  status ENUM('CONFIGURATION', 'ACTIVE', 'FINISHED', 'ABANDONED') NOT NULL DEFAULT 'ACTIVE',
+  points_limit INT UNSIGNED NOT NULL,
+  mission_id VARCHAR(160) NOT NULL,
+  mission_snapshot JSON NOT NULL,
+  current_round INT UNSIGNED NOT NULL DEFAULT 1,
+  player1_name VARCHAR(80) NOT NULL,
+  player1_race ENUM('ZERG', 'TERRAN', 'PROTOSS') NOT NULL,
+  player1_vp INT UNSIGNED NOT NULL DEFAULT 0,
+  player2_name VARCHAR(80) NOT NULL,
+  player2_race ENUM('ZERG', 'TERRAN', 'PROTOSS') NOT NULL,
+  player2_vp INT UNSIGNED NOT NULL DEFAULT 0,
+  winner_slot TINYINT UNSIGNED NULL,
+  finish_reason ENUM('ROUNDS_COMPLETE', 'SPECIAL_VICTORY', 'CONCESSION', 'OTHER', 'DRAW') NULL,
+  owner_player_slot TINYINT UNSIGNED NULL,
+  linked_list_id CHAR(36) NULL,
+  linked_match_record_id CHAR(36) NULL,
+  revision INT UNSIGNED NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  finished_at DATETIME NULL,
+  INDEX game_sessions_account_idx (owner_account_id, updated_at),
+  INDEX game_sessions_guest_idx (owner_guest_id, updated_at),
+  INDEX game_sessions_status_idx (status, updated_at),
+  CONSTRAINT game_sessions_account_fk FOREIGN KEY (owner_account_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT game_sessions_guest_fk FOREIGN KEY (owner_guest_id) REFERENCES game_guest_principals(id) ON DELETE RESTRICT,
+  CONSTRAINT game_sessions_list_fk FOREIGN KEY (linked_list_id) REFERENCES saved_lists(id) ON DELETE SET NULL,
+  CONSTRAINT game_sessions_match_fk FOREIGN KEY (linked_match_record_id) REFERENCES list_match_records(id) ON DELETE SET NULL
+) ENGINE=InnoDB;

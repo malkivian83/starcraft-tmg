@@ -33,6 +33,11 @@ SESSION_SECRET=SECRETO_ALEATORIO_DE_AL_MENOS_32_CARACTERES
 NODE_ENV=production
 ```
 
+Si `VITE_API_BASE_URL` no está presente al compilar producción, el cliente usa
+automáticamente la ruta relativa `/api`. Nunca debe publicarse un bundle de
+producción que conserve `http://localhost:3001/api`, porque `localhost` sería
+el dispositivo del visitante y no el servidor.
+
 No fijar `PORT` en Plesk: el alojamiento Node.js debe proporcionar el puerto al
 proceso de la aplicación.
 
@@ -83,8 +88,8 @@ por su ruta absoluta:
 /opt/plesk/node/22/bin/npm run db:migrate:plesk
 ```
 
-Desde la raíz `httpdocs`, el resultado esperado para esta versión es
-`Migración aplicada: 012_list_match_records.sql`.
+Desde la raíz `httpdocs`, el resultado esperado para esta versión incluye
+`Migración aplicada: 014_game_sessions.sql`.
 
 ## Webhook de GitHub
 

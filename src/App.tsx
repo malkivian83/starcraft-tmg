@@ -27,12 +27,13 @@ import { PrintSheet } from './ui/print/PrintSheet';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
 import { AppVersion } from './ui/common/AppVersion';
+import { GamePage } from './ui/game/GamePage';
 import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
 import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review' | 'stats';
-type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list' | 'support';
+type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'games' | 'profile' | 'public-list' | 'support';
 const STEPS: Array<{ id: StepId; label: string }> = [
   { id: 'cards', label: 'commandCards' }, { id: 'units', label: 'recruitment' },
   { id: 'scenario', label: 'mission' }, { id: 'review', label: 'review' },
@@ -47,6 +48,7 @@ const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'indust
 const NAV_ITEMS = [
   { page: 'home' as const, key: 'home', icon: 'inicio' },
   { page: 'lists' as const, key: 'lists', icon: 'mis-listas' },
+  { page: 'games' as const, key: 'games', icon: null },
   { page: 'public-lists' as const, key: 'publicLists', icon: 'listas-publicas' },
   { page: 'builder' as const, key: 'newList', icon: 'nueva-lista' },
   { page: 'support' as const, key: 'support', icon: null },
@@ -69,6 +71,7 @@ function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; 
   const selectItem = (item: typeof NAV_ITEMS[number], event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.closest('details')?.removeAttribute('open');
     if (item.page === 'builder') onCreate();
+    else if (item.page === 'games') window.location.assign(pathForPage('games'));
     else onNavigate(item.page, t(item.key));
   };
   return <details className="primary-nav__mobile">
@@ -87,6 +90,7 @@ const PAGE_PATHS: Record<Exclude<PageId, 'public-list'>, string> = {
   builder: '/nueva-lista',
   lists: '/mis-listas',
   'public-lists': '/listas-publicas',
+  games: '/partidas',
   profile: '/perfil',
   support: '/soporte',
 };
@@ -104,11 +108,13 @@ export function pageForPathname(pathname: string, publicListId: string | null = 
   if (localizedPage === 'builder') return 'builder';
   if (localizedPage === 'lists') return 'lists';
   if (localizedPage === 'public-lists') return 'public-lists';
+  if (localizedPage === 'games') return 'games';
   if (localizedPage === 'profile') return 'profile';
   if (localizedPage === 'support') return 'support';
   if (pathname === PAGE_PATHS.builder) return 'builder';
   if (pathname === PAGE_PATHS.lists) return 'lists';
   if (pathname === PAGE_PATHS['public-lists']) return 'public-lists';
+  if (pathname === PAGE_PATHS.games) return 'games';
   if (pathname === PAGE_PATHS.profile) return 'profile';
   if (pathname === PAGE_PATHS.support) return 'support';
   return 'home';
@@ -140,9 +146,27 @@ export function App() {
       <Route path="/soporte" element={<SupportRoute />} />
       <Route path="/:locale/soporte" element={<SupportRoute />} />
       <Route path="/:locale/support" element={<SupportRoute />} />
+      <Route path="/partida" element={<GameRoute />} />
+      <Route path="/:locale/partida" element={<GameRoute />} />
+      <Route path="/:locale/game" element={<GameRoute />} />
+      <Route path="/partidas" element={<GameRoute />} />
+      <Route path="/:locale/partidas" element={<GameRoute />} />
+      <Route path="/:locale/partidas/nueva" element={<GameRoute />} />
+      <Route path="/:locale/games" element={<GameRoute />} />
+      <Route path="/:locale/games/new" element={<GameRoute />} />
+      <Route path="/:locale/partidas/:id" element={<GameRoute />} />
+      <Route path="/:locale/games/:id" element={<GameRoute />} />
       <Route path="*" element={<AccountRoute />} />
     </Routes>
   </>;
+}
+
+function GameRoute() {
+  const status = useAuthStore((state) => state.status);
+  const restore = useAuthStore((state) => state.restore);
+  useEffect(() => { if (status === 'checking') void restore(); }, [restore, status]);
+  if (status === 'checking') return <div className="game-page game-empty">Cargando…</div>;
+  return <GamePage mode={status === 'authenticated' ? 'account' : 'guest'} />;
 }
 
 function SupportRoute() {
@@ -165,15 +189,18 @@ function SupportRoute() {
 }
 
 function GuestBuilderRoute() {
+  const location = useLocation();
   const navigate = useNavigate();
   const status = useAuthStore((state) => state.status);
   const restore = useAuthStore((state) => state.restore);
+  const locale = routeLocale(location.pathname);
   useEffect(() => {
     if (status === 'checking') void restore();
   }, [restore, status]);
   if (status === 'authenticated') return <Navigate to="/" replace />;
   return <ArmyBuilderApp
     mode="guest"
+    onCloseGuestBuilder={() => navigate(localizedPath('home', locale), { replace: true })}
     onRequestAuthentication={() => navigate('/', { state: { preserveGuestDraft: true } satisfies DraftNavigationState })}
   />;
 }
@@ -205,10 +232,11 @@ function AccountRoute() {
   </AuthGate>;
 }
 
-function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onRequestAuthentication }: {
+function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
   mode: AccessMode;
   preserveDraftOnMount?: boolean;
   onDraftClaimed?: () => void;
+  onCloseGuestBuilder?: () => void;
   onRequestAuthentication?: () => void;
 }) {
   const { t: tBuilder } = useTranslation('builder');
@@ -345,14 +373,6 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     if (!confirmDiscard(tBuilderUi('logout'))) return;
     void logout();
   };
-  const clearList = () => {
-    if (!confirmDiscard(tBuilderUi('deleteList'))) return;
-    resetForRace(list.race);
-    setListIsPublic(false);
-    setListVisibilityDirty(false);
-    setSeedVisible(false);
-    setPage('builder');
-  };
   const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard(tBuilderUi('newList'))) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder')); setPage('builder'); };
   const onImportFile = async (file: File) => {
     if (!confirmDiscard(tBuilderUi('import'))) return;
@@ -450,12 +470,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
         <span className="topbar__title">{tCommon('appName')}</span>
         <nav className="primary-nav" aria-label={tNavigation('main')}>
           {mode === 'guest' ? (
-            <button className="primary-nav__item" onClick={clearList}>{tCommon('close')}</button>
+            <button className="primary-nav__item" onClick={onCloseGuestBuilder}>{tCommon('close')}</button>
           ) : (
             <>
             <div className="primary-nav__buttons">
               <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', tNavigation('home'))}><NavigationIcon race={list.race} icon="inicio" />{tNavigation('home')}</button>
               <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', tNavigation('lists'))}><NavigationIcon race={list.race} icon="mis-listas" />{tNavigation('lists')}</button>
+              <button className={`primary-nav__item${page === 'games' ? ' primary-nav__item--active' : ''}`} onClick={() => window.location.assign(pathForPage('games'))}>{tNavigation('games')}</button>
               <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', tNavigation('publicLists'))}>{tNavigation('publicLists')}</button>
               <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />{tNavigation('newList')}</button>
             </div>
@@ -468,11 +489,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
               onChange={(event) => {
                 const destination = event.target.value as PageId;
                 if (destination === 'builder') createList();
+                else if (destination === 'games') window.location.assign(pathForPage('games'));
                 else navigateToPage(destination, tNavigation(destination === 'home' ? 'home' : destination === 'lists' ? 'lists' : destination === 'public-lists' ? 'publicLists' : 'support'));
               }}
             >
               <option value="home">{tNavigation('home')}</option>
               <option value="lists">{tNavigation('lists')}</option>
+              <option value="games">{tNavigation('games')}</option>
               <option value="public-lists">{tNavigation('publicLists')}</option>
               <option value="builder">{tNavigation('newList')}</option>
               <option value="support">{tNavigation('support')}</option>
@@ -584,7 +607,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
         </>
       )}
 
-      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} />}
+      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} onOpenGames={() => window.location.assign(pathForPage('games'))} />}
       {mode === 'account' && page === 'lists' && <SavedListsPage onCreate={() => createList()} onLoad={loadList} onViewPublic={(id) => { void openPublicList(id); }} />}
       {mode === 'account' && page === 'public-lists' && <PublicListsPage onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} />}
       {mode === 'account' && page === 'support' && <SupportPage user={user} />}

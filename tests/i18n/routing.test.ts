@@ -11,6 +11,8 @@ describe('rutas localizadas', () => {
     expect(pageFromPath('/en/register')).toBe('register');
     expect(pageFromPath('/es/revisa-tu-correo')).toBe('check-email');
     expect(pageFromPath('/en/check-your-email')).toBe('check-email');
+    expect(pageFromPath('/es/partidas')).toBe('games');
+    expect(pageFromPath('/en/games')).toBe('games');
   });
 
   it('conserva el identificador de una lista pública', () => {
@@ -19,6 +21,8 @@ describe('rutas localizadas', () => {
     expect(localizedPath('register', 'en')).toBe('/en/register');
     expect(localizedPath('check-email', 'es')).toBe('/es/revisa-tu-correo');
     expect(localizedPath('check-email', 'en')).toBe('/en/check-your-email');
+    expect(localizedPath('games', 'es')).toBe('/es/partidas');
+    expect(localizedPath('games', 'en')).toBe('/en/games');
     expect(findPublicListId('/es/listas-publicas/abc')).toBe('abc');
   });
 

@@ -1,11 +1,11 @@
 import { localeFromPathname } from './locale';
 import type { SupportedLocale } from './types';
 
-export type LocalizedPage = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'support' | 'public-list' | 'guest-builder' | 'terms' | 'register' | 'check-email' | 'verify-email' | 'reset-password';
+export type LocalizedPage = 'home' | 'builder' | 'lists' | 'public-lists' | 'games' | 'profile' | 'support' | 'public-list' | 'guest-builder' | 'terms' | 'register' | 'check-email' | 'verify-email' | 'reset-password';
 
 const paths: Record<SupportedLocale, Record<LocalizedPage, string>> = {
-  es: { home: 'inicio', builder: 'nueva-lista', lists: 'mis-listas', 'public-lists': 'listas-publicas', profile: 'perfil', support: 'soporte', 'public-list': 'listas-publicas', 'guest-builder': 'crear-lista', terms: 'terminos-y-condiciones', register: 'registro', 'check-email': 'revisa-tu-correo', 'verify-email': 'verificar-correo', 'reset-password': 'restablecer-contrasena' },
-  en: { home: 'home', builder: 'new-list', lists: 'my-lists', 'public-lists': 'public-lists', profile: 'profile', support: 'support', 'public-list': 'public-lists', 'guest-builder': 'create-list', terms: 'terms-and-conditions', register: 'register', 'check-email': 'check-your-email', 'verify-email': 'verify-email', 'reset-password': 'reset-password' },
+  es: { home: 'inicio', builder: 'nueva-lista', lists: 'mis-listas', 'public-lists': 'listas-publicas', games: 'partidas', profile: 'perfil', support: 'soporte', 'public-list': 'listas-publicas', 'guest-builder': 'crear-lista', terms: 'terminos-y-condiciones', register: 'registro', 'check-email': 'revisa-tu-correo', 'verify-email': 'verificar-correo', 'reset-password': 'restablecer-contrasena' },
+  en: { home: 'home', builder: 'new-list', lists: 'my-lists', 'public-lists': 'public-lists', games: 'games', profile: 'profile', support: 'support', 'public-list': 'public-lists', 'guest-builder': 'create-list', terms: 'terms-and-conditions', register: 'register', 'check-email': 'check-your-email', 'verify-email': 'verify-email', 'reset-password': 'reset-password' },
 };
 
 export function localizedPath(page: LocalizedPage, locale: SupportedLocale, id?: string | null): string {
@@ -41,6 +41,7 @@ export function pageFromPath(pathname: string): LocalizedPage {
   if (stripped === `/${current.builder}`) return 'builder';
   if (stripped === `/${current.lists}`) return 'lists';
   if (stripped === `/${current['public-lists']}`) return 'public-lists';
+  if (stripped === `/${current.games}` || stripped === '/partida' || stripped === '/game') return 'games';
   if (stripped === `/${current.profile}`) return 'profile';
   if (stripped === `/${current.support}`) return 'support';
   if (stripped === `/${current['guest-builder']}`) return 'guest-builder';
