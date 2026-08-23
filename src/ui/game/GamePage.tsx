@@ -177,7 +177,7 @@ export function GamePage({ mode }: { mode: 'guest' | 'account' }) {
     } catch (error) { setMessage(error instanceof Error ? error.message : (en ? 'The game could not be deleted.' : 'No se pudo borrar la partida.')); }
   };
 
-  return <div className={`game-page${view === 'board' && selected ? ' game-page--board' : ''}`}>
+  return <div className={`game-page${view === 'board' && selected ? ' game-page--board' : view === 'library' ? ' game-page--library' : ''}`}>
     <header className="game-header">
       <Link to={localizedPath('home', locale)} className="game-header__brand"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /><span>{en ? 'Game manager' : 'Gestor de partidas'}</span></Link>
       <div className="game-header__actions"><span className="game-owner-badge">{mode === 'account' ? (en ? 'My games' : 'Mis partidas') : (en ? 'Guest · this browser' : 'Invitado · este navegador')}</span><Link className="button-link" to={localizedPath('home', locale)}>{en ? 'Exit' : 'Salir'}</Link></div>
@@ -189,7 +189,7 @@ export function GamePage({ mode }: { mode: 'guest' | 'account' }) {
       ) : view === 'board' && selected ? (
         <BoardView en={en} mode={mode} game={selected} lists={lists} pending={pending} onCommand={command} onFinalize={finalize} onLink={(listId, slot) => { void linkToList(listId, slot); }} onBack={() => setView(mode === 'account' ? 'library' : 'setup')} />
       ) : (
-        <LibraryView en={en} mode={mode} games={games} guestGames={guestGames} pending={pending} onClaim={(game) => { void claim(game); }} onNew={startNew} onOpen={selectGame} onDelete={(game) => { void remove(game); }} />
+        <LibraryView en={en} mode={mode} games={games} guestGames={guestGames} lists={lists} pending={pending} onClaim={(game) => { void claim(game); }} onNew={startNew} onOpen={selectGame} onDelete={(game) => { void remove(game); }} />
       )}
     </main>
   </div>;
@@ -382,9 +382,90 @@ function SetupView({ en, mission, missions, missionId, pointsLimit, players, pen
   </section>;
 }
 
-function LibraryView({ en, mode, games, guestGames, pending, onClaim, onNew, onOpen, onDelete }: { en: boolean; mode: 'guest' | 'account'; games: GameSession[]; guestGames: GameSession[]; pending: boolean; onClaim: (game: GameSession) => void; onNew: () => void; onOpen: (game: GameSession) => void; onDelete: (game: GameSession) => void }) {
-  const renderCards = (items: GameSession[], guest = false) => <div className="game-library-grid">{items.map((game) => { const derived = deriveGameState(game); const first = game.players[0]!; const second = game.players[1]!; return <article className="game-card" key={`${guest ? 'guest-' : ''}${game.id}`}><div className="game-card__top"><span className={`game-status game-status--${game.status.toLowerCase()}`}>{game.status === 'ACTIVE' ? (en ? 'In progress' : 'En curso') : game.status === 'FINISHED' ? (en ? 'Finished' : 'Finalizada') : (en ? 'Abandoned' : 'Abandonada')}</span><span className="muted small">{dateLabel(game.updatedAt, en)}</span></div><h2>{first.name} <span>vs</span> {second.name}</h2><p>{game.mission.name} · {game.mission.scale === 'skirmish' ? (en ? 'Skirmish' : 'Escaramuza') : (en ? 'Standard' : 'Estándar')}</p><p className="game-card__score">{first.victoryPoints} — {second.victoryPoints} <small>· {en ? `Round ${game.currentRound}/${game.mission.gameLength}` : `Ronda ${game.currentRound}/${game.mission.gameLength}`}</small></p><div className="game-card__actions">{guest ? <button className="button-primary" disabled={pending} onClick={() => onClaim(game)}>{en ? 'Save to my account' : 'Guardar en mi cuenta'}</button> : <><button className="button-primary" onClick={() => onOpen(game)}>{game.status === 'ACTIVE' ? (en ? 'Continue' : 'Continuar') : (en ? 'View' : 'Ver')}</button><button className="button-link" onClick={() => onDelete(game)}>{en ? 'Delete' : 'Borrar'}</button></>}</div><span className="sr-only">{en ? `Margin ${derived.margin}` : `Margen ${derived.margin}`}</span></article>; })}</div>;
-  return <section className="game-panel" aria-labelledby="game-library-title"><div className="game-panel__heading"><div><p className="game-eyebrow">{en ? 'Saved sessions' : 'Sesiones guardadas'}</p><h1 id="game-library-title">{en ? 'My games' : 'Mis partidas'}</h1></div><button className="button-primary" onClick={onNew}>{en ? 'New game' : 'Nueva partida'}</button></div>{mode === 'account' && guestGames.length > 0 && <div className="game-claim-banner"><strong>{en ? `${guestGames.length} guest game${guestGames.length === 1 ? '' : 's'} found in this browser.` : `Hay ${guestGames.length} partida${guestGames.length === 1 ? '' : 's'} invitada${guestGames.length === 1 ? '' : 's'} en este navegador.`}</strong><span>{en ? 'Review and save them to your account.' : 'Revísalas y guárdalas en tu cuenta.'}</span>{renderCards(guestGames, true)}</div>}{games.length === 0 ? <div className="game-empty">{en ? 'No games saved yet.' : 'Todavía no hay partidas guardadas.'}</div> : renderCards(games)}</section>;
+export function LibraryView({ en, mode, games, guestGames, lists, pending, onClaim, onNew, onOpen, onDelete }: {
+  en: boolean;
+  mode: 'guest' | 'account';
+  games: GameSession[];
+  guestGames: GameSession[];
+  lists: RemoteList[];
+  pending: boolean;
+  onClaim: (game: GameSession) => void;
+  onNew: () => void;
+  onOpen: (game: GameSession) => void;
+  onDelete: (game: GameSession) => void;
+}) {
+  const linkedListHref = (id: string) => `${localizedPath('builder', en ? 'en' : 'es')}?list=${encodeURIComponent(id)}`;
+  const renderCards = (items: GameSession[], guest = false) => <div className="game-library-grid">
+    {items.map((game) => {
+      const derived = deriveGameState(game);
+      const resultSlot = game.status === 'FINISHED' ? game.winnerPlayerSlot : game.status === 'ACTIVE' ? derived.leader : null;
+      const linkedList = game.linkedListId ? lists.find((list) => list.id === game.linkedListId) ?? null : null;
+      const linkedPlayer = game.ownerPlayerSlot ? game.players[game.ownerPlayerSlot - 1] : null;
+      const linkedFaction = linkedList?.factionCardId
+        ? loadCatalog(linkedList.race).catalog.factionCards.find((card) => card.id === linkedList.factionCardId)?.name ?? null
+        : null;
+      const scale = game.mission.scale === 'skirmish'
+        ? (en ? 'Skirmish' : 'Escaramuza')
+        : game.mission.scale === 'standard'
+          ? (en ? 'Standard' : 'Estándar')
+          : (en ? 'Grand offensive' : 'Gran ofensiva');
+
+      return <article className="game-card" key={`${guest ? 'guest-' : ''}${game.id}`}>
+        <header className="game-card__top">
+          <span className={`game-status game-status--${game.status.toLowerCase()}`}>{game.status === 'ACTIVE' ? (en ? 'In progress' : 'En curso') : game.status === 'FINISHED' ? (en ? 'Finished' : 'Finalizada') : (en ? 'Abandoned' : 'Abandonada')}</span>
+          <time dateTime={game.updatedAt}>{dateLabel(game.updatedAt, en)}</time>
+        </header>
+
+        <div className="game-card__players">
+          {([1, 2] as const).map((slot) => {
+            const player = game.players[slot - 1]!;
+            const highlighted = resultSlot === slot;
+            return <section
+              className="game-card__player"
+              data-race={player.race}
+              data-leading={highlighted ? 'true' : undefined}
+              aria-label={`${player.name}, ${RACE_LABEL[player.race]}, ${player.victoryPoints} ${en ? 'victory points' : 'puntos de victoria'}`}
+              key={slot}
+            >
+              <div className="game-card__player-identity">
+                <img src={raceLogo(player.race)} width="36" height="36" alt="" />
+                <div>
+                  <span>{en ? `Player ${slot}` : `Jugador ${slot}`} · {RACE_LABEL[player.race]}</span>
+                  <strong title={player.name}>{player.name}</strong>
+                </div>
+              </div>
+              {highlighted && <span className="game-card__result-mark">{game.status === 'FINISHED' ? (en ? 'Winner' : 'Ganador') : (en ? 'Leading' : 'Lidera')}</span>}
+              <div className="game-card__player-score" aria-hidden="true"><strong>{player.victoryPoints}</strong><span>{en ? 'VP' : 'PV'}</span></div>
+            </section>;
+          })}
+        </div>
+
+        <div className="game-card__mission">
+          <div><strong>{game.mission.name}</strong><span>{scale} · {game.pointsLimit} {en ? 'points' : 'puntos'}</span></div>
+          <span>{en ? `Round ${game.currentRound}/${game.mission.gameLength}` : `Ronda ${game.currentRound}/${game.mission.gameLength}`}</span>
+        </div>
+
+        {game.linkedListId && <a className="game-card__linked-list" href={linkedListHref(game.linkedListId)}>
+          <img src={raceLogo(linkedList?.race ?? linkedPlayer?.race ?? game.players[0].race)} width="30" height="30" alt="" />
+          <span><small>{linkedPlayer ? (en ? `${linkedPlayer.name}'s linked list` : `Lista asociada de ${linkedPlayer.name}`) : (en ? 'Linked list' : 'Lista asociada')}</small><strong>{linkedList?.name ?? (en ? 'Open linked list' : 'Abrir lista asociada')}</strong>{linkedList && <span>{[RACE_LABEL[linkedList.race], linkedFaction].filter(Boolean).join(' · ')}</span>}</span>
+          <b aria-hidden="true">↗</b>
+        </a>}
+
+        <footer className="game-card__actions">
+          {guest
+            ? <button className="button-primary" type="button" disabled={pending} onClick={() => onClaim(game)}>{en ? 'Save to my account' : 'Guardar en mi cuenta'}</button>
+            : <><button className="button-primary" type="button" onClick={() => onOpen(game)}>{game.status === 'ACTIVE' ? (en ? 'Continue' : 'Continuar') : (en ? 'View game' : 'Ver partida')}</button><button className="button-link" type="button" onClick={() => onDelete(game)}>{en ? 'Delete' : 'Borrar'}</button></>}
+        </footer>
+        <span className="sr-only">{en ? `Victory margin ${derived.margin} points` : `Margen de victoria ${derived.margin} puntos`}</span>
+      </article>;
+    })}
+  </div>;
+
+  return <section className="game-panel game-library" aria-labelledby="game-library-title">
+    <div className="game-panel__heading"><div><p className="game-eyebrow">{en ? 'Saved sessions' : 'Sesiones guardadas'}</p><h1 id="game-library-title">{en ? 'My games' : 'Mis partidas'}</h1></div><button className="button-primary" type="button" onClick={onNew}>{en ? 'New game' : 'Nueva partida'}</button></div>
+    {mode === 'account' && guestGames.length > 0 && <div className="game-claim-banner"><strong>{en ? `${guestGames.length} guest game${guestGames.length === 1 ? '' : 's'} found in this browser.` : `Hay ${guestGames.length} partida${guestGames.length === 1 ? '' : 's'} invitada${guestGames.length === 1 ? '' : 's'} en este navegador.`}</strong><span>{en ? 'Review and save them to your account.' : 'Revísalas y guárdalas en tu cuenta.'}</span>{renderCards(guestGames, true)}</div>}
+    {games.length === 0 ? <div className="game-empty">{en ? 'No games saved yet.' : 'Todavía no hay partidas guardadas.'}</div> : renderCards(games)}
+  </section>;
 }
 
 export function BoardView({ en, mode, game, lists, pending, onCommand, onFinalize, onLink, onBack }: { en: boolean; mode: 'guest' | 'account'; game: GameSession; lists: RemoteList[]; pending: boolean; onCommand: (command: GameCommand) => void; onFinalize: () => void; onLink: (listId: string, slot: 1 | 2) => void; onBack: () => void }) {

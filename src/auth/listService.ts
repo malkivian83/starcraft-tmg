@@ -100,6 +100,10 @@ export async function loadRemoteLists(options: { cursor?: string | null; limit?:
   return request<RemoteListPage>(`/lists${query ? `?${query}` : ''}`);
 }
 
+export async function loadRemoteList(id: string): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/${encodeURIComponent(id)}`)).list;
+}
+
 export async function loadPublicLists(): Promise<RemoteList[]> {
   return (await request<{ lists: RemoteList[] }>('/lists/public')).lists;
 }

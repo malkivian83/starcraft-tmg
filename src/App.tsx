@@ -8,7 +8,7 @@ import { encodeSeed } from '@/engine/seed/codec';
 import { useListStore } from '@/store/listStore';
 import { clearDraft, loadDraft, saveDraft, type DraftScope } from '@/store/draftPersistence';
 import { downloadJson, importListFromJson } from '@/store/persistence';
-import { clonePublicList as cloneRemotePublicList, loadPublicList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
+import { clonePublicList as cloneRemotePublicList, loadPublicList, loadRemoteList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
 import { useAuthStore } from '@/store/authStore';
 import { copyToClipboard } from './ui/common/clipboard';
 import { decodeSeedForAnyRace } from './ui/common/seedImport';
@@ -221,6 +221,7 @@ function AccountRoute() {
   const navigationState = location.state as DraftNavigationState | null;
   const preserveGuestDraft = navigationState?.preserveGuestDraft === true;
   const initialSeed = new URLSearchParams(location.search).get('seed');
+  const initialListId = new URLSearchParams(location.search).get('list');
   const consumeGuestDraft = useCallback(() => {
     if (!preserveGuestDraft) return;
     navigate(location.pathname, { replace: true, state: null });
@@ -235,15 +236,17 @@ function AccountRoute() {
     <ArmyBuilderApp
       mode="account"
       initialSeed={initialSeed}
+      initialListId={initialListId}
       preserveDraftOnMount={preserveGuestDraft}
       onDraftClaimed={consumeGuestDraft}
     />
   </AuthGate>;
 }
 
-function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
+function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
   mode: AccessMode;
   initialSeed?: string | null;
+  initialListId?: string | null;
   preserveDraftOnMount?: boolean;
   onDraftClaimed?: () => void;
   onCloseGuestBuilder?: () => void;
@@ -292,10 +295,37 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
       ? 'guest'
       : null;
   const hydratedDraftScope = useRef<DraftScope | null>(null);
+  const hydratedDirectList = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (mode !== 'account' || !initialListId || hydratedDirectList.current === initialListId) return;
+    hydratedDirectList.current = initialListId;
+    let active = true;
+    void loadRemoteList(initialListId)
+      .then((loaded) => {
+        if (!active) return;
+        setList(loaded);
+        setListIsPublic(loaded.isPublic);
+        setListVisibilityDirty(false);
+        setRemoteRevision(loaded.revision);
+        markSaved();
+        setSeedVisible(false);
+        setPublicListId(null);
+        setPublicList(null);
+        setPage('builder');
+        setToast(tBuilder('listLoaded'));
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError'));
+      });
+    return () => { active = false; };
+  }, [initialListId, markSaved, mode, setList, setRemoteRevision, tBuilder, tBuilderUi]);
 
   useEffect(() => {
     if (!draftScope || hydratedDraftScope.current === draftScope) return;
     hydratedDraftScope.current = draftScope;
+    if (mode === 'account' && initialListId) return;
 
     // Al pasar del constructor invitado al login se conserva el estado vivo
     // del store; el borrador de invitado se conserva localmente y el de cuenta
@@ -342,7 +372,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
     }
     if (initialSeed) setToast(tBuilderUi('invalidSeed'));
     onDraftClaimed?.();
-  }, [draftScope, initialSeed, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, tBuilderUi, user]);
+  }, [draftScope, initialListId, initialSeed, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, tBuilderUi, user]);
   useEffect(() => {
     if (!draftScope || hydratedDraftScope.current !== draftScope) return;
     if (isDirty || listVisibilityDirty) saveDraft(draftScope, { list, remoteRevision, isPublic: listIsPublic });
