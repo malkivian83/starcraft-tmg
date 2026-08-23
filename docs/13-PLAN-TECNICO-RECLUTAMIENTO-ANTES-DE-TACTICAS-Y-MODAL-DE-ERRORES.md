@@ -23,7 +23,8 @@ Además:
 - una vez elegida una facción válida, ninguna unidad de la raza actual
   desaparecerá del catálogo por no poderse añadir;
 - las unidades no añadibles, incluidas las `UNIQUE` ya incorporadas como
-  Kerrigan, permanecerán visibles, atenuadas y con el motivo;
+  Kerrigan, permanecerán visibles y atenuadas; el detalle se conservará en
+  tooltip y texto accesible, sin añadir bloques largos al catálogo;
 - al entrar en **Revisión e impresión** con errores se abrirá un modal que los
   resuma;
 - el panel completo de validación de Revisión seguirá existiendo debajo del
@@ -409,16 +410,16 @@ En [`src/ui/builder/StepMusterUnits.tsx`](../src/ui/builder/StepMusterUnits.tsx)
 6. Aplicar estado visual no disponible a `blocked` e `impossible`.
 7. Aplicar un estado visual de advertencia, pero no de deshabilitado, a
    `provisional`.
-8. Mostrar motivo y remedio visibles tanto para el estado agregado como para
-   composiciones individuales.
+8. Mantener el catálogo compacto: no pintar bloques largos de motivo/remedio
+   debajo de cada composición. El detalle queda en `title` y en un texto
+   `sr-only` enlazado al control.
 9. Conservar el roster derecho y su acción de quitar sin cambios funcionales.
 10. Mantener las unidades invocadas en su sección separada, pero aplicarles la
     elegibilidad de facción: una referencia incompatible se muestra atenuada y
     su acción de alta está deshabilitada.
-11. En cada composición provisional, enlazar el botón habilitado con su mensaje
-    mediante `aria-describedby` e ids únicos. En las no disponibles, mantener
-    motivo y estado como texto normal fuera del botón `disabled`, para que sigan
-    en el orden de lectura.
+11. En cada composición provisional o no disponible, enlazar el botón con el
+    detalle accesible mediante `aria-describedby` e ids únicos, sin reservar
+    espacio visual permanente.
 12. En unidades con composiciones mixtas, mostrar el estado junto a cada
     composición; el estado agregado de la tarjeta no puede ocultar que una
     opción concreta es provisional o está bloqueada.
@@ -429,12 +430,12 @@ En [`src/ui/builder/StepMusterUnits.tsx`](../src/ui/builder/StepMusterUnits.tsx)
 |---|---|
 | Disponible | Tarjeta y composición normales; control habilitado |
 | Provisional | Borde o indicador de aviso; texto “se puede añadir, faltarán N espacios”; control habilitado |
-| Bloqueada | Contenido atenuado, etiqueta “No disponible”, motivo, control deshabilitado |
-| Imposible | Igual que bloqueada, con motivo de etiqueta o `UNIQUE`; nunca oculta |
+| Bloqueada | Contenido atenuado, control deshabilitado y detalle en tooltip/lector |
+| Imposible | Igual que bloqueada, con detalle de etiqueta o `UNIQUE`; nunca oculta |
 
-El gris no puede ser la única señal. Debe acompañarse de texto y del estado
-`disabled` real en el botón. Una tarjeta contenedora que sea un `div` puede usar
-una etiqueta visible; no debe fingir `aria-disabled` si dentro conserva acciones
+El gris no puede ser la única señal. Debe acompañarse del estado `disabled`
+real en el botón y de un detalle accesible/tooltip. Una tarjeta contenedora que
+sea un `div` no debe fingir `aria-disabled` si dentro conserva acciones
 habilitadas.
 
 No se renombrará ni se cambiará globalmente `.card--blocked`: también la usa el
@@ -443,8 +444,8 @@ visible. El catálogo de unidades usará clases propias, por ejemplo
 `.unit-catalog-card--unavailable`, `.unit-composition--provisional` y
 `.unit-composition--unavailable`.
 
-El motivo, el remedio y la etiqueta de estado mantendrán contraste normal; no
-heredarán la opacidad de toda la tarjeta. También se evitará multiplicar la
+El detalle no ocupará espacio visual permanente ni heredará una opacidad que lo
+haga ilegible para lectores de pantalla. También se evitará multiplicar la
 opacidad de una tarjeta atenuada por la de un botón deshabilitado. Si durante la
 implementación se toca algún selector compartido, se añadirá una regresión de
 Cartas Tácticas además de las pruebas del catálogo de unidades.
@@ -592,8 +593,6 @@ en español e inglés. Como mínimo:
 | `reviewErrorsSummary_other` | Hay {{count}} errores por resolver. | There are {{count}} errors to resolve. |
 | `reviewErrorsContinue` | Ver la revisión | View review |
 | `reviewErrorsClose` | Cerrar resumen de errores | Close error summary |
-| `unitUnavailable` | No disponible | Unavailable |
-| `unitProvisional` | Se puede añadir; la lista necesitará más espacios. | Can be added; the list will need more slots. |
 | `chooseFactionHint` | Primero elige una Carta de Facción. Después podrás reclutar y completar los espacios con tácticas. | Choose a Faction Card first. You can then recruit and complete the slots with Tactical Cards. |
 
 Los motivos específicos del motor continúan usando `Localized`. La interfaz no
@@ -738,7 +737,7 @@ Revisión; entrar sin errores no lo abre.
 |---|---|---|
 | UI-01 | Abrir Reclutamiento sin facción | Mensaje de precondición; ninguna alta posible |
 | UI-02 | Catálogo con disponible, provisional, bloqueada e imposible | Todas visibles; semántica y controles correctos |
-| UI-03 | Composición provisional en móvil | Motivo visible sin depender de hover o `title` |
+| UI-03 | Composición provisional en móvil | El catálogo no crece; el detalle sigue disponible para tooltip y tecnologías de asistencia |
 | UI-04 | `UNIQUE` ya incorporada | Sigue gris en catálogo y se puede quitar desde roster |
 | UI-05 | Añadir provisional | Barra, contador de errores de Reclutamiento y validación reflejan `R4` inmediatamente |
 | UI-06 | Resolver con táctica | Barra y validación se actualizan sin perder orden/mejoras |

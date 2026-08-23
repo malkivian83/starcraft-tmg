@@ -291,6 +291,14 @@
     font-weight: 600;
   }
 
+  /* Un déficit de espacios es un error de lista, aunque la unidad se haya
+   * añadido provisionalmente. La regla debe ganar a la paleta de acento del
+   * constructor para que el tipo afectado se vea claramente en rojo. */
+  .app:has(> .builder-toolbar) .resbar__slot.resbar__slot--over .resbar__slot-label,
+  .app:has(> .builder-toolbar) .resbar__slot.resbar__slot--over .resbar__slot-value {
+    color: var(--error);
+  }
+
   .app:has(> .builder-toolbar) .resbar__hint {
     color: var(--text-faint);
     font-size: 12px;
@@ -614,20 +622,6 @@
 
   .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--provisional .comp {
     border-color: color-mix(in srgb, var(--warn) 70%, var(--line));
-  }
-
-  .app:has(> .builder-toolbar) > main.content.no-print .comp__reason {
-    display: flex;
-    max-width: 180px;
-    flex-direction: column;
-    gap: 2px;
-    color: var(--warn);
-    font-size: 11px;
-    line-height: 1.35;
-  }
-
-  .app:has(> .builder-toolbar) > main.content.no-print .comp__reason .card__remedy {
-    font-size: 11px;
   }
 
   /* Acciones compactas de cartas y roster. */

@@ -143,8 +143,8 @@ interface EligibleUnit {
 
 - `available` — se puede añadir.
 - `provisional` — cumple las restricciones duras y los minerales, pero al añadirla la lista tendrá un déficit de espacios. **Se puede añadir y genera R4.**
-- `blocked` — no hay minerales suficientes. **Se muestra atenuada con el motivo.**
-- `impossible` — una etiqueta, raza o `UNIQUE` ya incluida impide incorporarla. **Se muestra atenuada con el motivo; no se oculta.**
+- `blocked` — no hay minerales suficientes. **Se muestra atenuada; el detalle queda en tooltip y texto accesible.**
+- `impossible` — una etiqueta, raza o `UNIQUE` ya incluida impide incorporarla. **Se muestra atenuada; el detalle queda en tooltip y texto accesible, sin ocultarse.**
 
 La UI usa `available` y `provisional` como estados accionables. Sin una Carta de Facción válida no muestra el catálogo de reclutamiento, aunque la validación final conserva R0 para listas importadas o manipuladas.
 

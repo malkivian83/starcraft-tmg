@@ -102,7 +102,7 @@ Como jugador Zerg, debo incluir exactamente una Creep Card, porque mi carta de f
 **US-04 · Reclutar unidades**
 Como jugador, quiero añadir unidades gastando minerales y ocupando espacios.
 - CA-04.1 Tras elegir una Carta de Facción válida, todas las unidades de la raza se muestran, incluidas las incompatibles por etiquetas y las `UNIQUE` ya incluidas.
-- CA-04.1b Las unidades incompatibles o sin minerales se muestran atenuadas, con el motivo, y no se pueden añadir. La falta de espacios es provisional: la composición se puede añadir y la lista queda marcada con R4 hasta completar los espacios.
+- CA-04.1b Las unidades incompatibles o sin minerales se muestran atenuadas y no se pueden añadir. El detalle queda disponible mediante tooltip y tecnologías de asistencia, sin ocupar espacio permanente. La falta de espacios es provisional: la composición se puede añadir y la lista queda marcada con R4 hasta completar los espacios.
 - CA-04.2 Cada unidad muestra sus opciones de composición con número de modelos, coste y valor de suministro.
 - CA-04.3 Al elegir una opción, la unidad ocupa tantos espacios de su tipo como su valor de suministro.
 - CA-04.4 Si no quedan espacios libres del tipo requerido, la app lo indica y explica qué carta táctica lo desbloquearía.

@@ -55,7 +55,7 @@ export function StepMusterUnits() {
         <section className="panel">
           <h2 className="panel__title">{t('catalog')}</h2>
           <div className="stack">
-            {recruitable.map(({ entry, status, reason, remedy, compositions }) => (
+            {recruitable.map(({ entry, status, compositions }) => (
               <div
                 key={entry.id}
                 className={`card unit-card--${status}`}
@@ -70,21 +70,20 @@ export function StepMusterUnits() {
                 </div>
 
                 <div className="row" style={{ gap: 6 }}>
-                  {compositions.map(({ composition, status: cs, reason: cr, remedy: cm, projectedSlotDeficit }) => {
+                  {compositions.map(({ composition, status: cs, reason: cr, remedy: cm }) => {
                     const detailId = `unit-${entry.id}-${composition.id}-eligibility`;
                     const addable = isUnitAddable(cs);
-                    const statusText = cs === 'provisional'
-                      ? t('unitProvisional', { count: projectedSlotDeficit ?? 0 })
-                      : cs === 'available'
-                        ? null
-                        : t('unitUnavailable');
+                    const detailText = [cr, cm]
+                      .filter((text): text is NonNullable<typeof text> => Boolean(text))
+                      .map((text) => localizedText(text, locale))
+                      .join(' ');
                     return (
                       <div key={composition.id} className={`comp-wrap comp-wrap--${cs}`}>
                         <button
                           className="comp"
                           disabled={!addable}
                           title={cr ? localizedText(cr, locale) : undefined}
-                          aria-describedby={cr ? detailId : undefined}
+                          aria-describedby={detailText ? detailId : undefined}
                           aria-label={t('addUnitAria', { name: entry.name, models: models(composition.models), cost: composition.mineralCost })}
                           onClick={() => { if (addable) addUnit(entry.id, composition.id); }}
                         >
@@ -92,24 +91,11 @@ export function StepMusterUnits() {
                           <span className="comp__supply">{t('supply')} {composition.supplyValue}</span>
                           <span className="comp__cost">{composition.mineralCost} min.</span>
                         </button>
-                        {(statusText || cr || cm) && (
-                          <span id={detailId} className="comp__reason" role="status">
-                            {statusText && <strong>{statusText}</strong>}
-                            {cr && <span>{localizedText(cr, locale)}</span>}
-                            {cm && <span className="card__remedy">{localizedText(cm, locale)}</span>}
-                          </span>
-                        )}
+                        {detailText && <span id={detailId} className="sr-only">{detailText}</span>}
                       </div>
                     );
                   })}
                 </div>
-
-                {status !== 'available' && reason && (
-                  <>
-                    <span className="card__reason">{localizedText(reason, locale)}</span>
-                    {remedy && <span className="card__remedy">{localizedText(remedy, locale)}</span>}
-                  </>
-                )}
               </div>
             ))}
           </div>
@@ -126,17 +112,26 @@ export function StepMusterUnits() {
             <div className="stack">
               {summoned.map(({ entry, status, reason, remedy }) => {
                 const addable = isUnitAddable(status);
+                const detailId = `summoned-${entry.id}-eligibility`;
+                const detailText = [reason, remedy]
+                  .filter((text): text is NonNullable<typeof text> => Boolean(text))
+                  .map((text) => localizedText(text, locale))
+                  .join(' ');
                 return <div key={entry.id} className={`card unit-card--${status}`}>
                   <div className="card__head">
                     <span className="card__name">{entry.name}</span>
                     <span className="chip">{summonedLabel}</span>
                   </div>
-                  {reason && <span className="card__reason">{localizedText(reason, locale)}</span>}
-                  {remedy && <span className="card__remedy">{localizedText(remedy, locale)}</span>}
                   <div>
-                    <button disabled={!addable} onClick={() => { if (addable) addReferenceUnit(entry.id); }}>
+                    <button
+                      disabled={!addable}
+                      title={reason ? localizedText(reason, locale) : undefined}
+                      aria-describedby={detailText ? detailId : undefined}
+                      onClick={() => { if (addable) addReferenceUnit(entry.id); }}
+                    >
                       {t('addReference')}
                     </button>
+                    {detailText && <span id={detailId} className="sr-only">{detailText}</span>}
                   </div>
                 </div>;
               })}

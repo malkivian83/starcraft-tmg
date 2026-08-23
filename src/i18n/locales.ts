@@ -182,8 +182,6 @@ Object.assign(resources.en.builderUi, {
   textCopyError: 'The list could not be copied.',
 });
 Object.assign(resources.es.builderUi, {
-  unitUnavailable: 'No disponible',
-  unitProvisional: 'Añadible; faltan {{count}} espacios.',
   reviewErrorsTitle: 'Hay errores en la lista',
   reviewErrorsSummary_one: 'Hay 1 error por resolver.',
   reviewErrorsSummary_other: 'Hay {{count}} errores por resolver.',
@@ -191,8 +189,6 @@ Object.assign(resources.es.builderUi, {
   reviewErrorsClose: 'Cerrar resumen de errores',
 });
 Object.assign(resources.en.builderUi, {
-  unitUnavailable: 'Unavailable',
-  unitProvisional: 'Can be added; {{count}} slots are missing.',
   reviewErrorsTitle: 'There are errors in the list',
   reviewErrorsSummary_one: 'There is 1 error to resolve.',
   reviewErrorsSummary_other: 'There are {{count}} errors to resolve.',
