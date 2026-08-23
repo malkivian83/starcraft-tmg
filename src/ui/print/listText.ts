@@ -1,4 +1,4 @@
-import { findComposition, upgradeCostFor } from '@/engine/costing';
+import { findComposition } from '@/engine/costing';
 import type { CatalogIndex } from '@/engine/catalogIndex';
 import type { ArmyList, CostSummary, ValidationResult } from '@/engine/types';
 import { SLOT_TYPES } from '@/engine/types';
@@ -25,7 +25,7 @@ export function formatListAsText(
   },
   t: (key: string) => string,
   locale: 'es' | 'en',
-  share: { seed: string; url: string },
+  share: { url: string },
 ): string {
   const faction = list.factionCardId
     ? index.factionCards.get(list.factionCardId)
@@ -74,16 +74,12 @@ export function formatListAsText(
     const unit = index.unitEntries.get(listEntry.unitEntryId);
     if (!unit) continue;
     const composition = findComposition(unit, listEntry.compositionId);
-    const upgradeCost = listEntry.upgrades.reduce((total, applied) => {
-      const upgrade = unit.upgrades.find((candidate) => candidate.id === applied.upgradeId);
-      return total + (upgrade ? (upgradeCostFor(upgrade, listEntry.compositionId) ?? 0) : 0);
-    }, 0);
     const upgrades = listEntry.upgrades
       .map((applied) => unit.upgrades.find((upgrade) => upgrade.id === applied.upgradeId)?.name ?? applied.upgradeId)
       .join(', ') || t('noValue');
 
     lines.push(
-      `• ${unit.name} · ${t('models')}: ${composition?.models ?? t('noValue')} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')} · ${t('slot')}: ${slotLabel(unit.slotType, locale)} · ${t('upgrades')}: ${upgrades} · ${composition ? composition.mineralCost + upgradeCost : 0} ${t('minerals')}`,
+      `• **${unit.name}** · ${t('models')}: ${composition?.models ?? t('noValue')} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')} · ${t('upgrades')}: ${upgrades}`,
     );
   }
   lines.push(`${t('total')}: ${summary.mineralsSpent} ${t('minerals')}`);
@@ -112,7 +108,7 @@ export function formatListAsText(
       .join(' · ') || t('noValue')}`,
   );
 
-  lines.push('', t('seedLink'), share.url, `${t('seed')}: ${share.seed}`);
+  lines.push('', t('seedLink'), share.url);
 
   return lines.join('\n');
 }

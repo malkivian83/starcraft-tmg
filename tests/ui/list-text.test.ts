@@ -23,7 +23,7 @@ function textFor(list = manualExampleList()) {
     { list, index, summary: computeCosts(list, index), validation: validateList(list, index) },
     t,
     'es',
-    { seed: 'SCT1-TEST-SEED', url: 'https://example.test/es/crear-lista?seed=SCT1-TEST-SEED' },
+    { url: 'https://example.test/es/crear-lista?seed=SCT1-TEST-SEED' },
   );
 }
 
@@ -34,10 +34,13 @@ describe('formato de lista para copiar en texto', () => {
     expect(text).toContain("Raynor's Raiders — ejemplo del manual §9.1");
     expect(text).toContain('CARTAS DE MANDO');
     expect(text).toContain('UNIDADES');
-    expect(text).toContain('Marine');
+    expect(text).toContain('**Marine**');
+    const marineLine = text.split('\n').find((line) => line.includes('**Marine**')) ?? '';
+    expect(marineLine).not.toContain('Espacio');
+    expect(marineLine).not.toContain('minerales');
     expect(text).toContain('ESCENARIOS QUE LLEVO AL DRAFT');
     expect(text).toContain('https://example.test/es/crear-lista?seed=SCT1-TEST-SEED');
-    expect(text).toContain('Seed: SCT1-TEST-SEED');
+    expect(text).not.toContain('Seed:');
     expect(text).not.toContain('Perfil de unidad');
     expect(text).not.toContain('Habilidades');
     expect(text).not.toContain('Armas');

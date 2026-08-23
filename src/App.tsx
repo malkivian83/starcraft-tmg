@@ -422,7 +422,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
       const seed = encodeSeed(list, index);
       const shareUrl = new URL(localizedPath('guest-builder', locale), window.location.origin);
       shareUrl.searchParams.set('seed', seed);
-      await copyToClipboard(formatListAsText({ list, index, summary, validation }, tPrint, locale, { seed, url: shareUrl.toString() }));
+      await copyToClipboard(formatListAsText({ list, index, summary, validation }, tPrint, locale, { url: shareUrl.toString() }));
       setToast(tBuilderUi('textCopied'));
     } catch {
       setToast(tBuilderUi('textCopyError'));
