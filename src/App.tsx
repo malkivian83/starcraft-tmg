@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
+import { encodeSeed } from '@/engine/seed/codec';
 import { useListStore } from '@/store/listStore';
 import { clearDraft, loadDraft, saveDraft, type DraftScope } from '@/store/draftPersistence';
 import { downloadJson, importListFromJson } from '@/store/persistence';
 import { clonePublicList as cloneRemotePublicList, loadPublicList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
 import { useAuthStore } from '@/store/authStore';
+import { copyToClipboard } from './ui/common/clipboard';
+import { decodeSeedForAnyRace } from './ui/common/seedImport';
 import { AuthGate } from './ui/auth/AuthGate';
 import { SavedListsPage } from './ui/lists/SavedListsPage';
 import { PublicListPage } from './ui/lists/PublicListPage';
@@ -24,6 +27,7 @@ import { StepReview } from './ui/builder/StepReview';
 import { StepScenario } from './ui/builder/StepScenario';
 import { StepStatistics } from './ui/builder/StepStatistics';
 import { PrintSheet } from './ui/print/PrintSheet';
+import { formatListAsText } from './ui/print/listText';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
 import { AppVersion } from './ui/common/AppVersion';
@@ -194,12 +198,14 @@ function GuestBuilderRoute() {
   const status = useAuthStore((state) => state.status);
   const restore = useAuthStore((state) => state.restore);
   const locale = routeLocale(location.pathname);
+  const initialSeed = new URLSearchParams(location.search).get('seed');
   useEffect(() => {
     if (status === 'checking') void restore();
   }, [restore, status]);
-  if (status === 'authenticated') return <Navigate to="/" replace />;
+  if (status === 'authenticated') return <Navigate to={`${localizedPath('builder', locale)}${location.search}${location.hash}`} replace />;
   return <ArmyBuilderApp
     mode="guest"
+    initialSeed={initialSeed}
     onCloseGuestBuilder={() => navigate(localizedPath('home', locale), { replace: true })}
     onRequestAuthentication={() => navigate('/', { state: { preserveGuestDraft: true } satisfies DraftNavigationState })}
   />;
@@ -213,6 +219,7 @@ function AccountRoute() {
   const previousStatus = useRef(status);
   const navigationState = location.state as DraftNavigationState | null;
   const preserveGuestDraft = navigationState?.preserveGuestDraft === true;
+  const initialSeed = new URLSearchParams(location.search).get('seed');
   const consumeGuestDraft = useCallback(() => {
     if (!preserveGuestDraft) return;
     navigate(location.pathname, { replace: true, state: null });
@@ -226,14 +233,16 @@ function AccountRoute() {
   return <AuthGate>
     <ArmyBuilderApp
       mode="account"
+      initialSeed={initialSeed}
       preserveDraftOnMount={preserveGuestDraft}
       onDraftClaimed={consumeGuestDraft}
     />
   </AuthGate>;
 }
 
-function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
+function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
   mode: AccessMode;
+  initialSeed?: string | null;
   preserveDraftOnMount?: boolean;
   onDraftClaimed?: () => void;
   onCloseGuestBuilder?: () => void;
@@ -241,6 +250,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
 }) {
   const { t: tBuilder } = useTranslation('builder');
   const { t: tBuilderUi } = useTranslation('builderUi');
+  const { t: tPrint } = useTranslation('print');
   const { t: tNavigation } = useTranslation('navigation');
   const { t: tCommon } = useTranslation('common');
   const { t: tLegal } = useTranslation('legal');
@@ -292,6 +302,23 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       return;
     }
 
+    const importedSeed = initialSeed ? decodeSeedForAnyRace(initialSeed) : null;
+    if (importedSeed?.list) {
+      clearDraft('guest');
+      setList(importedSeed.list);
+      setListIsPublic(false);
+      setListVisibilityDirty(false);
+      setRemoteRevision(null);
+      setSeedVisible(false);
+      setToast(importedSeed.status === 'partial'
+        ? tBuilderUi('importedPartial', { items: importedSeed.missing.join(', ') })
+        : importedSeed.status === 'version_mismatch'
+          ? tBuilderUi('importedVersion')
+          : tBuilderUi('importedOk'));
+      onDraftClaimed?.();
+      return;
+    }
+
       const draft = loadDraft(draftScope);
       if (draft) {
         setList(draft.list);
@@ -309,8 +336,9 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setListIsPublic(false);
       setListVisibilityDirty(false);
     }
+    if (initialSeed) setToast(tBuilderUi('invalidSeed'));
     onDraftClaimed?.();
-  }, [draftScope, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, user]);
+  }, [draftScope, initialSeed, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, tBuilderUi, user]);
   useEffect(() => {
     if (!draftScope || hydratedDraftScope.current !== draftScope) return;
     if (isDirty || listVisibilityDirty) saveDraft(draftScope, { list, remoteRevision, isPublic: listIsPublic });
@@ -388,6 +416,17 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setPage('builder');
       setToast(tBuilderUi('imported'));
     } else setToast(result.error ?? tBuilderUi('listSaveError'));
+  };
+  const copyListAsText = async () => {
+    try {
+      const seed = encodeSeed(list, index);
+      const shareUrl = new URL(localizedPath('guest-builder', locale), window.location.origin);
+      shareUrl.searchParams.set('seed', seed);
+      await copyToClipboard(formatListAsText({ list, index, summary, validation }, tPrint, locale, { seed, url: shareUrl.toString() }));
+      setToast(tBuilderUi('textCopied'));
+    } catch {
+      setToast(tBuilderUi('textCopyError'));
+    }
   };
   const saveList = async () => {
     if (!capabilities.saveRemoteLists) {
@@ -568,6 +607,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
                     }} />
                   </label>
                   <button className="builder-toolbar__portable-action" onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
+                  <button className="builder-toolbar__portable-action" onClick={() => { void copyListAsText(); }}>{tBuilderUi('copyAsText')}</button>
                   {mode === 'guest' && <button onClick={() => window.print()}>{tBuilderUi('printPdf')}</button>}
                 </>
               )}

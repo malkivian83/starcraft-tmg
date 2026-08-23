@@ -171,4 +171,23 @@ Object.assign(resources.en.builderUi, {
   statsDonutAria: '{{faction}}: {{wins}} wins, {{losses}} losses and {{draws}} draws out of {{played}} games.',
 });
 
+Object.assign(resources.es.builderUi, {
+  copyAsText: 'Copiar en texto',
+  textCopied: 'Lista copiada en texto.',
+  textCopyError: 'No se pudo copiar la lista.',
+});
+Object.assign(resources.en.builderUi, {
+  copyAsText: 'Copy as text',
+  textCopied: 'List copied as text.',
+  textCopyError: 'The list could not be copied.',
+});
+Object.assign(resources.es.print, {
+  seedLink: 'ENLACE PARA COPIAR LA LISTA',
+  seed: 'Seed',
+});
+Object.assign(resources.en.print, {
+  seedLink: 'LINK TO COPY THE LIST',
+  seed: 'Seed',
+});
+
 export type TranslationResources = typeof resources;

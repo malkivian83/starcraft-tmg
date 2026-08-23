@@ -25,6 +25,7 @@ describe('ruta pública del constructor', () => {
     expect(html).toContain('Seed');
     expect(html).toContain('Importar');
     expect(html).toContain('Exportar');
+    expect(html).toContain('Copiar en texto');
     expect(html).toContain('Imprimir / PDF');
     expect(html).not.toContain('Mis listas');
     expect(html).not.toContain('Listas públicas');
