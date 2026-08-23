@@ -43,6 +43,7 @@ describe('formato de lista para copiar en texto', () => {
     expect(marineLine).not.toContain('Miniaturas');
     expect(marineLine).not.toContain('Espacio');
     expect(marineLine).not.toContain('minerales');
+    expect(marineLine).not.toContain('Mejoras:');
     expect(text).not.toContain('*Total:*');
     expect(text).toContain('ESCENARIOS QUE LLEVO AL DRAFT');
     expect(text).toContain('https://example.test/es/crear-lista?seed=SCT1-TEST-SEED');

@@ -76,10 +76,11 @@ export function formatListAsText(
     const composition = findComposition(unit, listEntry.compositionId);
     const upgrades = listEntry.upgrades
       .map((applied) => unit.upgrades.find((upgrade) => upgrade.id === applied.upgradeId)?.name ?? applied.upgradeId)
-      .join(', ') || t('noValue');
+      .join(', ');
+    const upgradesText = upgrades ? ` · ${t('upgrades')}: ${upgrades}` : '';
 
     lines.push(
-      `• ${whatsappBold(unit.name)} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')} · ${t('upgrades')}: ${upgrades}`,
+      `• ${whatsappBold(unit.name)} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')}${upgradesText}`,
     );
   }
 
