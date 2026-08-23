@@ -632,7 +632,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
                     }} />
                   </label>
                   <button className="builder-toolbar__portable-action" onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
-                  <button className="builder-toolbar__portable-action" onClick={() => { void copyListAsText(); }}>{tBuilderUi('copyAsText')}</button>
+                  <button onClick={() => { void copyListAsText(); }}>{tBuilderUi('copyAsText')}</button>
                   {mode === 'guest' && <button onClick={() => window.print()}>{tBuilderUi('printPdf')}</button>}
                 </>
               )}
