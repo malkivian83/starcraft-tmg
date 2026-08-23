@@ -31,13 +31,19 @@ describe('formato de lista para copiar en texto', () => {
   it('incluye el resumen de la hoja, pero no las fichas de unidad', () => {
     const text = textFor();
 
-    expect(text).toContain("Raynor's Raiders — ejemplo del manual §9.1");
-    expect(text).toContain('CARTAS DE MANDO');
-    expect(text).toContain('UNIDADES');
-    expect(text).toContain('**Marine**');
-    const marineLine = text.split('\n').find((line) => line.includes('**Marine**')) ?? '';
+    expect(text).toContain("*Raynor's Raiders — ejemplo del manual §9.1*");
+    expect(text).toContain('_TERRAN · Estándar');
+    expect(text).toContain('*CARTAS DE MANDO*');
+    expect(text).toContain('*Facción:*');
+    expect(text).toContain('*UNIDADES*');
+    expect(text).toContain('*Marine*');
+    expect(text).toContain('*ENLACE PARA COPIAR LA LISTA*');
+    expect(text).not.toContain('**Marine**');
+    const marineLine = text.split('\n').find((line) => line.includes('*Marine*')) ?? '';
+    expect(marineLine).not.toContain('Miniaturas');
     expect(marineLine).not.toContain('Espacio');
     expect(marineLine).not.toContain('minerales');
+    expect(text).not.toContain('*Total:*');
     expect(text).toContain('ESCENARIOS QUE LLEVO AL DRAFT');
     expect(text).toContain('https://example.test/es/crear-lista?seed=SCT1-TEST-SEED');
     expect(text).not.toContain('Seed:');
@@ -51,7 +57,7 @@ describe('formato de lista para copiar en texto', () => {
       entries: [entry('zerg.entry.roachling', '3', [], true)],
     });
     const text = textFor(list);
-    const summonedStart = text.indexOf('UNIDADES INVOCADAS');
+    const summonedStart = text.indexOf('*UNIDADES INVOCADAS*');
 
     expect(summonedStart).toBeGreaterThan(-1);
     expect(text.slice(0, summonedStart)).not.toContain('Roachling');

@@ -40,20 +40,20 @@ export function formatListAsText(
     : '';
 
   const lines = [
-    list.name,
-    `${list.race} · ${scaleLabel(list.scaleId, t)} · ${summary.mineralsSpent}/${summary.mineralLimit} ${t('minerals')} · ${summary.vespeneSpent}/${summary.vespeneLimit} ${t('gas')}${resource} · ${t('supply')} ${summary.totalSupply}`,
+    whatsappBold(list.name),
+    whatsappItalic(`${list.race} · ${scaleLabel(list.scaleId, t)} · ${summary.mineralsSpent}/${summary.mineralLimit} ${t('minerals')} · ${summary.vespeneSpent}/${summary.vespeneLimit} ${t('gas')}${resource} · ${t('supply')} ${summary.totalSupply}`),
   ];
 
-  if (!validation.legal) lines.push(t('invalid'));
+  if (!validation.legal) lines.push(whatsappBold(t('invalid')));
 
-  lines.push('', t('commandCards'));
+  lines.push('', whatsappBold(t('commandCards')));
   lines.push(
-    `${t('faction')}: ${faction?.name ?? t('noValue')}`
-      + (creep ? ` · ${t('creep')}: ${creep.name} (${creep.vespeneCost} ${t('gas')})` : ''),
+    `${whatsappBold(`${t('faction')}:`)} ${faction?.name ?? t('noValue')}`
+      + (creep ? ` · ${whatsappBold(`${t('creep')}:`)} ${creep.name} (${creep.vespeneCost} ${t('gas')})` : ''),
   );
   if (list.tacticalCardIds.length > 0) {
     lines.push(
-      `${t('tactics')}: ${list.tacticalCardIds
+      `${whatsappBold(`${t('tactics')}:`)} ${list.tacticalCardIds
         .map((id) => {
           const card = index.tacticalCards.get(id);
           return card ? `${card.name} (${card.vespeneCost})` : id;
@@ -62,14 +62,14 @@ export function formatListAsText(
     );
   }
 
-  lines.push('', t('armySlots'));
+  lines.push('', whatsappBold(t('armySlots')));
   lines.push(
     SLOT_TYPES.filter((type) => summary.slots[type].total > 0)
       .map((type) => `${slotLabel(type, locale)} ${summary.slots[type].used}/${summary.slots[type].total}`)
       .join(' · ') || t('noValue'),
   );
 
-  lines.push('', t('units'));
+  lines.push('', whatsappBold(t('units')));
   for (const listEntry of mustered) {
     const unit = index.unitEntries.get(listEntry.unitEntryId);
     if (!unit) continue;
@@ -79,13 +79,12 @@ export function formatListAsText(
       .join(', ') || t('noValue');
 
     lines.push(
-      `• **${unit.name}** · ${t('models')}: ${composition?.models ?? t('noValue')} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')} · ${t('upgrades')}: ${upgrades}`,
+      `• ${whatsappBold(unit.name)} · ${t('supplyShort')}: ${composition?.supplyValue ?? t('noValue')} · ${t('upgrades')}: ${upgrades}`,
     );
   }
-  lines.push(`${t('total')}: ${summary.mineralsSpent} ${t('minerals')}`);
 
   if (referenced.length > 0) {
-    lines.push('', t('summoned'));
+    lines.push('', whatsappBold(t('summoned')));
     lines.push(
       referenced
         .map((entry) => index.unitEntries.get(entry.unitEntryId)?.name ?? entry.unitEntryId)
@@ -93,9 +92,9 @@ export function formatListAsText(
     );
   }
 
-  lines.push('', t('draftScenarios'));
+  lines.push('', whatsappBold(t('draftScenarios')));
   lines.push(
-    `${t('missions')}: ${list.missionCardIds
+    `${whatsappBold(`${t('missions')}:`)} ${list.missionCardIds
       .map((id) => {
         const mission = index.missionCards.get(id);
         return mission ? `${mission.name} (${scaleLabel(mission.scale, t)})` : id;
@@ -103,14 +102,22 @@ export function formatListAsText(
       .join(' · ') || t('noValue')}`,
   );
   lines.push(
-    `${t('deployments')}: ${list.deploymentCardIds
+    `${whatsappBold(`${t('deployments')}:`)} ${list.deploymentCardIds
       .map((id) => index.deploymentCards.get(id)?.name ?? id)
       .join(' · ') || t('noValue')}`,
   );
 
-  lines.push('', t('seedLink'), share.url);
+  lines.push('', whatsappBold(t('seedLink')), share.url);
 
   return lines.join('\n');
+}
+
+function whatsappBold(value: string): string {
+  return `*${value}*`;
+}
+
+function whatsappItalic(value: string): string {
+  return `_${value}_`;
 }
 
 function scaleLabel(scale: string, t: (key: string) => string): string {
