@@ -24,6 +24,7 @@ import { SeedPanel } from './ui/common/SeedPanel';
 import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
+import { ReviewErrorsModal } from './ui/builder/ReviewErrorsModal';
 import { StepScenario } from './ui/builder/StepScenario';
 import { StepStatistics } from './ui/builder/StepStatistics';
 import { PrintSheet } from './ui/print/PrintSheet';
@@ -268,6 +269,9 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
   const [listVisibilityDirty, setListVisibilityDirty] = useState(false);
   const [seedVisible, setSeedVisible] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [reviewErrorsOpen, setReviewErrorsOpen] = useState(false);
+  const reviewTabRef = useRef<HTMLButtonElement>(null);
+  const previousReviewVisible = useRef(false);
   const { list, index, summary, validation, remoteRevision, isDirty } = useListStore();
   const setRace = useListStore((state) => state.setRace);
   const setScale = useListStore((state) => state.setScale);
@@ -381,6 +385,27 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
   useEffect(() => {
     if (!statsAvailable && step === 'stats') setStep('cards');
   }, [statsAvailable, step]);
+  const reviewVisible = page === 'builder' && step === 'review';
+  useEffect(() => {
+    if (!reviewVisible) {
+      if (reviewErrorsOpen) setReviewErrorsOpen(false);
+      previousReviewVisible.current = false;
+      return;
+    }
+    if (reviewErrorsOpen && validation.errors.length === 0) {
+      setReviewErrorsOpen(false);
+      return;
+    }
+    const enteredReview = !previousReviewVisible.current && reviewVisible;
+    previousReviewVisible.current = reviewVisible;
+    if (enteredReview && validation.errors.length > 0) setReviewErrorsOpen(true);
+  }, [reviewVisible, reviewErrorsOpen, validation.errors.length]);
+  const closeReviewErrors = useCallback(() => {
+    setReviewErrorsOpen(false);
+    const restoreFocus = () => reviewTabRef.current?.focus();
+    if (typeof window.requestAnimationFrame === 'function') window.requestAnimationFrame(restoreFocus);
+    else restoreFocus();
+  }, []);
   const errorsByStep: Record<StepId, number> = {
     cards: validation.errors.filter((error) => ['R0', 'R2', 'R7', 'R11'].includes(error.rule)).length,
     units: validation.errors.filter((error) => ['R1', 'R3', 'R4', 'R6', 'R8', 'R9', 'R10'].includes(error.rule)).length,
@@ -487,7 +512,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
   };
 
   return (
-    <div className="app" data-race={list.race}>
+    <div className={`app${reviewErrorsOpen ? ' app--modal-open' : ''}`} data-race={list.race}>
       <header className="topbar app-header no-print">
         {mode === 'account' ? (
           <img
@@ -616,7 +641,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
           <ResourceBar summary={summary} hasErrors={!validation.legal} />
           <nav className="tabs no-print">
             {steps.map((item) => (
-              <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
+              <button ref={item.id === 'review' ? reviewTabRef : undefined} key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
                 {tBuilder(item.label)}
                 {errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}
               </button>
@@ -641,6 +666,14 @@ function ArmyBuilderApp({ mode, initialSeed = null, preserveDraftOnMount = false
             {step === 'review' && <StepReview />}
             {step === 'stats' && statsAvailable && <StepStatistics listId={list.id} />}
           </main>
+          {reviewErrorsOpen && reviewVisible && (
+            <ReviewErrorsModal
+              errors={validation.errors}
+              list={list}
+              index={index}
+              onClose={closeReviewErrors}
+            />
+          )}
           <div className={`content print-sheet-host${step === 'review' ? ' print-sheet-host--preview' : ''}`}>
             <PrintSheet />
           </div>

@@ -317,7 +317,7 @@ describe('R12/R13 — cartas de escenario', () => {
 });
 
 describe('Filtrado en dos niveles (SDD §6.6)', () => {
-  it('oculta lo imposible y muestra lo bloqueado por recursos', () => {
+  it('mantiene lo imposible visible y muestra lo bloqueado por recursos', () => {
     const list = zergBase({
       mineralLimit: 200,
       tacticalCardIds: ['zerg.tactical.hydralisk_den'],
@@ -335,13 +335,13 @@ describe('Filtrado en dos niveles (SDD §6.6)', () => {
     expect(corpser?.reason?.es).toContain('240');
   });
 
-  it('lo bloqueado por espacios explica qué carta lo resuelve', () => {
+  it('lo provisional por espacios explica qué carta lo resuelve', () => {
     const list = zergBase({ mineralLimit: 2000 });
     const units = getEligibleUnits(list, zerg);
     const hydra = units.find((u) => u.entry.id === 'zerg.entry.hydralisk');
     // Zerg Swarm da 1 Élite: la composición de 2 (suministro 2) no cabe.
     const comp2 = hydra?.compositions.find((c) => c.composition.id === '2');
-    expect(comp2?.status).toBe('blocked');
+    expect(comp2?.status).toBe('provisional');
     expect(comp2?.remedy?.es).toContain('Élite');
   });
 });

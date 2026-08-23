@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { findComposition, upgradeCostFor } from '@/engine/costing';
-import { getEligibleUnits } from '@/engine/eligibility';
+import { getEligibleUnits, isUnitAddable } from '@/engine/eligibility';
 import type { ListEntry, UnitCard, UnitEntry } from '@/engine/types';
 import { useListStore } from '@/store/listStore';
 import { CombatTagChips, slotLabel, UniqueChip } from '../common/Chips';
@@ -18,9 +18,9 @@ import './unitcard.css';
 /**
  * Paso 2 — Reclutamiento.
  *
- * Filtrado de dos niveles (SDD §6.6): lo imposible se oculta, lo bloqueado
- * por recursos se muestra atenuado con el motivo. Ocultar lo segundo dejaría
- * al usuario sin saber que la unidad existe.
+ * Las unidades incompatibles o sin recursos permanecen en el catálogo. La
+ * falta de espacios es provisional: permite incorporar la composición y deja
+ * que la validación final muestre R4 hasta añadir las tácticas adecuadas.
  */
 export function StepMusterUnits() {
   const { i18n } = useTranslation();
@@ -31,7 +31,11 @@ export function StepMusterUnits() {
   const addUnit = useListStore((s) => s.addUnit);
   const addReferenceUnit = useListStore((s) => s.addReferenceUnit);
 
-  if (!list.factionCardId) {
+  const faction = list.factionCardId
+    ? index.factionCards.get(list.factionCardId)
+    : undefined;
+
+  if (!faction || faction.race !== list.race) {
     return (
       <div className="panel">
         <p className="empty">
@@ -41,10 +45,7 @@ export function StepMusterUnits() {
     );
   }
 
-  const eligible = getEligibleUnits(list, index, summary).filter(
-    // Nivel 1: nunca podrá formar parte de este ejército → se oculta.
-    (u) => u.status !== 'impossible',
-  );
+  const eligible = getEligibleUnits(list, index, summary);
   const recruitable = eligible.filter((u) => !u.entry.summoned);
   const summoned = eligible.filter((u) => u.entry.summoned);
 
@@ -57,41 +58,53 @@ export function StepMusterUnits() {
             {recruitable.map(({ entry, status, reason, remedy, compositions }) => (
               <div
                 key={entry.id}
-                className={`card${status === 'blocked' ? ' card--blocked' : ''}`}
+                className={`card unit-card--${status}`}
               >
                 <div className="card__head">
                   <span className="card__name">
                     {entry.name} <UniqueChip unique={entry.unique} />
                   </span>
-                    <span className="chip chip--slot">
+                  <span className="chip chip--slot">
                     {slotLabel(entry.slotType, locale)}
                   </span>
                 </div>
 
                 <div className="row" style={{ gap: 6 }}>
-                  {compositions.map(({ composition, status: cs, reason: cr }) => (
-                    <button
-                      key={composition.id}
-                      className="comp"
-                      disabled={cs !== 'available'}
-                      title={cr ? localizedText(cr, locale) : undefined}
-                      aria-label={t('addUnitAria', { name: entry.name, models: models(composition.models), cost: composition.mineralCost })}
-                      onClick={() => addUnit(entry.id, composition.id)}
-                    >
-                      <span className="comp__models">
-                        {models(composition.models)}
-                      </span>
-                      <span className="comp__supply">
-                        {t('supply')} {composition.supplyValue}
-                      </span>
-                      <span className="comp__cost">
-                        {composition.mineralCost} min.
-                      </span>
-                    </button>
-                  ))}
+                  {compositions.map(({ composition, status: cs, reason: cr, remedy: cm, projectedSlotDeficit }) => {
+                    const detailId = `unit-${entry.id}-${composition.id}-eligibility`;
+                    const addable = isUnitAddable(cs);
+                    const statusText = cs === 'provisional'
+                      ? t('unitProvisional', { count: projectedSlotDeficit ?? 0 })
+                      : cs === 'available'
+                        ? null
+                        : t('unitUnavailable');
+                    return (
+                      <div key={composition.id} className={`comp-wrap comp-wrap--${cs}`}>
+                        <button
+                          className="comp"
+                          disabled={!addable}
+                          title={cr ? localizedText(cr, locale) : undefined}
+                          aria-describedby={cr ? detailId : undefined}
+                          aria-label={t('addUnitAria', { name: entry.name, models: models(composition.models), cost: composition.mineralCost })}
+                          onClick={() => { if (addable) addUnit(entry.id, composition.id); }}
+                        >
+                          <span className="comp__models">{models(composition.models)}</span>
+                          <span className="comp__supply">{t('supply')} {composition.supplyValue}</span>
+                          <span className="comp__cost">{composition.mineralCost} min.</span>
+                        </button>
+                        {(statusText || cr || cm) && (
+                          <span id={detailId} className="comp__reason" role="status">
+                            {statusText && <strong>{statusText}</strong>}
+                            {cr && <span>{localizedText(cr, locale)}</span>}
+                            {cm && <span className="card__remedy">{localizedText(cm, locale)}</span>}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {status === 'blocked' && reason && (
+                {status !== 'available' && reason && (
                   <>
                     <span className="card__reason">{localizedText(reason, locale)}</span>
                     {remedy && <span className="card__remedy">{localizedText(remedy, locale)}</span>}
@@ -111,19 +124,22 @@ export function StepMusterUnits() {
               {t('noRecruit')}
             </p>
             <div className="stack">
-              {summoned.map(({ entry }) => (
-                <div key={entry.id} className="card">
+              {summoned.map(({ entry, status, reason, remedy }) => {
+                const addable = isUnitAddable(status);
+                return <div key={entry.id} className={`card unit-card--${status}`}>
                   <div className="card__head">
                     <span className="card__name">{entry.name}</span>
                     <span className="chip">{summonedLabel}</span>
                   </div>
+                  {reason && <span className="card__reason">{localizedText(reason, locale)}</span>}
+                  {remedy && <span className="card__remedy">{localizedText(remedy, locale)}</span>}
                   <div>
-                    <button onClick={() => addReferenceUnit(entry.id)}>
+                    <button disabled={!addable} onClick={() => { if (addable) addReferenceUnit(entry.id); }}>
                       {t('addReference')}
                     </button>
                   </div>
-                </div>
-              ))}
+                </div>;
+              })}
             </div>
           </section>
         )}

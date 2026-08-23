@@ -370,11 +370,11 @@ export interface ValidationResult {
 // ---------------------------------------------------------------------------
 
 /**
- * - `available`  : se puede añadir.
- * - `blocked`    : legal en este ejército pero ahora no cabe. SE MUESTRA.
- * - `impossible` : nunca podrá formar parte de este ejército. SE OCULTA.
+ * Elegibilidad compartida por cartas tácticas y Creep Cards.
  *
- * El motor solo clasifica; mostrar u ocultar es decisión de la interfaz.
+ * Las unidades tienen además `provisional`: pueden incorporarse aunque la
+ * lista todavía tenga un déficit de espacios. No se añade al tipo común para
+ * no ensanchar innecesariamente el contrato de las cartas.
  */
 export type EligibilityStatus = 'available' | 'blocked' | 'impossible';
 
@@ -384,11 +384,41 @@ export interface Eligibility {
   remedy?: Localized;
 }
 
-export interface EligibleUnit extends Eligibility {
+export type UnitEligibilityStatus = EligibilityStatus | 'provisional';
+
+export type UnitEligibilityConstraint =
+  | 'RACE_MISMATCH'
+  | 'TAG_MISMATCH'
+  | 'UNIQUE_ALREADY_INCLUDED'
+  | 'INSUFFICIENT_MINERALS'
+  | 'INSUFFICIENT_SLOTS';
+
+export interface UnitEligibility extends Omit<Eligibility, 'status'> {
+  status: UnitEligibilityStatus;
+  constraint?: UnitEligibilityConstraint;
+}
+
+export interface UnitCompositionEligibility extends UnitEligibility {
+  /** Déficit que quedará después de incorporar esta composición. */
+  projectedSlotDeficit?: number;
+}
+
+export interface EligibleUnit extends UnitEligibility {
   entry: UnitEntry;
   /** Elegibilidad por composición: con 2 modelos puede caber y con 4 no. */
-  compositions: Array<{ composition: Composition } & Eligibility>;
+  compositions: Array<{ composition: Composition } & UnitCompositionEligibility>;
 }
+
+export type RecruitmentRejectionCode =
+  | 'MISSING_FACTION'
+  | 'UNKNOWN_UNIT'
+  | 'UNKNOWN_COMPOSITION'
+  | 'WRONG_RECRUITMENT_ACTION'
+  | Exclude<UnitEligibilityConstraint, 'INSUFFICIENT_SLOTS'>;
+
+export type RecruitmentResult =
+  | { ok: true; instanceId: string }
+  | { ok: false; constraint: RecruitmentRejectionCode };
 
 export interface EligibleTacticalCard extends Eligibility {
   card: TacticalCard;

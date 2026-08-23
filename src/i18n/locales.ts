@@ -181,6 +181,24 @@ Object.assign(resources.en.builderUi, {
   textCopied: 'List copied as text.',
   textCopyError: 'The list could not be copied.',
 });
+Object.assign(resources.es.builderUi, {
+  unitUnavailable: 'No disponible',
+  unitProvisional: 'Añadible; faltan {{count}} espacios.',
+  reviewErrorsTitle: 'Hay errores en la lista',
+  reviewErrorsSummary_one: 'Hay 1 error por resolver.',
+  reviewErrorsSummary_other: 'Hay {{count}} errores por resolver.',
+  reviewErrorsContinue: 'Ver la revisión',
+  reviewErrorsClose: 'Cerrar resumen de errores',
+});
+Object.assign(resources.en.builderUi, {
+  unitUnavailable: 'Unavailable',
+  unitProvisional: 'Can be added; {{count}} slots are missing.',
+  reviewErrorsTitle: 'There are errors in the list',
+  reviewErrorsSummary_one: 'There is 1 error to resolve.',
+  reviewErrorsSummary_other: 'There are {{count}} errors to resolve.',
+  reviewErrorsContinue: 'View review',
+  reviewErrorsClose: 'Close error summary',
+});
 Object.assign(resources.es.print, {
   seedLink: 'ENLACE PARA COPIAR LA LISTA',
   seed: 'Seed',

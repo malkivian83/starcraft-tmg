@@ -1,16 +1,16 @@
 import { SLOT_TYPES } from '@/engine/types';
 import { useTranslation } from 'react-i18next';
-import { localizedText } from '@/i18n/localized-content';
 import { normalizeLocale } from '@/i18n/types';
 import { useListStore } from '@/store/listStore';
 import { slotLabel } from '../common/Chips';
+import { ValidationIssueList } from './ValidationIssueList';
 
 /** Paso 4 — Revisión, libro mayor de espacios e impresión. */
 export function StepReview() {
   const { t } = useTranslation('builderUi');
   const { i18n } = useTranslation();
   const locale = normalizeLocale(i18n.language) ?? 'es';
-  const { summary, validation } = useListStore();
+  const { list, index, summary, validation } = useListStore();
 
   return (
     <div className="review-layout">
@@ -26,26 +26,8 @@ export function StepReview() {
           </p>
         )}
 
-        <div className="stack" style={{ marginTop: 10 }}>
-          {validation.errors.map((issue, i) => (
-            <div key={`e${i}`} className="issue issue--error">
-              <span className="issue__rule">
-                {issue.rule} · {issue.ruleRef}
-              </span>
-              <div>{localizedText(issue.message, locale)}</div>
-              {issue.remedy && (
-                <div className="issue__remedy">→ {localizedText(issue.remedy, locale)}</div>
-              )}
-            </div>
-          ))}
-          {validation.warnings.map((issue, i) => (
-            <div key={`w${i}`} className="issue issue--warning">
-              <span className="issue__rule">
-                {issue.rule} · {issue.ruleRef}
-              </span>
-              <div>{localizedText(issue.message, locale)}</div>
-            </div>
-          ))}
+        <div style={{ marginTop: 10 }}>
+          <ValidationIssueList issues={[...validation.errors, ...validation.warnings]} list={list} index={index} locale={locale} />
         </div>
       </section>
 

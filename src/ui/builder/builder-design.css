@@ -577,6 +577,59 @@
     line-height: 1.45;
   }
 
+  /* Estados de elegibilidad propios de unidades. No reutilizar
+   * .card--blocked: las cartas tácticas tienen otra semántica. */
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--blocked,
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--impossible {
+    border-color: var(--line);
+    background: color-mix(in srgb, var(--bg-raised) 88%, #000 12%);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--blocked > .card__head,
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--impossible > .card__head {
+    opacity: 0.52;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--provisional {
+    border-color: color-mix(in srgb, var(--warn) 70%, var(--line));
+    background: color-mix(in srgb, var(--warn) 7%, var(--bg-raised));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap {
+    display: inline-flex;
+    min-width: 112px;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--blocked,
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--impossible {
+    opacity: 1;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--blocked .comp,
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--impossible .comp {
+    opacity: 0.55;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--provisional .comp {
+    border-color: color-mix(in srgb, var(--warn) 70%, var(--line));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp__reason {
+    display: flex;
+    max-width: 180px;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--warn);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp__reason .card__remedy {
+    font-size: 11px;
+  }
+
   /* Acciones compactas de cartas y roster. */
   .app:has(> .builder-toolbar) > main.content.no-print .card-actions {
     gap: 8px;

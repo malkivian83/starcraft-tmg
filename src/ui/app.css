@@ -10,6 +10,59 @@
   overflow: auto;
 }
 
+/* La revisión se muestra dentro de .app para conservar los tokens de raza.
+ * Al crear un contexto superior también queda por encima de los avisos PWA y
+ * del toast global, que de otro modo podrían atravesar el backdrop. */
+.app--modal-open {
+  position: relative;
+  z-index: 80;
+}
+
+.app--modal-open > .review-errors-modal {
+  z-index: 100;
+}
+
+.review-errors-modal__box {
+  display: flex;
+  width: min(680px, 100%);
+  max-height: min(90vh, 760px);
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.review-errors-modal__list {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.review-errors-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.issue__affected {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.validation-issue-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .modal__box {
   width: min(620px, 100%);
   max-height: 90vh;

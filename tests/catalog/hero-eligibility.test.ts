@@ -63,9 +63,9 @@ describe('Elegibilidad de héroes según sus cartas oficiales', () => {
       expect(index.factionCards.get(heroFactionId)?.startingSlots.HERO).toBe(1);
 
       const withoutHeroSlot = findHero(factionId, []);
-      expect(withoutHeroSlot?.status).toBe('blocked');
+      expect(withoutHeroSlot?.status).toBe('provisional');
       expect(withoutHeroSlot?.reason?.es).toContain('Héroe');
-      expect(withoutHeroSlot?.compositions[0]?.status).toBe('blocked');
+      expect(withoutHeroSlot?.compositions[0]?.status).toBe('provisional');
 
       expect(findHero(factionId, [slotCardId])?.status).toBe('available');
       expect(findHero(heroFactionId, [])?.status).toBe('available');
