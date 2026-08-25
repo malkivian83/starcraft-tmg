@@ -291,6 +291,14 @@
     font-weight: 600;
   }
 
+  /* Un déficit de espacios es un error de lista, aunque la unidad se haya
+   * añadido provisionalmente. La regla debe ganar a la paleta de acento del
+   * constructor para que el tipo afectado se vea claramente en rojo. */
+  .app:has(> .builder-toolbar) .resbar__slot.resbar__slot--over .resbar__slot-label,
+  .app:has(> .builder-toolbar) .resbar__slot.resbar__slot--over .resbar__slot-value {
+    color: var(--error);
+  }
+
   .app:has(> .builder-toolbar) .resbar__hint {
     color: var(--text-faint);
     font-size: 12px;
@@ -575,6 +583,45 @@
     color: var(--text-dim);
     font-size: 12.5px;
     line-height: 1.45;
+  }
+
+  /* Estados de elegibilidad propios de unidades. No reutilizar
+   * .card--blocked: las cartas tácticas tienen otra semántica. */
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--blocked,
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--impossible {
+    border-color: var(--line);
+    background: color-mix(in srgb, var(--bg-raised) 88%, #000 12%);
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--blocked > .card__head,
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--impossible > .card__head {
+    opacity: 0.52;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .unit-card--provisional {
+    border-color: color-mix(in srgb, var(--warn) 70%, var(--line));
+    background: color-mix(in srgb, var(--warn) 7%, var(--bg-raised));
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap {
+    display: inline-flex;
+    min-width: 112px;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--blocked,
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--impossible {
+    opacity: 1;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--blocked .comp,
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--impossible .comp {
+    opacity: 0.55;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .comp-wrap--provisional .comp {
+    border-color: color-mix(in srgb, var(--warn) 70%, var(--line));
   }
 
   /* Acciones compactas de cartas y roster. */
@@ -1378,11 +1425,10 @@
 
   .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions {
     width: 100%;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 8px;
     padding-bottom: 3px;
-    overflow-x: auto;
-    scrollbar-color: var(--accent-dim) transparent;
+    overflow-x: visible;
   }
 
   .app:has(> .builder-toolbar) > .builder-toolbar .builder-toolbar__actions > * {

@@ -90,11 +90,11 @@ export const resources = {
       passwordUpdated: 'Contraseña actualizada. Ya puedes iniciar sesión.',
       guestTitle: 'Crear una lista como invitado',
       guestDescription: 'Prueba el creador de listas sin registrarte. Puedes imprimir o exportar tu lista cuando termines.',
-      openBuilder: 'Abrir creador de listas',
+      openBuilder: 'Crear lista como invitado',
       loginLater: 'Inicia sesión más tarde para guardarla',
       googleNote: 'Con Google no hace falta verificar el correo. Si ya tenías cuenta con ese correo, quedará vinculada.',
       showPassword: 'Ver contraseña',
-      hidePassword: 'Ocultar contraseña', genericError: 'No se pudo completar la solicitud.', googleError: 'No se pudo entrar con Google.', or: 'o', noAccount: 'Sin cuenta', resendConfirmation: 'Si la cuenta sigue pendiente, te hemos enviado un nuevo enlace de verificación.', verifyLocal: 'Verificar esta cuenta (desarrollo local)', resetRequestConfirmation: 'Si existe una cuenta activa con ese correo, recibirás un enlace para restablecer la contraseña.', backToAccess: 'Volver al acceso', verifying: 'Verificando correo…', invalidVerification: 'El enlace de verificación no es válido.', emailVerified: 'Correo verificado. Ya puedes iniciar sesión.',
+      hidePassword: 'Ocultar contraseña', genericError: 'No se pudo completar la solicitud.', googleError: 'No se pudo entrar con Google.', or: 'o', noAccount: 'Invitado', resendConfirmation: 'Si la cuenta sigue pendiente, te hemos enviado un nuevo enlace de verificación.', verifyLocal: 'Verificar esta cuenta (desarrollo local)', resetRequestConfirmation: 'Si existe una cuenta activa con ese correo, recibirás un enlace para restablecer la contraseña.', backToAccess: 'Volver al acceso', verifying: 'Verificando correo…', invalidVerification: 'El enlace de verificación no es válido.', emailVerified: 'Correo verificado. Ya puedes iniciar sesión.',
     },
     support: { eyebrow: 'Ayuda', title: 'Soporte', description: 'Cuéntanos qué ha ocurrido y revisaremos tu solicitud lo antes posible.', emailReply: 'Respuesta por correo electrónico', subject: 'Asunto', contactEmail: 'Correo de contacto', message: 'Mensaje', messagePlaceholder: 'Describe tu consulta con el mayor detalle posible.', termsPrefix: 'Acepto los', termsLink: 'términos y condiciones de uso', submit: 'Enviar solicitud', sending: 'Enviando…', sent: 'Tu solicitud se ha enviado al equipo de soporte.', termsRequired: 'Debes aceptar las condiciones para enviar la solicitud.', sendError: 'No se pudo enviar la solicitud.', reply: 'Respuesta' },
     account: { profile: 'Perfil', accountEyebrow: 'Cuenta', profileDescription: 'Personaliza cómo apareces en la aplicación y ajusta tus preferencias.', preferences: 'Identidad y preferencias', security: 'Seguridad', nickname: 'Apodo', nicknamePlaceholder: 'Tu apodo', avatar: 'Avatar', chooseAvatar: 'Elegir avatar {{avatar}}', uploadImage: 'Subir imagen', removeImage: 'Quitar imagen', imageHint: 'PNG, JPG o WebP · se optimiza a 256 px', defaultFaction: 'Facción predeterminada', saveProfile: 'Guardar perfil', saving: 'Guardando…', profileSaved: 'Perfil guardado correctamente.', profileSaveError: 'No se pudo guardar el perfil.', avatarPrepared: 'Avatar preparado. Guarda el perfil para aplicarlo.', avatarPrepareError: 'No se pudo preparar el avatar.', currentPassword: 'Contraseña actual', newPassword: 'Nueva contraseña', password: 'Contraseña', changePassword: 'Cambiar contraseña', setPassword: 'Establecer contraseña', access: 'Acceso: {{provider}}.', addPasswordHint: 'Puedes añadir una contraseña para entrar también sin Google.', passwordUpdated: 'Contraseña actualizada.', passwordSet: 'Contraseña establecida. Ya puedes entrar con Google o con tu contraseña.', changePasswordError: 'No se pudo cambiar la contraseña.', deleteAccount: 'Eliminar cuenta', deleteDescription: 'La cuenta se desactiva de forma lógica y las listas dejan de estar accesibles.', deleteButton: 'Borrar cuenta', deleteConfirm: 'La cuenta se desactivará y se cerrarán todas las sesiones. ¿Continuar?', deletePasswordPrompt: 'Escribe tu contraseña para borrar la cuenta de forma lógica.', deleteError: 'No se pudo borrar la cuenta.', googleConfirm: 'Confirma con Google', googleDeleteHint: 'Vuelve a identificarte con Google para borrar la cuenta.', googlePasswordHint: 'Vuelve a identificarte con Google para guardar la contraseña.', cancel: 'Cancelar', googleConfirmError: 'No se pudo confirmar con Google.' },
@@ -121,7 +121,7 @@ export const resources = {
       commandCards: 'Command cards', recruitment: 'Recruitment', mission: 'Mission and deployment', review: 'Review and print', listName: 'Name', race: 'Race', scale: 'Scale', minerals: 'Minerals', visibility: 'Visibility', public: 'Public', private: 'Private', guestMode: 'Guest mode', guestWarning: 'Your draft is saved on this device. You can print it, export it, or sign in to sync it with your account.', save: 'Save', signInToSave: 'Sign in to save', closeSeed: 'Close seed', seed: 'Seed', import: 'Import', export: 'Export', print: 'Print / PDF', listSaved: 'List saved to your account.', listImported: 'List imported.', seedImported: 'List imported from seed.', listLoaded: 'List loaded.', listCloned: 'List cloned. You can edit it now.', confirmDiscard: '{{action}} will discard unsaved changes to this list. Do you want to continue?', scaleName: 'Scale {{name}}', vespene: 'Vespene gas', noSlots: 'No slots unlocked', usedOf: 'used of', perRound: 'per round', supply: 'Supply', stats: { size: 'Size', hitPoints: 'Hit points', evade: 'Evade', armour: 'Armour', speed: 'Speed', shield: 'Shield', modelsSupply: 'Models / Supply' }, resource: { CP: 'Command points', BM: 'Biomass', PE: 'Psionic energy' },
     },
     auth: {
-      login: 'Sign in', register: 'Create account', accessMode: 'Access mode', email: 'Email', password: 'Password', newPassword: 'New password', enter: 'Sign in', registerAction: 'Register', processing: 'Processing…', forgotPassword: 'I forgot my password', createAccount: 'Create an account', existingAccount: 'I already have an account', acceptTerms: 'I accept the terms and conditions of use.', acceptTermsPrefix: 'I accept the', acceptTermsLink: 'terms and conditions of use', termsRequired: 'You must accept the terms and conditions to register.', verifyTitle: 'Verify your email', verifyMessage: 'Open the verification link before accessing the application.', resend: 'Resend email', requesting: 'Requesting…', resetTitle: 'Reset password', recoverTitle: 'Recover password', sendLink: 'Send link', savePassword: 'Save password', passwordUpdated: 'Password updated. You can now sign in.', guestTitle: 'Create a list as a guest', guestDescription: 'Try the list builder without registering. You can print or export your list when you finish.', openBuilder: 'Open list builder', loginLater: 'Sign in later to save it', googleNote: 'With Google you do not need to verify your email. If you already had an account with that email, it will be linked.', showPassword: 'Show password', hidePassword: 'Hide password', genericError: 'The request could not be completed.', googleError: 'Google sign-in failed.', or: 'or', noAccount: 'No account', resendConfirmation: 'If the account is still pending, we sent you a new verification link.', verifyLocal: 'Verify this account (local development)', resetRequestConfirmation: 'If an active account exists with that email, you will receive a password reset link.', backToAccess: 'Back to sign in', verifying: 'Verifying email…', invalidVerification: 'The verification link is invalid.', emailVerified: 'Email verified. You can now sign in.',
+      login: 'Sign in', register: 'Create account', accessMode: 'Access mode', email: 'Email', password: 'Password', newPassword: 'New password', enter: 'Sign in', registerAction: 'Register', processing: 'Processing…', forgotPassword: 'I forgot my password', createAccount: 'Create an account', existingAccount: 'I already have an account', acceptTerms: 'I accept the terms and conditions of use.', acceptTermsPrefix: 'I accept the', acceptTermsLink: 'terms and conditions of use', termsRequired: 'You must accept the terms and conditions to register.', verifyTitle: 'Verify your email', verifyMessage: 'Open the verification link before accessing the application.', resend: 'Resend email', requesting: 'Requesting…', resetTitle: 'Reset password', recoverTitle: 'Recover password', sendLink: 'Send link', savePassword: 'Save password', passwordUpdated: 'Password updated. You can now sign in.', guestTitle: 'Create a list as a guest', guestDescription: 'Try the list builder without registering. You can print or export your list when you finish.', openBuilder: 'Create list as guest', loginLater: 'Sign in later to save it', googleNote: 'With Google you do not need to verify your email. If you already had an account with that email, it will be linked.', showPassword: 'Show password', hidePassword: 'Hide password', genericError: 'The request could not be completed.', googleError: 'Google sign-in failed.', or: 'or', noAccount: 'Guest', resendConfirmation: 'If the account is still pending, we sent you a new verification link.', verifyLocal: 'Verify this account (local development)', resetRequestConfirmation: 'If an active account exists with that email, you will receive a password reset link.', backToAccess: 'Back to sign in', verifying: 'Verifying email…', invalidVerification: 'The verification link is invalid.', emailVerified: 'Email verified. You can now sign in.',
     },
     support: { eyebrow: 'Help', title: 'Support', description: 'Tell us what happened and we will review your request as soon as possible.', emailReply: 'Reply by email', subject: 'Subject', contactEmail: 'Contact email', message: 'Message', messagePlaceholder: 'Describe your question in as much detail as possible.', termsPrefix: 'I accept the', termsLink: 'terms and conditions of use', submit: 'Send request', sending: 'Sending…', sent: 'Your request has been sent to the support team.', termsRequired: 'You must accept the conditions to send the request.', sendError: 'The request could not be sent.', reply: 'Reply' },
     account: { profile: 'Profile', accountEyebrow: 'Account', profileDescription: 'Customize how you appear in the application and adjust your preferences.', preferences: 'Identity and preferences', security: 'Security', nickname: 'Nickname', nicknamePlaceholder: 'Your nickname', avatar: 'Avatar', chooseAvatar: 'Choose avatar {{avatar}}', uploadImage: 'Upload image', removeImage: 'Remove image', imageHint: 'PNG, JPG or WebP · optimized to 256 px', defaultFaction: 'Default faction', saveProfile: 'Save profile', saving: 'Saving…', profileSaved: 'Profile saved successfully.', profileSaveError: 'The profile could not be saved.', avatarPrepared: 'Avatar prepared. Save the profile to apply it.', avatarPrepareError: 'The avatar could not be prepared.', currentPassword: 'Current password', newPassword: 'New password', password: 'Password', changePassword: 'Change password', setPassword: 'Set password', access: 'Access: {{provider}}.', addPasswordHint: 'You can add a password to sign in without Google too.', passwordUpdated: 'Password updated.', passwordSet: 'Password set. You can now sign in with Google or your password.', changePasswordError: 'The password could not be changed.', deleteAccount: 'Delete account', deleteDescription: 'The account is logically deactivated and its lists are no longer accessible.', deleteButton: 'Delete account', deleteConfirm: 'The account will be deactivated and all sessions closed. Continue?', deletePasswordPrompt: 'Enter your password to logically delete the account.', deleteError: 'The account could not be deleted.', googleConfirm: 'Confirm with Google', googleDeleteHint: 'Sign in with Google again to delete the account.', googlePasswordHint: 'Sign in with Google again to save the password.', cancel: 'Cancel', googleConfirmError: 'Google confirmation failed.' },
@@ -133,6 +133,10 @@ export const resources = {
 
 Object.assign(resources.es.builder, { statistics: 'Estadísticas' });
 Object.assign(resources.en.builder, { statistics: 'Statistics' });
+Object.assign(resources.es.navigation, { games: 'Mis partidas' });
+Object.assign(resources.en.navigation, { games: 'My games' });
+Object.assign(resources.es.auth, { guestTitle: 'Usar sin cuenta', guestDescription: 'Crea una lista o gestiona una partida sin registrarte.', openGame: 'Comenzar partida', gameHint: 'Guarda la partida para continuarla desde este navegador.' });
+Object.assign(resources.en.auth, { guestTitle: 'Use without an account', guestDescription: 'Create a list or manage a game without registering.', openGame: 'Start game', gameHint: 'Save the game so you can continue it from this browser.' });
 Object.assign(resources.es.builderUi, {
   statsTitle: 'Estadísticas de esta lista',
   statsHint: 'Registra las partidas que juegues con esta lista. Solo las ves tú.',
@@ -165,6 +169,39 @@ Object.assign(resources.en.builderUi, {
   statsVs: 'vs {{faction}}',
   statsUnknownFaction: 'Not recorded',
   statsDonutAria: '{{faction}}: {{wins}} wins, {{losses}} losses and {{draws}} draws out of {{played}} games.',
+});
+
+Object.assign(resources.es.builderUi, {
+  copyAsText: 'Copiar en texto',
+  textCopied: 'Lista copiada en texto.',
+  textCopyError: 'No se pudo copiar la lista.',
+});
+Object.assign(resources.en.builderUi, {
+  copyAsText: 'Copy as text',
+  textCopied: 'List copied as text.',
+  textCopyError: 'The list could not be copied.',
+});
+Object.assign(resources.es.builderUi, {
+  reviewErrorsTitle: 'Hay errores en la lista',
+  reviewErrorsSummary_one: 'Hay 1 error por resolver.',
+  reviewErrorsSummary_other: 'Hay {{count}} errores por resolver.',
+  reviewErrorsContinue: 'Ver la revisión',
+  reviewErrorsClose: 'Cerrar resumen de errores',
+});
+Object.assign(resources.en.builderUi, {
+  reviewErrorsTitle: 'There are errors in the list',
+  reviewErrorsSummary_one: 'There is 1 error to resolve.',
+  reviewErrorsSummary_other: 'There are {{count}} errors to resolve.',
+  reviewErrorsContinue: 'View review',
+  reviewErrorsClose: 'Close error summary',
+});
+Object.assign(resources.es.print, {
+  seedLink: 'ENLACE PARA COPIAR LA LISTA',
+  seed: 'Seed',
+});
+Object.assign(resources.en.print, {
+  seedLink: 'LINK TO COPY THE LIST',
+  seed: 'Seed',
 });
 
 export type TranslationResources = typeof resources;

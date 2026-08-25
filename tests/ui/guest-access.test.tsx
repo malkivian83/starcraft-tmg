@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { App, initialPageFor, pageForPathname } from '@/App';
+import { initialGameView } from '@/ui/game/GamePage';
 import { useAuthStore } from '@/store/authStore';
 import { useListStore } from '@/store/listStore';
 
@@ -24,6 +25,7 @@ describe('ruta pública del constructor', () => {
     expect(html).toContain('Seed');
     expect(html).toContain('Importar');
     expect(html).toContain('Exportar');
+    expect(html).toContain('Copiar en texto');
     expect(html).toContain('Imprimir / PDF');
     expect(html).not.toContain('Mis listas');
     expect(html).not.toContain('Listas públicas');
@@ -50,6 +52,12 @@ describe('ruta pública del constructor', () => {
     expect(initialPageFor('account', false, 'public-list-id')).toBe('public-list');
   });
 
+  it('abre directamente la configuración de partida para invitados', () => {
+    expect(initialGameView('guest', false)).toBe('setup');
+    expect(initialGameView('account', false)).toBe('library');
+    expect(initialGameView('account', true)).toBe('setup');
+  });
+
   it('restaura la sección según la ruta al recargar', () => {
     expect(pageForPathname('/')).toBe('home');
     expect(pageForPathname('/mis-listas')).toBe('lists');
@@ -57,6 +65,7 @@ describe('ruta pública del constructor', () => {
     expect(pageForPathname('/nueva-lista')).toBe('builder');
     expect(pageForPathname('/perfil')).toBe('profile');
     expect(pageForPathname('/soporte')).toBe('support');
+    expect(pageForPathname('/partidas')).toBe('games');
     expect(pageForPathname('/public-lists/id', 'id')).toBe('public-list');
   });
 });

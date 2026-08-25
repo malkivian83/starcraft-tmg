@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { capabilitiesFor, type AccessMode } from '@/auth/access';
 import { availableRaces } from '@/catalog/loader';
 import type { Race, ScaleId } from '@/engine/types';
+import { encodeSeed } from '@/engine/seed/codec';
 import { useListStore } from '@/store/listStore';
 import { clearDraft, loadDraft, saveDraft, type DraftScope } from '@/store/draftPersistence';
 import { downloadJson, importListFromJson } from '@/store/persistence';
-import { clonePublicList as cloneRemotePublicList, loadPublicList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
+import { clonePublicList as cloneRemotePublicList, loadPublicList, loadRemoteList, saveRemoteList, setListPublic as setRemoteListPublic, type RemoteList } from '@/auth/listService';
 import { useAuthStore } from '@/store/authStore';
+import { copyToClipboard } from './ui/common/clipboard';
+import { decodeSeedForAnyRace } from './ui/common/seedImport';
 import { AuthGate } from './ui/auth/AuthGate';
 import { SavedListsPage } from './ui/lists/SavedListsPage';
 import { PublicListPage } from './ui/lists/PublicListPage';
@@ -21,18 +24,21 @@ import { SeedPanel } from './ui/common/SeedPanel';
 import { StepCommandCards } from './ui/builder/StepCommandCards';
 import { StepMusterUnits } from './ui/builder/StepMusterUnits';
 import { StepReview } from './ui/builder/StepReview';
+import { ReviewErrorsModal } from './ui/builder/ReviewErrorsModal';
 import { StepScenario } from './ui/builder/StepScenario';
 import { StepStatistics } from './ui/builder/StepStatistics';
 import { PrintSheet } from './ui/print/PrintSheet';
+import { formatListAsText } from './ui/print/listText';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
 import { AppVersion } from './ui/common/AppVersion';
+import { GamePage } from './ui/game/GamePage';
 import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
 import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review' | 'stats';
-type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'profile' | 'public-list' | 'support';
+type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'games' | 'profile' | 'public-list' | 'support';
 const STEPS: Array<{ id: StepId; label: string }> = [
   { id: 'cards', label: 'commandCards' }, { id: 'units', label: 'recruitment' },
   { id: 'scenario', label: 'mission' }, { id: 'review', label: 'review' },
@@ -47,6 +53,7 @@ const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'indust
 const NAV_ITEMS = [
   { page: 'home' as const, key: 'home', icon: 'inicio' },
   { page: 'lists' as const, key: 'lists', icon: 'mis-listas' },
+  { page: 'games' as const, key: 'games', icon: null },
   { page: 'public-lists' as const, key: 'publicLists', icon: 'listas-publicas' },
   { page: 'builder' as const, key: 'newList', icon: 'nueva-lista' },
   { page: 'support' as const, key: 'support', icon: null },
@@ -69,6 +76,7 @@ function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; 
   const selectItem = (item: typeof NAV_ITEMS[number], event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.closest('details')?.removeAttribute('open');
     if (item.page === 'builder') onCreate();
+    else if (item.page === 'games') window.location.assign(pathForPage('games'));
     else onNavigate(item.page, t(item.key));
   };
   return <details className="primary-nav__mobile">
@@ -87,6 +95,7 @@ const PAGE_PATHS: Record<Exclude<PageId, 'public-list'>, string> = {
   builder: '/nueva-lista',
   lists: '/mis-listas',
   'public-lists': '/listas-publicas',
+  games: '/partidas',
   profile: '/perfil',
   support: '/soporte',
 };
@@ -104,11 +113,13 @@ export function pageForPathname(pathname: string, publicListId: string | null = 
   if (localizedPage === 'builder') return 'builder';
   if (localizedPage === 'lists') return 'lists';
   if (localizedPage === 'public-lists') return 'public-lists';
+  if (localizedPage === 'games') return 'games';
   if (localizedPage === 'profile') return 'profile';
   if (localizedPage === 'support') return 'support';
   if (pathname === PAGE_PATHS.builder) return 'builder';
   if (pathname === PAGE_PATHS.lists) return 'lists';
   if (pathname === PAGE_PATHS['public-lists']) return 'public-lists';
+  if (pathname === PAGE_PATHS.games) return 'games';
   if (pathname === PAGE_PATHS.profile) return 'profile';
   if (pathname === PAGE_PATHS.support) return 'support';
   return 'home';
@@ -140,9 +151,27 @@ export function App() {
       <Route path="/soporte" element={<SupportRoute />} />
       <Route path="/:locale/soporte" element={<SupportRoute />} />
       <Route path="/:locale/support" element={<SupportRoute />} />
+      <Route path="/partida" element={<GameRoute />} />
+      <Route path="/:locale/partida" element={<GameRoute />} />
+      <Route path="/:locale/game" element={<GameRoute />} />
+      <Route path="/partidas" element={<GameRoute />} />
+      <Route path="/:locale/partidas" element={<GameRoute />} />
+      <Route path="/:locale/partidas/nueva" element={<GameRoute />} />
+      <Route path="/:locale/games" element={<GameRoute />} />
+      <Route path="/:locale/games/new" element={<GameRoute />} />
+      <Route path="/:locale/partidas/:id" element={<GameRoute />} />
+      <Route path="/:locale/games/:id" element={<GameRoute />} />
       <Route path="*" element={<AccountRoute />} />
     </Routes>
   </>;
+}
+
+function GameRoute() {
+  const status = useAuthStore((state) => state.status);
+  const restore = useAuthStore((state) => state.restore);
+  useEffect(() => { if (status === 'checking') void restore(); }, [restore, status]);
+  if (status === 'checking') return <div className="game-page game-empty">Cargando…</div>;
+  return <GamePage mode={status === 'authenticated' ? 'account' : 'guest'} />;
 }
 
 function SupportRoute() {
@@ -165,15 +194,20 @@ function SupportRoute() {
 }
 
 function GuestBuilderRoute() {
+  const location = useLocation();
   const navigate = useNavigate();
   const status = useAuthStore((state) => state.status);
   const restore = useAuthStore((state) => state.restore);
+  const locale = routeLocale(location.pathname);
+  const initialSeed = new URLSearchParams(location.search).get('seed');
   useEffect(() => {
     if (status === 'checking') void restore();
   }, [restore, status]);
-  if (status === 'authenticated') return <Navigate to="/" replace />;
+  if (status === 'authenticated') return <Navigate to={`${localizedPath('builder', locale)}${location.search}${location.hash}`} replace />;
   return <ArmyBuilderApp
     mode="guest"
+    initialSeed={initialSeed}
+    onCloseGuestBuilder={() => navigate(localizedPath('home', locale), { replace: true })}
     onRequestAuthentication={() => navigate('/', { state: { preserveGuestDraft: true } satisfies DraftNavigationState })}
   />;
 }
@@ -186,6 +220,8 @@ function AccountRoute() {
   const previousStatus = useRef(status);
   const navigationState = location.state as DraftNavigationState | null;
   const preserveGuestDraft = navigationState?.preserveGuestDraft === true;
+  const initialSeed = new URLSearchParams(location.search).get('seed');
+  const initialListId = new URLSearchParams(location.search).get('list');
   const consumeGuestDraft = useCallback(() => {
     if (!preserveGuestDraft) return;
     navigate(location.pathname, { replace: true, state: null });
@@ -199,20 +235,26 @@ function AccountRoute() {
   return <AuthGate>
     <ArmyBuilderApp
       mode="account"
+      initialSeed={initialSeed}
+      initialListId={initialListId}
       preserveDraftOnMount={preserveGuestDraft}
       onDraftClaimed={consumeGuestDraft}
     />
   </AuthGate>;
 }
 
-function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, onRequestAuthentication }: {
+function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
   mode: AccessMode;
+  initialSeed?: string | null;
+  initialListId?: string | null;
   preserveDraftOnMount?: boolean;
   onDraftClaimed?: () => void;
+  onCloseGuestBuilder?: () => void;
   onRequestAuthentication?: () => void;
 }) {
   const { t: tBuilder } = useTranslation('builder');
   const { t: tBuilderUi } = useTranslation('builderUi');
+  const { t: tPrint } = useTranslation('print');
   const { t: tNavigation } = useTranslation('navigation');
   const { t: tCommon } = useTranslation('common');
   const { t: tLegal } = useTranslation('legal');
@@ -230,6 +272,9 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   const [listVisibilityDirty, setListVisibilityDirty] = useState(false);
   const [seedVisible, setSeedVisible] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [reviewErrorsOpen, setReviewErrorsOpen] = useState(false);
+  const reviewTabRef = useRef<HTMLButtonElement>(null);
+  const previousReviewVisible = useRef(false);
   const { list, index, summary, validation, remoteRevision, isDirty } = useListStore();
   const setRace = useListStore((state) => state.setRace);
   const setScale = useListStore((state) => state.setScale);
@@ -250,16 +295,60 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       ? 'guest'
       : null;
   const hydratedDraftScope = useRef<DraftScope | null>(null);
+  const hydratedDirectList = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (mode !== 'account' || !initialListId || hydratedDirectList.current === initialListId) return;
+    hydratedDirectList.current = initialListId;
+    let active = true;
+    void loadRemoteList(initialListId)
+      .then((loaded) => {
+        if (!active) return;
+        setList(loaded);
+        setListIsPublic(loaded.isPublic);
+        setListVisibilityDirty(false);
+        setRemoteRevision(loaded.revision);
+        markSaved();
+        setSeedVisible(false);
+        setPublicListId(null);
+        setPublicList(null);
+        setPage('builder');
+        setToast(tBuilder('listLoaded'));
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setToast(error instanceof Error ? error.message : tBuilderUi('listSaveError'));
+      });
+    return () => { active = false; };
+  }, [initialListId, markSaved, mode, setList, setRemoteRevision, tBuilder, tBuilderUi]);
 
   useEffect(() => {
     if (!draftScope || hydratedDraftScope.current === draftScope) return;
     hydratedDraftScope.current = draftScope;
+    if (mode === 'account' && initialListId) return;
 
     // Al pasar del constructor invitado al login se conserva el estado vivo
     // del store; el borrador de invitado se conserva localmente y el de cuenta
     // se mantiene separado por usuario para no mezclar dispositivos/cuentas.
     if (mode === 'account' && preserveDraftOnMount) {
       clearDraft('guest');
+      onDraftClaimed?.();
+      return;
+    }
+
+    const importedSeed = initialSeed ? decodeSeedForAnyRace(initialSeed) : null;
+    if (importedSeed?.list) {
+      clearDraft('guest');
+      setList(importedSeed.list);
+      setListIsPublic(false);
+      setListVisibilityDirty(false);
+      setRemoteRevision(null);
+      setSeedVisible(false);
+      setToast(importedSeed.status === 'partial'
+        ? tBuilderUi('importedPartial', { items: importedSeed.missing.join(', ') })
+        : importedSeed.status === 'version_mismatch'
+          ? tBuilderUi('importedVersion')
+          : tBuilderUi('importedOk'));
       onDraftClaimed?.();
       return;
     }
@@ -281,8 +370,9 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setListIsPublic(false);
       setListVisibilityDirty(false);
     }
+    if (initialSeed) setToast(tBuilderUi('invalidSeed'));
     onDraftClaimed?.();
-  }, [draftScope, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, user]);
+  }, [draftScope, initialListId, initialSeed, mode, onDraftClaimed, preserveDraftOnMount, resetForRace, setList, setRemoteRevision, tBuilderUi, user]);
   useEffect(() => {
     if (!draftScope || hydratedDraftScope.current !== draftScope) return;
     if (isDirty || listVisibilityDirty) saveDraft(draftScope, { list, remoteRevision, isPublic: listIsPublic });
@@ -325,6 +415,27 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   useEffect(() => {
     if (!statsAvailable && step === 'stats') setStep('cards');
   }, [statsAvailable, step]);
+  const reviewVisible = page === 'builder' && step === 'review';
+  useEffect(() => {
+    if (!reviewVisible) {
+      if (reviewErrorsOpen) setReviewErrorsOpen(false);
+      previousReviewVisible.current = false;
+      return;
+    }
+    if (reviewErrorsOpen && validation.errors.length === 0) {
+      setReviewErrorsOpen(false);
+      return;
+    }
+    const enteredReview = !previousReviewVisible.current && reviewVisible;
+    previousReviewVisible.current = reviewVisible;
+    if (enteredReview && validation.errors.length > 0) setReviewErrorsOpen(true);
+  }, [reviewVisible, reviewErrorsOpen, validation.errors.length]);
+  const closeReviewErrors = useCallback(() => {
+    setReviewErrorsOpen(false);
+    const restoreFocus = () => reviewTabRef.current?.focus();
+    if (typeof window.requestAnimationFrame === 'function') window.requestAnimationFrame(restoreFocus);
+    else restoreFocus();
+  }, []);
   const errorsByStep: Record<StepId, number> = {
     cards: validation.errors.filter((error) => ['R0', 'R2', 'R7', 'R11'].includes(error.rule)).length,
     units: validation.errors.filter((error) => ['R1', 'R3', 'R4', 'R6', 'R8', 'R9', 'R10'].includes(error.rule)).length,
@@ -345,14 +456,6 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
     if (!confirmDiscard(tBuilderUi('logout'))) return;
     void logout();
   };
-  const clearList = () => {
-    if (!confirmDiscard(tBuilderUi('deleteList'))) return;
-    resetForRace(list.race);
-    setListIsPublic(false);
-    setListVisibilityDirty(false);
-    setSeedVisible(false);
-    setPage('builder');
-  };
   const createList = (requestedRace?: unknown) => { const race: Race = requestedRace === 'ZERG' || requestedRace === 'TERRAN' || requestedRace === 'PROTOSS' ? requestedRace : (user?.defaultRace ?? 'ZERG'); if (!confirmDiscard(tBuilderUi('newList'))) return; resetForRace(race); setListIsPublic(false); setListVisibilityDirty(false); setSeedVisible(false); setPublicListId(null); setPublicList(null); if (window.location.pathname !== pathForPage('builder')) window.history.pushState({}, '', pathForPage('builder')); setPage('builder'); };
   const onImportFile = async (file: File) => {
     if (!confirmDiscard(tBuilderUi('import'))) return;
@@ -368,6 +471,17 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
       setPage('builder');
       setToast(tBuilderUi('imported'));
     } else setToast(result.error ?? tBuilderUi('listSaveError'));
+  };
+  const copyListAsText = async () => {
+    try {
+      const seed = encodeSeed(list, index);
+      const shareUrl = new URL(localizedPath('guest-builder', locale), window.location.origin);
+      shareUrl.searchParams.set('seed', seed);
+      await copyToClipboard(formatListAsText({ list, index, summary, validation }, tPrint, locale, { url: shareUrl.toString() }));
+      setToast(tBuilderUi('textCopied'));
+    } catch {
+      setToast(tBuilderUi('textCopyError'));
+    }
   };
   const saveList = async () => {
     if (!capabilities.saveRemoteLists) {
@@ -428,7 +542,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
   };
 
   return (
-    <div className="app" data-race={list.race}>
+    <div className={`app${reviewErrorsOpen ? ' app--modal-open' : ''}`} data-race={list.race}>
       <header className="topbar app-header no-print">
         {mode === 'account' ? (
           <img
@@ -450,12 +564,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
         <span className="topbar__title">{tCommon('appName')}</span>
         <nav className="primary-nav" aria-label={tNavigation('main')}>
           {mode === 'guest' ? (
-            <button className="primary-nav__item" onClick={clearList}>{tCommon('close')}</button>
+            <button className="primary-nav__item" onClick={onCloseGuestBuilder}>{tCommon('close')}</button>
           ) : (
             <>
             <div className="primary-nav__buttons">
               <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', tNavigation('home'))}><NavigationIcon race={list.race} icon="inicio" />{tNavigation('home')}</button>
               <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', tNavigation('lists'))}><NavigationIcon race={list.race} icon="mis-listas" />{tNavigation('lists')}</button>
+              <button className={`primary-nav__item${page === 'games' ? ' primary-nav__item--active' : ''}`} onClick={() => window.location.assign(pathForPage('games'))}>{tNavigation('games')}</button>
               <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', tNavigation('publicLists'))}>{tNavigation('publicLists')}</button>
               <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />{tNavigation('newList')}</button>
             </div>
@@ -468,11 +583,13 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
               onChange={(event) => {
                 const destination = event.target.value as PageId;
                 if (destination === 'builder') createList();
+                else if (destination === 'games') window.location.assign(pathForPage('games'));
                 else navigateToPage(destination, tNavigation(destination === 'home' ? 'home' : destination === 'lists' ? 'lists' : destination === 'public-lists' ? 'publicLists' : 'support'));
               }}
             >
               <option value="home">{tNavigation('home')}</option>
               <option value="lists">{tNavigation('lists')}</option>
+              <option value="games">{tNavigation('games')}</option>
               <option value="public-lists">{tNavigation('publicLists')}</option>
               <option value="builder">{tNavigation('newList')}</option>
               <option value="support">{tNavigation('support')}</option>
@@ -545,6 +662,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
                     }} />
                   </label>
                   <button className="builder-toolbar__portable-action" onClick={() => downloadJson(list)}>{tBuilderUi('export')}</button>
+                  <button onClick={() => { void copyListAsText(); }}>{tBuilderUi('copyAsText')}</button>
                   {mode === 'guest' && <button onClick={() => window.print()}>{tBuilderUi('printPdf')}</button>}
                 </>
               )}
@@ -553,7 +671,7 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
           <ResourceBar summary={summary} hasErrors={!validation.legal} />
           <nav className="tabs no-print">
             {steps.map((item) => (
-              <button key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
+              <button ref={item.id === 'review' ? reviewTabRef : undefined} key={item.id} className={`tab${step === item.id ? ' tab--active' : ''}`} onClick={() => setStep(item.id)}>
                 {tBuilder(item.label)}
                 {errorsByStep[item.id] > 0 && <span className="tab__badge">{errorsByStep[item.id]}</span>}
               </button>
@@ -578,13 +696,21 @@ function ArmyBuilderApp({ mode, preserveDraftOnMount = false, onDraftClaimed, on
             {step === 'review' && <StepReview />}
             {step === 'stats' && statsAvailable && <StepStatistics listId={list.id} />}
           </main>
+          {reviewErrorsOpen && reviewVisible && (
+            <ReviewErrorsModal
+              errors={validation.errors}
+              list={list}
+              index={index}
+              onClose={closeReviewErrors}
+            />
+          )}
           <div className={`content print-sheet-host${step === 'review' ? ' print-sheet-host--preview' : ''}`}>
             <PrintSheet />
           </div>
         </>
       )}
 
-      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} />}
+      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} onOpenGames={() => window.location.assign(pathForPage('games'))} />}
       {mode === 'account' && page === 'lists' && <SavedListsPage onCreate={() => createList()} onLoad={loadList} onViewPublic={(id) => { void openPublicList(id); }} />}
       {mode === 'account' && page === 'public-lists' && <PublicListsPage onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} />}
       {mode === 'account' && page === 'support' && <SupportPage user={user} />}

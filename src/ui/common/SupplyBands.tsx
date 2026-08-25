@@ -3,6 +3,25 @@ import { useTranslation } from 'react-i18next';
 import './StatBlock.css';
 
 /**
+ * Limita el perfil de suministro al tamaño máximo de la composición elegida.
+ * El catálogo conserva siempre el perfil completo; este recorte es solo de
+ * presentación para no mostrar tramos que la unidad no puede alcanzar.
+ */
+export function supplyBandsForModels(
+  bands: SupplyBand[],
+  selectedModels?: number,
+): SupplyBand[] {
+  if (selectedModels === undefined) return bands;
+
+  return bands
+    .filter((band) => band.minModels <= selectedModels)
+    .map((band) => ({
+      ...band,
+      maxModels: Math.min(band.maxModels, selectedModels),
+    }));
+}
+
+/**
  * Tabla MODELS / SUPPLY de la carta: cuánto suministro vale la unidad según
  * cuántos modelos le queden en pie.
  *
@@ -14,19 +33,22 @@ import './StatBlock.css';
  */
 export function SupplyBands({
   bands,
+  selectedModels,
   size = 'normal',
 }: {
   bands: SupplyBand[];
+  selectedModels?: number;
   size?: 'normal' | 'small';
 }) {
   const { t } = useTranslation('builder');
-  if (bands.length === 0) return null;
+  const visibleBands = supplyBandsForModels(bands, selectedModels);
+  if (visibleBands.length === 0) return null;
 
   return (
     <div className={`supplybands supplybands--${size}`}>
       <span className="supplybands__caption">{t('stats.modelsSupply')}</span>
       <div className={`statblock statblock--${size}`}>
-        {bands.map((band) => (
+        {visibleBands.map((band) => (
           <div className="statblock__cell" key={`${band.minModels}-${band.maxModels}`}>
             <span className="statblock__label">
               {band.minModels}-{band.maxModels}

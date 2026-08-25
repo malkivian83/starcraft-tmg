@@ -16,12 +16,14 @@ export function HomePage({
   onViewPublic,
   onClonePublic,
   onViewAllPublic,
+  onOpenGames,
 }: {
   onCreateRace: (race: Race) => void;
   onOpenOwn: (list: RemoteList) => void;
   onViewPublic: (id: string) => void;
   onClonePublic: (id: string) => void;
   onViewAllPublic: () => void;
+  onOpenGames: () => void;
 }) {
   const { t, i18n } = useTranslation('home');
   const [data, setData] = useState<{ recentLists: RemoteList[]; publicLists: RemoteList[] } | null>(null);
@@ -59,6 +61,10 @@ export function HomePage({
     <main className="content page-content home-page no-print">
       <section className="home-brand" aria-label={t('ariaLabel')}>
         <img className="home-brand__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} />
+      </section>
+
+      <section className="home-section home-game-cta" aria-labelledby="home-games-title">
+        <div className="home-section__heading"><div><h2 id="home-games-title">{t('gameTitle', { defaultValue: i18n.language.startsWith('en') ? 'Manage a game' : 'Gestionar una partida' })}</h2><span className="muted small">{t('gameHint', { defaultValue: i18n.language.startsWith('en') ? 'Track rounds, mission supply, and victory points in one place.' : 'Controla rondas, suministro de misión y puntos de victoria en un solo lugar.' })}</span></div><button className="button-primary" type="button" onClick={onOpenGames}>{t('openGames', { defaultValue: i18n.language.startsWith('en') ? 'Open my games' : 'Abrir mis partidas' })}</button></div>
       </section>
 
       <section className="home-section" aria-labelledby="home-create-title">

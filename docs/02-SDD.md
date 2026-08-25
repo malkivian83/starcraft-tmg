@@ -128,22 +128,25 @@ function computeCosts(list: ArmyList, catalog: Catalog): CostSummary;
 
 Funciones puras, sin efectos, sin estado. La misma lista y el mismo catálogo dan siempre el mismo resultado — condición para que las pruebas signifiquen algo.
 
-`getEligible*` no solo filtra: clasifica. Devuelve cada elemento con su estado y el motivo, para que la interfaz aplique el filtrado de dos niveles de §6.6:
+`getEligible*` no solo filtra: clasifica. Devuelve cada elemento con su estado y el motivo. En unidades, el motor separa la falta de minerales (bloqueo) de la falta de espacios (estado provisional):
 
 ```ts
 interface EligibleUnit {
   entry: UnitEntry;
-  status: 'available' | 'blocked' | 'impossible';
-  reason?: Localized;            // por qué, en blocked e impossible
-  remedy?: Localized;            // qué hacer, solo en blocked
+  status: 'available' | 'provisional' | 'blocked' | 'impossible';
+  constraint?: 'RACE_MISMATCH' | 'TAG_MISMATCH' | 'UNIQUE_ALREADY_INCLUDED' | 'INSUFFICIENT_MINERALS' | 'INSUFFICIENT_SLOTS';
+  reason?: Localized;
+  remedy?: Localized;
+  compositions: Array<{ composition: Composition; status: EligibleUnit['status']; projectedSlotDeficit?: number }>;
 }
 ```
 
 - `available` — se puede añadir.
-- `blocked` — legal en este ejército, pero ahora no cabe (minerales o espacios). **Se muestra atenuada con el motivo.**
-- `impossible` — nunca podrá formar parte de este ejército (etiquetas, raza, UNIQUE ya incluida). **Se oculta.**
+- `provisional` — cumple las restricciones duras y los minerales, pero al añadirla la lista tendrá un déficit de espacios. **Se puede añadir y genera R4.**
+- `blocked` — no hay minerales suficientes. **Se muestra atenuada; el detalle queda en tooltip y texto accesible.**
+- `impossible` — una etiqueta, raza o `UNIQUE` ya incluida impide incorporarla. **Se muestra atenuada; el detalle queda en tooltip y texto accesible, sin ocultarse.**
 
-La decisión de mostrar u ocultar es de la interfaz; el motor solo aporta la clasificación. Así, cambiar el criterio no toca el motor ni sus pruebas.
+La UI usa `available` y `provisional` como estados accionables. Sin una Carta de Facción válida no muestra el catálogo de reclutamiento, aunque la validación final conserva R0 para listas importadas o manipuladas.
 
 ### 4.2 Reglas
 
@@ -336,35 +339,20 @@ En el paso de revisión, tabla por tipo de espacio:
 
 Responde de un vistazo qué carta aporta cada espacio y qué unidad lo consume, sin obligar al usuario a hacer aritmética.
 
-### 6.6 Filtrado del catálogo en dos niveles
+### 6.6 Estados del catálogo de unidades
 
-No todas las razones por las que una unidad «no se puede añadir» son iguales, y tratarlas igual produce una interfaz peor. Se distinguen dos clases:
-
-**Nivel 1 — Imposible. Se oculta.**
-La unidad **nunca** podrá formar parte de este ejército, hagas lo que hagas sin rehacer la lista:
-- Sus etiquetas no están contenidas en las de la carta de facción (R3).
-- Pertenece a otra raza.
-- Es UNIQUE y ya está incluida (R7).
-
-Mostrarlas sería ruido permanente: el usuario no puede hacer nada al respecto salvo cambiar de carta de facción, y para eso vuelve al paso 1.
-
-**Nivel 2 — Ahora no. Se muestra, deshabilitada, con el motivo.**
-La unidad es legal en este ejército, pero el estado actual impide añadirla:
-- No hay minerales suficientes.
-- No quedan espacios libres de su tipo (R4).
-
-Se ven, atenuadas, con su coste y el motivo. Ocultarlas sería peor: el usuario dejaría de saber que existen y no podría planificar hacia ellas.
-
-**Sobre los espacios.** Pediste explícitamente que el caso de coste siga visible. Agrupo los espacios en la misma categoría porque son el mismo tipo de problema: un presupuesto que puedes ampliar sin rehacer nada —comprando una carta táctica— igual que los minerales se liberan quitando otra unidad. Si prefieres que la falta de espacios oculte la unidad, es un cambio de una línea.
+Tras elegir una Carta de Facción válida se muestran todas las unidades de la raza. El estado se evalúa por composición y sigue esta precedencia: raza y etiquetas, `UNIQUE`, minerales y, por último, espacios. La falta de espacios no bloquea la planificación: se calcula el déficit proyectado después de la incorporación y se marca la composición como `provisional`.
 
 Ejemplo del comportamiento resultante en una lista `Zerg Swarm`:
 
 | Unidad | Estado | Motivo |
 |---|---|---|
 | `Zergling` | Disponible | — |
-| `Hydralisk` (4 modelos) | Visible, deshabilitada | Ocupa 3 espacios de Élite, tienes 2 |
-| `Kerrigan Swarm Raptor` | **Oculta** | Etiqueta `Kerrigan's Swarm` ausente en la carta de facción |
-| `Kerrigan` | **Oculta** | Ya incluida y es UNIQUE |
+| `Hydralisk` (4 modelos) | Provisional, accionable | Después faltarán 2 espacios de Élite |
+| `Kerrigan Swarm Raptor` | Visible, deshabilitada | Etiqueta `Kerrigan's Swarm` ausente en la carta de facción |
+| `Kerrigan` | Visible, deshabilitada | Ya incluida y es UNIQUE |
+
+El store vuelve a evaluar la misma política al ejecutar `addUnit` y `addReferenceUnit`; la interfaz no es una frontera de seguridad. El modal de Revisión se abre solo cuando el paso pasa de no visible a visible y `validation.errors` no está vacío. El panel persistente continúa mostrando errores y avisos.
 
 ### 6.7 Barra de recursos siempre visible
 

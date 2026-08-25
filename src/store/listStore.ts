@@ -2,11 +2,13 @@ import { create } from 'zustand';
 import { loadCatalog } from '@/catalog/loader';
 import { buildCatalogIndex, type CatalogIndex } from '@/engine/catalogIndex';
 import { computeCosts, findComposition } from '@/engine/costing';
+import { evaluateRecruitment } from '@/engine/eligibility';
 import type {
   AppliedUpgrade,
   ArmyList,
   CostSummary,
   Race,
+  RecruitmentResult,
   ScaleId,
   ValidationResult,
 } from '@/engine/types';
@@ -63,8 +65,8 @@ interface ListState {
   removeTacticalCard: (id: string) => void;
   selectCreepCard: (id: string) => void;
 
-  addUnit: (unitEntryId: string, compositionId: string) => void;
-  addReferenceUnit: (unitEntryId: string) => void;
+  addUnit: (unitEntryId: string, compositionId: string) => RecruitmentResult;
+  addReferenceUnit: (unitEntryId: string) => RecruitmentResult;
   removeUnit: (instanceId: string) => void;
   moveUnit: (instanceId: string, direction: 'up' | 'down') => void;
   changeComposition: (instanceId: string, compositionId: string) => void;
@@ -193,12 +195,14 @@ export const useListStore = create<ListState>((set, get) => {
       apply({ creepCardId: get().list.creepCardId === id ? null : id }),
 
     addUnit: (unitEntryId, compositionId) => {
-      const { list } = get();
+      const { list, index } = get();
+      const result = evaluateRecruitment(list, index, unitEntryId, compositionId, 'recruit');
+      if (!result.ok) return result;
       apply({
         entries: [
           ...list.entries,
           {
-            instanceId: newId(),
+            instanceId: result.instanceId,
             unitEntryId,
             compositionId,
             upgrades: [],
@@ -206,18 +210,20 @@ export const useListStore = create<ListState>((set, get) => {
           },
         ],
       });
+      return result;
     },
 
     addReferenceUnit: (unitEntryId) => {
       const { list, index } = get();
       const entry = index.unitEntries.get(unitEntryId);
       const composition = entry?.compositions[0];
-      if (!entry || !composition) return;
+      const result = evaluateRecruitment(list, index, unitEntryId, composition?.id ?? null, 'addReference');
+      if (!result.ok || !entry || !composition) return result;
       apply({
         entries: [
           ...list.entries,
           {
-            instanceId: newId(),
+            instanceId: result.instanceId,
             unitEntryId,
             compositionId: composition.id,
             upgrades: [],
@@ -225,6 +231,7 @@ export const useListStore = create<ListState>((set, get) => {
           },
         ],
       });
+      return result;
     },
 
     removeUnit: (instanceId) =>

@@ -101,8 +101,8 @@ Como jugador Zerg, debo incluir exactamente una Creep Card, porque mi carta de f
 
 **US-04 · Reclutar unidades**
 Como jugador, quiero añadir unidades gastando minerales y ocupando espacios.
-- CA-04.1 Las unidades que **nunca** podrán formar parte del ejército (etiquetas incompatibles, otra raza, UNIQUE ya incluida) **no se muestran**.
-- CA-04.1b Las unidades legales pero que ahora no caben (minerales o espacios insuficientes) **sí se muestran**, atenuadas, con su coste y el motivo, y no se pueden añadir.
+- CA-04.1 Tras elegir una Carta de Facción válida, todas las unidades de la raza se muestran, incluidas las incompatibles por etiquetas y las `UNIQUE` ya incluidas.
+- CA-04.1b Las unidades incompatibles o sin minerales se muestran atenuadas y no se pueden añadir. El detalle queda disponible mediante tooltip y tecnologías de asistencia, sin ocupar espacio permanente. La falta de espacios es provisional: la composición se puede añadir y la lista queda marcada con R4 hasta completar los espacios.
 - CA-04.2 Cada unidad muestra sus opciones de composición con número de modelos, coste y valor de suministro.
 - CA-04.3 Al elegir una opción, la unidad ocupa tantos espacios de su tipo como su valor de suministro.
 - CA-04.4 Si no quedan espacios libres del tipo requerido, la app lo indica y explica qué carta táctica lo desbloquearía.
@@ -148,6 +148,7 @@ Como jugador, quiero seleccionar las 2 cartas de misión y las 2 de despliegue q
 **US-07 · Saber si mi lista es legal**
 - CA-07.1 La app distingue **errores** (lista ilegal) de **avisos** (legal pero cuestionable, p. ej. espacios sin usar o recursos sin gastar).
 - CA-07.2 Cada error indica la regla concreta del reglamento que se incumple y qué hacer para resolverlo.
+- CA-07.2b Al entrar en Revisión e impresión con errores se abre un resumen modal con todos los errores actuales. Los avisos permanecen en el panel de Revisión y no abren el modal.
 - CA-07.3 Una lista con errores puede guardarse o imprimirse, pero se marca
   visiblemente como no válida tanto en pantalla como en la salida impresa.
 

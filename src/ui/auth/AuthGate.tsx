@@ -186,6 +186,10 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
             <span className="auth-guest-button__label">{t('openBuilder')}</span>
             <span className="auth-guest-button__hint">{t('loginLater')}</span>
           </Link>
+          <Link className="auth-guest-button" to={localizedPath('games', locale)}>
+            <span className="auth-guest-button__label">{t('openGame')}</span>
+            <span className="auth-guest-button__hint">{t('gameHint')}</span>
+          </Link>
         </section>
       </div>
     </AuthShell>

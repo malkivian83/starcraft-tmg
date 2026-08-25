@@ -1,8 +1,7 @@
 import type { ArmyList, Race } from '@/engine/types';
 import { ApiError, localizedApiErrorMessage } from './authService';
 import i18n from '@/i18n/config';
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
+import { apiBaseUrl } from './apiBase';
 
 export interface RemoteList extends ArmyList {
   revision: number;
@@ -99,6 +98,10 @@ export async function loadRemoteLists(options: { cursor?: string | null; limit?:
   if (options.cursor) params.set('cursor', options.cursor);
   const query = params.toString();
   return request<RemoteListPage>(`/lists${query ? `?${query}` : ''}`);
+}
+
+export async function loadRemoteList(id: string): Promise<RemoteList> {
+  return (await request<{ list: RemoteList }>(`/lists/${encodeURIComponent(id)}`)).list;
 }
 
 export async function loadPublicLists(): Promise<RemoteList[]> {

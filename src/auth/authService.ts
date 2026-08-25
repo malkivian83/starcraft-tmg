@@ -1,5 +1,6 @@
 import type { SupportedLocale } from '@/i18n/types';
 import i18n from '@/i18n/config';
+import { apiBaseUrl } from './apiBase';
 
 export type Race = 'ZERG' | 'TERRAN' | 'PROTOSS';
 
@@ -72,8 +73,6 @@ export interface RegistrationResult {
   developmentVerificationUrl: string | null;
   emailDeliveryWarning: string | null;
 }
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3001/api';
 
 const avatarDataUrlPattern = /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
 const avatarPathPattern = /^\/auth\/avatars\/[0-9a-f-]{36}\.(?:png|jpe?g|webp)$/i;
@@ -174,6 +173,20 @@ const API_ERROR_MESSAGES: Record<string, { es: string; en: string }> = {
   RATE_LIMITED: { es: 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.', en: 'Too many attempts. Wait a few minutes before trying again.' },
   NOT_FOUND: { es: 'No se ha encontrado el recurso solicitado.', en: 'The requested resource was not found.' },
   INVALID_CURSOR: { es: 'El cursor de paginación no es válido.', en: 'The pagination cursor is not valid.' },
+  INVALID_GAME: { es: 'La configuración de la partida no es válida.', en: 'The game configuration is not valid.' },
+  INVALID_MISSION: { es: 'La misión seleccionada no existe.', en: 'The selected mission does not exist.' },
+  INVALID_GAME_COMMAND: { es: 'La acción de la partida no es válida.', en: 'The game action is not valid.' },
+  INVALID_GAME_LINK: { es: 'La asociación de la partida no es válida.', en: 'The game link is not valid.' },
+  GAME_NOT_FOUND: { es: 'No existe esa partida.', en: 'That game does not exist.' },
+  GAME_NOT_ACTIVE: { es: 'La partida ya no está activa.', en: 'The game is no longer active.' },
+  GAME_NOT_FINISHED: { es: 'Solo se pueden asociar partidas finalizadas.', en: 'Only finished games can be linked.' },
+  GAME_CONFLICT: { es: 'La partida fue modificada desde otra sesión.', en: 'The game was changed in another session.' },
+  FIRST_ROUND: { es: 'La partida ya está en la primera ronda.', en: 'The game is already in round one.' },
+  FINAL_ROUND: { es: 'La partida ya está en la ronda final.', en: 'The game is already in the final round.' },
+  INVALID_RESULT: { es: 'El resultado de la partida no es válido.', en: 'The game result is not valid.' },
+  LIST_RACE_MISMATCH: { es: 'La raza de la lista no coincide con el jugador elegido.', en: 'The list race does not match the selected player.' },
+  GUEST_IDENTITY_NOT_FOUND: { es: 'No se encontró la identidad invitada de este navegador.', en: 'This browser guest identity was not found.' },
+  GUEST_IDENTITY_UNAVAILABLE: { es: 'No se pudo crear la identidad invitada.', en: 'The guest identity could not be created.' },
 };
 
 export function localizedApiErrorMessage(code: string | null | undefined, fallback: string): string {

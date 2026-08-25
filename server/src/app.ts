@@ -16,6 +16,8 @@ import { createListRouter } from './modules/lists/list.routes.js';
 import { MatchRepository } from './modules/lists/match.repository.js';
 import { SupportRepository } from './modules/support/support.repository.js';
 import { createSupportRouter } from './modules/support/support.routes.js';
+import { GameRepository } from './modules/game-sessions/game.repository.js';
+import { createGameRouter } from './modules/game-sessions/game.routes.js';
 
 export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverride?: EmailGateway) {
   const app = express();
@@ -23,6 +25,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   const avatarStorage = new AvatarStorage();
   const listRepository = new ListRepository(pool);
   const matchRepository = new MatchRepository(pool);
+  const gameRepository = new GameRepository(pool);
   const supportRepository = new SupportRepository(pool);
   const smtpSettings = new SmtpSettingsRepository(pool, env.SESSION_SECRET);
   const emailLogs = new EmailDeliveryLogRepository(pool);
@@ -82,6 +85,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
   app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, env));
   app.use('/api/support', createSupportRouter(supportRepository, authRepository, email, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository, matchRepository));
+  app.use('/api/games', createGameRouter(gameRepository, authRepository, env));
   app.use(errorHandler);
 
   return app;

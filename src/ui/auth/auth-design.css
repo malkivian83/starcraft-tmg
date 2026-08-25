@@ -110,7 +110,7 @@
 }
 
 .auth-page .auth-page__panel--guest {
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   background: linear-gradient(180deg, rgb(28 30 44 / 74%), rgb(22 24 38 / 70%));
 }
