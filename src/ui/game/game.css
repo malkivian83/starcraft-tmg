@@ -426,7 +426,13 @@
   cursor: pointer;
   transform: translateY(-50%);
 }
-.game-map-modal__nav:hover { border-color: var(--accent); background: var(--accent-deep); color: white; }
+.game-map-modal__nav:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-deep);
+  color: white;
+  transform: translateY(-50%);
+}
+.game-map-modal__nav:active:not(:disabled) { transform: translateY(-50%) scale(.96); }
 .game-map-modal__nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .game-map-modal__nav span { margin-top: -3px; font-family: Arial, sans-serif; font-size: 34px; font-weight: 300; line-height: 1; }
 .game-map-modal__nav--previous { left: 16px; }
