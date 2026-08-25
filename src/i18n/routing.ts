@@ -41,7 +41,7 @@ export function pageFromPath(pathname: string): LocalizedPage {
   if (stripped === `/${current.builder}`) return 'builder';
   if (stripped === `/${current.lists}`) return 'lists';
   if (stripped === `/${current['public-lists']}`) return 'public-lists';
-  if (stripped === `/${current.games}` || stripped === '/partida' || stripped === '/game') return 'games';
+  if (stripped === `/${current.games}` || stripped.startsWith(`/${current.games}/`) || stripped === '/partida' || stripped === '/game') return 'games';
   if (stripped === `/${current.profile}`) return 'profile';
   if (stripped === `/${current.support}`) return 'support';
   if (stripped === `/${current['guest-builder']}`) return 'guest-builder';

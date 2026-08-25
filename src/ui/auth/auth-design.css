@@ -559,6 +559,9 @@
   }
 
   .auth-page .auth-page__footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 10px;
     white-space: normal;
   }
 }

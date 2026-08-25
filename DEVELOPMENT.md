@@ -91,6 +91,21 @@ Al modificar archivos de `src/catalog/data/`:
 La prueba `tests/engine/regression-manual.test.ts` reproduce el ejemplo del
 reglamento; cualquier cambio que la afecte debe revisarse con especial cuidado.
 
+## Versiones de la aplicación y changelog
+
+Cada cambio de `version` en `package.json` debe incluir, en el mismo cambio, una
+nueva entrada al principio de `src/content/changelog.ts`.
+
+- La versión de la primera entrada debe coincidir con la de `package.json`.
+- Añade la fecha, un título breve y solo cambios visibles o útiles para las
+  personas que usan la aplicación.
+- No incluyas detalles internos como tecnologías, migraciones, endpoints,
+  esquemas o tareas de mantenimiento.
+- Mantén el contenido disponible tanto en español como en inglés.
+
+La prueba `tests/i18n/changelog.test.ts` comprueba que la versión publicada y la
+primera entrada del changelog permanecen sincronizadas.
+
 ## Estilo de código
 
 - Usa TypeScript estricto y nombres claros; evita abreviaturas crípticas.

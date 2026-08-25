@@ -6,6 +6,7 @@ import type { MissionCard, Race } from '@/engine/types';
 import { claimGame, createGame, deleteGame, linkGameToList, loadGames, loadGuestGames, sendGameCommand } from '@/auth/gameService';
 import { loadRemoteLists, type RemoteList } from '@/auth/listService';
 import { localizedPath, routeLocale } from '@/i18n/routing';
+import { GameMapExamples } from './GameMapExamples';
 import './game.css';
 
 const RACES: Race[] = ['ZERG', 'TERRAN', 'PROTOSS'];
@@ -43,7 +44,7 @@ function suggestedWinner(game: GameSession): { winnerPlayerSlot: GamePlayerSlot 
   return { winnerPlayerSlot: null, finishReason: 'DRAW' };
 }
 
-export function GamePage({ mode }: { mode: 'guest' | 'account' }) {
+export function GamePage({ mode, embedded = false }: { mode: 'guest' | 'account'; embedded?: boolean }) {
   const locale = routeLocale(window.location.pathname);
   const en = locale === 'en';
   const missions = useMemo(() => loadCatalog('ZERG').catalog.missionCards, []);
@@ -177,11 +178,11 @@ export function GamePage({ mode }: { mode: 'guest' | 'account' }) {
     } catch (error) { setMessage(error instanceof Error ? error.message : (en ? 'The game could not be deleted.' : 'No se pudo borrar la partida.')); }
   };
 
-  return <div className={`game-page${view === 'board' && selected ? ' game-page--board' : view === 'library' ? ' game-page--library' : ''}`}>
-    <header className="game-header">
+  return <div className={`game-page${embedded ? ' game-page--embedded' : ''}${view === 'board' && selected ? ' game-page--board' : view === 'library' ? ' game-page--library' : ''}`}>
+    {!embedded && <header className="game-header">
       <Link to={localizedPath('home', locale)} className="game-header__brand"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /><span>{en ? 'Game manager' : 'Gestor de partidas'}</span></Link>
       <div className="game-header__actions"><span className="game-owner-badge">{mode === 'account' ? (en ? 'My games' : 'Mis partidas') : (en ? 'Guest · this browser' : 'Invitado · este navegador')}</span><Link className="button-link" to={localizedPath('home', locale)}>{en ? 'Exit' : 'Salir'}</Link></div>
-    </header>
+    </header>}
     <main className="game-main">
       {message && <p className="game-message" role="alert">{message}</p>}
       {loading ? <section className="game-panel game-empty">{en ? 'Loading games…' : 'Cargando partidas…'}</section> : view === 'setup' ? (
@@ -337,47 +338,125 @@ function SetupView({ en, mission, missions, missionId, pointsLimit, players, pen
   en: boolean; mission: MissionCard | undefined; missions: MissionCard[]; missionId: string; pointsLimit: string; players: [{ name: string; race: Race }, { name: string; race: Race }]; pending: boolean;
   onMission: (value: string) => void; onPoints: (value: string) => void; onPlayers: (value: [{ name: string; race: Race }, { name: string; race: Race }]) => void; onSubmit: (event: React.FormEvent) => void; onCancel: () => void;
 }) {
+  const missionScale = !mission
+    ? ''
+    : mission.scale === 'skirmish'
+      ? (en ? 'Skirmish' : 'Escaramuza')
+      : mission.scale === 'standard'
+        ? (en ? 'Standard' : 'Estándar')
+        : (en ? 'Grand offensive' : 'Gran ofensiva');
+
   return <section className="game-panel game-setup" aria-labelledby="game-setup-title">
-    <div className="game-panel__heading"><div><p className="game-eyebrow">{en ? 'New 1v1 game' : 'Nueva partida 1v1'}</p><h1 id="game-setup-title">{en ? 'Configure the table' : 'Configura la mesa'}</h1></div></div>
-    <form onSubmit={onSubmit} className="game-form">
-      <label className="field"><span>{en ? 'Game points' : 'Puntos de la partida'}</span><input type="number" min="1" step="1" value={pointsLimit} onChange={(event) => onPoints(event.target.value)} required /></label>
-      <label className="field">
-        <span>{en ? 'Mission and variant' : 'Misión y variante'}</span>
-        <select value={missionId} onChange={(event) => onMission(event.target.value)}>
-          {MISSION_SCALE_GROUPS.map((scale) => <optgroup
-            key={scale}
-            label={scale === 'skirmish' ? (en ? 'Skirmish' : 'Escaramuza') : (en ? 'Standard' : 'Estándar')}
-          >
-            {missions.filter((item) => item.scale === scale).map((item) => <option key={item.id} value={item.id}>
-              {item.name} · {scale === 'skirmish' ? (en ? 'Skirmish' : 'Escaramuza') : (en ? 'Standard' : 'Estándar')}
-            </option>)}
-          </optgroup>)}
-        </select>
-      </label>
-      {mission && <div className="game-mission-summary"><strong>{mission.name}</strong><span>{en ? 'Starting supply' : 'Suministro inicial'}: {mission.startingSupply} · +{mission.supplyEscalation} {en ? 'per round' : 'por ronda'} · {mission.gameLength} {en ? 'rounds' : 'rondas'}</span><small>{localized(mission.additionalConditions, en)}</small></div>}
-      <div className="game-player-setup-grid">
-        {players.map((player, index) => {
-          const racePickerId = `game-player-${index + 1}-race`;
-          const raceLabelId = `${racePickerId}-label`;
-          return <fieldset className="game-player-setup" key={index}>
-            <legend>{en ? `Player ${index + 1}` : `Jugador ${index + 1}`}</legend>
-            <label className="field">
-              <span>{en ? 'Name' : 'Nombre'}</span>
-              <input value={player.name} maxLength={80} onChange={(event) => onPlayers(updateSetupPlayer(players, index, { name: event.target.value }))} required />
-            </label>
-            <div className="field">
-              <label id={raceLabelId} htmlFor={racePickerId}>{en ? 'Race' : 'Raza'}</label>
-              <RacePicker
-                id={racePickerId}
-                labelId={raceLabelId}
-                value={player.race}
-                onChange={(race) => onPlayers(updateSetupPlayer(players, index, { race }))}
-              />
-            </div>
-          </fieldset>;
-        })}
+    <header className="game-setup__header">
+      <div>
+        <p className="game-eyebrow">{en ? 'New 1v1 game' : 'Nueva partida 1v1'}</p>
+        <h1 id="game-setup-title">{en ? 'Configure the table' : 'Configura la mesa'}</h1>
+        <p>{en ? 'Choose the mission and identify both commanders before the first round.' : 'Elige la misión e identifica a ambos comandantes antes de la primera ronda.'}</p>
       </div>
-      <div className="game-form__actions"><button className="button-link" type="button" onClick={onCancel}>{en ? 'Cancel' : 'Cancelar'}</button><button className="button-primary" type="submit" disabled={pending || !mission}>{pending ? (en ? 'Starting…' : 'Iniciando…') : (en ? 'Start game' : 'Empezar partida')}</button></div>
+      <div className="game-setup__format" aria-label={en ? 'One versus one game' : 'Partida uno contra uno'}>
+        <strong>1</strong><span>VS</span><strong>1</strong>
+      </div>
+    </header>
+
+    <form onSubmit={onSubmit} className="game-form">
+      <section className="game-setup__section" aria-labelledby="game-setup-match-title">
+        <header className="game-setup__section-header">
+          <span className="game-setup__section-number" aria-hidden="true">01</span>
+          <div>
+            <h2 id="game-setup-match-title">{en ? 'Game details' : 'Datos de la partida'}</h2>
+            <p>{en ? 'Set the game size and the scenario to play.' : 'Define el tamaño de la partida y el escenario que vais a jugar.'}</p>
+          </div>
+        </header>
+
+        <div className="game-setup__match-fields">
+          <label className="field game-setup__points-field">
+            <span>{en ? 'Game points' : 'Puntos de la partida'}</span>
+            <span className="game-setup__number-input">
+              <input type="number" inputMode="numeric" min="1" step="1" value={pointsLimit} onChange={(event) => onPoints(event.target.value)} required />
+              <span aria-hidden="true">PTS</span>
+            </span>
+          </label>
+          <label className="field">
+            <span>{en ? 'Mission and variant' : 'Misión y variante'}</span>
+            <select value={missionId} onChange={(event) => onMission(event.target.value)}>
+              {MISSION_SCALE_GROUPS.map((scale) => <optgroup
+                key={scale}
+                label={scale === 'skirmish' ? (en ? 'Skirmish' : 'Escaramuza') : (en ? 'Standard' : 'Estándar')}
+              >
+                {missions.filter((item) => item.scale === scale).map((item) => <option key={item.id} value={item.id}>
+                  {item.name} · {scale === 'skirmish' ? (en ? 'Skirmish' : 'Escaramuza') : (en ? 'Standard' : 'Estándar')}
+                </option>)}
+              </optgroup>)}
+            </select>
+          </label>
+        </div>
+
+        {mission && <article className="game-mission-summary" aria-live="polite">
+          <div className="game-mission-summary__identity">
+            <span className="game-mission-summary__mark" aria-hidden="true">⌖</span>
+            <div>
+              <span>{en ? 'Selected mission' : 'Misión seleccionada'} · {missionScale}</span>
+              <strong>{mission.name}</strong>
+            </div>
+          </div>
+          <dl className="game-mission-summary__metrics">
+            <div><dt>{en ? 'Supply' : 'Suministro'}</dt><dd>{mission.startingSupply}</dd></div>
+            <div><dt>{en ? 'Per round' : 'Por ronda'}</dt><dd>+{mission.supplyEscalation}</dd></div>
+            <div><dt>{en ? 'Rounds' : 'Rondas'}</dt><dd>{mission.gameLength}</dd></div>
+          </dl>
+          <p>{localized(mission.additionalConditions, en)}</p>
+        </article>}
+        {mission && (mission.scale === 'skirmish' || mission.scale === 'standard') && <GameMapExamples en={en} scale={mission.scale} />}
+      </section>
+
+      <section className="game-setup__section" aria-labelledby="game-setup-players-title">
+        <header className="game-setup__section-header">
+          <span className="game-setup__section-number" aria-hidden="true">02</span>
+          <div>
+            <h2 id="game-setup-players-title">{en ? 'Commanders' : 'Comandantes'}</h2>
+            <p>{en ? 'Name each side and choose the race they will command.' : 'Pon nombre a cada bando y elige la raza que comandará.'}</p>
+          </div>
+        </header>
+
+        <div className="game-player-setup-grid">
+          {players.map((player, index) => {
+            const racePickerId = `game-player-${index + 1}-race`;
+            const raceLabelId = `${racePickerId}-label`;
+            const playerLabel = en ? `Player ${index + 1}` : `Jugador ${index + 1}`;
+            return <fieldset className="game-player-setup" data-race={player.race} key={index}>
+              <legend className="sr-only">{playerLabel}</legend>
+              <header className="game-player-setup__header">
+                <span className="game-player-setup__number" aria-hidden="true">0{index + 1}</span>
+                <div><strong>{playerLabel}</strong><span>{RACE_LABEL[player.race]}</span></div>
+                <img src={raceLogo(player.race)} width="46" height="46" alt="" />
+              </header>
+              <div className="game-player-setup__fields">
+                <label className="field">
+                  <span>{en ? 'Name' : 'Nombre'}</span>
+                  <input value={player.name} maxLength={80} onChange={(event) => onPlayers(updateSetupPlayer(players, index, { name: event.target.value }))} required />
+                </label>
+                <div className="field">
+                  <label id={raceLabelId} htmlFor={racePickerId}>{en ? 'Race' : 'Raza'}</label>
+                  <RacePicker
+                    id={racePickerId}
+                    labelId={raceLabelId}
+                    value={player.race}
+                    onChange={(race) => onPlayers(updateSetupPlayer(players, index, { race }))}
+                  />
+                </div>
+              </div>
+            </fieldset>;
+          })}
+        </div>
+      </section>
+
+      <footer className="game-form__actions">
+        <p><strong>{en ? 'Ready to deploy' : 'Listos para desplegar'}</strong><span>1 VS 1 · {pointsLimit || '—'} {en ? 'points' : 'puntos'}{mission ? ` · ${mission.name}` : ''}</span></p>
+        <div className="game-form__buttons">
+          <button className="button-link" type="button" onClick={onCancel}>{en ? 'Cancel' : 'Cancelar'}</button>
+          <button className="button-primary" type="submit" disabled={pending || !mission}><span>{pending ? (en ? 'Starting…' : 'Iniciando…') : (en ? 'Start game' : 'Empezar partida')}</span><span aria-hidden="true">→</span></button>
+        </div>
+      </footer>
     </form>
   </section>;
 }
