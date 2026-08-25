@@ -50,8 +50,8 @@ export default defineConfig({
       injectRegister: null,
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
       manifest: {
-        name: 'StarCraft Builder',
-        short_name: 'StarCraft Builder',
+        name: 'Starcraft Builder',
+        short_name: 'Starcraft Builder',
         description:
           'Constructor de listas de ejército para StarCraft: The Miniatures Game',
         id: '/',

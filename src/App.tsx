@@ -32,6 +32,7 @@ import { formatListAsText } from './ui/print/listText';
 import { SupportPage } from './ui/support/SupportPage';
 import { LanguageSelector } from './ui/common/LanguageSelector';
 import { AppVersion } from './ui/common/AppVersion';
+import { ChangelogLink } from './ui/common/ChangelogLink';
 import { GamePage } from './ui/game/GamePage';
 import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
 import './ui/app.css';
@@ -53,7 +54,7 @@ const NAV_ICON_THEME: Record<Race, string> = { ZERG: 'organico', TERRAN: 'indust
 const NAV_ITEMS = [
   { page: 'home' as const, key: 'home', icon: 'inicio' },
   { page: 'lists' as const, key: 'lists', icon: 'mis-listas' },
-  { page: 'games' as const, key: 'games', icon: null },
+  { page: 'games' as const, key: 'games', icon: 'partidas' },
   { page: 'public-lists' as const, key: 'publicLists', icon: 'listas-publicas' },
   { page: 'builder' as const, key: 'newList', icon: 'nueva-lista' },
   { page: 'support' as const, key: 'support', icon: null },
@@ -76,13 +77,12 @@ function MobileNavigation({ page, race, onNavigate, onCreate }: { page: PageId; 
   const selectItem = (item: typeof NAV_ITEMS[number], event: MouseEvent<HTMLButtonElement>) => {
     event.currentTarget.closest('details')?.removeAttribute('open');
     if (item.page === 'builder') onCreate();
-    else if (item.page === 'games') window.location.assign(pathForPage('games'));
     else onNavigate(item.page, t(item.key));
   };
   return <details className="primary-nav__mobile">
     <summary>{current.icon ? <NavigationIcon race={race} icon={current.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{t(current.key)}</span></summary>
     <div className="primary-nav__mobile-menu">
-      {NAV_ITEMS.map((item) => <button key={item.page} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}>{item.icon ? <NavigationIcon race={race} icon={item.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{t(item.key)}</span></button>)}
+      {NAV_ITEMS.map((item) => <button key={item.page} aria-current={item.page === page ? 'page' : undefined} className={item.page === page ? 'primary-nav__mobile-item--active' : ''} onClick={(event) => selectItem(item, event)}>{item.icon ? <NavigationIcon race={race} icon={item.icon} /> : <span className="primary-nav__support-mark" aria-hidden="true">?</span>}<span>{t(item.key)}</span></button>)}
     </div>
   </details>;
 }
@@ -170,8 +170,15 @@ function GameRoute() {
   const status = useAuthStore((state) => state.status);
   const restore = useAuthStore((state) => state.restore);
   useEffect(() => { if (status === 'checking') void restore(); }, [restore, status]);
-  if (status === 'checking') return <div className="game-page game-empty">Cargando…</div>;
-  return <GamePage mode={status === 'authenticated' ? 'account' : 'guest'} />;
+  const surface = gameRouteSurface(status);
+  if (surface === 'loading') return <div className="game-page game-empty">Cargando…</div>;
+  if (surface === 'account-shell') return <AccountRoute />;
+  return <GamePage mode="guest" />;
+}
+
+export function gameRouteSurface(status: 'checking' | 'anonymous' | 'unverified' | 'authenticated'): 'loading' | 'account-shell' | 'guest-page' {
+  if (status === 'checking') return 'loading';
+  return status === 'authenticated' ? 'account-shell' : 'guest-page';
 }
 
 function SupportRoute() {
@@ -189,7 +196,7 @@ function SupportRoute() {
   return <div className="support-standalone">
     <header className="support-standalone__header"><a href={localizedPath('home', locale)} aria-label={tCommon('appName')}><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><LanguageSelector /><a className="support-standalone__back" href={localizedPath('home', locale)}>{tNavigation('home')}</a></header>
     <SupportPage user={null} />
-    <footer className="auth-page__footer">{tLegal('footer')} <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> <AppVersion /></footer>
+    <footer className="auth-page__footer">{tLegal('footer')} <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> · <ChangelogLink /> · <AppVersion /></footer>
   </div>;
 }
 
@@ -545,36 +552,35 @@ function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preser
     <div className={`app${reviewErrorsOpen ? ' app--modal-open' : ''}`} data-race={list.race}>
       <header className="topbar app-header no-print">
         {mode === 'account' ? (
-          <img
-            className="topbar__logo"
-            src="/logo.png"
-            alt="StarCraft: The Miniatures Game"
-            width={521}
-            height={149}
-            role="button"
-            tabIndex={0}
+          <button
+            type="button"
+            className="topbar__brand"
+            aria-label={tCommon('appName')}
             onClick={() => navigateToPage('home', tNavigation('home'))}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') navigateToPage('home', tNavigation('home'));
-            }}
-          />
+          >
+            <img className="topbar__logo" src="/logo.png" alt="" width={521} height={149} />
+            <span className="topbar__title">{tCommon('appName')}</span>
+          </button>
         ) : (
-          <img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} />
+          <div className="topbar__brand">
+            <img className="topbar__logo" src="/logo.png" alt="StarCraft: The Miniatures Game" width={521} height={149} />
+            <span className="topbar__title">{tCommon('appName')}</span>
+          </div>
         )}
-        <span className="topbar__title">{tCommon('appName')}</span>
         <nav className="primary-nav" aria-label={tNavigation('main')}>
           {mode === 'guest' ? (
             <button className="primary-nav__item" onClick={onCloseGuestBuilder}>{tCommon('close')}</button>
           ) : (
             <>
             <div className="primary-nav__buttons">
-              <button className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', tNavigation('home'))}><NavigationIcon race={list.race} icon="inicio" />{tNavigation('home')}</button>
-              <button className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', tNavigation('lists'))}><NavigationIcon race={list.race} icon="mis-listas" />{tNavigation('lists')}</button>
-              <button className={`primary-nav__item${page === 'games' ? ' primary-nav__item--active' : ''}`} onClick={() => window.location.assign(pathForPage('games'))}>{tNavigation('games')}</button>
-              <button className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', tNavigation('publicLists'))}>{tNavigation('publicLists')}</button>
-              <button className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />{tNavigation('newList')}</button>
+              <button aria-current={page === 'home' ? 'page' : undefined} className={`primary-nav__item${page === 'home' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('home', tNavigation('home'))}><NavigationIcon race={list.race} icon="inicio" />{tNavigation('home')}</button>
+              <button aria-current={page === 'lists' ? 'page' : undefined} className={`primary-nav__item${page === 'lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('lists', tNavigation('lists'))}><NavigationIcon race={list.race} icon="mis-listas" />{tNavigation('lists')}</button>
+              <button aria-current={page === 'games' ? 'page' : undefined} className={`primary-nav__item${page === 'games' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('games', tNavigation('games'))}><NavigationIcon race={list.race} icon="partidas" />{tNavigation('games')}</button>
+              <button aria-current={page === 'public-lists' ? 'page' : undefined} className={`primary-nav__item${page === 'public-lists' ? ' primary-nav__item--active' : ''}`} onClick={() => navigateToPage('public-lists', tNavigation('publicLists'))}><NavigationIcon race={list.race} icon="listas-publicas" />{tNavigation('publicLists')}</button>
+              <button aria-current={page === 'builder' ? 'page' : undefined} className={`primary-nav__item${page === 'builder' ? ' primary-nav__item--active' : ''}`} onClick={() => createList()}><NavigationIcon race={list.race} icon="nueva-lista" />{tNavigation('newList')}</button>
             </div>
-            <button className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', tNavigation('support'))}><span className="primary-nav__support-mark" aria-hidden="true">?</span>{tNavigation('support')}</button>
+            <span className="primary-nav__divider" aria-hidden="true" />
+            <button aria-current={page === 'support' ? 'page' : undefined} className={`primary-nav__support${page === 'support' ? ' primary-nav__support--active' : ''}`} onClick={() => navigateToPage('support', tNavigation('support'))}><span className="primary-nav__support-mark" aria-hidden="true">?</span>{tNavigation('support')}</button>
             <MobileNavigation page={page} race={list.race} onNavigate={navigateToPage} onCreate={() => createList()} />
             <select
               className="primary-nav__select"
@@ -583,8 +589,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preser
               onChange={(event) => {
                 const destination = event.target.value as PageId;
                 if (destination === 'builder') createList();
-                else if (destination === 'games') window.location.assign(pathForPage('games'));
-                else navigateToPage(destination, tNavigation(destination === 'home' ? 'home' : destination === 'lists' ? 'lists' : destination === 'public-lists' ? 'publicLists' : 'support'));
+                else navigateToPage(destination, tNavigation(destination === 'home' ? 'home' : destination === 'lists' ? 'lists' : destination === 'games' ? 'games' : destination === 'public-lists' ? 'publicLists' : 'support'));
               }}
             >
               <option value="home">{tNavigation('home')}</option>
@@ -598,15 +603,17 @@ function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preser
           )}
         </nav>
         <div className="topbar__spacer" />
-        {mode === 'guest' && <span className="guest-mode">{tBuilder('guestMode')}</span>}
-        {capabilities.manageAccount && user && (
-          <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => navigateToPage('profile', tNavigation('profile'))} aria-label={tNavigation('openProfile')}>
-            <ProfileAvatar user={user} />
-            <span className="profile-trigger__name">{profileName(user)}</span>
-          </button>
-        )}
-        {mode === 'account' && <LanguageSelector />}
-        {mode === 'account' && <button className="header-logout" onClick={logoutFromApp}>{tNavigation('logout')}</button>}
+        <div className="topbar__account">
+          {mode === 'guest' && <span className="guest-mode">{tBuilder('guestMode')}</span>}
+          {capabilities.manageAccount && user && (
+            <button className={`profile-trigger${page === 'profile' ? ' profile-trigger--active' : ''}`} onClick={() => navigateToPage('profile', tNavigation('profile'))} aria-label={tNavigation('openProfile')}>
+              <ProfileAvatar user={user} />
+              <span className="profile-trigger__name">{profileName(user)}</span>
+            </button>
+          )}
+          {mode === 'account' && <LanguageSelector />}
+          {mode === 'account' && <button className="header-logout" onClick={logoutFromApp}>{tNavigation('logout')}</button>}
+        </div>
       </header>
 
       {mode === 'guest' && (
@@ -710,14 +717,15 @@ function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preser
         </>
       )}
 
-      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} onOpenGames={() => window.location.assign(pathForPage('games'))} />}
+      {mode === 'account' && page === 'home' && <HomePage onCreateRace={createList} onOpenOwn={(remote) => loadList(remote, remote.revision)} onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} onViewAllPublic={() => navigateToPage('public-lists', tNavigation('publicLists'))} onOpenGames={() => navigateToPage('games', tNavigation('games'))} />}
       {mode === 'account' && page === 'lists' && <SavedListsPage onCreate={() => createList()} onLoad={loadList} onViewPublic={(id) => { void openPublicList(id); }} />}
+      {mode === 'account' && page === 'games' && <GamePage mode="account" embedded />}
       {mode === 'account' && page === 'public-lists' && <PublicListsPage onViewPublic={(id) => { void openPublicList(id); }} onClonePublic={(id) => { void clonePublicList(id); }} />}
       {mode === 'account' && page === 'support' && <SupportPage user={user} />}
       {mode === 'account' && page === 'profile' && <AccountPage />}
       {mode === 'account' && page === 'public-list' && publicList && <PublicListPage list={publicList} onBack={closePublicList} onClone={() => { void clonePublicList(publicList.id); }} />}
       {toast && <div className="toast no-print">{toast}</div>}
-      <footer className="auth-page__footer app__footer no-print">{tLegal('footer')} <a href={localizedPath('support', locale)}>{tNavigation('support')}</a> · <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> · <AppVersion /></footer>
+      <footer className="auth-page__footer app__footer no-print">{tLegal('footer')} <a href={localizedPath('support', locale)}>{tNavigation('support')}</a> · <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> · <ChangelogLink /> · <AppVersion /></footer>
     </div>
   );
 }

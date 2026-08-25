@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { localizedPath, routeLocale } from '@/i18n/routing';
+import { ChangelogLink } from '@/ui/common/ChangelogLink';
 
 const lastUpdated = '5 de agosto de 2026';
 const siteDomain = 'starcraft-builder.com';
@@ -62,6 +63,8 @@ export function TermsPage() {
 
           <footer className="terms-page__footer">
             <a href={localizedPath('home', locale)}>{t('backAccess')}</a>
+            <span aria-hidden="true">·</span>
+            <ChangelogLink />
           </footer>
         </article>
       </main>

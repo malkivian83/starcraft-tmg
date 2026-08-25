@@ -13,6 +13,8 @@ describe('rutas localizadas', () => {
     expect(pageFromPath('/en/check-your-email')).toBe('check-email');
     expect(pageFromPath('/es/partidas')).toBe('games');
     expect(pageFromPath('/en/games')).toBe('games');
+    expect(pageFromPath('/es/partidas/partida-123')).toBe('games');
+    expect(pageFromPath('/en/games/game-123')).toBe('games');
   });
 
   it('conserva el identificador de una lista pública', () => {

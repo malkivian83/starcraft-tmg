@@ -31,7 +31,7 @@ Referencias principales:
 | [`Inicio de sesión.dc.html`](../design/Inicio%20de%20sesión.dc.html) | Acceso y panel de invitado |
 | [`Biblioteca.dc.html`](../design/Biblioteca.dc.html) | Mis listas y listas públicas |
 | [`Creador de listas.dc.html`](../design/Creador%20de%20listas.dc.html) | Constructor y sus cuatro pasos |
-| [`Soporte.dc.html`](../design/Soporte.dc.html) | Formulario de soporte |
+| [`Soporte.dc.html`](../design/Soporte.dc.html) | Formulario de contacto |
 
 La aplicación no cargará en producción `support.js`, `image-slot.js`,
 `_ds_bundle.js` ni el CSS global exportado por Nocturne. Son infraestructura de
@@ -72,7 +72,7 @@ El diseño se traducirá a componentes React y CSS propios del proyecto.
 - Listas públicas: búsqueda, filtros, todas las ordenaciones actuales, ver,
   clonar, dar o retirar like y consultar el detalle de solo lectura.
 - Inicio, perfil, preferencias, contraseña, Google, borrado de cuenta,
-  superadministración, soporte y términos.
+  superadministración, contacto y términos.
 - Estados vacíos, carga, error, bloqueo, pendiente, confirmación y notificaciones.
 - Navegación y comportamiento responsive actuales, incluida la navegación móvil
   y la barra de recursos sin tapar el contenido.

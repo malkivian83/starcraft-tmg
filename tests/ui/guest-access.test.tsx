@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { App, initialPageFor, pageForPathname } from '@/App';
+import { App, gameRouteSurface, initialPageFor, pageForPathname } from '@/App';
 import { initialGameView } from '@/ui/game/GamePage';
 import { useAuthStore } from '@/store/authStore';
 import { useListStore } from '@/store/listStore';
@@ -67,5 +67,11 @@ describe('ruta pública del constructor', () => {
     expect(pageForPathname('/soporte')).toBe('support');
     expect(pageForPathname('/partidas')).toBe('games');
     expect(pageForPathname('/public-lists/id', 'id')).toBe('public-list');
+  });
+
+  it('integra Mis partidas en la estructura principal cuando hay sesión', () => {
+    expect(gameRouteSurface('checking')).toBe('loading');
+    expect(gameRouteSurface('authenticated')).toBe('account-shell');
+    expect(gameRouteSurface('anonymous')).toBe('guest-page');
   });
 });

@@ -6,7 +6,7 @@ export const LOCALE_STORAGE_KEY = 'starcraft-tmg.locale';
 function updateDocumentMetadata(locale: SupportedLocale): void {
   if (typeof document === 'undefined') return;
   document.documentElement.lang = locale;
-  document.title = locale === 'en' ? 'Army lists · StarCraft TMG' : 'Listas de ejército · StarCraft TMG';
+  document.title = 'Starcraft Builder · StarCraft TMG';
   const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
   if (description) description.content = locale === 'en'
     ? 'Army list builder for StarCraft: The Miniatures Game'
