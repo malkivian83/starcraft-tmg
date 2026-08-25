@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { cookiesResources } from '@/i18n/cookies';
 import { resources } from '@/i18n/locales';
 
 function leafKeys(value: unknown, prefix = ''): string[] {
@@ -19,5 +20,9 @@ describe('recursos de traducción', () => {
         expect(String(value).trim(), `${locale}.${key}`).not.toBe('');
       }
     }
+  });
+
+  it('mantienen las mismas claves para el consentimiento de cookies', () => {
+    expect(leafKeys(cookiesResources.es).sort()).toEqual(leafKeys(cookiesResources.en).sort());
   });
 });

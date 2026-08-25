@@ -25,6 +25,7 @@ Los orígenes llevan `www`: es el dominio canónico, y el pelado redirige hacia 
 ```env
 VITE_API_BASE_URL=https://www.starcraft-builder.com/api
 VITE_GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
+VITE_GOOGLE_ANALYTICS_ID=G-F7DMMN328B
 GOOGLE_CLIENT_ID=IDENTIFICADOR.apps.googleusercontent.com
 APP_ORIGIN=https://www.starcraft-builder.com
 APP_BASE_URL=https://www.starcraft-builder.com

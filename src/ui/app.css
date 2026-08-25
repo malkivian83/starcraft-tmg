@@ -131,6 +131,66 @@
   box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
 }
 
+.cookie-consent {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: flex;
+  width: min(620px, calc(100% - 32px));
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  color: var(--text);
+  background: var(--bg-panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 44px rgb(0 0 0 / 32%);
+}
+
+.cookie-consent__copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.cookie-consent__copy p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.cookie-consent__copy a {
+  width: fit-content;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.cookie-consent__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 9px;
+}
+
+@media (max-width: 620px) {
+  .cookie-consent {
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 16px);
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .cookie-consent__actions {
+    justify-content: flex-end;
+  }
+}
+
 .pwa-prompt,
 .pwa-network-status {
   position: fixed;

@@ -17,6 +17,7 @@ function TermsSection({ title, children }: { title: string; children: ReactNode 
 
 export function TermsPage() {
   const { t } = useTranslation('legal');
+  const { t: tCookies } = useTranslation('cookies');
   const locale = routeLocale(window.location.pathname);
   return (
     <div className="terms-page">
@@ -40,6 +41,11 @@ export function TermsPage() {
             <TermsSection title={t('sections.account.title')}>
               <p>{t('sections.account.p1')}</p>
               <p>{t('sections.account.p2')}</p>
+            </TermsSection>
+
+            <TermsSection title={tCookies('policyTitle')}>
+              <p>{tCookies('policyText')}</p>
+              <p>{tCookies('policyConsent')}</p>
             </TermsSection>
 
             <TermsSection title={t('sections.lists.title')}>
