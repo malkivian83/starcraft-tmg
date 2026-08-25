@@ -33,7 +33,12 @@ describe('metadatos SEO y rich snippets', () => {
 
     for (const locale of ['es', 'en'] as const) {
       const metadata = buildSeoMetadata('home', locale);
-      const website = metadata.structuredData as StructuredData;
+      const website = (Array.isArray(metadata.structuredData)
+        ? metadata.structuredData.find((item) => item['@type'] === 'WebSite')
+        : metadata.structuredData) as StructuredData;
+      const organization = (Array.isArray(metadata.structuredData)
+        ? metadata.structuredData.find((item) => item['@type'] === 'Organization')
+        : null) as StructuredData;
 
       expect(metadata.title.trim()).not.toBe('');
       expect(metadata.description.trim()).not.toBe('');
@@ -46,6 +51,13 @@ describe('metadatos SEO y rich snippets', () => {
       });
       expect(typeof website.name).toBe('string');
       expect(new URL(String(website.url)).origin).toBe(SITE_ORIGIN);
+      expect(organization).toMatchObject({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Starcraft Builder',
+        url: SITE_ORIGIN,
+      });
+      expect(new URL(String(organization.logo)).origin).toBe(SITE_ORIGIN);
     }
   });
 

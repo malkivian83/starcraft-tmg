@@ -4,6 +4,7 @@ import type { SupportedLocale } from '@/i18n/types';
 export const SITE_ORIGIN = 'https://www.starcraft-builder.com';
 
 type StructuredData = Record<string, unknown>;
+type StructuredDataValue = StructuredData | StructuredData[];
 
 interface PageCopy {
   title: string;
@@ -22,7 +23,7 @@ export interface SeoMetadataDescriptor {
   canonicalUrl: string;
   robots: string;
   alternates: SeoAlternate[];
-  structuredData: StructuredData | null;
+  structuredData: StructuredDataValue | null;
 }
 
 const PUBLIC_PAGES = new Set<LocalizedPage>([
@@ -128,6 +129,19 @@ function websiteStructuredData(): StructuredData {
   };
 }
 
+function organizationStructuredData(locale: SupportedLocale): StructuredData {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE_ORIGIN}/#organization`,
+    name: 'Starcraft Builder',
+    alternateName: ['StarCraft TMG Builder', 'starcraft-builder.com'],
+    url: SITE_ORIGIN,
+    logo: `${SITE_ORIGIN}/icon-512.png`,
+    description: PAGE_COPY[locale].home.description,
+  };
+}
+
 function breadcrumbStructuredData(page: LocalizedPage, locale: SupportedLocale): StructuredData {
   const copy = PAGE_COPY[locale];
   const pageUrl = canonicalUrl(page, locale);
@@ -174,7 +188,7 @@ export function buildSeoMetadata(page: LocalizedPage, locale: SupportedLocale): 
     structuredData: !isPublic
       ? null
       : page === 'home'
-        ? websiteStructuredData()
+        ? [websiteStructuredData(), organizationStructuredData(locale)]
         : breadcrumbStructuredData(page, locale),
   };
 }
