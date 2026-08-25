@@ -51,6 +51,16 @@ inicio**. La instalación incluye el shell de la interfaz y algunas imágenes en
 caché, pero las cuentas y las listas guardadas siguen necesitando conexión con
 la API y MariaDB online.
 
+## Google Analytics
+
+La aplicación integra Google Analytics 4 con `VITE_GOOGLE_ANALYTICS_ID` (por
+defecto, `G-F7DMMN328B`). En producción aparece un aviso de cookies: las cookies
+técnicas de sesión siguen disponibles y las cookies de analítica no se cargan
+hasta que el visitante las acepta. La navegación SPA se registra mediante la
+medición mejorada de cambios del historial de GA4; mantén esa opción activada
+en el flujo de datos. En la primera ubicación enviada se omiten las query
+strings para no transmitir tokens, seeds ni parámetros de sesión.
+
 ## Puesta en marcha
 
 ```bash

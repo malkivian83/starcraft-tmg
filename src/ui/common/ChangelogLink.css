@@ -1,4 +1,5 @@
-.footer-changelog-link {
+.footer-changelog-link,
+.auth-page .footer-changelog-link {
   display: inline;
   min-height: 0;
   margin: 0;
@@ -10,19 +11,28 @@
   color: var(--accent-muted, var(--accent));
   font: inherit;
   font-weight: inherit;
+  letter-spacing: inherit;
   line-height: inherit;
-  text-decoration: underline;
+  text-decoration: none;
+  text-transform: none;
   text-underline-offset: 2px;
   vertical-align: baseline;
 }
 
 .footer-changelog-link:hover:not(:disabled),
-.footer-changelog-link:active:not(:disabled) {
+.footer-changelog-link:active:not(:disabled),
+.auth-page .footer-changelog-link:hover:not(:disabled),
+.auth-page .footer-changelog-link:active:not(:disabled) {
   transform: none;
   border-color: transparent;
   background: transparent;
   box-shadow: none;
   color: var(--accent-soft, var(--accent));
+}
+
+.footer-changelog-link:hover:not(:disabled),
+.auth-page .footer-changelog-link:hover:not(:disabled) {
+  text-decoration: underline;
 }
 
 .changelog-modal {

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.starcraft-builder.com/es/inicio</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/inicio" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/home" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/inicio" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/home</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/inicio" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/home" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/inicio" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/es/crear-lista</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/crear-lista" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/create-list" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/crear-lista" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/create-list</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/crear-lista" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/create-list" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/crear-lista" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/es/partidas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/partidas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/games" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/partidas" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/games</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/partidas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/games" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/partidas" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/es/soporte</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/soporte" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/support" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/soporte" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/support</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/soporte" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/support" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/soporte" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/es/terminos-y-condiciones</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/terminos-y-condiciones" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/terminos-y-condiciones" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/terms-and-conditions</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/terminos-y-condiciones" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/terminos-y-condiciones" />
+  </url>
+</urlset>

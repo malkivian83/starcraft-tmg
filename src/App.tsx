@@ -35,8 +35,10 @@ import { AppVersion } from './ui/common/AppVersion';
 import { ChangelogLink } from './ui/common/ChangelogLink';
 import { GamePage } from './ui/game/GamePage';
 import { PwaNetworkStatus, PwaPrompt } from './pwa/PwaPrompt';
+import { CookieConsent } from './privacy/CookieConsent';
+import { SeoMetadata } from './seo/SeoMetadata';
 import './ui/app.css';
-import { findPublicListId, localizedPath, pageFromPath, routeLocale } from './i18n/routing';
+import { findPublicListId, localizedPath, pageFromPath, routeLocale, type LocalizedPage } from './i18n/routing';
 
 type StepId = 'cards' | 'units' | 'scenario' | 'review' | 'stats';
 type PageId = 'home' | 'builder' | 'lists' | 'public-lists' | 'games' | 'profile' | 'public-list' | 'support';
@@ -136,6 +138,7 @@ export function initialPageFor(mode: AccessMode, preserveGuestDraft: boolean, pu
 
 export function App() {
   return <>
+    <CookieConsent />
     <PwaPrompt />
     <PwaNetworkStatus />
     <Routes>
@@ -169,11 +172,17 @@ export function App() {
 function GameRoute() {
   const status = useAuthStore((state) => state.status);
   const restore = useAuthStore((state) => state.restore);
+  const locale = routeLocale(window.location.pathname);
+  const noIndex = isGameSubpage(window.location.pathname);
   useEffect(() => { if (status === 'checking') void restore(); }, [restore, status]);
   const surface = gameRouteSurface(status);
-  if (surface === 'loading') return <div className="game-page game-empty">Cargando…</div>;
+  if (surface === 'loading') return <><SeoMetadata page="games" locale={locale} noIndex={noIndex} /><div className="game-page game-empty">Cargando…</div></>;
   if (surface === 'account-shell') return <AccountRoute />;
-  return <GamePage mode="guest" />;
+  return <><SeoMetadata page="games" locale={locale} noIndex={noIndex} /><GamePage mode="guest" /></>;
+}
+
+function isGameSubpage(pathname: string): boolean {
+  return /\/(?:partidas|games)\/[^/]+\/?$/.test(pathname);
 }
 
 export function gameRouteSurface(status: 'checking' | 'anonymous' | 'unverified' | 'authenticated'): 'loading' | 'account-shell' | 'guest-page' {
@@ -191,9 +200,10 @@ function SupportRoute() {
     if (status === 'checking') void restore();
   }, [restore, status]);
   if (status === 'authenticated') return <AccountRoute />;
-  if (status === 'checking') return <div className="support-standalone support-standalone--loading"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></div>;
   const locale = routeLocale(window.location.pathname);
+  if (status === 'checking') return <><SeoMetadata page="support" locale={locale} /><div className="support-standalone support-standalone--loading"><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></div></>;
   return <div className="support-standalone">
+    <SeoMetadata page="support" locale={locale} />
     <header className="support-standalone__header"><a href={localizedPath('home', locale)} aria-label={tCommon('appName')}><img src="/logo.png" alt="StarCraft: The Miniatures Game" /></a><LanguageSelector /><a className="support-standalone__back" href={localizedPath('home', locale)}>{tNavigation('home')}</a></header>
     <SupportPage user={null} />
     <footer className="auth-page__footer">{tLegal('footer')} <a href={localizedPath('terms', locale)}>{tLegal('terms')}</a> · <ChangelogLink /> · <AppVersion /></footer>
@@ -223,6 +233,8 @@ function AccountRoute() {
   const location = useLocation();
   const navigate = useNavigate();
   const status = useAuthStore((state) => state.status);
+  const routePage = pageFromPath(location.pathname);
+  const locale = routeLocale(location.pathname);
   const resetForRace = useListStore((state) => state.resetForRace);
   const previousStatus = useRef(status);
   const navigationState = location.state as DraftNavigationState | null;
@@ -239,16 +251,28 @@ function AccountRoute() {
     if (priorStatus === 'authenticated' && status === 'anonymous') resetForRace('ZERG');
   }, [resetForRace, status]);
 
-  return <AuthGate>
-    <ArmyBuilderApp
-      mode="account"
-      initialSeed={initialSeed}
-      initialListId={initialListId}
-      preserveDraftOnMount={preserveGuestDraft}
-      onDraftClaimed={consumeGuestDraft}
-    />
-  </AuthGate>;
+  const appOwnsSeo = status === 'authenticated' && !AUTH_GATE_ONLY_PAGES.has(routePage);
+  return <>
+    {!appOwnsSeo && <SeoMetadata page={routePage} locale={locale} />}
+    <AuthGate>
+      <ArmyBuilderApp
+        mode="account"
+        initialSeed={initialSeed}
+        initialListId={initialListId}
+        preserveDraftOnMount={preserveGuestDraft}
+        onDraftClaimed={consumeGuestDraft}
+      />
+    </AuthGate>
+  </>;
 }
+
+const AUTH_GATE_ONLY_PAGES = new Set<LocalizedPage>([
+  'terms',
+  'register',
+  'check-email',
+  'verify-email',
+  'reset-password',
+]);
 
 function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preserveDraftOnMount = false, onDraftClaimed, onCloseGuestBuilder, onRequestAuthentication }: {
   mode: AccessMode;
@@ -550,6 +574,7 @@ function ArmyBuilderApp({ mode, initialSeed = null, initialListId = null, preser
 
   return (
     <div className={`app${reviewErrorsOpen ? ' app--modal-open' : ''}`} data-race={list.race}>
+      <SeoMetadata page={mode === 'guest' ? 'guest-builder' : page} locale={locale} noIndex={page === 'games' && isGameSubpage(window.location.pathname)} />
       <header className="topbar app-header no-print">
         {mode === 'account' ? (
           <button
