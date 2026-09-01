@@ -903,9 +903,17 @@ con sus listas. Sin cambios.
 
 ### 11.6 Panel de administración
 
-`SuperAdminPanel` muestra el número de listas por usuario. No se añade
-información de partidas: D4 las declara privadas y no hay motivo operativo para
-que un administrador las vea.
+`SuperAdminPanel` incorpora una pestaña protegida de estadísticas de partidas.
+El endpoint administrativo agrupa las filas de `game_sessions` por usuario y
+devuelve todas las sesiones guardadas, también las que siguen en configuración
+o están en curso. El resumen incluye contadores por estado (configuración,
+activas, finalizadas y abandonadas), el total de sesiones, las sesiones de
+invitados y la última actividad.
+
+La autorización sigue siendo exclusiva del superadministrador configurado en
+el backend. No se exponen rivales, nombres, cartas, listas ni registros
+individuales, por lo que la privacidad de los datos de partida detallados en
+D4 se mantiene para el resto de usuarios.
 
 ---
 
