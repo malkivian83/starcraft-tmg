@@ -11,6 +11,32 @@ export interface GamePrincipal {
   guestId: string | null;
 }
 
+export interface AdminGameUserSummary {
+  userId: string;
+  email: string;
+  nickname: string | null;
+  isActive: boolean;
+  sessions: number;
+  configuration: number;
+  active: number;
+  finished: number;
+  abandoned: number;
+  lastActivityAt: string | null;
+}
+
+export interface AdminGameStats {
+  users: AdminGameUserSummary[];
+  totals: {
+    users: number;
+    sessions: number;
+    configuration: number;
+    active: number;
+    finished: number;
+    abandoned: number;
+    guestSessions: number;
+  };
+}
+
 interface GameRow extends RowDataPacket {
   id: string;
   owner_type: 'ACCOUNT' | 'GUEST';
@@ -37,6 +63,20 @@ interface GameRow extends RowDataPacket {
   created_at: string;
   updated_at: string;
   finished_at: string | null;
+}
+
+interface AdminGameSummaryRow extends RowDataPacket {
+  owner_type: GamePrincipal['type'];
+  user_id: string | null;
+  email: string | null;
+  nickname: string | null;
+  is_active: number | boolean | null;
+  sessions: number | string | null;
+  configuration: number | string | null;
+  active: number | string | null;
+  finished: number | string | null;
+  abandoned: number | string | null;
+  last_activity_at: string | null;
 }
 
 const columns = `
@@ -106,6 +146,52 @@ export class GameRepository {
     const owner = ownerClause(principal);
     const [rows] = await this.pool.execute<GameRow[]>(`${columns} WHERE ${owner.sql} ORDER BY updated_at DESC`, owner.params);
     return rows.map(map);
+  }
+
+  async adminSummaryByUser(): Promise<AdminGameStats> {
+    const [rows] = await this.pool.execute<AdminGameSummaryRow[]>(
+      `SELECT s.owner_type, u.id AS user_id, u.email, p.nickname, u.is_active,
+              COUNT(*) AS sessions,
+              SUM(s.status = 'CONFIGURATION') AS configuration,
+              SUM(s.status = 'ACTIVE') AS active,
+              SUM(s.status = 'FINISHED') AS finished,
+              SUM(s.status = 'ABANDONED') AS abandoned,
+              MAX(s.updated_at) AS last_activity_at
+         FROM game_sessions s
+         LEFT JOIN users u ON u.id = s.owner_account_id
+         LEFT JOIN profiles p ON p.user_id = u.id
+        GROUP BY s.owner_type, u.id, u.email, p.nickname, u.is_active
+        ORDER BY sessions DESC, last_activity_at DESC`,
+    );
+
+    const users = rows
+      .filter((row) => row.owner_type === 'ACCOUNT' && row.user_id && row.email)
+      .map((row) => ({
+        userId: row.user_id!,
+        email: row.email!,
+        nickname: row.nickname,
+        isActive: Boolean(row.is_active),
+        sessions: Number(row.sessions ?? 0),
+        configuration: Number(row.configuration ?? 0),
+        active: Number(row.active ?? 0),
+        finished: Number(row.finished ?? 0),
+        abandoned: Number(row.abandoned ?? 0),
+        lastActivityAt: row.last_activity_at,
+      }));
+    const guest = rows.find((row) => row.owner_type === 'GUEST');
+
+    return {
+      users,
+      totals: {
+        users: users.length,
+        sessions: rows.reduce((total, row) => total + Number(row.sessions ?? 0), 0),
+        configuration: rows.reduce((total, row) => total + Number(row.configuration ?? 0), 0),
+        active: rows.reduce((total, row) => total + Number(row.active ?? 0), 0),
+        finished: rows.reduce((total, row) => total + Number(row.finished ?? 0), 0),
+        abandoned: rows.reduce((total, row) => total + Number(row.abandoned ?? 0), 0),
+        guestSessions: Number(guest?.sessions ?? 0),
+      },
+    };
   }
 
   async find(id: string, principal: GamePrincipal): Promise<GameSession | null> {

@@ -1058,6 +1058,94 @@
   gap: 16px;
 }
 
+.super-admin-panel .admin-match-stats-summary {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.super-admin-panel .admin-match-stat {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--page-line);
+  border-radius: 9px;
+  background: var(--page-surface-2);
+}
+
+.super-admin-panel .admin-match-stat span {
+  overflow: hidden;
+  color: var(--page-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.super-admin-panel .admin-match-stat strong {
+  color: var(--page-text);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.super-admin-panel .admin-match-stats-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--page-line);
+  border-radius: 9px;
+  background: var(--page-surface-2);
+}
+
+.super-admin-panel .admin-match-stats-table {
+  width: 100%;
+  min-width: 690px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.super-admin-panel .admin-match-stats-table th,
+.super-admin-panel .admin-match-stats-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--page-line);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.super-admin-panel .admin-match-stats-table thead th {
+  color: var(--page-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.super-admin-panel .admin-match-stats-table th:first-child,
+.super-admin-panel .admin-match-stats-table td:first-child {
+  text-align: left;
+}
+
+.super-admin-panel .admin-match-stats-table tbody tr:last-child th,
+.super-admin-panel .admin-match-stats-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.super-admin-panel .admin-match-stats-table tbody th {
+  color: var(--page-text);
+  font-weight: 600;
+}
+
+.super-admin-panel .admin-match-stats-table tbody th small {
+  display: block;
+  margin-top: 2px;
+  color: var(--page-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.super-admin-panel .admin-match-stats-table tbody td {
+  color: var(--page-text);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Public list detail (the sheet itself remains untouched) ---------------- */
 
 .public-list-page {
@@ -1270,6 +1358,10 @@
   .super-admin-panel .email-log-result {
     justify-items: start;
     text-align: left;
+  }
+
+  .super-admin-panel .admin-match-stats-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .public-list-toolbar {

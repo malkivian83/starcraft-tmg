@@ -47,6 +47,7 @@ describe('autorización HTTP de estadísticas', () => {
   });
 
   it.each([
+    ['GET', '/api/admin/match-stats'],
     ['GET', '/api/lists/00000000-0000-4000-8000-000000000001/matches'],
     ['POST', '/api/lists/00000000-0000-4000-8000-000000000001/matches'],
     ['PUT', '/api/lists/00000000-0000-4000-8000-000000000001/matches/00000000-0000-4000-8000-000000000002'],

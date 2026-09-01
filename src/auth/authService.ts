@@ -28,6 +28,30 @@ export interface AdminUser {
   lastLoginAt: string | null;
   savedLists: number;
 }
+export interface AdminGameUserSummary {
+  userId: string;
+  email: string;
+  nickname: string | null;
+  isActive: boolean;
+  sessions: number;
+  configuration: number;
+  active: number;
+  finished: number;
+  abandoned: number;
+  lastActivityAt: string | null;
+}
+export interface AdminGameStats {
+  users: AdminGameUserSummary[];
+  totals: {
+    users: number;
+    sessions: number;
+    configuration: number;
+    active: number;
+    finished: number;
+    abandoned: number;
+    guestSessions: number;
+  };
+}
 export interface SmtpSettings { host: string; port: number; secure: boolean; username: string; from: string; passwordConfigured: boolean; password?: string; }
 export interface EmailDeliveryLog {
   id: number;
@@ -246,6 +270,10 @@ export async function deleteAccount(reauthentication: { password: string } | { c
 
 export async function listAdminUsers(): Promise<AdminUser[]> {
   return (await request<{ users: AdminUser[] }>('/admin/users')).users;
+}
+
+export async function getAdminGameStats(): Promise<AdminGameStats> {
+  return request<AdminGameStats>('/admin/match-stats');
 }
 
 export async function setAdminUserActive(id: string, isActive: boolean): Promise<void> {

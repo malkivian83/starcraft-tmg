@@ -149,6 +149,26 @@ Object.assign(resources.es.builder, { statistics: 'Estadísticas' });
 Object.assign(resources.en.builder, { statistics: 'Statistics' });
 Object.assign(resources.es.navigation, { games: 'Mis partidas' });
 Object.assign(resources.en.navigation, { games: 'My games' });
+Object.assign(resources.es.admin.sections, { matchStats: 'Estadísticas' });
+Object.assign(resources.en.admin.sections, { matchStats: 'Match statistics' });
+Object.assign(resources.es.admin, {
+  matchStatsTitle: 'Estadísticas de partidas',
+  matchStatsDescription: 'Resumen de todas las sesiones de partida guardadas por cada usuario.',
+  matchStatsUsers: 'Usuarios con partidas', matchStatsGames: 'Partidas guardadas', matchStatsConfiguration: 'Configuración',
+  matchStatsActive: 'En curso', matchStatsFinished: 'Finalizadas', matchStatsAbandoned: 'Abandonadas', matchStatsGuests: 'Invitados',
+  matchStatsUser: 'Usuario', matchStatsLastActivity: 'Última actividad', loadingMatchStats: 'Cargando estadísticas…',
+  matchStatsNoUsers: 'Todavía no hay usuarios con partidas guardadas.', matchStatsLoadError: 'No se pudieron cargar las estadísticas de partidas.',
+  matchStatsRefresh: 'Actualizar estadísticas',
+});
+Object.assign(resources.en.admin, {
+  matchStatsTitle: 'Match statistics',
+  matchStatsDescription: 'Summary of all game sessions saved by each user.',
+  matchStatsUsers: 'Users with games', matchStatsGames: 'Saved games', matchStatsConfiguration: 'Configuration',
+  matchStatsActive: 'In progress', matchStatsFinished: 'Finished', matchStatsAbandoned: 'Abandoned', matchStatsGuests: 'Guests',
+  matchStatsUser: 'User', matchStatsLastActivity: 'Last activity', loadingMatchStats: 'Loading statistics…',
+  matchStatsNoUsers: 'There are no users with saved games yet.', matchStatsLoadError: 'Match statistics could not be loaded.',
+  matchStatsRefresh: 'Refresh statistics',
+});
 Object.assign(resources.es.auth, { guestTitle: 'Usar sin cuenta', guestDescription: 'Crea una lista o gestiona una partida sin registrarte.', openGame: 'Comenzar partida', gameHint: 'Guarda la partida para continuarla desde este navegador.' });
 Object.assign(resources.en.auth, { guestTitle: 'Use without an account', guestDescription: 'Create a list or manage a game without registering.', openGame: 'Start game', gameHint: 'Save the game so you can continue it from this browser.' });
 Object.assign(resources.es.builderUi, {

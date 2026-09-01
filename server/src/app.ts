@@ -82,7 +82,7 @@ export function createApp(pool: DatabasePool, env: ServerEnvironment, emailOverr
     response.json({ status: 'ok' });
   });
   app.use('/api/auth', createAuthRouter({ repository: authRepository, env, email, avatarStorage }));
-  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, env));
+  app.use('/api/admin', createAdminRouter(authRepository, smtpSettings, emailLogs, smtpEmail, email, supportRepository, gameRepository, env));
   app.use('/api/support', createSupportRouter(supportRepository, authRepository, email, env));
   app.use('/api/lists', requireUser(authRepository, env), createListRouter(listRepository, matchRepository));
   app.use('/api/games', createGameRouter(gameRepository, authRepository, env));

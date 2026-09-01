@@ -9,6 +9,7 @@ import { EmailDeliveryLogRepository } from '../email/email-delivery-log.reposito
 import { describeSmtpError, type EmailGateway, SmtpEmailGateway } from '../email/email.gateway.js';
 import { SmtpSettingsRepository } from '../email/smtp-settings.repository.js';
 import { SupportRepository, type SupportStatus } from '../support/support.repository.js';
+import { GameRepository } from '../game-sessions/game.repository.js';
 
 const SUPER_ADMIN_EMAIL = 'malkivian@gmail.com';
 
@@ -27,11 +28,13 @@ export function createAdminRouter(
   smtpEmail: SmtpEmailGateway,
   email: EmailGateway,
   support: SupportRepository,
+  games: GameRepository,
   env: ServerEnvironment,
 ): Router {
   const router = Router();
   router.use(...requireSuperAdmin(repository, env));
   router.get('/users', async (_request, response) => response.json({ users: await repository.listUsersForAdmin() }));
+  router.get('/match-stats', async (_request, response) => response.json(await games.adminSummaryByUser()));
   router.put('/users/:id/active', async (request, response) => {
     const { isActive } = z.object({ isActive: z.boolean() }).parse(request.body);
     if (request.params.id === request.authenticatedUser!.id && !isActive) throw new HttpError(400, 'INVALID_INPUT', 'No puedes desactivar tu propia cuenta de superadministrador.');

@@ -16,7 +16,7 @@ export function authProviderLabel(provider: auth.AuthProvider, locale: 'es' | 'e
   return AUTH_PROVIDER_LABEL[provider];
 }
 
-type AdminSection = 'users' | 'support' | 'smtp' | 'email-logs';
+type AdminSection = 'users' | 'support' | 'smtp' | 'email-logs' | 'match-stats';
 export function SuperAdminPanel() {
   const { t, i18n } = useTranslation('admin');
   const locale = normalizeLocale(i18n.language) ?? 'es';
@@ -35,6 +35,8 @@ export function SuperAdminPanel() {
   const [selectedSupport, setSelectedSupport] = useState<auth.SupportTicket | null>(null);
   const [supportReply, setSupportReply] = useState('');
   const [supportPending, setSupportPending] = useState(false);
+  const [matchStats, setMatchStats] = useState<auth.AdminGameStats | null>(null);
+  const [matchStatsPending, setMatchStatsPending] = useState(false);
   const [activeSection, setActiveSection] = useState<AdminSection>('users');
 
   const refreshUsers = async () => {
@@ -70,6 +72,17 @@ export function SuperAdminPanel() {
     catch (error) { setMessage(error instanceof Error ? error.message : t('supportTicketError')); }
   };
 
+  const refreshMatchStats = async (reportError = true) => {
+    setMatchStatsPending(true);
+    try {
+      setMatchStats(await auth.getAdminGameStats());
+    } catch (error) {
+      if (reportError) setMessage(error instanceof Error ? error.message : t('matchStatsLoadError'));
+    } finally {
+      setMatchStatsPending(false);
+    }
+  };
+
   useEffect(() => {
     void refreshUsers();
     void refreshEmailLogs();
@@ -88,6 +101,9 @@ export function SuperAdminPanel() {
   }, [selectedSupportId]);
 
   useEffect(() => { if (activeSection === 'support') void refreshSupport(false); }, [activeSection, supportStatusFilter]);
+  useEffect(() => {
+    if (activeSection === 'match-stats' && !matchStats) void refreshMatchStats();
+  }, [activeSection, matchStats]);
 
   const toggleActive = async (user: auth.AdminUser) => {
     try { await auth.setAdminUserActive(user.id, !user.isActive); await refreshUsers(); }
@@ -163,6 +179,7 @@ export function SuperAdminPanel() {
   const tabs: Array<{ id: AdminSection; label: string; count?: number }> = [
     { id: 'users', label: t('sections.users'), count: users.length },
     { id: 'support', label: t('sections.support'), count: supportOpenCount || undefined },
+    { id: 'match-stats', label: t('sections.matchStats'), count: matchStats?.totals.users || undefined },
     { id: 'smtp', label: t('sections.smtp') },
     { id: 'email-logs', label: t('sections.logs'), count: failedEmailCount || undefined },
   ];
@@ -210,6 +227,31 @@ export function SuperAdminPanel() {
           </>}
         </article>
       </div>
+    </section>}
+
+    {activeSection === 'match-stats' && <section className="admin-section admin-match-stats stack" id="admin-panel-match-stats" role="tabpanel" aria-labelledby="admin-tab-match-stats">
+      <div className="row email-log-heading"><div><h3>{t('matchStatsTitle')}</h3><p className="muted small">{t('matchStatsDescription')}</p></div><button type="button" onClick={() => { void refreshMatchStats(); }} disabled={matchStatsPending}>{matchStatsPending ? t('loadingMatchStats') : t('matchStatsRefresh')}</button></div>
+      {matchStatsPending && !matchStats ? <p className="muted">{t('loadingMatchStats')}</p> : matchStats && <>
+        <div className="admin-match-stats-summary" aria-label={t('matchStatsTitle')}>
+          <div className="admin-match-stat"><span>{t('matchStatsUsers')}</span><strong>{matchStats.totals.users}</strong></div>
+          <div className="admin-match-stat"><span>{t('matchStatsGames')}</span><strong>{matchStats.totals.sessions}</strong></div>
+          <div className="admin-match-stat"><span>{t('matchStatsActive')}</span><strong>{matchStats.totals.active}</strong></div>
+          <div className="admin-match-stat"><span>{t('matchStatsFinished')}</span><strong>{matchStats.totals.finished}</strong></div>
+          <div className="admin-match-stat"><span>{t('matchStatsAbandoned')}</span><strong>{matchStats.totals.abandoned}</strong></div>
+          <div className="admin-match-stat"><span>{t('matchStatsGuests')}</span><strong>{matchStats.totals.guestSessions}</strong></div>
+        </div>
+        {matchStats.users.length === 0 ? <p className="muted">{t('matchStatsNoUsers')}</p> : <div className="admin-match-stats-table-wrap">
+          <table className="admin-match-stats-table">
+            <caption className="sr-only">{t('matchStatsTitle')}</caption>
+            <thead><tr><th scope="col">{t('matchStatsUser')}</th><th scope="col">{t('matchStatsGames')}</th><th scope="col">{t('matchStatsConfiguration')}</th><th scope="col">{t('matchStatsActive')}</th><th scope="col">{t('matchStatsFinished')}</th><th scope="col">{t('matchStatsAbandoned')}</th><th scope="col">{t('matchStatsLastActivity')}</th></tr></thead>
+            <tbody>{matchStats.users.map((user) => <tr key={user.userId}>
+              <th scope="row"><strong>{user.nickname || user.email}</strong>{user.nickname && <small>{user.email}</small>}</th>
+              <td>{user.sessions}</td><td>{user.configuration}</td><td>{user.active}</td><td>{user.finished}</td><td>{user.abandoned}</td>
+              <td>{user.lastActivityAt ? new Date(user.lastActivityAt).toLocaleString(locale) : t('never')}</td>
+            </tr>)}</tbody>
+          </table>
+        </div>}
+      </>}
     </section>}
 
     {activeSection === 'smtp' && <form className="admin-section admin-smtp stack" id="admin-panel-smtp" role="tabpanel" aria-labelledby="admin-tab-smtp" onSubmit={saveSmtp}>
