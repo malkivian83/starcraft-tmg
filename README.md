@@ -163,8 +163,16 @@ cartas, que no los incluyen. Están pendientes de una segunda verificación
 humana; ver `docs/00-PLAN-DE-TRABAJO.md`.
 
 La aplicación y la hoja PDF de lista muestran la fase de uso de habilidades y
-mejoras (Movimiento, Asalto, Combate o Cualquier fase). Las imágenes completas
-de carta siguen siendo opcionales: la interfaz las oculta si no existen.
+mejoras (Movimiento, Asalto, Combate o Cualquier fase). En las pantallas de
+selección, el icono de lupa abre la imagen original inglesa recortada del PDF:
+las unidades muestran anverso y reverso en orden vertical, y las cartas de
+mando, misión y despliegue muestran su recorte completo. En tácticas, la imagen
+original aparece encima del texto localizado. Esta consulta no modifica la
+salida de impresión ni genera PDFs nuevos.
+
+Los recortes se regeneran con `npm run cards:generate`. El script necesita
+`pdftoppm` (Poppler) disponible en el sistema y deja las imágenes WebP en
+`public/cards/`; valida además la huella SHA-256 de cada PDF fuente.
 
 ## Verificación
 

@@ -147,9 +147,11 @@ avisos y caso de regresión de la lista del manual.
 ### Fase 4 — Interfaz de construcción: implementada con deuda UX
 
 Asistente de cuatro pasos, barra de recursos, escritorio y adaptación móvil.
-La prevención de descartes accidentales y la previsualización de cartas tácticas
-están implementadas. Quedan pendientes la semántica accesible de pestañas y una
-acción visible para cerrar sesión en móvil.
+La prevención de descartes accidentales y la previsualización de cartas desde
+las pantallas de selección están implementadas; las imágenes originales se
+consultan en un modal accesible y no aparecen en impresión. Quedan pendientes
+la semántica accesible de pestañas y una acción visible para cerrar sesión en
+móvil.
 
 ### Fase 5 — Persistencia y consulta: parcial
 
@@ -161,7 +163,9 @@ de cartas sigue pendiente.
 ### Fase 6 — Impresión y PDF: implementada
 
 La hoja resumen se genera con CSS de impresión y el navegador permite guardarla
-como PDF. El inventario de imágenes completas de cartas permanece incompleto.
+como PDF. Las imágenes originales completas para consulta ya están extraídas
+desde las hojas A4 y se muestran desde los catálogos de selección; esta mejora
+no altera la hoja ni el flujo de impresión.
 
 ### Fase 7 — PWA y despliegue: parcial
 

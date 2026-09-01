@@ -201,6 +201,8 @@ export const deploymentCardSchema = z.object({
   }),
   // Obligatorio: el diagrama de marcadores ES la carta (hallazgo M4).
   imageRef: z.string().min(1),
+  // Recorte de la carta física completa; el diagrama anterior se conserva.
+  originalImageRef: z.string().optional(),
   notes: localized.optional(),
 });
 

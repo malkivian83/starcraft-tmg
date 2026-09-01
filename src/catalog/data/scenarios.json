@@ -15,7 +15,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs." },
       "instantWinLead": 10,
-      "imageRef": "cards/scenarios/hold-position-standard.png"
+      "imageRef": "cards/scenarios/hold-position-standard.webp"
     },
   {
     "id": "mission.hold_position.skirmish",
@@ -29,7 +29,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado neutral o asociado a tu color; gana 2 PV por cada uno asociado al color del oponente.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker that is Neutral or associated with your colour. Gain 2 VPs for each Controlled Mission Marker associated with the Opponent colour." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
-      "imageRef": "cards/scenarios/hold-position-skirmish.png"
+      "imageRef": "cards/scenarios/hold-position-skirmish.webp"
     },
   {
     "id": "mission.frontlines.standard",
@@ -43,7 +43,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 10 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs." },
       "instantWinLead": 10,
-      "imageRef": "cards/scenarios/frontlines-standard.png"
+      "imageRef": "cards/scenarios/frontlines-standard.webp"
     },
   {
     "id": "mission.frontlines.skirmish",
@@ -57,7 +57,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: gana 1 PV por cada Marcador de Misión controlado y 2 PV adicionales por un marcador cuyo control arrebataste al oponente esta ronda.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: Gain 1 VP for each Controlled Mission Marker. Gain an additional 2 VPs for a Marker if you gained Control of it from the Opponent this Round." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
-      "imageRef": "cards/scenarios/frontlines-skirmish.png"
+      "imageRef": "cards/scenarios/frontlines-skirmish.webp"
     },
     {
       "id": "mission.gather_the_resources.standard",
@@ -80,7 +80,7 @@
         "en": "ASSAULT PHASE: If an Unengaged Unit is Within 3\" of a Controlled Neutral Mission Marker or associated with the Opponent, this unit may perform the Gather Action instead of a standard action. GATHER ACTION: Gain 1 VP. SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs."
       },
       "instantWinLead": 10,
-      "imageRef": "cards/scenarios/gather-the-resources-standard.png"
+      "imageRef": "cards/scenarios/gather-the-resources-standard.webp"
     },
     {
       "id": "mission.gather_the_resources.skirmish",
@@ -103,7 +103,7 @@
         "en": "ASSAULT PHASE: If an Unengaged Unit is Within 3\" of a Controlled Neutral Mission Marker or associated with the Opponent, this unit may perform the Gather Action instead of a standard action. GATHER ACTION: Gain 1 VP. SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs."
       },
       "instantWinLead": 8,
-      "imageRef": "cards/scenarios/gather-the-resources-skirmish.png"
+      "imageRef": "cards/scenarios/gather-the-resources-skirmish.webp"
     },
     {
       "id": "mission.divide_and_conquer.standard",
@@ -126,7 +126,7 @@
         "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 10+ VPs."
       },
       "instantWinLead": 10,
-      "imageRef": "cards/scenarios/divide-and-conquer-standard.png"
+      "imageRef": "cards/scenarios/divide-and-conquer-standard.webp"
     },
     {
       "id": "mission.divide_and_conquer.skirmish",
@@ -149,7 +149,7 @@
         "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs."
       },
       "instantWinLead": 8,
-      "imageRef": "cards/scenarios/divide-and-conquer-skirmish.png"
+      "imageRef": "cards/scenarios/divide-and-conquer-skirmish.webp"
     },
   {
     "id": "mission.supply_drop.standard",
@@ -163,7 +163,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA PRIMERA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE FIRST ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 12 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 12+ VPs." },
     "instantWinLead": 12,
-      "imageRef": "cards/scenarios/supply-drop-standard.png"
+      "imageRef": "cards/scenarios/supply-drop-standard.webp"
     },
   {
     "id": "mission.supply_drop.skirmish",
@@ -177,7 +177,7 @@
     "scoringConditions": { "es": "Puntúa PV igual al Suministro enemigo destruido esta ronda. A PARTIR DEL INICIO DE LA SEGUNDA RONDA: por cada Marcador de Misión controlado y activado, gana PV igual al número de ronda en el que se activó y retíralo.", "en": "Score VPs equal to Enemy Supply destroyed this Round. FROM THE START OF THE SECOND ROUND: For each activated Controlled Mission Marker, gain VPs equal to the Game Round number in which that Mission Marker was Activated and remove it." },
     "additionalConditions": { "es": "VICTORIA ESPECIAL: la partida termina de inmediato si un jugador aventaja por 8 o más PV.", "en": "SPECIAL WINNING CONDITIONS: The game ends immediately if a Player leads by 8+ VPs." },
       "instantWinLead": 8,
-      "imageRef": "cards/scenarios/supply-drop-skirmish.png"
+      "imageRef": "cards/scenarios/supply-drop-skirmish.webp"
     }
   ],
   "deploymentCards": [
@@ -187,7 +187,8 @@
       "name": "Abandoned Camp",
       "scale": "skirmish",
       "battlefield": { "width": 36, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-abandoned-camp.png"
+      "imageRef": "cards/scenarios/deployment-abandoned-camp.png",
+      "originalImageRef": "cards/scenarios/deployment-abandoned-camp-original.webp"
     },
     {
       "id": "deployment.agria_valley",
@@ -195,7 +196,8 @@
       "name": "Agria Valley",
       "scale": "skirmish",
       "battlefield": { "width": 36, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-agria-valley.png"
+      "imageRef": "cards/scenarios/deployment-agria-valley.png",
+      "originalImageRef": "cards/scenarios/deployment-agria-valley-original.webp"
     },
     {
       "id": "deployment.dirt_side",
@@ -203,7 +205,8 @@
       "name": "Dirt Side",
       "scale": "skirmish",
       "battlefield": { "width": 36, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-dirt-side.png"
+      "imageRef": "cards/scenarios/deployment-dirt-side.png",
+      "originalImageRef": "cards/scenarios/deployment-dirt-side-original.webp"
     },
     {
       "id": "deployment.frontier",
@@ -211,7 +214,8 @@
       "name": "Frontier",
       "scale": "skirmish",
       "battlefield": { "width": 36, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-frontier.png"
+      "imageRef": "cards/scenarios/deployment-frontier.png",
+      "originalImageRef": "cards/scenarios/deployment-frontier-original.webp"
     },
     {
       "id": "deployment.char_plains",
@@ -219,7 +223,8 @@
       "name": "Char Plains",
       "scale": "skirmish",
       "battlefield": { "width": 36, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-char-plains.png"
+      "imageRef": "cards/scenarios/deployment-char-plains.png",
+      "originalImageRef": "cards/scenarios/deployment-char-plains-original.webp"
     },
     {
       "id": "deployment.gauntlet",
@@ -227,7 +232,8 @@
       "name": "Gauntlet",
       "scale": "standard",
       "battlefield": { "width": 54, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-gauntlet.png"
+      "imageRef": "cards/scenarios/deployment-gauntlet.png",
+      "originalImageRef": "cards/scenarios/deployment-gauntlet-original.webp"
     },
     {
       "id": "deployment.typhoon",
@@ -235,7 +241,8 @@
       "name": "Typhoon",
       "scale": "standard",
       "battlefield": { "width": 54, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-typhoon.png"
+      "imageRef": "cards/scenarios/deployment-typhoon.png",
+      "originalImageRef": "cards/scenarios/deployment-typhoon-original.webp"
     },
     {
       "id": "deployment.acropolis",
@@ -243,7 +250,8 @@
       "name": "Acropolis",
       "scale": "standard",
       "battlefield": { "width": 54, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-acropolis.png"
+      "imageRef": "cards/scenarios/deployment-acropolis.png",
+      "originalImageRef": "cards/scenarios/deployment-acropolis-original.webp"
     },
     {
       "id": "deployment.proving_grounds",
@@ -251,7 +259,8 @@
       "name": "Proving Grounds",
       "scale": "standard",
       "battlefield": { "width": 54, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-proving-grounds.png"
+      "imageRef": "cards/scenarios/deployment-proving-grounds.png",
+      "originalImageRef": "cards/scenarios/deployment-proving-grounds-original.webp"
     },
     {
       "id": "deployment.breach",
@@ -259,7 +268,8 @@
       "name": "Breach",
       "scale": "standard",
       "battlefield": { "width": 54, "height": 36 },
-      "imageRef": "cards/scenarios/deployment-breach.png"
+      "imageRef": "cards/scenarios/deployment-breach.png",
+      "originalImageRef": "cards/scenarios/deployment-breach-original.webp"
     }
   ]
 }

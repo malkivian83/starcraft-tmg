@@ -1,0 +1,229 @@
+.card-preview-button {
+  display: inline-flex;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--text-dim);
+  background: var(--builder-field, var(--bg-raised));
+}
+
+/* The builder applies a broad button rule with higher specificity. Keep the
+ * icon control compact so its SVG is not squeezed into the remaining content
+ * box by the builder's horizontal padding. */
+.app:has(> .builder-toolbar) > main.content.no-print .card-preview-button {
+  width: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  gap: 0;
+  padding: 7px;
+  border-radius: 8px;
+  box-shadow: none;
+  transform: none;
+}
+
+.card-preview-button:hover,
+.card-preview-button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-raised));
+}
+
+.card-preview-button__icon {
+  display: block;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.card-selection-card {
+  position: relative;
+}
+
+.card-selection-card > .card-selection-button {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+
+.card-selection-card > .card__head {
+  align-items: center;
+}
+
+.card-selection-card .card-selection-button--header {
+  display: flex;
+  min-width: 0;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+
+.card-selection-card .card-selection-button--header:hover:not(:disabled),
+.card-selection-card .card-selection-button--header:focus-visible {
+  background: transparent;
+}
+
+.card-selection-card .card-selection-button--header:disabled {
+  color: inherit;
+  cursor: not-allowed;
+}
+
+.card-selection-card > .card-selection-button:hover:not(:disabled),
+.card-selection-card > .card-selection-button:focus-visible {
+  background: transparent;
+}
+
+.card-selection-card > .card-selection-button:disabled {
+  color: inherit;
+  cursor: not-allowed;
+}
+
+.card-preview-control {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 1;
+}
+
+.card__name-with-preview {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.card__name-with-preview .card-preview-button {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 5px;
+}
+
+.scenario-selection-card {
+  gap: 10px;
+}
+
+.scenario-selection-card > .card-action {
+  justify-self: start;
+}
+
+.card--blocked .card-preview-control {
+  opacity: 1;
+}
+
+.card-image-modal {
+  z-index: 100;
+}
+
+.card-image-modal__box {
+  display: flex;
+  width: min(920px, 100%);
+  max-height: calc(100dvh - 32px);
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+}
+
+.card-image-modal__header {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  flex: 0 0 auto;
+  margin: -2px -2px 0;
+  padding: 2px 2px 10px;
+  background: var(--bg-panel);
+}
+
+.card-image-modal__images {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+  overflow: visible;
+  overscroll-behavior: contain;
+}
+
+.card-image-modal__figure {
+  margin: 0;
+}
+
+.card-image-modal__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  object-fit: contain;
+  background: #10131f;
+}
+
+.card-image-modal__error {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--builder-danger-line, var(--line));
+  border-radius: 6px;
+  color: var(--warn);
+  background: var(--builder-danger-bg, transparent);
+  font-size: 12px;
+}
+
+@media (max-width: 620px) {
+  .card-preview-button {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .app:has(> .builder-toolbar) > main.content.no-print .card-preview-button {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    padding: 10px;
+  }
+
+  .card__name-with-preview .card-preview-button {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .card-image-modal__box {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 12px;
+  }
+}
+
+@media print {
+  .card-image-modal,
+  .card-preview-button {
+    display: none !important;
+  }
+}

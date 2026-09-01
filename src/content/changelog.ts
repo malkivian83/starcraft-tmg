@@ -18,6 +18,24 @@ export interface ChangelogEntry {
  */
 export const CHANGELOG_ENTRIES: readonly ChangelogEntry[] = [
   {
+    version: '2.0',
+    date: '2026-09-01',
+    title: {
+      es: 'Consulta de cartas originales',
+      en: 'Original card previews',
+    },
+    changes: [
+      {
+        es: 'Las pantallas de selección incluyen una lupa para consultar la carta original en inglés.',
+        en: 'Selection screens now include a magnifier to view the original English card.',
+      },
+      {
+        es: 'Las unidades muestran el anverso y el reverso en el orden correcto, y las tácticas conservan debajo su detalle localizado.',
+        en: 'Units show their front and back in the correct order, while tactical cards keep their localized detail below.',
+      },
+    ],
+  },
+  {
     version: '1.06',
     date: '2026-08-25',
     title: {

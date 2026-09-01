@@ -224,7 +224,12 @@ PDFs → pdftotext -layout → texto
 
 La revisión humana no es opcional. Un `210` transcrito como `120` produce una lista que la app declara legal y que no lo es; no hay ninguna prueba automática que lo detecte, porque el único testigo es el PDF.
 
-Las imágenes de las cartas se extraen con `pdftoppm` a PNG, recortadas por carta, para las vistas de consulta e impresión.
+Las imágenes originales de las cartas se extraen con `pdftoppm` a una página
+rasterizada, se recortan por carta y se publican como WebP para las vistas de
+consulta. El pipeline reproducible está en `tools/extract/makeCards.mjs` y
+usa las coordenadas versionadas de `tools/extract/card-assets.manifest.json`.
+La impresión existente no consume estos recortes nuevos: mantiene su flujo
+HTML/CSS y sus reglas de salida.
 
 ### 5.2 Carga en la aplicación
 
@@ -550,10 +555,10 @@ legal.
 Las cartas se imprimen como **imagen original recortada del PDF**, sin regenerarlas. Esto simplifica sustancialmente la fase:
 
 ```
-PDF de cartas → pdftoppm -r 300 -png → página completa
+PDF de cartas → pdftoppm -r 216 -png → página completa
               → recorte por carta (coordenadas fijas, rejilla A4)
-              → PNG por carta, anverso y reverso
-              → src/catalog/data/images/
+              → WebP por carta, anverso y reverso
+              → public/cards/
 ```
 
 Las hojas de cartas son A4 con disposición regular y marcas `fold here`, así que el recorte se parametriza una vez por PDF y se aplica a todas las páginas. Un contacto visual de todas las cartas recortadas permite verificar el resultado de un vistazo.
