@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type {
   Catalog,
   DeploymentCard,
@@ -8,6 +9,7 @@ import { useListStore } from '@/store/listStore';
 import { useTranslation } from 'react-i18next';
 import { localizedText } from '@/i18n/localized-content';
 import { normalizeLocale } from '@/i18n/types';
+import { CardImageModal, CardPreviewButton } from '../common/CardImagePreview';
 
 export function playableScenarioCards(
   catalog: Pick<Catalog, 'missionCards' | 'deploymentCards'>,
@@ -35,6 +37,7 @@ export function StepScenario() {
   const { list, index } = useListStore();
   const toggleMission = useListStore((s) => s.toggleMission);
   const toggleDeployment = useListStore((s) => s.toggleDeployment);
+  const [preview, setPreview] = useState<{ name: string; imageRef: string } | null>(null);
 
   const { missions, deployments } = playableScenarioCards(
     index.catalog,
@@ -64,6 +67,7 @@ export function StepScenario() {
                 list.missionCardIds.length >= 2
               }
               onToggle={() => toggleMission(mission.id)}
+              onPreview={() => mission.imageRef && setPreview({ name: mission.name, imageRef: mission.imageRef })}
             />
           ))}
         </div>
@@ -84,10 +88,18 @@ export function StepScenario() {
                 list.deploymentCardIds.length >= 2
               }
               onToggle={() => toggleDeployment(deployment.id)}
+              onPreview={() => deployment.originalImageRef && setPreview({ name: deployment.name, imageRef: deployment.originalImageRef })}
             />
           ))}
         </div>
       </section>
+      {preview && (
+        <CardImageModal
+          title={preview.name}
+          images={[{ src: preview.imageRef, alt: t('originalCardImage', { name: preview.name }) }]}
+          onClose={() => setPreview(null)}
+        />
+      )}
     </div>
   );
 }
@@ -97,26 +109,25 @@ function MissionCardView({
   selected,
   disabled,
   onToggle,
+  onPreview,
 }: {
   mission: MissionCard;
   selected: boolean;
   disabled: boolean;
   onToggle: () => void;
+  onPreview: () => void;
 }) {
   const { i18n } = useTranslation();
   const { t } = useTranslation('builderUi');
   const { t: tBuilder } = useTranslation('builder');
   const locale = normalizeLocale(i18n.language) ?? 'es';
   return (
-    <button
-      className={`card${selected ? ' card--selected' : ''}`}
-      disabled={disabled}
-      aria-pressed={selected}
-      aria-label={`${t('missions', { count: 0 })} ${mission.name}, ${t('scale')} ${scaleLabel(mission.scale, t)}`}
-      onClick={onToggle}
-    >
+    <article className={`card scenario-selection-card${selected ? ' card--selected' : ''}`}>
       <div className="card__head">
-        <span className="card__name">{mission.name}</span>
+        <span className="card__name card__name-with-preview">
+          {mission.name}
+          {mission.imageRef && <CardPreviewButton cardName={mission.name} onOpen={onPreview} />}
+        </span>
         <span className="chip">{scaleLabel(mission.scale, t)}</span>
       </div>
       <div className="scenario-mission-stats" aria-label={t('missions', { count: 0 })}>
@@ -156,7 +167,17 @@ function MissionCardView({
           {localizedText(mission.additionalConditions, locale)}
         </p>
       )}
-    </button>
+      <button
+        type="button"
+        className={`card-action ${selected ? 'card-action--remove' : 'card-action--add'}`}
+        disabled={!selected && disabled}
+        aria-pressed={selected}
+        aria-label={`${selected ? t('remove') : t('add')} ${mission.name}`}
+        onClick={onToggle}
+      >
+        {selected ? t('remove') : t('add')}
+      </button>
+    </article>
   );
 }
 
@@ -165,23 +186,22 @@ function DeploymentCardView({
   selected,
   disabled,
   onToggle,
+  onPreview,
 }: {
   deployment: DeploymentCard;
   selected: boolean;
   disabled: boolean;
   onToggle: () => void;
+  onPreview: () => void;
 }) {
   const { t } = useTranslation('builderUi');
   return (
-    <button
-      className={`card${selected ? ' card--selected' : ''}`}
-      disabled={disabled}
-      aria-pressed={selected}
-      aria-label={`${t('deployments', { count: 0 })} ${deployment.name}`}
-      onClick={onToggle}
-    >
+    <article className={`card scenario-selection-card${selected ? ' card--selected' : ''}`}>
       <div className="card__head">
-        <span className="card__name">{deployment.name}</span>
+        <span className="card__name card__name-with-preview">
+          {deployment.name}
+          {deployment.originalImageRef && <CardPreviewButton cardName={deployment.name} onOpen={onPreview} />}
+        </span>
         <span className="chip">
           {deployment.battlefield.width}×{deployment.battlefield.height}″
         </span>
@@ -197,7 +217,17 @@ function DeploymentCardView({
           e.currentTarget.style.display = 'none';
         }}
       />
-    </button>
+      <button
+        type="button"
+        className={`card-action ${selected ? 'card-action--remove' : 'card-action--add'}`}
+        disabled={!selected && disabled}
+        aria-pressed={selected}
+        aria-label={`${selected ? t('remove') : t('add')} ${deployment.name}`}
+        onClick={onToggle}
+      >
+        {selected ? t('remove') : t('add')}
+      </button>
+    </article>
   );
 }
 

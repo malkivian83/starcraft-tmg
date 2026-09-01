@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "render": {
+    "dpi": 216,
+    "format": "webp",
+    "quality": 96,
+    "smartSubsample": true,
+    "effort": 6,
+    "insetPt": 0
+  },
+  "sources": {
+    "zerg": {
+      "path": "docs/StarCraft-Zerg-P2P-Card-Sheets-A4_EN.pdf",
+      "sha256": "6810F46EE422AC5D8F3CC169C3EDA3CCB9551F01AB71A1F7E4AC8C266817B364",
+      "pages": 20,
+      "pageSizePt": [595.276, 841.89]
+    },
+    "terran": {
+      "path": "docs/StarCraft-Terran-P2P-Card-Sheets-A4_EN.pdf",
+      "sha256": "AFA3F229DB61444D0673DEA35E31772530A4C39DADAA0E281BA1BAE0D271109C",
+      "pages": 14,
+      "pageSizePt": [595.276, 841.89]
+    },
+    "protoss": {
+      "path": "docs/StarCraft-Protoss-P2P-Card-Sheets-A4_EN.pdf",
+      "sha256": "4E8547B2DF8D545DF3D0EBB7D7821521A888DC0437D6F4DDE21D82145337A212",
+      "pages": 14,
+      "pageSizePt": [595.276, 841.89]
+    }
+  },
+  "layouts": {
+    "unit": {
+      "x": [68.031, 527.244],
+      "y": [117.638, 420.945, 724.056],
+      "rotation": { "front": 180, "back": 0 }
+    },
+    "command": {
+      "x": [47.88, 297.638, 547.344],
+      "y": [81.357, 259.996, 438.579, 617.161, 795.744],
+      "rotation": 90
+    },
+    "mission": {
+      "x": [98.923, 297.638, 496.023],
+      "y": [98.171, 438.579, 779.018],
+      "rotation": 0
+    },
+    "deployment": {
+      "x": [47.88, 297.638, 547.344],
+      "y": [81.357, 259.996, 438.579, 617.161, 795.744]
+    }
+  },
+  "assets": [
+    { "id": "zerg.faction.zerg_swarm", "source": "zerg", "page": 13, "layout": "command", "slot": [1, 1], "output": "cards/zerg/faction-zerg-swarm.webp" },
+    { "id": "zerg.faction.kerrigans_swarm", "source": "zerg", "page": 14, "layout": "command", "slot": [1, 1], "output": "cards/zerg/faction-kerrigans-swarm.webp" },
+    { "id": "zerg.tactical.spawning_pool", "source": "zerg", "page": 16, "layout": "command", "slot": [0, 0], "output": "cards/zerg/tactical-spawning-pool.webp" },
+    { "id": "zerg.tactical.spawning_pool_six_pool", "source": "zerg", "page": 15, "layout": "command", "slot": [1, 1], "output": "cards/zerg/tactical-spawning-pool-six-pool.webp" },
+    { "id": "zerg.tactical.roach_warren", "source": "zerg", "page": 15, "layout": "command", "slot": [0, 1], "output": "cards/zerg/tactical-roach-warren.webp" },
+    { "id": "zerg.tactical.hydralisk_den", "source": "zerg", "page": 14, "layout": "command", "slot": [0, 1], "output": "cards/zerg/tactical-hydralisk-den.webp" },
+    { "id": "zerg.tactical.evolution_chamber", "source": "zerg", "page": 13, "layout": "command", "slot": [0, 1], "output": "cards/zerg/tactical-evolution-chamber.webp" },
+    { "id": "zerg.tactical.hatchery", "source": "zerg", "page": 13, "layout": "command", "slot": [1, 0], "output": "cards/zerg/tactical-hatchery.webp" },
+    { "id": "zerg.tactical.lair", "source": "zerg", "page": 15, "layout": "command", "slot": [0, 0], "output": "cards/zerg/tactical-lair.webp" },
+    { "id": "zerg.tactical.overlord", "source": "zerg", "page": 14, "layout": "command", "slot": [1, 0], "output": "cards/zerg/tactical-overlord.webp" },
+    { "id": "zerg.tactical.overseer", "source": "zerg", "page": 13, "layout": "command", "slot": [0, 0], "output": "cards/zerg/tactical-overseer.webp" },
+    { "id": "zerg.creep.accelerating_creep", "source": "zerg", "page": 15, "layout": "command", "slot": [1, 0], "output": "cards/zerg/creep-accelerating-creep.webp" },
+    { "id": "zerg.creep.malignant_creep", "source": "zerg", "page": 14, "layout": "command", "slot": [0, 1], "output": "cards/zerg/creep-malignant-creep.webp" },
+    { "id": "terran.faction.terran_armed_forces", "source": "terran", "page": 8, "layout": "command", "slot": [1, 1], "output": "cards/terran/faction-terran-armed-forces.webp" },
+    { "id": "terran.faction.raynors_raiders", "source": "terran", "page": 9, "layout": "command", "slot": [1, 1], "output": "cards/terran/faction-raynors-raiders.webp" },
+    { "id": "terran.tactical.barracks", "source": "terran", "page": 8, "layout": "command", "slot": [0, 0], "output": "cards/terran/tactical-barracks.webp" },
+    { "id": "terran.tactical.barracks_proxy", "source": "terran", "page": 10, "layout": "command", "slot": [1, 1], "output": "cards/terran/tactical-barracks-proxy.webp" },
+    { "id": "terran.tactical.barracks_tech_lab", "source": "terran", "page": 10, "layout": "command", "slot": [0, 1], "output": "cards/terran/tactical-barracks-tech-lab.webp" },
+    { "id": "terran.tactical.supply_depot", "source": "terran", "page": 9, "layout": "command", "slot": [0, 0], "output": "cards/terran/tactical-supply-depot.webp" },
+    { "id": "terran.tactical.factory", "source": "terran", "page": 10, "layout": "command", "slot": [0, 0], "output": "cards/terran/tactical-factory.webp" },
+    { "id": "terran.tactical.engineering_bay", "source": "terran", "page": 8, "layout": "command", "slot": [1, 0], "output": "cards/terran/tactical-engineering-bay.webp" },
+    { "id": "terran.tactical.armory", "source": "terran", "page": 10, "layout": "command", "slot": [1, 0], "output": "cards/terran/tactical-armory.webp" },
+    { "id": "terran.tactical.academy", "source": "terran", "page": 8, "layout": "command", "slot": [0, 1], "output": "cards/terran/tactical-academy.webp" },
+    { "id": "terran.tactical.orbital_command", "source": "terran", "page": 9, "layout": "command", "slot": [1, 0], "output": "cards/terran/tactical-orbital-command.webp" },
+    { "id": "terran.tactical.dropship", "source": "terran", "page": 9, "layout": "command", "slot": [0, 1], "output": "cards/terran/tactical-dropship.webp" },
+    { "id": "protoss.faction.daelaam", "source": "protoss", "page": 9, "layout": "command", "slot": [1, 1], "output": "cards/protoss/faction-daelaam.webp" },
+    { "id": "protoss.faction.khalai", "source": "protoss", "page": 8, "layout": "command", "slot": [0, 1], "output": "cards/protoss/faction-khalai.webp" },
+    { "id": "protoss.tactical.gateway", "source": "protoss", "page": 8, "layout": "command", "slot": [1, 0], "output": "cards/protoss/tactical-gateway.webp" },
+    { "id": "protoss.tactical.warp_gate", "source": "protoss", "page": 9, "layout": "command", "slot": [0, 1], "output": "cards/protoss/tactical-warp-gate.webp" },
+    { "id": "protoss.tactical.gate_chronoboosted", "source": "protoss", "page": 8, "layout": "command", "slot": [0, 0], "output": "cards/protoss/tactical-gate-chronoboosted.webp" },
+    { "id": "protoss.tactical.nexus", "source": "protoss", "page": 10, "layout": "command", "slot": [0, 1], "output": "cards/protoss/tactical-nexus.webp" },
+    { "id": "protoss.tactical.overcharged_nexus", "source": "protoss", "page": 9, "layout": "command", "slot": [0, 0], "output": "cards/protoss/tactical-overcharged-nexus.webp" },
+    { "id": "protoss.tactical.power_field", "source": "protoss", "page": 10, "layout": "command", "slot": [1, 1], "output": "cards/protoss/tactical-power-field.webp" },
+    { "id": "protoss.tactical.forge", "source": "protoss", "page": 10, "layout": "command", "slot": [0, 1], "output": "cards/protoss/tactical-forge.webp" },
+    { "id": "protoss.tactical.observer", "source": "protoss", "page": 10, "layout": "command", "slot": [1, 0], "output": "cards/protoss/tactical-observer.webp" },
+    { "id": "protoss.tactical.warp_prism", "source": "protoss", "page": 8, "layout": "command", "slot": [1, 0], "output": "cards/protoss/tactical-warp-prism.webp" },
+    { "id": "protoss.tactical.twilight_council", "source": "protoss", "page": 9, "layout": "command", "slot": [1, 0], "output": "cards/protoss/tactical-twilight-council.webp" },
+
+    { "id": "zerg.card.hydralisk", "source": "zerg", "page": 1, "layout": "unit", "output": { "front": "cards/zerg/unit-hydralisk-front.webp", "back": "cards/zerg/unit-hydralisk-back.webp" } },
+    { "id": "zerg.card.kerrigan", "source": "zerg", "page": 2, "layout": "unit", "output": { "front": "cards/zerg/unit-kerrigan-front.webp", "back": "cards/zerg/unit-kerrigan-back.webp" } },
+    { "id": "zerg.card.omega_worm", "source": "zerg", "page": 3, "layout": "unit", "output": { "front": "cards/zerg/unit-omega-worm-front.webp", "back": "cards/zerg/unit-omega-worm-back.webp" } },
+    { "id": "zerg.card.kerrigan_swarm_raptor", "source": "zerg", "page": 4, "layout": "unit", "output": { "front": "cards/zerg/unit-kerrigan-swarm-raptor-front.webp", "back": "cards/zerg/unit-kerrigan-swarm-raptor-back.webp" } },
+    { "id": "zerg.card.queen", "source": "zerg", "page": 5, "layout": "unit", "output": { "front": "cards/zerg/unit-queen-front.webp", "back": "cards/zerg/unit-queen-back.webp" } },
+    { "id": "zerg.card.roach", "source": "zerg", "page": 6, "layout": "unit", "output": { "front": "cards/zerg/unit-roach-front.webp", "back": "cards/zerg/unit-roach-back.webp" } },
+    { "id": "zerg.card.corpser", "source": "zerg", "page": 7, "layout": "unit", "output": { "front": "cards/zerg/unit-corpser-front.webp", "back": "cards/zerg/unit-corpser-back.webp" } },
+    { "id": "zerg.card.roachling", "source": "zerg", "page": 8, "layout": "unit", "output": { "front": "cards/zerg/unit-roachling-front.webp", "back": "cards/zerg/unit-roachling-back.webp" } },
+    { "id": "zerg.card.vile", "source": "zerg", "page": 9, "layout": "unit", "output": { "front": "cards/zerg/unit-vile-front.webp", "back": "cards/zerg/unit-vile-back.webp" } },
+    { "id": "zerg.card.zergling", "source": "zerg", "page": 10, "layout": "unit", "output": { "front": "cards/zerg/unit-zergling-front.webp", "back": "cards/zerg/unit-zergling-back.webp" } },
+    { "id": "zerg.card.raptor", "source": "zerg", "page": 11, "layout": "unit", "output": { "front": "cards/zerg/unit-raptor-front.webp", "back": "cards/zerg/unit-raptor-back.webp" } },
+    { "id": "zerg.card.swarmling", "source": "zerg", "page": 12, "layout": "unit", "output": { "front": "cards/zerg/unit-swarmling-front.webp", "back": "cards/zerg/unit-swarmling-back.webp" } },
+    { "id": "terran.card.marine", "source": "terran", "page": 1, "layout": "unit", "output": { "front": "cards/terran/unit-marine-front.webp", "back": "cards/terran/unit-marine-back.webp" } },
+    { "id": "terran.card.marauder", "source": "terran", "page": 2, "layout": "unit", "output": { "front": "cards/terran/unit-marauder-front.webp", "back": "cards/terran/unit-marauder-back.webp" } },
+    { "id": "terran.card.medic", "source": "terran", "page": 3, "layout": "unit", "output": { "front": "cards/terran/unit-medic-front.webp", "back": "cards/terran/unit-medic-back.webp" } },
+    { "id": "terran.card.jim_raynor", "source": "terran", "page": 4, "layout": "unit", "output": { "front": "cards/terran/unit-jim-raynor-front.webp", "back": "cards/terran/unit-jim-raynor-back.webp" } },
+    { "id": "terran.card.point_defense_drone", "source": "terran", "page": 5, "layout": "unit", "output": { "front": "cards/terran/unit-point-defense-drone-front.webp", "back": "cards/terran/unit-point-defense-drone-back.webp" } },
+    { "id": "terran.card.raynors_raider", "source": "terran", "page": 6, "layout": "unit", "output": { "front": "cards/terran/unit-raynors-raider-front.webp", "back": "cards/terran/unit-raynors-raider-back.webp" } },
+    { "id": "terran.card.goliath", "source": "terran", "page": 7, "layout": "unit", "output": { "front": "cards/terran/unit-goliath-front.webp", "back": "cards/terran/unit-goliath-back.webp" } },
+    { "id": "protoss.card.adept", "source": "protoss", "page": 1, "layout": "unit", "output": { "front": "cards/protoss/unit-adept-front.webp", "back": "cards/protoss/unit-adept-back.webp" } },
+    { "id": "protoss.card.artanis", "source": "protoss", "page": 2, "layout": "unit", "output": { "front": "cards/protoss/unit-artanis-front.webp", "back": "cards/protoss/unit-artanis-back.webp" } },
+    { "id": "protoss.card.praetor_guard", "source": "protoss", "page": 3, "layout": "unit", "output": { "front": "cards/protoss/unit-praetor-guard-front.webp", "back": "cards/protoss/unit-praetor-guard-back.webp" } },
+    { "id": "protoss.card.pylon", "source": "protoss", "page": 4, "layout": "unit", "output": { "front": "cards/protoss/unit-pylon-front.webp", "back": "cards/protoss/unit-pylon-back.webp" } },
+    { "id": "protoss.card.sentry", "source": "protoss", "page": 5, "layout": "unit", "output": { "front": "cards/protoss/unit-sentry-front.webp", "back": "cards/protoss/unit-sentry-back.webp" } },
+    { "id": "protoss.card.stalker", "source": "protoss", "page": 6, "layout": "unit", "output": { "front": "cards/protoss/unit-stalker-front.webp", "back": "cards/protoss/unit-stalker-back.webp" } },
+    { "id": "protoss.card.zealot", "source": "protoss", "page": 7, "layout": "unit", "output": { "front": "cards/protoss/unit-zealot-front.webp", "back": "cards/protoss/unit-zealot-back.webp" } },
+
+    { "id": "mission.supply_drop.standard", "source": "zerg", "page": 17, "layout": "mission", "slot": [0, 0], "output": "cards/scenarios/supply-drop-standard.webp" },
+    { "id": "mission.supply_drop.skirmish", "source": "zerg", "page": 17, "layout": "mission", "slot": [1, 0], "output": "cards/scenarios/supply-drop-skirmish.webp" },
+    { "id": "mission.hold_position.standard", "source": "zerg", "page": 17, "layout": "mission", "slot": [0, 1], "output": "cards/scenarios/hold-position-standard.webp" },
+    { "id": "mission.hold_position.skirmish", "source": "zerg", "page": 17, "layout": "mission", "slot": [1, 1], "output": "cards/scenarios/hold-position-skirmish.webp" },
+    { "id": "mission.frontlines.standard", "source": "zerg", "page": 18, "layout": "mission", "slot": [0, 0], "output": "cards/scenarios/frontlines-standard.webp" },
+    { "id": "mission.frontlines.skirmish", "source": "zerg", "page": 18, "layout": "mission", "slot": [1, 0], "output": "cards/scenarios/frontlines-skirmish.webp" },
+    { "id": "mission.gather_the_resources.standard", "source": "zerg", "page": 18, "layout": "mission", "slot": [0, 1], "output": "cards/scenarios/gather-the-resources-standard.webp" },
+    { "id": "mission.gather_the_resources.skirmish", "source": "zerg", "page": 18, "layout": "mission", "slot": [1, 1], "output": "cards/scenarios/gather-the-resources-skirmish.webp" },
+    { "id": "mission.divide_and_conquer.standard", "source": "zerg", "page": 19, "layout": "mission", "slot": [0, 0], "output": "cards/scenarios/divide-and-conquer-standard.webp" },
+    { "id": "mission.divide_and_conquer.skirmish", "source": "zerg", "page": 19, "layout": "mission", "slot": [1, 0], "output": "cards/scenarios/divide-and-conquer-skirmish.webp" },
+
+    { "id": "deployment.abandoned_camp", "source": "zerg", "page": 19, "layout": "deployment", "slot": [0, 2], "rotation": 180, "output": "cards/scenarios/deployment-abandoned-camp-original.webp" },
+    { "id": "deployment.agria_valley", "source": "zerg", "page": 19, "layout": "deployment", "slot": [1, 2], "rotation": 180, "output": "cards/scenarios/deployment-agria-valley-original.webp" },
+    { "id": "deployment.gauntlet", "source": "zerg", "page": 19, "layout": "deployment", "slot": [0, 3], "rotation": 0, "output": "cards/scenarios/deployment-gauntlet-original.webp" },
+    { "id": "deployment.typhoon", "source": "zerg", "page": 19, "layout": "deployment", "slot": [1, 3], "rotation": 0, "output": "cards/scenarios/deployment-typhoon-original.webp" },
+    { "id": "deployment.dirt_side", "source": "zerg", "page": 20, "layout": "deployment", "slot": [0, 0], "rotation": 180, "output": "cards/scenarios/deployment-dirt-side-original.webp" },
+    { "id": "deployment.frontier", "source": "zerg", "page": 20, "layout": "deployment", "slot": [1, 0], "rotation": 180, "output": "cards/scenarios/deployment-frontier-original.webp" },
+    { "id": "deployment.acropolis", "source": "zerg", "page": 20, "layout": "deployment", "slot": [0, 1], "rotation": 0, "output": "cards/scenarios/deployment-acropolis-original.webp" },
+    { "id": "deployment.proving_grounds", "source": "zerg", "page": 20, "layout": "deployment", "slot": [1, 1], "rotation": 0, "output": "cards/scenarios/deployment-proving-grounds-original.webp" },
+    { "id": "deployment.char_plains", "source": "zerg", "page": 20, "layout": "deployment", "slot": [0, 2], "rotation": 180, "output": "cards/scenarios/deployment-char-plains-original.webp" },
+    { "id": "deployment.breach", "source": "zerg", "page": 20, "layout": "deployment", "slot": [1, 2], "rotation": 0, "output": "cards/scenarios/deployment-breach-original.webp" }
+  ]
+}

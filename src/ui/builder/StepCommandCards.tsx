@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   getEligibleCreepCards,
@@ -10,6 +10,7 @@ import { SlotChips, UniqueChip } from '../common/Chips';
 import { KeywordText } from '../common/KeywordText';
 import { localizedText } from '@/i18n/localized-content';
 import { normalizeLocale } from '@/i18n/types';
+import { CardImageModal, CardPreviewButton } from '../common/CardImagePreview';
 
 /**
  * Paso 1 — Cartas de mando: facción, tácticas y Creep Card.
@@ -23,7 +24,11 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
   const { t } = useTranslation('builderUi');
   const locale = normalizeLocale(i18n.language) ?? 'es';
   const { list, index, summary, validation } = useListStore();
-  const [previewCard, setPreviewCard] = useState<TacticalCard | null>(null);
+  const [preview, setPreview] = useState<{
+    title: string;
+    imageRef: string;
+    detail?: TacticalCard;
+  } | null>(null);
   const selectFactionCard = useListStore((s) => s.selectFactionCard);
   const addTacticalCard = useListStore((s) => s.addTacticalCard);
   const removeTacticalCard = useListStore((s) => s.removeTacticalCard);
@@ -35,15 +40,6 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
 
   const creepMissing = validation.errors.some((e) => e.rule === 'R11');
 
-  useEffect(() => {
-    if (!previewCard) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setPreviewCard(null);
-    };
-    window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [previewCard]);
-
   return (
     <div className="split">
       <div className="stack">
@@ -51,31 +47,49 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
           <h2 className="panel__title">{t('factionTitle')}</h2>
           <div className="stack">
             {factionCards.map((card) => (
-              <button
+              <div
                 key={card.id}
-                className={`card${list.factionCardId === card.id ? ' card--selected' : ''}`}
-                onClick={() => {
-                  if (list.factionCardId !== card.id && onBeforeFactionChange && !onBeforeFactionChange()) return;
-                  selectFactionCard(card.id);
-                }}
+                className={`card card-selection-card${list.factionCardId === card.id ? ' card--selected' : ''}`}
               >
                 <div className="card__head">
-                  <span className="card__name">{card.name}</span>
-                  <span className="chip chip--cost">
-                    +{card.resourcePerRound} {card.resource}
-                  </span>
+                  <button
+                    type="button"
+                    className="card-selection-button card-selection-button--header"
+                    onClick={() => {
+                      if (list.factionCardId !== card.id && onBeforeFactionChange && !onBeforeFactionChange()) return;
+                      selectFactionCard(card.id);
+                    }}
+                  >
+                    <span className="card__name">{card.name}</span>
+                  </button>
+                  {card.imageRef && (
+                    <CardPreviewButton
+                      cardName={card.name}
+                      onOpen={() => setPreview({ title: card.name, imageRef: card.imageRef! })}
+                    />
+                  )}
+                  <span className="chip chip--cost">+{card.resourcePerRound} {card.resource}</span>
                 </div>
-                <div className="row" style={{ gap: 4 }}>
-                  <SlotChips slots={card.startingSlots} />
-                </div>
-                <div className="row small muted" style={{ gap: 4 }}>
-                  {card.tags.map((tag) => (
-                    <span key={tag} className="chip chip--role">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </button>
+                <button
+                  type="button"
+                  className="card-selection-button card-selection-button--details"
+                  onClick={() => {
+                    if (list.factionCardId !== card.id && onBeforeFactionChange && !onBeforeFactionChange()) return;
+                    selectFactionCard(card.id);
+                  }}
+                >
+                  <div className="row" style={{ gap: 4 }}>
+                    <SlotChips slots={card.startingSlots} />
+                  </div>
+                  <div className="row small muted" style={{ gap: 4 }}>
+                    {card.tags.map((tag) => (
+                      <span key={tag} className="chip chip--role">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </button>
+              </div>
             ))}
           </div>
         </section>
@@ -106,24 +120,41 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                     const selected = list.creepCardId === card.id;
                     const blocked = status === 'blocked' && !selected;
                     return (
-                      <button
+                      <div
                         key={card.id}
-                        className={`card${selected ? ' card--selected' : ''}${
+                        className={`card card-selection-card${selected ? ' card--selected' : ''}${
                           blocked ? ' card--blocked' : ''
                         }`}
-                        disabled={blocked}
-                        onClick={() => selectCreepCard(card.id)}
                       >
                         <div className="card__head">
-                          <span className="card__name">{card.name}</span>
-                          <span className="chip chip--cost">
-                            {card.vespeneCost} gas
-                          </span>
+                          <button
+                            type="button"
+                            className="card-selection-button card-selection-button--header"
+                            disabled={blocked}
+                            onClick={() => selectCreepCard(card.id)}
+                          >
+                            <span className="card__name">{card.name}</span>
+                          </button>
+                          {card.imageRef && (
+                            <CardPreviewButton
+                              cardName={card.name}
+                              onOpen={() => setPreview({ title: card.name, imageRef: card.imageRef! })}
+                            />
+                          )}
+                          <span className="chip chip--cost">{card.vespeneCost} gas</span>
                         </div>
-                        {blocked && reason && (
-                          <span className="card__reason">{localizedText(reason, locale)}</span>
-                        )}
-                      </button>
+                        <button
+                          type="button"
+                          className="card-selection-button card-selection-button--details"
+                          disabled={blocked}
+                          onClick={() => selectCreepCard(card.id)}
+                        >
+                          <span className="card-selection-label">{selected ? t('remove') : t('add')}</span>
+                          {blocked && reason && (
+                            <span className="card__reason">{localizedText(reason, locale)}</span>
+                          )}
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -159,7 +190,15 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                       >
                         <div className="card__head">
                           <span className="card__name">
-                            {card.name}
+                            <span className="card__name-with-preview">
+                              {card.name}
+                              {card.imageRef && (
+                                <CardPreviewButton
+                                  cardName={card.name}
+                                  onOpen={() => setPreview({ title: card.name, imageRef: card.imageRef!, detail: card })}
+                                />
+                              )}
+                            </span>
                             {count > 1 && (
                               <span className="chip" style={{ marginLeft: 6 }}>
                                 ×{count}
@@ -188,16 +227,6 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
                           </>
                         )}
                         <div className="row card-actions">
-                          <button
-                            type="button"
-                            className="card-action card-action--preview"
-                            title={`${t('viewCard')} ${card.name}`}
-                            aria-label={`${t('viewCard')} ${card.name}`}
-                            onClick={() => setPreviewCard(card)}
-                          >
-                            <span className="card-action__icon" aria-hidden="true">▣</span>
-                            {t('viewCard')}
-                          </button>
                           <button
                             type="button"
                             className="card-action card-action--add"
@@ -240,62 +269,23 @@ export function StepCommandCards({ onBeforeFactionChange }: { onBeforeFactionCha
       </div>
 
       <ActiveCards />
-      {previewCard && (
-        <TacticalCardModal
-          card={previewCard}
-          onClose={() => setPreviewCard(null)}
-        />
+      {preview && (
+        <CardImageModal
+          title={preview.title}
+          images={[{ src: preview.imageRef, alt: t('originalCardImage', { name: preview.title }) }]}
+          onClose={() => setPreview(null)}
+        >
+          {preview.detail && (
+            <CardDetail
+              title={preview.detail.name}
+              kind={t('tacticalCard')}
+              badge={`${preview.detail.vespeneCost} gas`}
+              slots={preview.detail.slotsGranted}
+              abilities={preview.detail.abilities}
+            />
+          )}
+        </CardImageModal>
       )}
-    </div>
-  );
-}
-
-function TacticalCardModal({
-  card,
-  onClose,
-}: {
-  card: TacticalCard;
-  onClose: () => void;
-}) {
-  const { t } = useTranslation('builderUi');
-  return (
-    <div
-      className="modal"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <div
-        className="modal__box modal__box--card-preview"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tactical-card-preview-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <div className="modal__header">
-          <div>
-            <p className="eyebrow">{t('preview')}</p>
-            <h2 id="tactical-card-preview-title">{t('tacticalCardView')}</h2>
-          </div>
-          <button
-            type="button"
-            className="card-action modal__close"
-            onClick={onClose}
-            aria-label={t('closePreview')}
-            title={t('closePreview')}
-          >
-            <span className="card-action__icon" aria-hidden="true">×</span>
-          </button>
-        </div>
-        <CardDetail
-          title={card.name}
-          kind={t('tacticalCard')}
-          badge={`${card.vespeneCost} gas`}
-          slots={card.slotsGranted}
-          abilities={card.abilities}
-        />
-      </div>
     </div>
   );
 }

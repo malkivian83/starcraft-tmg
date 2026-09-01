@@ -136,7 +136,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/faction-zerg-swarm.png"
+      "imageRef": "cards/zerg/faction-zerg-swarm.webp"
     },
     {
       "id": "zerg.faction.kerrigans_swarm",
@@ -182,7 +182,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/faction-kerrigans-swarm.png"
+      "imageRef": "cards/zerg/faction-kerrigans-swarm.webp"
     }
   ],
 
@@ -211,7 +211,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-spawning-pool.png"
+      "imageRef": "cards/zerg/tactical-spawning-pool.webp"
     },
     {
       "id": "zerg.tactical.spawning_pool_six_pool",
@@ -248,7 +248,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-spawning-pool-six-pool.png"
+      "imageRef": "cards/zerg/tactical-spawning-pool-six-pool.webp"
     },
     {
       "id": "zerg.tactical.roach_warren",
@@ -274,7 +274,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-roach-warren.png"
+      "imageRef": "cards/zerg/tactical-roach-warren.webp"
     },
     {
       "id": "zerg.tactical.hydralisk_den",
@@ -300,7 +300,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-hydralisk-den.png"
+      "imageRef": "cards/zerg/tactical-hydralisk-den.webp"
     },
     {
       "id": "zerg.tactical.evolution_chamber",
@@ -337,7 +337,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-evolution-chamber.png"
+      "imageRef": "cards/zerg/tactical-evolution-chamber.webp"
     },
     {
       "id": "zerg.tactical.hatchery",
@@ -374,7 +374,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-hatchery.png"
+      "imageRef": "cards/zerg/tactical-hatchery.webp"
     },
     {
       "id": "zerg.tactical.lair",
@@ -411,7 +411,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-lair.png"
+      "imageRef": "cards/zerg/tactical-lair.webp"
     },
     {
       "id": "zerg.tactical.overlord",
@@ -448,7 +448,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-overlord.png"
+      "imageRef": "cards/zerg/tactical-overlord.webp"
     },
     {
       "id": "zerg.tactical.overseer",
@@ -485,7 +485,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/tactical-overseer.png"
+      "imageRef": "cards/zerg/tactical-overseer.webp"
     }
   ],
 
@@ -533,7 +533,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/creep-accelerating-creep.png"
+      "imageRef": "cards/zerg/creep-accelerating-creep.webp"
     },
     {
       "id": "zerg.creep.malignant_creep",
@@ -578,7 +578,7 @@
           }
         }
       ],
-      "imageRef": "cards/zerg/creep-malignant-creep.png"
+      "imageRef": "cards/zerg/creep-malignant-creep.webp"
     }
   ],
 
@@ -641,8 +641,8 @@
         { "minModels": 7, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
       ],
-      "imageRefFront": "cards/zerg/unit-zergling-front.png",
-      "imageRefBack": "cards/zerg/unit-zergling-back.png"
+      "imageRefFront": "cards/zerg/unit-zergling-front.webp",
+      "imageRefBack": "cards/zerg/unit-zergling-back.webp"
     },
     {
       "id": "zerg.card.raptor",
@@ -717,8 +717,8 @@
         { "minModels": 7, "maxModels": 12, "supply": 1 },
         { "minModels": 13, "maxModels": 18, "supply": 2 }
       ],
-      "imageRefFront": "cards/zerg/unit-raptor-front.png",
-      "imageRefBack": "cards/zerg/unit-raptor-back.png"
+      "imageRefFront": "cards/zerg/unit-raptor-front.webp",
+      "imageRefBack": "cards/zerg/unit-raptor-back.webp"
     },
     {
       "id": "zerg.card.kerrigan_swarm_raptor",
@@ -788,8 +788,8 @@
         { "minModels": 4, "maxModels": 6, "supply": 1 }
       ],
       "miniRef": "cards/zerg/mini-kerrigan_swarm_raptor.png",
-      "imageRefFront": "cards/zerg/unit-kerrigan-swarm-raptor-front.png",
-      "imageRefBack": "cards/zerg/unit-kerrigan-swarm-raptor-back.png"
+      "imageRefFront": "cards/zerg/unit-kerrigan-swarm-raptor-front.webp",
+      "imageRefBack": "cards/zerg/unit-kerrigan-swarm-raptor-back.webp"
     },
     {
       "id": "zerg.card.swarmling",
@@ -862,8 +862,8 @@
         { "minModels": 1, "maxModels": 6, "supply": 0 },
         { "minModels": 7, "maxModels": 18, "supply": 1 }
       ],
-      "imageRefFront": "cards/zerg/unit-swarmling-front.png",
-      "imageRefBack": "cards/zerg/unit-swarmling-back.png"
+      "imageRefFront": "cards/zerg/unit-swarmling-front.webp",
+      "imageRefBack": "cards/zerg/unit-swarmling-back.webp"
     },
     {
       "id": "zerg.card.roach",
@@ -907,8 +907,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 3, "supply": 1 }
       ],
-      "imageRefFront": "cards/zerg/unit-roach-front.png",
-      "imageRefBack": "cards/zerg/unit-roach-back.png"
+      "imageRefFront": "cards/zerg/unit-roach-front.webp",
+      "imageRefBack": "cards/zerg/unit-roach-back.webp"
     },
     {
       "id": "zerg.card.vile",
@@ -963,8 +963,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 3, "supply": 1 }
       ],
-      "imageRefFront": "cards/zerg/unit-vile-front.png",
-      "imageRefBack": "cards/zerg/unit-vile-back.png"
+      "imageRefFront": "cards/zerg/unit-vile-front.webp",
+      "imageRefBack": "cards/zerg/unit-vile-back.webp"
     },
     {
       "id": "zerg.card.corpser",
@@ -1029,8 +1029,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 3, "supply": 1 }
       ],
-      "imageRefFront": "cards/zerg/unit-corpser-front.png",
-      "imageRefBack": "cards/zerg/unit-corpser-back.png"
+      "imageRefFront": "cards/zerg/unit-corpser-front.webp",
+      "imageRefBack": "cards/zerg/unit-corpser-back.webp"
     },
     {
       "id": "zerg.card.hydralisk",
@@ -1094,8 +1094,8 @@
         { "minModels": 2, "maxModels": 2, "supply": 2 },
         { "minModels": 3, "maxModels": 4, "supply": 3 }
       ],
-      "imageRefFront": "cards/zerg/unit-hydralisk-front.png",
-      "imageRefBack": "cards/zerg/unit-hydralisk-back.png"
+      "imageRefFront": "cards/zerg/unit-hydralisk-front.webp",
+      "imageRefBack": "cards/zerg/unit-hydralisk-back.webp"
     },
     {
       "id": "zerg.card.queen",
@@ -1167,8 +1167,8 @@
         }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
-      "imageRefFront": "cards/zerg/unit-queen-front.png",
-      "imageRefBack": "cards/zerg/unit-queen-back.png"
+      "imageRefFront": "cards/zerg/unit-queen-front.webp",
+      "imageRefBack": "cards/zerg/unit-queen-back.webp"
     },
     {
       "id": "zerg.card.kerrigan",
@@ -1261,8 +1261,8 @@
         }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
-      "imageRefFront": "cards/zerg/unit-kerrigan-front.png",
-      "imageRefBack": "cards/zerg/unit-kerrigan-back.png"
+      "imageRefFront": "cards/zerg/unit-kerrigan-front.webp",
+      "imageRefBack": "cards/zerg/unit-kerrigan-back.webp"
     },
     {
       "id": "zerg.card.roachling",
@@ -1274,8 +1274,8 @@
       "weapons": [{ "name": "Claws", "phase": "COMBAT", "range": "E", "target": "Ground", "rateOfAttack": "2", "hit": "4+", "surgeType": null, "surgeDice": null, "damage": "1", "keywords": [] }],
       "abilities": [{ "name": "Underdeveloped Claws", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "Esta unidad no puede ganar el estado Burrowed.", "en": "This Unit cannot gain Burrowed Status." } }],
       "supplyProfile": [{ "minModels": 1, "maxModels": 3, "supply": 0 }],
-      "imageRefFront": "cards/zerg/unit-roachling-front.png",
-      "imageRefBack": "cards/zerg/unit-roachling-back.png"
+      "imageRefFront": "cards/zerg/unit-roachling-front.webp",
+      "imageRefBack": "cards/zerg/unit-roachling-back.webp"
     },
     {
       "id": "zerg.card.omega_worm",
@@ -1292,8 +1292,8 @@
         { "name": "Omega Network", "phase": "ANY", "type": "PASSIVE", "cost": null, "fromUpgrade": false, "text": { "es": "La peana del Omega Worm cuenta como un borde de entrada. Cada ronda, unidades amigas con un coste de suministro combinado de 2 o menos pueden desplegarse por este borde. Una miniatura líder amiga que termine Movimiento, Desenganche o Carrera en contacto peana con peana puede volver a Reservas con su unidad.", "en": "The base of the Omega Worm counts as an Entry Edge. Each Round, Friendly Units with a combined Supply cost of 2 or less may be Deployed via this Entry Edge. If a Friendly Leading model finishes a Move, Disengage, or Run action in base-to-base contact with the Omega Worm, the controlling player may remove that Unit from the battlefield and return it to Reserves." } }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
-      "imageRefFront": "cards/zerg/unit-omega-worm-front.png",
-      "imageRefBack": "cards/zerg/unit-omega-worm-back.png"
+      "imageRefFront": "cards/zerg/unit-omega-worm-front.webp",
+      "imageRefBack": "cards/zerg/unit-omega-worm-back.webp"
     }
   ],
 

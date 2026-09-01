@@ -293,7 +293,7 @@ Dos decisiones a destacar:
 
 **La variante de escala forma parte de la identidad de la misión.** `Gather the Resources` en Standard y en Skirmish son **cartas distintas**, con id propio, no una carta con dos juegos de valores. Es el mismo patrón que las variantes de cepa en las unidades (§2), y se resuelve igual por el mismo motivo: modelarlo como campos opcionales llena el motor de condicionales.
 
-**`imageRef` es obligatorio en `DeploymentCard`.** Las coordenadas de los marcadores 1–5 son un diagrama sobre rejilla, no una lista de números (hallazgo M4). Transcribirlas a datos sería lento, propenso a error y produciría algo peor que la imagen original. Una carta de despliegue sin su imagen no sirve de nada, así que el tipo lo exige.
+**`imageRef` es obligatorio en `DeploymentCard`.** Las coordenadas de los marcadores 1–5 son un diagrama sobre rejilla, no una lista de números (hallazgo M4). Transcribirlas a datos sería lento, propenso a error y produciría algo peor que la imagen original. Una carta de despliegue sin su imagen no sirve de nada, así que el tipo lo exige. `originalImageRef` es opcional y apunta al recorte de la carta física completa usado solo en la consulta del catálogo; `imageRef` sigue siendo el diagrama que se muestra en la tarjeta de selección y en la hoja.
 
 ### 3.10 `UpgradeOption`
 

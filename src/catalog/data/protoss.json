@@ -129,7 +129,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Mass Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Una vez por partida, coloca un indicador de facción en cualquier punto del campo de batalla. Retira todas las unidades Protoss amigas a menos de 6\" de ese indicador del campo de batalla y devuélvelas a Reservas.", "en": "Once per Game, Set a Faction Indicator anywhere on the battlefield. All Friendly Protoss Units Within 6\" of this Faction Indicator are removed from the battlefield and returned to Reserves." } }, { "name": "Dae'Uhl", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Cuando una unidad amiga recibe daño, reduce el daño total en 2 (mínimo 1).", "en": "When a Friendly Unit receives Damage, reduce the Total Damage by 2 (minimum 1)." } }],
-      "imageRef": "cards/protoss/faction-daelaam.png"
+      "imageRef": "cards/protoss/faction-daelaam.webp"
     },
     {
       "id": "protoss.faction.khalai",
@@ -164,7 +164,7 @@
           }
         }
       ],
-      "imageRef": "cards/protoss/faction-khalai.png"
+      "imageRef": "cards/protoss/faction-khalai.webp"
     }
   ],
 
@@ -181,7 +181,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo que use la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }],
-      "imageRef": "cards/protoss/tactical-gateway.png"
+      "imageRef": "cards/protoss/tactical-gateway.webp"
     },
     {
       "id": "protoss.tactical.warp_gate",
@@ -195,7 +195,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Quick Strikes", "phase": "COMBAT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma de combate cuerpo a cuerpo usada por la unidad activa gana PRECISION (2).", "en": "The active Unit's first Close Combat Weapon used gains PRECISION (2)." } }, { "name": "Warp In", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa se despliega desde cualquier borde de la mesa que no sea el borde de entrada de un jugador. El despliegue debe terminar a más de 10\" de cualquier miniatura enemiga. Esta habilidad no puede usarse si otra unidad terrestre amiga ya se ha desplegado esta ronda.", "en": "The active GROUND Unit Deploys from any table edge that is not a player's Entry Edge. This deployment must end more than 10\" away from any Enemy model. The controlling player cannot use this ability if another Friendly Ground Unit has already Deployed this Round." } }],
-      "imageRef": "cards/protoss/tactical-warp-gate.png"
+      "imageRef": "cards/protoss/tactical-warp-gate.webp"
     },
     {
       "id": "protoss.tactical.gate_chronoboosted",
@@ -232,7 +232,7 @@
           }
         }
       ],
-      "imageRef": "cards/protoss/tactical-gate-chronoboosted.png"
+      "imageRef": "cards/protoss/tactical-gate-chronoboosted.webp"
     },
     {
       "id": "protoss.tactical.nexus",
@@ -246,7 +246,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Strategic Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa y no trabada vuelve a Reservas en vez de realizar una acción.", "en": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action." } }, { "name": "Ancient Pride", "phase": "ANY", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma que use la unidad activa gana INSTANT.", "en": "The active Unit's first Weapon used gains INSTANT." } }],
-      "imageRef": "cards/protoss/tactical-nexus.png"
+      "imageRef": "cards/protoss/tactical-nexus.webp"
     },
     {
       "id": "protoss.tactical.overcharged_nexus",
@@ -260,7 +260,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Strategic Recall", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad terrestre activa y no trabada vuelve a Reservas en vez de realizar una acción.", "en": "The active, Unengaged Ground Unit is returned to Reserves instead of performing an action." } }, { "name": "Photon Overcharge", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Usa esta habilidad cuando una unidad enemiga entre al campo de batalla desde Reservas por un lugar distinto de su propio borde de entrada. Esa unidad sufre inmediatamente HITS 3 (1).", "en": "Use when an Enemy Unit enters the battlefield from Reserves via a location other than its own Entry Edge. That Unit immediately suffers HITS 3 (1)." } }],
-      "imageRef": "cards/protoss/tactical-overcharged-nexus.png"
+      "imageRef": "cards/protoss/tactical-overcharged-nexus.webp"
     },
     {
       "id": "protoss.tactical.power_field",
@@ -274,7 +274,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Guardian Shell", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad terrestre amiga, gana DODGE (2) para esa tirada.", "en": "Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains DODGE (2) for this roll." } }],
-      "imageRef": "cards/protoss/tactical-power-field.png"
+      "imageRef": "cards/protoss/tactical-power-field.webp"
     },
     {
       "id": "protoss.tactical.forge",
@@ -288,7 +288,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Ground Weapons", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia que use la unidad terrestre activa gana CRITICAL HIT (1).", "en": "The active Ground Unit's first Ranged Weapon used gains CRITICAL HIT (1)." } }, { "name": "Ground Armor", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Antes de una tirada de armadura de una unidad terrestre amiga, gana TOUGH (1) para esa tirada.", "en": "Use before a Friendly Ground Unit makes an Armour Roll. That Unit gains TOUGH (1) for this roll." } }],
-      "imageRef": "cards/protoss/tactical-forge.png"
+      "imageRef": "cards/protoss/tactical-forge.webp"
     },
     {
       "id": "protoss.tactical.observer",
@@ -302,7 +302,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Gravitic Boosters", "phase": "ASSAULT", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Después de que una unidad amiga tire D6 para la distancia de carga, suma 1 a esa distancia.", "en": "Use after a Friendly Unit rolls a D6 for Charge Distance. Add 1 to its Charge Distance." } }, { "name": "Surveillance", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador de facción en cualquier punto del campo de batalla. Mientras haya unidades enemigas a menos de 6\" de ese indicador de facción, pierden el estado HIDDEN.", "en": "Set a Faction Indicator anywhere on the battlefield. While Enemy Units are Within 6\" of this Faction Indicator, they lose HIDDEN Status." } }],
-      "imageRef": "cards/protoss/tactical-observer.png"
+      "imageRef": "cards/protoss/tactical-observer.webp"
     },
     {
       "id": "protoss.tactical.warp_prism",
@@ -316,7 +316,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Phase", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La unidad activa resuelve PLACE (3).", "en": "The active Unit resolves the PLACE (3) effect." } }, { "name": "Warp Conduit", "phase": "MOVEMENT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "Coloca un indicador de facción en cualquier punto del campo de batalla a más de 10\" de cualquier miniatura enemiga. Al final de la ronda, puedes desplegar una unidad terrestre desde Reservas en contacto peana con peana con ese indicador de facción.", "en": "Set a Faction Indicator anywhere on the battlefield more than 10\" away from any Enemy model. At the End of the Round, you may Deploy one Ground Unit from Reserves in base-to-base Contact with this Faction Indicator." } }],
-      "imageRef": "cards/protoss/tactical-warp-prism.png"
+      "imageRef": "cards/protoss/tactical-warp-prism.webp"
     },
     {
       "id": "protoss.tactical.twilight_council",
@@ -330,7 +330,7 @@
       "resource": "PE",
       "resourcePerRound": 1,
       "abilities": [{ "name": "Weapons of the Firstborn", "phase": "ASSAULT", "type": "ACTIVE", "cost": 1, "fromUpgrade": false, "text": { "es": "La primera arma a distancia que use la unidad terrestre activa gana BUFF Range (4).", "en": "The active Ground Unit's first Ranged Weapon used gains BUFF Range (4)." } }, { "name": "Veil of Shadows", "phase": "ANY", "type": "REACTION", "cost": 1, "fromUpgrade": false, "text": { "es": "Después de que una unidad amiga resuelva PLACE, esa unidad resuelve HEAL (2).", "en": "Use after a Friendly Unit resolves a PLACE effect. That Unit resolves HEAL (2)." } }],
-      "imageRef": "cards/protoss/tactical-twilight-council.png"
+      "imageRef": "cards/protoss/tactical-twilight-council.webp"
     }
   ],
 
@@ -363,8 +363,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 1 },
         { "minModels": 2, "maxModels": 3, "supply": 2 }
       ],
-      "imageRefFront": "cards/protoss/unit-zealot-front.png",
-      "imageRefBack": "cards/protoss/unit-zealot-back.png"
+      "imageRefFront": "cards/protoss/unit-zealot-front.webp",
+      "imageRefBack": "cards/protoss/unit-zealot-back.webp"
     },
     {
       "id": "protoss.card.praetor_guard",
@@ -459,8 +459,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 1 },
         { "minModels": 2, "maxModels": 3, "supply": 2 }
       ],
-      "imageRefFront": "cards/protoss/unit-praetor-guard-front.png",
-      "imageRefBack": "cards/protoss/unit-praetor-guard-back.png"
+      "imageRefFront": "cards/protoss/unit-praetor-guard-front.webp",
+      "imageRefBack": "cards/protoss/unit-praetor-guard-back.webp"
     },
     {
       "id": "protoss.card.adept",
@@ -500,8 +500,8 @@
         { "minModels": 1, "maxModels": 2, "supply": 0 },
         { "minModels": 3, "maxModels": 4, "supply": 1 }
       ],
-      "imageRefFront": "cards/protoss/unit-adept-front.png",
-      "imageRefBack": "cards/protoss/unit-adept-back.png"
+      "imageRefFront": "cards/protoss/unit-adept-front.webp",
+      "imageRefBack": "cards/protoss/unit-adept-back.webp"
     },
     {
       "id": "protoss.card.sentry",
@@ -541,8 +541,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 0 },
         { "minModels": 2, "maxModels": 2, "supply": 1 }
       ],
-      "imageRefFront": "cards/protoss/unit-sentry-front.png",
-      "imageRefBack": "cards/protoss/unit-sentry-back.png"
+      "imageRefFront": "cards/protoss/unit-sentry-front.webp",
+      "imageRefBack": "cards/protoss/unit-sentry-back.webp"
     },
     {
       "id": "protoss.card.stalker",
@@ -580,8 +580,8 @@
         { "minModels": 1, "maxModels": 1, "supply": 1 },
         { "minModels": 2, "maxModels": 2, "supply": 2 }
       ],
-      "imageRefFront": "cards/protoss/unit-stalker-front.png",
-      "imageRefBack": "cards/protoss/unit-stalker-back.png"
+      "imageRefFront": "cards/protoss/unit-stalker-front.webp",
+      "imageRefBack": "cards/protoss/unit-stalker-back.webp"
     },
     {
       "id": "protoss.card.artanis",
@@ -652,8 +652,8 @@
         }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 1 }],
-      "imageRefFront": "cards/protoss/unit-artanis-front.png",
-      "imageRefBack": "cards/protoss/unit-artanis-back.png"
+      "imageRefFront": "cards/protoss/unit-artanis-front.webp",
+      "imageRefBack": "cards/protoss/unit-artanis-back.webp"
     },
     {
       "id": "protoss.card.pylon",
@@ -699,8 +699,8 @@
         }
       ],
       "supplyProfile": [{ "minModels": 1, "maxModels": 1, "supply": 0 }],
-      "imageRefFront": "cards/protoss/unit-pylon-front.png",
-      "imageRefBack": "cards/protoss/unit-pylon-back.png"
+      "imageRefFront": "cards/protoss/unit-pylon-front.webp",
+      "imageRefBack": "cards/protoss/unit-pylon-back.webp"
     }
   ],
 

@@ -254,6 +254,8 @@ export interface DeploymentCard {
   battlefield: { width: number; height: number };
   /** Obligatorio: el diagrama de marcadores ES la carta (hallazgo M4). */
   imageRef: string;
+  /** Recorte de la carta física completa, solo para consulta en pantalla. */
+  originalImageRef?: string;
   notes?: Localized;
 }
 

@@ -10,6 +10,7 @@ import { StatBlock } from '../common/StatBlock';
 import { SupplyBands } from '../common/SupplyBands';
 import { groupAbilitiesByPhase, groupUnitProfileByPhase, groupUpgradesByPhase } from '../common/abilityPhases';
 import { KeywordText } from '../common/KeywordText';
+import { CardImageModal, CardPreviewButton } from '../common/CardImagePreview';
 import { upgradeDescription } from '../common/upgradeText';
 import { localizedText } from '@/i18n/localized-content';
 import { normalizeLocale, type SupportedLocale } from '@/i18n/types';
@@ -30,6 +31,7 @@ export function StepMusterUnits() {
   const { list, index, summary } = useListStore();
   const addUnit = useListStore((s) => s.addUnit);
   const addReferenceUnit = useListStore((s) => s.addReferenceUnit);
+  const [previewCard, setPreviewCard] = useState<UnitCard | null>(null);
 
   const faction = list.factionCardId
     ? index.factionCards.get(list.factionCardId)
@@ -55,14 +57,24 @@ export function StepMusterUnits() {
         <section className="panel">
           <h2 className="panel__title">{t('catalog')}</h2>
           <div className="stack">
-            {recruitable.map(({ entry, status, compositions }) => (
+            {recruitable.map(({ entry, status, compositions }) => {
+              const card = index.unitCards.get(entry.cardId);
+              return (
               <div
                 key={entry.id}
                 className={`card unit-card--${status}`}
               >
                 <div className="card__head">
                   <span className="card__name">
-                    {entry.name} <UniqueChip unique={entry.unique} />
+                    <span className="card__name-with-preview">
+                      {entry.name} <UniqueChip unique={entry.unique} />
+                      {card?.imageRefFront && card.imageRefBack && (
+                        <CardPreviewButton
+                          cardName={card.name}
+                          onOpen={() => setPreviewCard(card)}
+                        />
+                      )}
+                    </span>
                   </span>
                   <span className="chip chip--slot">
                     {slotLabel(entry.slotType, locale)}
@@ -97,7 +109,8 @@ export function StepMusterUnits() {
                   })}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -117,9 +130,20 @@ export function StepMusterUnits() {
                   .filter((text): text is NonNullable<typeof text> => Boolean(text))
                   .map((text) => localizedText(text, locale))
                   .join(' ');
+                const card = index.unitCards.get(entry.cardId);
                 return <div key={entry.id} className={`card unit-card--${status}`}>
                   <div className="card__head">
-                    <span className="card__name">{entry.name}</span>
+                    <span className="card__name">
+                      <span className="card__name-with-preview">
+                        {entry.name}
+                        {card?.imageRefFront && card.imageRefBack && (
+                          <CardPreviewButton
+                            cardName={card.name}
+                            onOpen={() => setPreviewCard(card)}
+                          />
+                        )}
+                      </span>
+                    </span>
                     <span className="chip">{summonedLabel}</span>
                   </div>
                   <div>
@@ -141,6 +165,22 @@ export function StepMusterUnits() {
       </div>
 
       <Roster />
+      {previewCard?.imageRefFront && previewCard.imageRefBack && (
+        <CardImageModal
+          title={previewCard.name}
+          images={[
+            {
+              src: previewCard.imageRefFront,
+              alt: t('cardFront', { name: previewCard.name }),
+            },
+            {
+              src: previewCard.imageRefBack,
+              alt: t('cardBack', { name: previewCard.name }),
+            },
+          ]}
+          onClose={() => setPreviewCard(null)}
+        />
+      )}
     </div>
   );
 }

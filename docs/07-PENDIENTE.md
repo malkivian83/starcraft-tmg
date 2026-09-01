@@ -25,6 +25,9 @@ Estos puntos ya no deben tratarse como pendientes:
 - Página de términos y condiciones enlazada desde los footers y casilla
   obligatoria en el registro. El titular es `starcraft-builder.com`.
 - Previsualización de cartas tácticas en modal y ajuste responsive para móvil.
+- Previsualización de la carta original inglesa para todas las cartas del
+  catálogo de selección (unidades, facción, tácticas, Creep, misión y
+  despliegue), con anverso/reverso de unidad y composición de cartas de mando.
 - Confirmación de cambios sin guardar al cambiar de sección del constructor y
   botón de impresión en la sección de revisión.
 - Estadísticas privadas de partidas por lista guardada, con historial, balance y
@@ -101,15 +104,14 @@ con las cartas antes de mostrarse como información fiable.
 | `Jim Raynor` | Tamaño |
 | `Point Defense Drone` | Tamaño y velocidad |
 
-### B3 · Faltan las imágenes completas de carta
+### B3 · Imágenes completas de carta (resuelto)
 
-Están disponibles los retratos de las 26 unidades y los 10 diagramas de
-despliegue. No están recortadas:
-
-- Anverso y reverso de las cartas de unidad (`imageRefFront` / `imageRefBack`).
-- Cartas de facción, tácticas y Creep.
-
-La interfaz oculta las imágenes que faltan, así que nada se rompe.
+El pipeline `tools/extract/makeCards.mjs` genera los recortes originales
+ingleses en WebP a partir de las hojas A4 y valida sus huellas SHA-256. Se han
+incorporado anverso y reverso de las 26 unidades, las cartas de facción,
+tácticas y Creep, las 10 misiones y las 10 cartas de despliegue. La interfaz
+los consulta únicamente desde las pantallas de selección; la impresión sigue
+siendo independiente.
 
 ---
 
@@ -167,15 +169,18 @@ consola y no hay prueba que avise de un retrato ausente.
 El modelo de datos (§8) la exige y no existe como script. Hoy se comprueba la
 coherencia interna del catálogo, no que coincida con los PDF.
 
-### D4 · La extracción no es reproducible de principio a fin
-`makeLogo.mjs`, `makeMinis.mjs` y `samplePalette.mjs` sí lo son. La
-transcripción de perfiles, habilidades y costes se hizo a mano leyendo el texto
-extraído: no hay forma de regenerarla ni de detectar si un PDF nuevo cambia
-algo.
+### D4 · La extracción de contenido estructurado no es reproducible
 
-### D5 · `Point Defense Drone` sin carta completa propia
-El retrato existe en `public/cards/terran/mini-point_defense_drone.jpg`, pero no
-tiene página de carta completa propia en la hoja P2P Terran.
+La extracción de imágenes ya es reproducible mediante `makeCards.mjs`, con
+coordenadas y hashes en el manifiesto. La transcripción de perfiles,
+habilidades y costes se hizo a mano leyendo el texto extraído: sigue sin haber
+una verificación automática de esos valores frente a un PDF nuevo.
+
+### D5 · `Point Defense Drone` sin carta completa propia (resuelto)
+
+La hoja P2P Terran contiene el recorte de la carta y ahora se publica como
+`public/cards/terran/unit-point-defense-drone-front.webp` y
+`public/cards/terran/unit-point-defense-drone-back.webp`.
 
 ### D6 · Seguridad de superadministración (`AUD-01`)
 
@@ -264,4 +269,4 @@ Escenarios: 5 misiones × 2 escalas y 10 despliegues, comunes a las tres razas.
 5. **Corregir salida móvil y pérdida silenciosa de cambios** (`AUD-04`,
    `AUD-08`).
 6. **Revisión humana de costes Terran y Protoss** (A1).
-7. **Completar perfiles e imágenes completas de carta** (B1–B3).
+7. **Completar perfiles pendientes y verificación editorial** (B1–B2).
