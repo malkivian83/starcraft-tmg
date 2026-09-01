@@ -18,13 +18,17 @@ export interface ChangelogEntry {
  */
 export const CHANGELOG_ENTRIES: readonly ChangelogEntry[] = [
   {
-    version: '2.0',
+    version: '2.01',
     date: '2026-09-01',
     title: {
-      es: 'Consulta de cartas originales',
-      en: 'Original card previews',
+      es: 'FAQ oficial y consulta de cartas',
+      en: 'Official FAQ and card previews',
     },
     changes: [
+      {
+        es: 'La nueva sección FAQ reúne en español las 68 aclaraciones oficiales e incluye acceso al PDF original en inglés.',
+        en: 'The new FAQ section includes all 68 official clarifications and provides access to the original English PDF.',
+      },
       {
         es: 'Las pantallas de selección incluyen una lupa para consultar la carta original en inglés.',
         en: 'Selection screens now include a magnifier to view the original English card.',

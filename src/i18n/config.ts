@@ -17,7 +17,7 @@ if (!i18n.isInitialized) {
     fallbackLng: defaultLocale,
     supportedLngs: ['es', 'en'],
     defaultNS: 'common',
-    ns: ['common', 'navigation', 'home', 'lists', 'builder', 'builderUi', 'print', 'auth', 'support', 'account', 'admin', 'legal', 'errors', 'pwa', 'cookies'],
+    ns: ['common', 'navigation', 'home', 'lists', 'builder', 'builderUi', 'print', 'auth', 'support', 'faqs', 'account', 'admin', 'legal', 'errors', 'pwa', 'cookies'],
     interpolation: { escapeValue: false },
     returnNull: false,
     react: { useSuspense: false },

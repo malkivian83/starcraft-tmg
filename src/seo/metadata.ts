@@ -31,6 +31,7 @@ const PUBLIC_PAGES = new Set<LocalizedPage>([
   'guest-builder',
   'games',
   'support',
+  'faqs',
   'terms',
 ]);
 
@@ -56,6 +57,7 @@ const PAGE_COPY: Record<SupportedLocale, Record<LocalizedPage, PageCopy>> = {
       description: 'Contacta con el soporte de Starcraft Builder para comunicar incidencias o resolver dudas sobre la aplicación.',
       breadcrumb: 'Soporte',
     },
+    faqs: { title: 'FAQ de StarCraft TMG | Starcraft Builder', description: 'Consulta en español las preguntas frecuentes y aclaraciones oficiales de StarCraft: The Miniatures Game.', breadcrumb: 'Preguntas frecuentes' },
     terms: {
       title: 'Términos y condiciones | Starcraft Builder',
       description: 'Consulta los términos y condiciones de uso de Starcraft Builder, proyecto fan no oficial para StarCraft TMG.',
@@ -92,6 +94,7 @@ const PAGE_COPY: Record<SupportedLocale, Record<LocalizedPage, PageCopy>> = {
       description: 'Contact Starcraft Builder support to report an issue or ask a question about the application.',
       breadcrumb: 'Support',
     },
+    faqs: { title: 'StarCraft TMG FAQ | Starcraft Builder', description: 'Read the official frequently asked questions and rules clarifications for StarCraft: The Miniatures Game.', breadcrumb: 'FAQ' },
     terms: {
       title: 'Terms and conditions | Starcraft Builder',
       description: 'Read the terms and conditions for Starcraft Builder, an unofficial fan-made project for StarCraft TMG.',

@@ -61,4 +61,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/terms-and-conditions" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/terminos-y-condiciones" />
   </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/es/faqs</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/faqs" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/faqs" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/faqs" />
+  </url>
+  <url>
+    <loc>https://www.starcraft-builder.com/en/faqs</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.starcraft-builder.com/es/faqs" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.starcraft-builder.com/en/faqs" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.starcraft-builder.com/es/faqs" />
+  </url>
 </urlset>

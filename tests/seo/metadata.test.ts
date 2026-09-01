@@ -98,6 +98,8 @@ describe('metadatos SEO y rich snippets', () => {
     ['support', 'en', '/en/home', '/en/support'],
     ['terms', 'es', '/es/inicio', '/es/terminos-y-condiciones'],
     ['terms', 'en', '/en/home', '/en/terms-and-conditions'],
+    ['faqs', 'es', '/es/inicio', '/es/faqs'],
+    ['faqs', 'en', '/en/home', '/en/faqs'],
   ] as const)('crea breadcrumbs absolutos para %s en %s', (page, locale, homePath, pagePath) => {
     const data = breadcrumb(page, locale);
 
@@ -143,6 +145,7 @@ describe('metadatos SEO y rich snippets', () => {
       { page: 'games', es: '/es/partidas', en: '/en/games' },
       { page: 'support', es: '/es/soporte', en: '/en/support' },
       { page: 'terms', es: '/es/terminos-y-condiciones', en: '/en/terms-and-conditions' },
+      { page: 'faqs', es: '/es/faqs', en: '/en/faqs' },
     ];
 
     for (const { page, es, en } of pages) {
@@ -162,7 +165,7 @@ describe('metadatos SEO y rich snippets', () => {
   });
 
   it('no inventa reseñas ni valoraciones en ningún rich snippet', () => {
-    for (const page of ['home', 'guest-builder', 'games', 'support', 'terms'] as const) {
+    for (const page of ['home', 'guest-builder', 'games', 'support', 'terms', 'faqs'] as const) {
       for (const locale of ['es', 'en'] as const) {
         const keys = structuredDataKeys(buildSeoMetadata(page, locale).structuredData);
 
