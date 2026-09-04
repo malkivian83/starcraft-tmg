@@ -103,6 +103,7 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [googleTermsRequired, setGoogleTermsRequired] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const login = useAuthStore((state) => state.login);
@@ -131,15 +132,19 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   };
 
   const enterWithGoogle = async (credential: string) => {
-    if (mode === 'register' && !termsAccepted) {
+    if (pending) return;
+    if ((mode === 'register' || googleTermsRequired) && !termsAccepted) {
       setError(t('termsRequired'));
       return;
     }
     setError(null);
     setPending(true);
     try {
-      await loginWithGoogle(credential, mode === 'register');
+      await loginWithGoogle(credential, termsAccepted);
     } catch (reason) {
+      if (reason instanceof ApiError && reason.code === 'TERMS_REQUIRED') {
+        setGoogleTermsRequired(true);
+      }
       setError(reason instanceof Error ? reason.message : t('googleError'));
     } finally {
       setPending(false);
@@ -163,9 +168,9 @@ function AuthForm({ mode }: { mode: 'login' | 'register' }) {
                 <button type="button" className="password-field__toggle" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? t('hidePassword') : t('showPassword')} aria-pressed={passwordVisible}>{passwordVisible ? t('hidePassword') : t('showPassword')}</button>
               </span>
             </label>
-            {mode === 'register' && (
+            {(mode === 'register' || googleTermsRequired) && (
               <label className="terms-check">
-                <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required />
+                <input type="checkbox" checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} required={mode === 'register'} />
                 <span>{t('acceptTermsPrefix')} <Link to={localizedPath('terms', locale)}>{t('acceptTermsLink')}</Link>.</span>
               </label>
             )}
